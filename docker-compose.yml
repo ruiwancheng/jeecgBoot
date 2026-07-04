@@ -17,6 +17,8 @@ services:
       --lower_case_table_names=1
       --max_allowed_packet=128M
       --default-authentication-plugin=caching_sha2_password
+    volumes:
+      - mysql-data:/var/lib/mysql
     ports:
       - 13306:3306
     networks:
@@ -74,3 +76,6 @@ services:
 networks:
   jeecg-boot:
     name: jeecg_boot
+
+volumes:
+  mysql-data:

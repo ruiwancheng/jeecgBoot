@@ -1,0 +1,13 @@
+{
+  "name": "jeecg-deploy-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "JeecgBoot 独立部署控制台",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.0.0",
+    "ws": "^8.18.0"
+  }
+}

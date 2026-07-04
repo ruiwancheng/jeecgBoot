@@ -139,4 +139,4 @@ MySQL (port 13306), Redis, PostgreSQL+pgvector, MongoDB, and the application con
 
 Online 模块采用**元数据驱动**架构，通过数据库配置表（`onl_cgform_*`）实现运行时 CRUD，无需生成代码。配置存在数据库中而非文件系统，Claude Code 无法直接读取具体表单配置，需用户提供 JSON 导出或截图。
 
-**完整的配置 Schema、控件类型、默认值语法、增强机制等详见: [online-form-schema.md](online-form-schema.md)**
+Online 表单的完整配置 Schema、控件类型、默认值语法、增强机制等请参考 JeecgBoot 官方文档或通过 API 查询现有表单配置。

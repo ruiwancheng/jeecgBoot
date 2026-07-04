@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JeecgBoot 部署控制台</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  .header {
+    background: #16213e;
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #0f3460;
+  }
+  .header h1 { font-size: 16px; color: #e94560; }
+  .status { font-size: 12px; padding: 4px 12px; border-radius: 12px; }
+  .status.connected { background: #1b4332; color: #52b788; }
+  .status.disconnected { background: #4a1a1a; color: #f87171; }
+  .main {
+    flex: 1; padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    max-width: 1200px; margin: 0 auto; width: 100%;
+  }
+  .btn-row { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    padding: 10px 32px; border: none; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .btn-deploy { background: #e94560; color: #fff; }
+  .btn-clear { background: #333; color: #ccc; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:hover:not(:disabled) { opacity: 0.85; }
+
+  .progress-section {
+    background: #16213e;
+    border-radius: 8px;
+    padding: 20px 24px;
+    display: none;
+  }
+  .progress-section.visible { display: block; }
+
+  .progress-bar-wrap {
+    background: #0d0d0d;
+    border-radius: 6px;
+    height: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e94560, #52b788);
+    border-radius: 6px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: calc(50% + 16px);
+    width: calc(100% - 32px);
+    height: 2px;
+    background: #333;
+    transition: background 0.3s;
+  }
+  .step:last-child::after { display: none; }
+  .step.done::after { background: #52b788; }
+
+  .step-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #333;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+    position: relative; z-index: 1;
+  }
+  .step.done .step-dot { background: #52b788; color: #fff; }
+  .step.active .step-dot { background: #e94560; color: #fff; box-shadow: 0 0 8px #e94560; }
+  .step.error .step-dot { background: #f87171; color: #fff; }
+
+  .step-label {
+    font-size: 11px;
+    color: #666;
+    max-width: 80px;
+    word-break: keep-all;
+    transition: color 0.3s;
+  }
+  .step.done .step-label { color: #52b788; }
+  .step.active .step-label { color: #e94560; }
+  .step.error .step-label { color: #f87171; }
+
+  .terminal {
+    flex: 1;
+    background: #0d0d0d;
+    border-radius: 8px;
+    padding: 16px;
+    overflow-y: auto;
+    min-height: 400px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .terminal .time { color: #666; margin-right: 8px; }
+  .terminal .info { color: #61dafb; }
+  .terminal .done { color: #52b788; }
+  .terminal .error { color: #f87171; }
+  .elapsed { font-size: 12px; color: #888; margin-left: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>JeecgBoot 部署控制台</h1>
+  <span id="status" class="status disconnected">未连接</span>
+</div>
+<div class="main">
+  <div class="btn-row">
+    <button id="btnDeploy" class="btn btn-deploy" disabled>开始部署</button>
+    <button id="btnClear" class="btn btn-clear">清空日志</button>
+    <span id="elapsed" class="elapsed"></span>
+  </div>
+
+  <div id="progressSection" class="progress-section">
+    <div class="progress-bar-wrap">
+      <div id="progressBar" class="progress-bar-fill"></div>
+    </div>
+    <div class="steps" id="steps">
+      <div class="step" data-step="1">
+        <div class="step-dot">1</div>
+        <div class="step-label">检查工具</div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-dot">2</div>
+        <div class="step-label">拉取代码</div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-dot">3</div>
+        <div class="step-label">Hosts</div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-dot">4</div>
+        <div class="step-label">编译后端</div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-dot">5</div>
+        <div class="step-label">编译前端</div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="step-dot">6</div>
+        <div class="step-label">Docker</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="terminal" class="terminal"></div>
+</div>
+
+<script>
+const TERMINAL = document.getElementById('terminal');
+const BTN_DEPLOY = document.getElementById('btnDeploy');
+const BTN_CLEAR = document.getElementById('btnClear');
+const STATUS = document.getElementById('status');
+const ELAPSED = document.getElementById('elapsed');
+const PROGRESS_SECTION = document.getElementById('progressSection');
+const PROGRESS_BAR = document.getElementById('progressBar');
+const STEPS_CONTAINER = document.getElementById('steps');
+
+let ws = null;
+let startTime = 0;
+let timerInterval = null;
+
+function connect() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(`${proto}://${location.host}`);
+
+  ws.onopen = () => {
+    STATUS.textContent = '已连接';
+    STATUS.className = 'status connected';
+    BTN_DEPLOY.disabled = false;
+    appendLine('info', '已连接到部署服务');
+  };
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    switch (msg.type) {
+      case 'ready':
+        break;
+      case 'start':
+        startTime = Date.now();
+        ELAPSED.textContent = '';
+        BTN_DEPLOY.disabled = true;
+        resetProgress();
+        PROGRESS_SECTION.classList.add('visible');
+        appendLine('info', msg.message);
+        timerInterval = setInterval(updateTimer, 1000);
+        break;
+      case 'step':
+        advanceStep(msg.step);
+        break;
+      case 'log':
+        appendLine('log', msg.line);
+        break;
+      case 'done':
+        clearInterval(timerInterval);
+        BTN_DEPLOY.disabled = false;
+        if (msg.code === 0) {
+          completeAllSteps();
+          appendLine('done', msg.message);
+        } else {
+          appendLine('error', msg.message);
+        }
+        ELAPSED.textContent = '';
+        break;
+      case 'error':
+        clearInterval(timerInterval);
+        BTN_DEPLOY.disabled = false;
+        PROGRESS_SECTION.classList.remove('visible');
+        appendLine('error', msg.message);
+        ELAPSED.textContent = '';
+        break;
+      case 'pong':
+        break;
+    }
+  };
+
+  ws.onclose = () => {
+    STATUS.textContent = '断开';
+    STATUS.className = 'status disconnected';
+    BTN_DEPLOY.disabled = true;
+    clearInterval(timerInterval);
+    appendLine('error', '连接已断开，3秒后重连...');
+    setTimeout(connect, 3000);
+  };
+
+  ws.onerror = () => {
+    ws?.close();
+  };
+}
+
+function resetProgress() {
+  PROGRESS_BAR.style.width = '0%';
+  const steps = STEPS_CONTAINER.querySelectorAll('.step');
+  steps.forEach(s => s.className = 'step');
+}
+
+function advanceStep(current) {
+  const steps = STEPS_CONTAINER.querySelectorAll('.step');
+  const total = steps.length;
+  steps.forEach(s => {
+    const n = parseInt(s.dataset.step);
+    s.className = 'step';
+    if (n < current) s.classList.add('done');
+    if (n === current) s.classList.add('active');
+  });
+  PROGRESS_BAR.style.width = ((current / total) * 100) + '%';
+}
+
+function completeAllSteps() {
+  const steps = STEPS_CONTAINER.querySelectorAll('.step');
+  steps.forEach(s => s.className = 'step done');
+  PROGRESS_BAR.style.width = '100%';
+}
+
+function updateTimer() {
+  const s = Math.floor((Date.now() - startTime) / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  ELAPSED.textContent = `已运行 ${m}分${sec}秒`;
+}
+
+function appendLine(type, text) {
+  const now = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+  const div = document.createElement('div');
+  div.innerHTML = `<span class="time">[${now}]</span><span class="${type}">${escapeHtml(text)}</span>`;
+  TERMINAL.appendChild(div);
+  TERMINAL.scrollTop = TERMINAL.scrollHeight;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+BTN_DEPLOY.addEventListener('click', () => {
+  if (ws?.readyState === WebSocket.OPEN) {
+    ws.send('deploy');
+  }
+});
+
+BTN_CLEAR.addEventListener('click', () => {
+  TERMINAL.innerHTML = '';
+  resetProgress();
+  PROGRESS_SECTION.classList.remove('visible');
+});
+
+connect();
+</script>
+</body>
+</html>
