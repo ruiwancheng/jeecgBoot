@@ -1,0 +1,16 @@
+# Super Harness 覆盖清单
+# 记录该客户基于哪个标品版本、覆盖了哪些文件、新增了哪些内容
+
+customer: mes
+base_version: 3.9.2
+created: 2026-07-06
+
+# 覆盖标品的内容（Bean 替换、路由覆盖、页面覆盖）
+overrides: []
+
+# 新增的内容（新表、新接口、新页面）
+additions:
+  - table: c_mes_warehouse, c_mes_location
+  - controller: MesWarehouseController, MesLocationController
+  - menu: 基础设置, 仓库管理, 库位管理
+  - dict: mes_warehouse_type, mes_location_type

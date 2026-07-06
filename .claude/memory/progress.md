@@ -1,9 +1,20 @@
 # Harness 工程进度
 
+## 工作流阶段追踪
+
+> ⚠️ 防失忆：每次完成一个阶段后更新 `phase` 字段。session-start hook 会检查此文件。
+
+| 字段 | 值 | 说明 |
+|------|-----|------|
+| phase | done | brainstorm / plan / coding / verify / testing / done |
+| last_verify | 2026-07-06 | 最后一次 /verify 通过的时间 |
+| last_test | 2026-07-06 | 最后一次测试通过的时间 |
+| pending_step | — | 下一步该做什么（空=已完成） |
+
 ## 当前状态
-- 最后更新：2026-07-05
-- Harness 健康度：35/35（刚巡检并修复全部问题）
-- 当前任务：Harness 工程架构固化完成
+- 最后更新：2026-07-06
+- Harness 健康度：35/35
+- 当前任务：MES 基础设置模块开发完成 + 防失忆机制落地
 
 ## 本次完成
 

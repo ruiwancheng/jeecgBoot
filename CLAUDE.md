@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **工作流（强制）：** `/brainstorm → /plan → 写代码 → /verify → 分级测试 → /done`
+> 
+> ⚠️ **防失忆规则：** 写完代码后必须自动跑 `/verify`；不要等用户提醒。每次回复末尾检查是否遗漏了流程步骤。
+> 
+> 分级测试由 AI 根据 git diff 自动判定（轻量/标准/全量），详见 `workflow.md`。
+
 > You should always answer questions in Simplified Chinese first, unless the user explicitly requests another language.
 >
 > **沟通风格：本项目的用户群体是业务人员（售前、项目经理、产品经理等），回复时必须使用业务语言描述问题和方案，避免使用技术术语。** 只有在业务语言确实无法准确表达时，才可以使用技术描述。比如：说"把代码推送到仓库"而不是"git push"；说"重启应用"而不是"重启 Docker 容器"；说"网页控制台"而不是"WebSocket 前端页面"。

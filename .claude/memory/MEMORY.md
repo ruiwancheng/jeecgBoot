@@ -1,0 +1,9 @@
+- [JeecgBoot 密码加密算法](learnings/2026-07-06-password-encrypt.md) — PBEWithMD5AndDES，参数顺序为 username, password, salt
+- [Docker MySQL 连字符库名](learnings/2026-07-06-docker-mysql-backtick.md) — 含连字符的库名必须用反引号包裹
+- [new-project SQL 未执行](learnings/2026-07-06-new-project-sql-gap.md) — 技能只生成文件不执行，需额外步骤写入数据库
+- [MySQL HEX() 编码诊断](learnings/2026-07-06-mysql-hex-encoding-check.md) — 用 HEX() 对比字节长度判断是否双重编码
+- [路由与菜单层级一致](learnings/2026-07-06-route-menu-hierarchy.md) — 数据库菜单每一层都需要前端路由对应节点
+- [Drawer/Modal Hook 配对](learnings/2026-07-06-drawer-modal-hooks.md) — BasicDrawer 用 useDrawer，BasicModal 用 useModal
+- [Maven 模块必须 install](learnings/2026-07-06-maven-install-vs-compile.md) — 新增模块用 mvn install 而不是 compile
+- [@TableLogic 复活模式](learnings/2026-07-06-tablelogic-resurrection.md) — 软删除记录查/改都要原始 SQL 绕过，复用时保留 ID
+- [defHttp.delete 参数](learnings/2026-07-06-defhttp-delete-joinparams.md) — 必须加 joinParamsToUrl 才能把参数拼到 URL

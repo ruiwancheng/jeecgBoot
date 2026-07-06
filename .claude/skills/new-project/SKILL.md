@@ -119,7 +119,7 @@ mvn clean install -pl jeecg-boot-module/project-<项目名> -am -DskipTests
 
 在 `jeecg-boot/jeecg-boot-module/project-<项目名>/src/main/resources/sql/` 下创建初始化 SQL 文件（如 `init-role-user.sql`）。
 
-**密码加密：** 使用 JeecgBoot 的密码加密工具生成加密密码和盐值（默认明文密码 `123456`），或参考已有数据库中的 `sys_user` 表密码格式。
+**密码加密：** 使用 `PasswordUtil.encrypt(username, password, salt)` 生成加密密码。算法 PBEWithMD5AndDES，迭代1000次，参数顺序为 `(用户名, 明文密码, 盐值)`。
 
 ```sql
 -- 创建项目角色
@@ -134,6 +134,24 @@ VALUES ('<随机UUID>', '<项目名>_admin', '<项目名>管理员', '<加密密
 INSERT INTO sys_user_role (id, user_id, role_id)
 VALUES ('<随机UUID>', '<用户ID>', '<角色ID>');
 ```
+
+### 执行 SQL 到数据库
+
+SQL 文件生成后，检测 MySQL 可用性并自动执行：
+
+1. **检测 MySQL：** `docker ps --filter name=mysql` 或本地 `mysql` 命令
+2. **写入加密密码：** 用 `PasswordUtil.encrypt(用户名, 明文密码, 盐值)` 生成正确密文
+3. **执行 SQL（关键）：** 必须管道方式传文件，避免 shell 二次编码导致中文乱码
+
+```bash
+# ✅ 正确：管道传文件
+cat /tmp/init.sql | docker exec -i <容器名> mysql -u root -proot --default-character-set=utf8mb4
+
+# ❌ 错误：-e 参数传中文
+# docker exec <容器名> mysql -e "INSERT ... VALUES('中文')"
+```
+
+4. **验证编码：** 用 `SELECT HEX(realname)` 确认每个汉字 3 字节（非双重编码）
 
 ---
 
@@ -189,6 +207,7 @@ export default project;
 - [ ] 前端目录 `views/project/<项目名>/` 已创建
 - [ ] Maven 两处注册已完成（boot-module/pom.xml + system-start/pom.xml）
 - [ ] Maven 编译通过（`mvn clean install -pl ... -am -DskipTests`）
-- [ ] SQL 初始化脚本已创建
+- [ ] SQL 初始化脚本已创建且已执行到数据库（编码正确）
 - [ ] 前端路由文件已创建
 - [ ] 激活文件已写入 `.claude/memory/active-project.md`
+- [ ] 所有新增文件已 git 暂存

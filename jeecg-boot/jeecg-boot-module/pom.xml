@@ -16,6 +16,7 @@
         <module>jeecg-module-demo</module>
         <module>jeecg-boot-module-airag</module>
         <module>customer-demo</module>
+        <module>project-mes</module>
     </modules>
 
 
