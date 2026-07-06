@@ -1,0 +1,14 @@
+# Super Harness 覆盖清单
+# 记录该客户基于哪个标品版本、覆盖了哪些文件、新增了哪些内容
+
+customer: demo
+base_version: 3.9.2
+created: {创建日期}
+
+# 覆盖标品的内容（Bean 替换、路由覆盖、页面覆盖）
+overrides: []
+
+# 新增的内容（新表、新接口、新页面）
+additions:
+  - table: c_demo_warehouse, c_demo_warehouse_location
+  - controller: DemoWarehouseController, DemoWarehouseLocationController
