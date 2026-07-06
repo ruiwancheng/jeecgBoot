@@ -1,12 +1,15 @@
 #!/bin/bash
 # JEECG Boot 一键部署脚本 (Linux Bash 版)
-# 从 GitHub 拉取最新代码 → 构建 → Docker 部署
+# 从 GitHub 拉取最新代码 → 构建 → 初始化数据库 → Docker 部署
 
 set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
+
+MYSQL_CMD="docker exec -i jeecg-boot-mysql mysql -uroot -proot --default-character-set=utf8mb4 jeecg-boot"
 
 echo
 echo "========================================="
@@ -15,7 +18,7 @@ echo "========================================="
 echo
 
 # 检查必要工具
-echo -e "[1/6] 检查必要工具..."
+echo -e "[1/7] 检查必要工具..."
 command -v git > /dev/null 2>&1 || { echo -e "${RED}[错误] 未安装 git${NC}"; exit 1; }
 command -v docker > /dev/null 2>&1 || { echo -e "${RED}[错误] 未安装 docker${NC}"; exit 1; }
 command -v docker-compose > /dev/null 2>&1 || command -v docker > /dev/null 2>&1 || { echo -e "${RED}[错误] 未安装 docker-compose${NC}"; exit 1; }
@@ -24,12 +27,12 @@ command -v pnpm > /dev/null 2>&1 || { echo -e "${RED}[错误] 未安装 pnpm${NC
 echo -e "${GREEN}[OK] 工具检查通过${NC}"
 
 # 拉取最新代码
-echo -e "[2/6] 拉取 GitHub 最新代码..."
+echo -e "[2/7] 拉取 GitHub 最新代码..."
 git pull origin main
 echo -e "${GREEN}[OK] 代码拉取完成${NC}"
 
 # 设置 hosts
-echo -e "[3/6] 检查 hosts 配置..."
+echo -e "[3/7] 检查 hosts 配置..."
 entry1="127.0.0.1   jeecg-boot-system"
 entry2="127.0.0.1   jeecg-boot-mysql"
 hostsFile="/etc/hosts"
@@ -49,13 +52,13 @@ else
 fi
 
 # 编译后端
-echo -e "[4/6] 编译后端项目..."
+echo -e "[4/7] 编译后端项目..."
 cd jeecg-boot
 mvn clean install -Pdocker
 echo -e "${GREEN}[OK] 后端编译完成${NC}"
 
 # 编译前端
-echo -e "[5/6] 编译前端项目..."
+echo -e "[5/7] 编译前端项目..."
 cd ../jeecgboot-vue3
 pnpm install
 
@@ -79,11 +82,46 @@ if [ $BUILD_EXIT -ne 0 ]; then
 fi
 echo -e "${GREEN}[OK] 前端编译完成${NC}"
 
-# 启动Docker容器
-echo -e "[6/6] 启动 Docker 容器..."
+# 启动 Docker 容器
+echo -e "[6/7] 启动 Docker 容器..."
 cd ..
 docker-compose up -d --build
 echo -e "${GREEN}[OK] Docker 容器启动完成${NC}"
+
+# 等待 MySQL 就绪
+echo -e "[7/7] 初始化数据库..."
+echo "  等待 MySQL 就绪..."
+for i in $(seq 1 30); do
+    if docker exec jeecg-boot-mysql mysqladmin ping -uroot -proot --silent 2>/dev/null; then
+        echo -e "  ${GREEN}MySQL 已就绪${NC}"
+        break
+    fi
+    [ $i -eq 30 ] && { echo -e "${YELLOW}  MySQL 启动超时，跳过数据库初始化${NC}"; exit 0; }
+    sleep 2
+done
+
+# 执行客户模块 SQL 初始化脚本
+SQL_EXECUTED=0
+for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/sql/*.sql" -type f 2>/dev/null | sort); do
+    modname=$(echo "$sqlfile" | sed 's|.*/jeecg-boot-module/\([^/]*\)/.*|\1|')
+    echo "  执行 SQL: $modname/$(basename $sqlfile)"
+    if $MYSQL_CMD < "$sqlfile" 2>&1 | grep -v "Warning" | head -3; then
+        echo -e "  ${GREEN}[OK] $modname SQL 执行完成${NC}"
+        SQL_EXECUTED=$((SQL_EXECUTED + 1))
+    else
+        echo -e "  ${YELLOW}[警告] $modname SQL 执行有误（可能已执行过）${NC}"
+    fi
+done
+
+if [ $SQL_EXECUTED -gt 0 ]; then
+    echo -e "${GREEN}[OK] 数据库初始化完成（$SQL_EXECUTED 个模块）${NC}"
+    # 重启后端加载新菜单
+    echo "  重启后端服务加载新配置..."
+    docker restart jeecg-boot-system > /dev/null 2>&1
+    sleep 10
+else
+    echo -e "${GREEN}[OK] 无需执行 SQL（无新脚本）${NC}"
+fi
 
 echo
 echo "========================================"

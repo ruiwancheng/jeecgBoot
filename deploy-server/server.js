@@ -71,14 +71,15 @@ wss.on('connection', (ws) => {
 });
 
 const STEP_LABELS = {
-  '1/6': '检查必要工具',
-  '2/6': '拉取最新代码',
-  '3/6': '配置 Hosts',
-  '4/6': '编译后端项目',
-  '5/6': '编译前端项目',
-  '6/6': '启动 Docker 容器',
+  '1/7': '检查必要工具',
+  '2/7': '拉取最新代码',
+  '3/7': '配置 Hosts',
+  '4/7': '编译后端项目',
+  '5/7': '编译前端项目',
+  '6/7': '启动 Docker 容器',
+  '7/7': '初始化数据库',
 };
-const STEP_PATTERN = /\[(\d\/6)\]/;
+const STEP_PATTERN = /\[(\d\/7)\]/;
 
 function startDeploy(ws) {
   deploying = true;
