@@ -1,0 +1,2319 @@
+{
+  "id": "993390878830264320",
+  "name": "流程门户",
+  "path": "/drag/page/view/993390878830264320",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "pcW": 15,
+      "moved": false,
+      "pcY": 59,
+      "h": 43,
+      "i": "1ac4db3c-364a-4485-8d18-23ac6b4014a7",
+      "orderNum": 0,
+      "component": "JCommonTable",
+      "w": 15,
+      "x": 0,
+      "y": 64,
+      "pageCompId": "1093329744202178560",
+      "config": {
+        "isPagination": true,
+        "btnOperateData": [
+          {
+            "btnName": "催办",
+            "operateType": "modal",
+            "modalName": "taskNotify",
+            "url": ""
+          },
+          {
+            "btnName": "作废流程",
+            "operateType": "modal",
+            "modalName": "invalid",
+            "url": "/task/myHandleTaskInfo"
+          },
+          {
+            "btnName": "取回流程",
+            "operateType": "modal",
+            "modalName": "backTask",
+            "url": ""
+          }
+        ],
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "我的申请",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "{{ domainURL }}/act/task/myApplyProcessList",
+        "drillData": [],
+        "dataSetMethod": "get",
+        "timeOut": "20",
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 1130,
+          "height": 463
+        },
+        "dataSetId": "1093319433973800960",
+        "fieldOption": [
+          {
+            "label": "bpmStatus",
+            "text": "bpmStatus",
+            "value": "bpmStatus"
+          },
+          {
+            "label": "业务标题",
+            "text": "业务标题",
+            "value": "bpmBizTitle"
+          },
+          {
+            "label": "流程名称",
+            "text": "流程名称",
+            "value": "prcocessDefinitionName"
+          },
+          {
+            "label": "taskDueTime",
+            "text": "taskDueTime",
+            "value": "taskDueTime"
+          },
+          {
+            "label": "lowFormName",
+            "text": "lowFormName",
+            "value": "lowFormName"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "processDefinitionId",
+            "text": "processDefinitionId",
+            "value": "processDefinitionId"
+          },
+          {
+            "label": "processInstanceId",
+            "text": "processInstanceId",
+            "value": "processInstanceId"
+          },
+          {
+            "label": "lowAppName",
+            "text": "lowAppName",
+            "value": "lowAppName"
+          },
+          {
+            "label": "durationStr",
+            "text": "durationStr",
+            "value": "durationStr"
+          },
+          {
+            "label": "remarks",
+            "text": "remarks",
+            "value": "remarks"
+          },
+          {
+            "label": "startUserAvatar",
+            "text": "startUserAvatar",
+            "value": "startUserAvatar"
+          },
+          {
+            "label": "startUserId",
+            "text": "startUserId",
+            "value": "startUserId"
+          },
+          {
+            "label": "assigneeName",
+            "text": "assigneeName",
+            "value": "assigneeName"
+          },
+          {
+            "label": "流程名称",
+            "text": "流程名称",
+            "value": "currentTaskName"
+          },
+          {
+            "label": "startUserName",
+            "text": "startUserName",
+            "value": "startUserName"
+          },
+          {
+            "label": "开始日期",
+            "text": "开始日期",
+            "value": "startTime"
+          },
+          {
+            "label": "owner",
+            "text": "owner",
+            "value": "owner"
+          },
+          {
+            "label": "耗时",
+            "text": "耗时",
+            "value": "spendTimes"
+          },
+          {
+            "label": "autoSubmitStatus",
+            "text": "autoSubmitStatus",
+            "value": "autoSubmitStatus"
+          },
+          {
+            "label": "urgeStatus",
+            "text": "urgeStatus",
+            "value": "urgeStatus"
+          },
+          {
+            "label": "deleteReason",
+            "text": "deleteReason",
+            "value": "deleteReason"
+          },
+          {
+            "label": "backStatus",
+            "text": "backStatus",
+            "value": "backStatus"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "notifyWay",
+            "text": "notifyWay",
+            "value": "notifyWay"
+          },
+          {
+            "label": "currentTaskKey",
+            "text": "currentTaskKey",
+            "value": "currentTaskKey"
+          },
+          {
+            "label": "graphicStatus",
+            "text": "graphicStatus",
+            "value": "graphicStatus"
+          },
+          {
+            "label": "endTime",
+            "text": "endTime",
+            "value": "endTime"
+          },
+          {
+            "label": "assignee",
+            "text": "assignee",
+            "value": "assignee"
+          },
+          {
+            "label": "assigneeAvatar",
+            "text": "assigneeAvatar",
+            "value": "assigneeAvatar"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "headerBgColor": "#FBFBFB",
+          "headerColor": "#000000",
+          "titleFontColor": "#000000",
+          "bodyColor": "#000000",
+          "columns": [
+            {
+              "izShow": "N",
+              "dataIndex": "bpmStatus",
+              "title": "bpmStatus"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "bpmBizTitle",
+              "title": "业务标题"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "prcocessDefinitionName",
+              "title": "流程名称"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "taskDueTime",
+              "title": "taskDueTime"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "lowFormName",
+              "title": "lowFormName"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "id",
+              "title": "id"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "processDefinitionId",
+              "title": "processDefinitionId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "processInstanceId",
+              "title": "processInstanceId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "lowAppName",
+              "title": "lowAppName"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "durationStr",
+              "title": "durationStr"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "remarks",
+              "title": "remarks"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "startUserAvatar",
+              "title": "startUserAvatar"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "startUserId",
+              "title": "startUserId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "assigneeName",
+              "title": "assigneeName"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "currentTaskName",
+              "title": "流程名称"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "startUserName",
+              "title": "startUserName"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "startTime",
+              "title": "开始日期"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "owner",
+              "title": "owner"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "spendTimes",
+              "title": "耗时"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "autoSubmitStatus",
+              "title": "autoSubmitStatus"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "urgeStatus",
+              "title": "urgeStatus"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "deleteReason",
+              "title": "deleteReason"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "backStatus",
+              "title": "backStatus"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "name",
+              "title": "name"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "notifyWay",
+              "title": "notifyWay"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "currentTaskKey",
+              "title": "currentTaskKey"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "graphicStatus",
+              "title": "graphicStatus"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "endTime",
+              "title": "endTime"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "assignee",
+              "title": "assignee"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "assigneeAvatar",
+              "title": "assigneeAvatar"
+            }
+          ],
+          "iconColor": "#000000",
+          "bodyBgColor": "#FFFFFF",
+          "contentColor": "#000000",
+          "card": {
+            "size": "small",
+            "rightHref": "/task/myApplyTaskList",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A",
+              "fontSize": 20
+            },
+            "title": "我的申请"
+          }
+        }
+      },
+      "key": "01711537-b383-40a3-8f21-7b8a582355b4"
+    },
+    {
+      "pcX": 0,
+      "pcW": 15,
+      "moved": false,
+      "pcY": 10,
+      "h": 49,
+      "i": "6fa6bd57-7e88-4308-94d5-3650a7ecad66",
+      "orderNum": 49,
+      "component": "JTabs",
+      "w": 15,
+      "x": 0,
+      "y": 15,
+      "pageCompId": "1093329744378339328",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1130,
+          "height": 529
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "h": 40,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "title": "选项卡",
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            }
+          }
+        },
+        "child": [
+          {
+            "component": "JCommonTable",
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "1794e0b8-9539-440c-8f9d-c275c62d9075",
+            "title": "待办",
+            "config": {
+              "isPagination": true,
+              "btnOperateData": [
+                {
+                  "btnName": "办理",
+                  "operateType": "modal",
+                  "modalName": "task",
+                  "url": ""
+                },
+                {
+                  "btnName": "委托",
+                  "operateType": "modal",
+                  "modalName": "entrust",
+                  "url": ""
+                }
+              ],
+              "borderColor": "#FFFFFF00",
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "我的待办",
+              "query": [],
+              "h": 42,
+              "dataSetApi": "{{ domainURL }}/act/task/list",
+              "drillData": [],
+              "timeOut": -1,
+              "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+              "paddingBottom": 90,
+              "dataSetId": "993667816614428672",
+              "fieldOption": [
+                {
+                  "label": "bpmStatus",
+                  "text": "bpmStatus",
+                  "value": "bpmStatus"
+                },
+                {
+                  "label": "taskUrgeRemark",
+                  "text": "taskUrgeRemark",
+                  "value": "taskUrgeRemark"
+                },
+                {
+                  "label": "taskAssigneeName",
+                  "text": "taskAssigneeName",
+                  "value": "taskAssigneeName"
+                },
+                {
+                  "label": "业务标题",
+                  "text": "业务标题",
+                  "value": "bpmBizTitle"
+                },
+                {
+                  "label": "taskDueTime",
+                  "text": "taskDueTime",
+                  "value": "taskDueTime"
+                },
+                {
+                  "label": "流程名称",
+                  "text": "流程名称",
+                  "value": "processDefinitionName"
+                },
+                {
+                  "label": "开始时间",
+                  "text": "开始时间",
+                  "value": "taskBeginTime"
+                },
+                {
+                  "label": "processDeleteReason",
+                  "text": "processDeleteReason",
+                  "value": "processDeleteReason"
+                },
+                {
+                  "label": "lowFormName",
+                  "text": "lowFormName",
+                  "value": "lowFormName"
+                },
+                {
+                  "label": "processApplyUserId",
+                  "text": "processApplyUserId",
+                  "value": "processApplyUserId"
+                },
+                {
+                  "label": "id",
+                  "text": "id",
+                  "value": "id"
+                },
+                {
+                  "label": "taskAssigneeAvatar",
+                  "text": "taskAssigneeAvatar",
+                  "value": "taskAssigneeAvatar"
+                },
+                {
+                  "label": "processApplyUserAvatar",
+                  "text": "processApplyUserAvatar",
+                  "value": "processApplyUserAvatar"
+                },
+                {
+                  "label": "processDefinitionId",
+                  "text": "processDefinitionId",
+                  "value": "processDefinitionId"
+                },
+                {
+                  "label": "processInstanceId",
+                  "text": "processInstanceId",
+                  "value": "processInstanceId"
+                },
+                {
+                  "label": "processApplyUserName",
+                  "text": "processApplyUserName",
+                  "value": "processApplyUserName"
+                },
+                {
+                  "label": "taskAssigneeId",
+                  "text": "taskAssigneeId",
+                  "value": "taskAssigneeId"
+                },
+                {
+                  "label": "taskUrge",
+                  "text": "taskUrge",
+                  "value": "taskUrge"
+                },
+                {
+                  "label": "lowAppName",
+                  "text": "lowAppName",
+                  "value": "lowAppName"
+                },
+                {
+                  "label": "taskTimeoutWarn",
+                  "text": "taskTimeoutWarn",
+                  "value": "taskTimeoutWarn"
+                },
+                {
+                  "label": "当前环节",
+                  "text": "当前环节",
+                  "value": "taskName"
+                },
+                {
+                  "label": "processEndTime",
+                  "text": "processEndTime",
+                  "value": "processEndTime"
+                },
+                {
+                  "label": "durationStr",
+                  "text": "durationStr",
+                  "value": "durationStr"
+                },
+                {
+                  "label": "taskId",
+                  "text": "taskId",
+                  "value": "taskId"
+                },
+                {
+                  "label": "remarks",
+                  "text": "remarks",
+                  "value": "remarks"
+                },
+                {
+                  "label": "taskEndTime",
+                  "text": "taskEndTime",
+                  "value": "taskEndTime"
+                }
+              ],
+              "dataSetType": "api",
+              "actionConfig": {
+                "operateType": "modal",
+                "modalName": "",
+                "url": ""
+              },
+              "seriesType": [],
+              "background": "#FFFFFF",
+              "w": 24,
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "headerBgColor": "#F1F1F1",
+                "headerColor": "#000000",
+                "titleFontColor": "#000000",
+                "bodyColor": "#000000",
+                "columns": [
+                  {
+                    "izShow": "N",
+                    "dataIndex": "bpmStatus",
+                    "title": "bpmStatus"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskUrgeRemark",
+                    "title": "taskUrgeRemark"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeName",
+                    "title": "taskAssigneeName"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "bpmBizTitle",
+                    "title": "业务标题"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskDueTime",
+                    "title": "taskDueTime"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "processDefinitionName",
+                    "title": "流程名称"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "taskBeginTime",
+                    "title": "开始时间"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processDeleteReason",
+                    "title": "processDeleteReason"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "lowFormName",
+                    "title": "lowFormName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserId",
+                    "title": "processApplyUserId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "id",
+                    "title": "id"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeAvatar",
+                    "title": "taskAssigneeAvatar"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserAvatar",
+                    "title": "processApplyUserAvatar"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processDefinitionId",
+                    "title": "processDefinitionId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processInstanceId",
+                    "title": "processInstanceId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserName",
+                    "title": "processApplyUserName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeId",
+                    "title": "taskAssigneeId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskUrge",
+                    "title": "taskUrge"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "lowAppName",
+                    "title": "lowAppName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskTimeoutWarn",
+                    "title": "taskTimeoutWarn"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "taskName",
+                    "title": "当前环节"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processEndTime",
+                    "title": "processEndTime"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "durationStr",
+                    "title": "durationStr"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskId",
+                    "title": "taskId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "remarks",
+                    "title": "remarks"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskEndTime",
+                    "title": "taskEndTime"
+                  }
+                ],
+                "iconColor": "#000000",
+                "bodyBgColor": "#FFFFFF",
+                "contentColor": "#000000",
+                "card": {
+                  "headColor": "#FFFFFF",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  }
+                }
+              }
+            },
+            "parentId": "6fa6bd57-7e88-4308-94d5-3650a7ecad66"
+          },
+          {
+            "h": 42,
+            "index": 0,
+            "i": "4bb291f0-4c1e-46ba-8dcb-18fb4163e9b4",
+            "title": "我的抄送",
+            "parentId": "6fa6bd57-7e88-4308-94d5-3650a7ecad66",
+            "horizontal": false,
+            "component": "JCommonTable",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "text": "0.042",
+            "id": "f042b84d-f486-471a-899b-6b9f49abf981",
+            "config": {
+              "isPagination": true,
+              "btnOperateData": [
+                {
+                  "btnName": "查看审批",
+                  "operateType": "modal",
+                  "modalName": "history",
+                  "url": ""
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "我的抄送",
+              "query": [],
+              "h": 42,
+              "dataSetApi": "{{ domainURL }}/act/task/taskAllCcHistoryList",
+              "drillData": [],
+              "timeOut": -1,
+              "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+              "paddingBottom": 90,
+              "dataSetId": "993809609725214720",
+              "fieldOption": [
+                {
+                  "label": "bpmStatus",
+                  "text": "bpmStatus",
+                  "value": "bpmStatus"
+                },
+                {
+                  "label": "taskUrgeRemark",
+                  "text": "taskUrgeRemark",
+                  "value": "taskUrgeRemark"
+                },
+                {
+                  "label": "taskAssigneeName",
+                  "text": "taskAssigneeName",
+                  "value": "taskAssigneeName"
+                },
+                {
+                  "label": "业务标题",
+                  "text": "业务标题",
+                  "value": "bpmBizTitle"
+                },
+                {
+                  "label": "taskDueTime",
+                  "text": "taskDueTime",
+                  "value": "taskDueTime"
+                },
+                {
+                  "label": "流程名称",
+                  "text": "流程名称",
+                  "value": "processDefinitionName"
+                },
+                {
+                  "label": "开始时间",
+                  "text": "开始时间",
+                  "value": "taskBeginTime"
+                },
+                {
+                  "label": "processDeleteReason",
+                  "text": "processDeleteReason",
+                  "value": "processDeleteReason"
+                },
+                {
+                  "label": "lowFormName",
+                  "text": "lowFormName",
+                  "value": "lowFormName"
+                },
+                {
+                  "label": "processApplyUserId",
+                  "text": "processApplyUserId",
+                  "value": "processApplyUserId"
+                },
+                {
+                  "label": "id",
+                  "text": "id",
+                  "value": "id"
+                },
+                {
+                  "label": "taskAssigneeAvatar",
+                  "text": "taskAssigneeAvatar",
+                  "value": "taskAssigneeAvatar"
+                },
+                {
+                  "label": "processApplyUserAvatar",
+                  "text": "processApplyUserAvatar",
+                  "value": "processApplyUserAvatar"
+                },
+                {
+                  "label": "processDefinitionId",
+                  "text": "processDefinitionId",
+                  "value": "processDefinitionId"
+                },
+                {
+                  "label": "processInstanceId",
+                  "text": "processInstanceId",
+                  "value": "processInstanceId"
+                },
+                {
+                  "label": "processApplyUserName",
+                  "text": "processApplyUserName",
+                  "value": "processApplyUserName"
+                },
+                {
+                  "label": "taskAssigneeId",
+                  "text": "taskAssigneeId",
+                  "value": "taskAssigneeId"
+                },
+                {
+                  "label": "taskUrge",
+                  "text": "taskUrge",
+                  "value": "taskUrge"
+                },
+                {
+                  "label": "lowAppName",
+                  "text": "lowAppName",
+                  "value": "lowAppName"
+                },
+                {
+                  "label": "taskTimeoutWarn",
+                  "text": "taskTimeoutWarn",
+                  "value": "taskTimeoutWarn"
+                },
+                {
+                  "label": "当前环节",
+                  "text": "当前环节",
+                  "value": "taskName"
+                },
+                {
+                  "label": "processEndTime",
+                  "text": "processEndTime",
+                  "value": "processEndTime"
+                },
+                {
+                  "label": "durationStr",
+                  "text": "durationStr",
+                  "value": "durationStr"
+                },
+                {
+                  "label": "taskId",
+                  "text": "taskId",
+                  "value": "taskId"
+                },
+                {
+                  "label": "remarks",
+                  "text": "remarks",
+                  "value": "remarks"
+                },
+                {
+                  "label": "taskEndTime",
+                  "text": "taskEndTime",
+                  "value": "taskEndTime"
+                }
+              ],
+              "dataSetType": "api",
+              "seriesType": [],
+              "w": 24,
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "headerBgColor": "#F1F1F1",
+                "headerColor": "#000000",
+                "bodyColor": "#000000",
+                "columns": [
+                  {
+                    "izShow": "N",
+                    "dataIndex": "bpmStatus",
+                    "title": "bpmStatus"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskUrgeRemark",
+                    "title": "taskUrgeRemark"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeName",
+                    "title": "taskAssigneeName"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "bpmBizTitle",
+                    "title": "业务标题"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskDueTime",
+                    "title": "taskDueTime"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "processDefinitionName",
+                    "title": "流程名称"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "taskBeginTime",
+                    "title": "开始时间"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processDeleteReason",
+                    "title": "processDeleteReason"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "lowFormName",
+                    "title": "lowFormName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserId",
+                    "title": "processApplyUserId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "id",
+                    "title": "id"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeAvatar",
+                    "title": "taskAssigneeAvatar"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserAvatar",
+                    "title": "processApplyUserAvatar"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processDefinitionId",
+                    "title": "processDefinitionId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processInstanceId",
+                    "title": "processInstanceId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processApplyUserName",
+                    "title": "processApplyUserName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskAssigneeId",
+                    "title": "taskAssigneeId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskUrge",
+                    "title": "taskUrge"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "lowAppName",
+                    "title": "lowAppName"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskTimeoutWarn",
+                    "title": "taskTimeoutWarn"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "taskName",
+                    "title": "当前环节"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "processEndTime",
+                    "title": "processEndTime"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "durationStr",
+                    "title": "durationStr"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskId",
+                    "title": "taskId"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "remarks",
+                    "title": "remarks"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "taskEndTime",
+                    "title": "taskEndTime"
+                  }
+                ],
+                "bodyBgColor": "#FFFFFF",
+                "card": {
+                  "headColor": "#FFFFFF",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  }
+                }
+              }
+            },
+            "child": []
+          }
+        ]
+      },
+      "key": "f121d230-ab48-4ac0-bff8-a37219cc2484"
+    },
+    {
+      "pcX": 15,
+      "pcW": 9,
+      "moved": false,
+      "pcY": 10,
+      "h": 49,
+      "i": "02afd6e1-0141-4c74-a1a7-1a1b470a63b8",
+      "orderNum": 98,
+      "component": "JList",
+      "w": 9,
+      "x": 15,
+      "y": 15,
+      "pageCompId": "1093329744407699456",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "titile",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "sendTime",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "bpm",
+            "label": "",
+            "text": "",
+            "type": "String",
+            "value": "busType"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "流程提醒",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "{{ domainURL }}/sys/sysAnnouncementSend/getMyAnnouncementSend",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 674,
+          "height": 529
+        },
+        "dataSetId": "993821999439183872",
+        "fieldOption": [
+          {
+            "label": "busId",
+            "text": "busId",
+            "value": "busId"
+          },
+          {
+            "label": "readFlag",
+            "text": "readFlag",
+            "value": "readFlag"
+          },
+          {
+            "label": "anntId",
+            "text": "anntId",
+            "value": "anntId"
+          },
+          {
+            "label": "pageSize",
+            "text": "pageSize",
+            "value": "pageSize"
+          },
+          {
+            "label": "msgAbstract",
+            "text": "msgAbstract",
+            "value": "msgAbstract"
+          },
+          {
+            "label": "priority",
+            "text": "priority",
+            "value": "priority"
+          },
+          {
+            "label": "userId",
+            "text": "userId",
+            "value": "userId"
+          },
+          {
+            "label": "sendTime",
+            "text": "sendTime",
+            "value": "sendTime"
+          },
+          {
+            "label": "openType",
+            "text": "openType",
+            "value": "openType"
+          },
+          {
+            "label": "openPage",
+            "text": "openPage",
+            "value": "openPage"
+          },
+          {
+            "label": "titile",
+            "text": "titile",
+            "value": "titile"
+          },
+          {
+            "label": "msgContent",
+            "text": "msgContent",
+            "value": "msgContent"
+          },
+          {
+            "label": "sender",
+            "text": "sender",
+            "value": "sender"
+          },
+          {
+            "label": "bizSource",
+            "text": "bizSource",
+            "value": "bizSource"
+          },
+          {
+            "label": "pageNo",
+            "text": "pageNo",
+            "value": "pageNo"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "msgCategory",
+            "text": "msgCategory",
+            "value": "msgCategory"
+          },
+          {
+            "label": "busType",
+            "text": "busType",
+            "value": "busType"
+          },
+          {
+            "label": "sendTimeEnd",
+            "text": "sendTimeEnd",
+            "value": "sendTimeEnd"
+          },
+          {
+            "label": "sendTimeBegin",
+            "text": "sendTimeBegin",
+            "value": "sendTimeBegin"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "sysNotice",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "bodyColor": "#000000",
+          "showTitlePrefix": false,
+          "titleFontWeight": "normal",
+          "bodyBgColor": "#FFFFFF",
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "contentColor": "#9B9B9B",
+          "layout": "horizontal",
+          "titleFontColor": "#9B9B9B",
+          "headerColor": "#000000",
+          "titleFontSize": 14,
+          "showTimePrefix": false,
+          "iconColor": "#9B9B9B",
+          "card": {
+            "rightHref": "/monitor/mynews",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "流程提醒"
+          }
+        }
+      },
+      "key": "415d973a-c852-4e6c-8c88-da13a014dd78"
+    },
+    {
+      "pcX": 15,
+      "pcW": 9,
+      "moved": false,
+      "pcY": 59,
+      "h": 43,
+      "i": "4c67af9f-091c-47eb-8eaf-54148351c378",
+      "orderNum": 103,
+      "component": "JList",
+      "w": 9,
+      "x": 15,
+      "y": 64,
+      "pageCompId": "1093329744437059584",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "titile",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "sendTime",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "通知公告",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "{{ domainURL }}/sys/sysAnnouncementSend/getMyAnnouncementSend",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 674,
+          "height": 463
+        },
+        "dataSetId": "993820539708145664",
+        "fieldOption": [
+          {
+            "label": "busId",
+            "text": "busId",
+            "value": "busId"
+          },
+          {
+            "label": "readFlag",
+            "text": "readFlag",
+            "value": "readFlag"
+          },
+          {
+            "label": "anntId",
+            "text": "anntId",
+            "value": "anntId"
+          },
+          {
+            "label": "pageSize",
+            "text": "pageSize",
+            "value": "pageSize"
+          },
+          {
+            "label": "msgAbstract",
+            "text": "msgAbstract",
+            "value": "msgAbstract"
+          },
+          {
+            "label": "priority",
+            "text": "priority",
+            "value": "priority"
+          },
+          {
+            "label": "userId",
+            "text": "userId",
+            "value": "userId"
+          },
+          {
+            "label": "时间",
+            "text": "时间",
+            "value": "sendTime"
+          },
+          {
+            "label": "openType",
+            "text": "openType",
+            "value": "openType"
+          },
+          {
+            "label": "openPage",
+            "text": "openPage",
+            "value": "openPage"
+          },
+          {
+            "label": "标题",
+            "text": "标题",
+            "value": "titile"
+          },
+          {
+            "label": "msgContent",
+            "text": "msgContent",
+            "value": "msgContent"
+          },
+          {
+            "label": "sender",
+            "text": "sender",
+            "value": "sender"
+          },
+          {
+            "label": "bizSource",
+            "text": "bizSource",
+            "value": "bizSource"
+          },
+          {
+            "label": "pageNo",
+            "text": "pageNo",
+            "value": "pageNo"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "msgCategory",
+            "text": "msgCategory",
+            "value": "msgCategory"
+          },
+          {
+            "label": "busType",
+            "text": "busType",
+            "value": "busType"
+          },
+          {
+            "label": "sendTimeEnd",
+            "text": "sendTimeEnd",
+            "value": "sendTimeEnd"
+          },
+          {
+            "label": "sendTimeBegin",
+            "text": "sendTimeBegin",
+            "value": "sendTimeBegin"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "bodyColor": "#000000",
+          "showTitlePrefix": false,
+          "titleFontWeight": "normal",
+          "bodyBgColor": "#FFFFFF",
+          "contentColor": "#9B9B9B",
+          "layout": "horizontal",
+          "headerColor": "#000000",
+          "titleFontColor": "#9B9B9B",
+          "titleFontSize": 15,
+          "showTimePrefix": false,
+          "iconColor": "#9B9B9B",
+          "card": {
+            "rightHref": "/monitor/mynews",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "系统公告"
+          }
+        }
+      },
+      "key": "fc006c14-c094-4606-8075-41177697a302"
+    },
+    {
+      "pcX": 0,
+      "pcW": 15,
+      "moved": false,
+      "pcY": 102,
+      "h": 37,
+      "i": "656101e9-0d6b-4035-8970-f6b4589954b7",
+      "orderNum": 103,
+      "component": "JStackBar",
+      "w": 15,
+      "x": 0,
+      "y": 107,
+      "pageCompId": "1093329744453836800",
+      "config": {
+        "chartData": "[  {    \"name\": \"录用\",    \"value\": 3,    \"type\": \"流转中\"  },  {    \"name\": \"面试\",    \"value\": 4,    \"type\": \"流转中\"  },  {    \"name\": \"用车\",    \"value\": 3.5,    \"type\": \"流转中\"  },  {    \"name\": \"加班\",    \"value\": 5,    \"type\": \"流转中\"  },  {    \"name\": \"出差\",    \"value\": 4.9,    \"type\": \"流转中\"  },  {    \"name\": \"请假\",    \"value\": 6,    \"type\": \"流转中\"  },  {    \"name\": \"录用\",    \"value\": 3,    \"type\": \"已归档\"  },  {    \"name\": \"面试\",    \"value\": 4,    \"type\": \"已归档\"  },  {    \"name\": \"用车\",    \"value\": 3.5,    \"type\": \"已归档\"  },  {    \"name\": \"加班\",    \"value\": 5,    \"type\": \"已归档\"  },  {    \"name\": \"出差\",    \"value\": 4.9,    \"type\": \"已归档\"  },  {    \"name\": \"请假\",    \"value\": 6,    \"type\": \"已归档\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1130,
+          "height": 397
+        },
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "customColor": [
+            {
+              "color": "#50A1DA"
+            },
+            {
+              "color": "#F9D95D"
+            }
+          ],
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 90,
+            "bottom": 115
+          },
+          "series": [
+            {
+              "label": {
+                "color": "#000000"
+              }
+            }
+          ],
+          "legend": {
+            "r": 39
+          },
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "堆叠柱形图",
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "流程数据分析"
+          }
+        }
+      },
+      "key": "6092df28-4e29-4c50-81c1-a132d9d16076"
+    },
+    {
+      "pcX": 15,
+      "pcW": 9,
+      "moved": false,
+      "pcY": 102,
+      "h": 37,
+      "i": "1ffc9e70-d9dc-44ac-bf08-fa95dfece52b",
+      "orderNum": 133,
+      "component": "JPie",
+      "w": 9,
+      "x": 15,
+      "y": 107,
+      "pageCompId": "1093329744479002624",
+      "config": {
+        "chartData": "[  {    \"value\": 1048,    \"name\": \"公文管理类\"  },  {    \"value\": 735,    \"name\": \"合同管理类\"  },  {    \"value\": 580,    \"name\": \"人事管理类\"  },  {    \"value\": 484,    \"name\": \"行政管理类\"  },  {    \"value\": 300,    \"name\": \"资产管理类\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 674,
+          "height": 397
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "option": {
+          "titleFontColor": "#000000",
+          "customColor": [
+            {
+              "color": "#1A7DED"
+            },
+            {
+              "color": "#77E0E3"
+            },
+            {
+              "color": "#F9DC5D"
+            },
+            {
+              "color": "#F5A623"
+            }
+          ],
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 42,
+            "left": 60,
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical",
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#9B9B9B",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "iconColor": "#000000",
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "基础饼图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "contentColor": "#000000",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "流程类型统计"
+          }
+        }
+      },
+      "key": "dc2a7161-bec5-49eb-88b0-e97929fa1b48"
+    },
+    {
+      "pcX": 0,
+      "pcW": 15,
+      "moved": false,
+      "pcY": 139,
+      "h": 43,
+      "i": "fbdcb902-7e46-4d85-946e-607bc7df1589",
+      "orderNum": 133,
+      "component": "JCommonTable",
+      "w": 15,
+      "x": 0,
+      "y": 144,
+      "pageCompId": "1093329744508362752",
+      "config": {
+        "btnOperateData": [
+          {
+            "btnName": "查看",
+            "operateType": "modal",
+            "modalName": "email",
+            "url": ""
+          }
+        ],
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "近期邮件",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "{{ domainURL }}/eoa/email/eoaMailboxInfo/sendList",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 1130,
+          "height": 463
+        },
+        "dataSetId": "993817955727474688",
+        "fieldOption": [
+          {
+            "label": "receiverIds",
+            "text": "receiverIds",
+            "value": "receiverIds"
+          },
+          {
+            "label": "count",
+            "text": "count",
+            "value": "count"
+          },
+          {
+            "label": "标题",
+            "text": "标题",
+            "value": "title"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "labelColor",
+            "text": "labelColor",
+            "value": "labelColor"
+          },
+          {
+            "label": "日期",
+            "text": "日期",
+            "value": "sendTime"
+          },
+          {
+            "label": "发件人",
+            "text": "发件人",
+            "value": "senderId_dictText"
+          },
+          {
+            "label": "receiverIds_dictText",
+            "text": "receiverIds_dictText",
+            "value": "receiverIds_dictText"
+          },
+          {
+            "label": "状态",
+            "text": "状态",
+            "value": "readFlag"
+          },
+          {
+            "label": "senderId",
+            "text": "senderId",
+            "value": "senderId"
+          },
+          {
+            "label": "receiverId",
+            "text": "receiverId",
+            "value": "receiverId"
+          },
+          {
+            "label": "attachment",
+            "text": "attachment",
+            "value": "attachment"
+          },
+          {
+            "label": "receiptFlag",
+            "text": "receiptFlag",
+            "value": "receiptFlag"
+          },
+          {
+            "label": "receiverCount",
+            "text": "receiverCount",
+            "value": "receiverCount"
+          },
+          {
+            "label": "mailboxType",
+            "text": "mailboxType",
+            "value": "mailboxType"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "labelName",
+            "text": "labelName",
+            "value": "labelName"
+          },
+          {
+            "label": "urgentFlag",
+            "text": "urgentFlag",
+            "value": "urgentFlag"
+          },
+          {
+            "label": "categoryId",
+            "text": "categoryId",
+            "value": "categoryId"
+          },
+          {
+            "label": "状态",
+            "text": "状态",
+            "value": "status"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "1",
+        "option": {
+          "headerBgColor": "#F1F1F1",
+          "headerColor": "#000000",
+          "titleFontColor": "#000000",
+          "bodyColor": "#000000",
+          "columns": [
+            {
+              "izShow": "N",
+              "dataIndex": "receiverIds",
+              "title": "receiverIds"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "count",
+              "title": "count"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "title",
+              "title": "标题"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "type",
+              "title": "type"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "content",
+              "title": "content"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "labelColor",
+              "title": "labelColor"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "sendTime",
+              "title": "日期"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "senderId_dictText",
+              "title": "发件人"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "receiverIds_dictText",
+              "title": "receiverIds_dictText"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "readFlag",
+              "title": "状态"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "senderId",
+              "title": "senderId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "receiverId",
+              "title": "receiverId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "attachment",
+              "title": "attachment"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "receiptFlag",
+              "title": "receiptFlag"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "receiverCount",
+              "title": "receiverCount"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "mailboxType",
+              "title": "mailboxType"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "id",
+              "title": "id"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "labelName",
+              "title": "labelName"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "urgentFlag",
+              "title": "urgentFlag"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "categoryId",
+              "title": "categoryId"
+            },
+            {
+              "izShow": "N",
+              "dataIndex": "status",
+              "title": "状态"
+            }
+          ],
+          "iconColor": "#000000",
+          "bodyBgColor": "#FFFFFF",
+          "contentColor": "#000000",
+          "card": {
+            "rightHref": "/eoa/email",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "近期邮件"
+          }
+        }
+      },
+      "key": "8c3ce8ac-74b8-4256-8eff-0c9fdfd7019c"
+    },
+    {
+      "pcX": 15,
+      "pcW": 9,
+      "moved": false,
+      "pcY": 139,
+      "h": 43,
+      "i": "d62129a6-9824-464d-8475-db9bc7e89fbb",
+      "orderNum": 175,
+      "component": "JCalendar",
+      "w": 9,
+      "x": 15,
+      "y": 144,
+      "pageCompId": "1093329744525139968",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "startTime",
+            "filed": "开始"
+          },
+          {
+            "mapping": "endTime",
+            "filed": "结束"
+          },
+          {
+            "mapping": "allDay",
+            "filed": "全天"
+          },
+          {
+            "mapping": "planColor",
+            "filed": "颜色"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "我的计划",
+        "query": [],
+        "h": 40,
+        "dataSetApi": "{{ domainURL }}/eoa/plan/queryMyPlan",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/calendar",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"座谈会\",\"start\":\"2022-03-11 11:32:33\",\"end\":\"2022-03-11 18:32:33\",\"color\":\"#000000\",\"allday\":\"0\"},{\"title\":\"冬奥会\",\"start\":\"2022-03-04 11:32:33\",\"end\":\"2022-03-13 18:32:33\",\"color\":\"#4A90E2\",\"allday\":\"1\"}]",
+        "size": {
+          "width": 674,
+          "height": 463
+        },
+        "dataSetId": "997034070565879808",
+        "fieldOption": [
+          {
+            "label": "reminders",
+            "text": "reminders",
+            "value": "reminders"
+          },
+          {
+            "label": "remark",
+            "text": "remark",
+            "value": "remark"
+          },
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "remind",
+            "text": "remind",
+            "value": "remind"
+          },
+          {
+            "label": "allDay",
+            "text": "allDay",
+            "value": "allDay"
+          },
+          {
+            "label": "createBy",
+            "text": "createBy",
+            "value": "createBy"
+          },
+          {
+            "label": "urgentLevel",
+            "text": "urgentLevel",
+            "value": "urgentLevel"
+          },
+          {
+            "label": "createTime",
+            "text": "createTime",
+            "value": "createTime"
+          },
+          {
+            "label": "sysOrgCode",
+            "text": "sysOrgCode",
+            "value": "sysOrgCode"
+          },
+          {
+            "label": "joinPerson",
+            "text": "joinPerson",
+            "value": "joinPerson"
+          },
+          {
+            "label": "startTime",
+            "text": "startTime",
+            "value": "startTime"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "endTime",
+            "text": "endTime",
+            "value": "endTime"
+          },
+          {
+            "label": "remindType",
+            "text": "remindType",
+            "value": "remindType"
+          },
+          {
+            "label": "status",
+            "text": "status",
+            "value": "status"
+          },
+          {
+            "label": "planColor",
+            "text": "planColor",
+            "value": "planColor"
+          }
+        ],
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "plan",
+          "url": ""
+        },
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 10,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "titleFontColor": "#000000",
+          "iconColor": "#000000",
+          "contentColor": "#000000",
+          "card": {
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            }
+          }
+        }
+      },
+      "key": "3e00b591-7123-4962-8f3b-806bca3fb3bd"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 0,
+      "h": 15,
+      "i": "94a41a6f-6260-4a6f-901c-26c14b733b65",
+      "orderNum": 170,
+      "component": "JRadioButton",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "1093329744546111488",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "procName",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "跳转"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "流程按钮",
+        "query": [],
+        "h": 12,
+        "dataSetApi": "{{ domainURL }}/joa/designform/designFormCommuse/getCommuseByUserId ",
+        "drillData": [],
+        "url": "",
+        "timeOut": 0,
+        "chartData": "[{\"title\":\"按钮一\",\"value\":0,\"href\":\"\",\"data\":{}},{\"title\":\"按钮二\",\"value\":1,\"href\":\"\",\"data\":{}},{\"title\":\"按钮三\",\"value\":2,\"href\":\"\",\"data\":{}},{\"title\":\"按钮四\",\"value\":3,\"href\":\"\",\"data\":{}},{\"title\":\"按钮五\",\"value\":4,\"href\":\"\",\"data\":{}}]",
+        "size": {
+          "width": 1485,
+          "height": 155
+        },
+        "dataSetId": "994104113397137408",
+        "fieldOption": [
+          {
+            "label": "desformCode",
+            "text": "desformCode",
+            "value": "desformCode"
+          },
+          {
+            "label": "formType",
+            "text": "formType",
+            "value": "formType"
+          },
+          {
+            "label": "desformName",
+            "text": "desformName",
+            "value": "desformName"
+          },
+          {
+            "label": "procName",
+            "text": "procName",
+            "value": "procName"
+          },
+          {
+            "label": "sortNum",
+            "text": "sortNum",
+            "value": "sortNum"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "titleExp",
+            "text": "titleExp",
+            "value": "titleExp"
+          },
+          {
+            "label": "procType",
+            "text": "procType",
+            "value": "procType"
+          }
+        ],
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "desform",
+          "url": ""
+        },
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "customColor": [
+            {
+              "color": "#1A7DED"
+            },
+            {
+              "color": "#F8E71C"
+            },
+            {
+              "color": "#D0021B"
+            }
+          ],
+          "title": "按钮",
+          "body": {
+            "spaceSize": 15,
+            "size": "small",
+            "shape": "circle",
+            "marginTop": 0,
+            "marginLeft": 0
+          },
+          "card": {
+            "size": "small",
+            "rightHref": "/oaOffice/orderApplyList",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "d8dcd68d-90f9-4d0a-af69-2f1149dbc495"
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 1002,
+  "appMenuGroupId": null,
+  "createTime": "2024-09-10 15:47:32",
+  "updateBy": "jeecg",
+  "updateTime": "2025-06-13 10:28:54",
+  "updateCount": 2,
+  "visitsNum": 40,
+  "delFlag": 0
+}

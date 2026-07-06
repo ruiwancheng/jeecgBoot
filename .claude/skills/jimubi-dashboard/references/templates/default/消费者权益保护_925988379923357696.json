@@ -1,0 +1,1439 @@
+{
+  "id": "925988379923357696",
+  "name": "消费者权益保护",
+  "path": "/drag/page/view/925988379923357696",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 0,
+      "h": 8,
+      "i": "95729a29-9b15-4102-8ca0-4474bcdfd6ea",
+      "orderNum": 0,
+      "component": "JText",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "1060051468042731520",
+      "config": {
+        "chartData": "2023年度消费者权益保护",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1604,
+          "height": 78
+        },
+        "background": "#698F38",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 500
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "3dce2b44-02cb-4dce-83ce-c584eaba0bae"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 8,
+      "h": 6,
+      "i": "89ac8d65-5a17-4c62-83cc-05f29f629734",
+      "orderNum": 13,
+      "component": "JText",
+      "w": 3,
+      "x": 0,
+      "y": 8,
+      "pageCompId": "1060051468130811904",
+      "config": {
+        "chartData": "消费维权信息量",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#22B6D4",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 24
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "8ecd434b-858a-451a-8df5-236157d63c21"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 14,
+      "h": 6,
+      "i": "f5f244fb-deed-48eb-8ada-78dadbe08bd8",
+      "orderNum": 21,
+      "component": "JText",
+      "w": 3,
+      "x": 0,
+      "y": 14,
+      "pageCompId": "1060051468151783424",
+      "config": {
+        "chartData": "5823万",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#22B6D4",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 50
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "9bbaae8e-f7ea-41f7-be93-47039647c615"
+    },
+    {
+      "pcX": 3,
+      "moved": false,
+      "pcY": 8,
+      "h": 6,
+      "i": "de17aaaf-b81c-48b3-8309-854b1d0b3d14",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 3,
+      "x": 3,
+      "y": 8,
+      "pageCompId": "1060051468164366336",
+      "config": {
+        "chartData": "网络传播热度指数",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#69AAF5",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 24
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "afbf3bce-23f1-4127-bb5a-b211e27b8593"
+    },
+    {
+      "pcX": 3,
+      "moved": false,
+      "pcY": 14,
+      "h": 6,
+      "i": "2df4f63e-b1a9-4a53-8972-08947f5f011b",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 3,
+      "x": 3,
+      "y": 14,
+      "pageCompId": "1060051468176949248",
+      "config": {
+        "chartData": "86.23",
+        "borderColor": "#69AAF5",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#69AAF5",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 47
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "3ec0dc1e-73b0-4196-8afd-c715f3a8ada9"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 36,
+      "h": 5,
+      "i": "6979473b-9eb1-4d90-887c-483378b89886",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 8,
+      "x": 6,
+      "y": 36,
+      "pageCompId": "1060051468189532160",
+      "config": {
+        "chartData": "头部用户影响力",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#E8F2DC",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "ac2978bf-43af-4b8a-8b71-af89857ea47e"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "fabcd19e-73a2-4a44-9035-d18bccfa77ba",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 8,
+      "x": 6,
+      "y": 8,
+      "pageCompId": "1060051468202115072",
+      "config": {
+        "chartData": "消费维权信息走势",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#E8F2DC",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 5
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "c53a541d-9a9c-4b1f-ba18-f55df961fc4e"
+    },
+    {
+      "pcX": 14,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "e5eb46cd-4d1a-447e-b42a-6e390fa7080e",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 10,
+      "x": 14,
+      "y": 8,
+      "pageCompId": "1060051468218892288",
+      "config": {
+        "chartData": "消费维权数据盘点",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 663,
+          "height": 45
+        },
+        "background": "#E8F2DC",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "a8ad0233-9683-4d1b-9e1b-e33cf79c1179"
+    },
+    {
+      "pcX": 14,
+      "moved": false,
+      "pcY": 24,
+      "h": 25,
+      "i": "a53c49e6-435a-402d-8de1-b8644b87486b",
+      "orderNum": 25,
+      "component": "JPie",
+      "w": 5,
+      "x": 14,
+      "y": 24,
+      "pageCompId": "1060051468231475200",
+      "config": {
+        "chartData": "[  {    \"value\": 1048,    \"name\": \"男性\"  },  {    \"value\": 735,    \"name\": \"女性\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 326,
+          "height": 265
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "option": {
+          "customColor": [
+            {
+              "color": "#B8E986"
+            },
+            {
+              "color": "#7ED321"
+            }
+          ],
+          "grid": {
+            "top": 41,
+            "left": 49,
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 1,
+            "orient": "vertical",
+            "t": 2,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "基础饼图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "5fb28666-fe2b-4a2a-8a9c-1bb244bbf53d"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 13,
+      "h": 23,
+      "i": "f42ce4f9-0e56-47da-8220-254436afea6d",
+      "orderNum": 25,
+      "component": "JSmoothLine",
+      "w": 8,
+      "x": 6,
+      "y": 13,
+      "pageCompId": "1060051468248252416",
+      "config": {
+        "chartData": "[  {    \"value\": 100,    \"name\": \"1月\"  },  {    \"value\": 150,    \"name\": \"2月\"  },  {    \"value\": 60,    \"name\": \"3月\"  },  {    \"value\": 190,    \"name\": \"4月\"  },  {    \"value\": 300,    \"name\": \"5月\"  },  {    \"value\": 200,    \"name\": \"6月\"  },  {    \"value\": 150,    \"name\": \"7月\"  },  {    \"value\": 300,    \"name\": \"8月\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 243
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 33,
+            "left": 33,
+            "bottom": 77,
+            "show": false,
+            "right": 25
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line",
+              "smooth": true
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "top": 1,
+            "left": 1,
+            "show": false,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "8b0e7f38-126e-4567-975b-100c6ca49e61"
+    },
+    {
+      "pcX": 20,
+      "moved": false,
+      "pcY": 13,
+      "h": 6,
+      "i": "102fa102-3bd7-4e86-83ea-77cc7ef23651",
+      "orderNum": 44,
+      "component": "JText",
+      "w": 4,
+      "x": 20,
+      "y": 13,
+      "pageCompId": "1060051468260835328",
+      "config": {
+        "chartData": "博文阅读量：569万",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 259,
+          "height": 56
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#417505",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 37
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "3d049ce0-e6ae-42c9-8a6b-454bea5f6a81"
+    },
+    {
+      "pcX": 17,
+      "moved": false,
+      "pcY": 13,
+      "h": 6,
+      "i": "201a48c1-924c-4da0-87e5-9dc0eb2579a9",
+      "orderNum": 69,
+      "component": "JText",
+      "w": 3,
+      "x": 17,
+      "y": 13,
+      "pageCompId": "1060051468277612544",
+      "config": {
+        "chartData": "互动量：1.68 亿",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 192,
+          "height": 56
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "body": {
+            "color": "#417505",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 21
+          },
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "62fe06b3-008a-4fe7-a69a-ef3b6221d8db"
+    },
+    {
+      "pcX": 14,
+      "moved": false,
+      "pcY": 19,
+      "h": 5,
+      "i": "7e2ecc0a-7930-4c76-9c9a-76af22a58f59",
+      "orderNum": 78,
+      "component": "JText",
+      "w": 10,
+      "x": 14,
+      "y": 19,
+      "pageCompId": "1060051468294389760",
+      "config": {
+        "chartData": "性别—年龄分布",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 663,
+          "height": 45
+        },
+        "background": "#E8F2DC",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "8ab5ca31-cf06-490a-87a4-a97678f0d681"
+    },
+    {
+      "pcX": 14,
+      "moved": false,
+      "pcY": 13,
+      "h": 6,
+      "i": "f4029d4e-b19e-4f50-9614-8eb6002b8bef",
+      "orderNum": 54,
+      "component": "JText",
+      "w": 3,
+      "x": 14,
+      "y": 13,
+      "pageCompId": "1060051468306972672",
+      "config": {
+        "chartData": "用户数：605万",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 192,
+          "height": 56
+        },
+        "background": "#E6CDA5",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#417505",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 26
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "4ad27d3e-44e5-4ec8-8a2d-f7fc15555f92"
+    },
+    {
+      "pcX": 19,
+      "moved": false,
+      "pcY": 24,
+      "h": 25,
+      "i": "b9fd7a80-7f1f-4ffd-b6dd-3efe1a3c224c",
+      "orderNum": 54,
+      "component": "JBar",
+      "w": 5,
+      "x": 19,
+      "y": 24,
+      "pageCompId": "1060051468319555584",
+      "config": {
+        "chartData": "[  {    \"name\": \"70前\",    \"value\": 1879  },  {    \"name\": \"70-80\",    \"value\": 3879  },  {    \"name\": \"80-90\",    \"value\": 2879  },  {    \"name\": \"95后\",    \"value\": 5479  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 326,
+          "height": 265
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 12,
+            "left": 38,
+            "bottom": 81,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 40,
+              "data": [],
+              "itemStyle": {
+                "color": "#64b5f6",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": false,
+            "text": "基础柱形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "063a93ea-44a5-4921-9ed4-e741685e28f9"
+    },
+    {
+      "pcX": 14,
+      "moved": false,
+      "pcY": 49,
+      "h": 34,
+      "i": "ec683701-de14-49c5-88d2-684ba2b0983f",
+      "orderNum": 54,
+      "component": "JScatter",
+      "w": 10,
+      "x": 14,
+      "y": 49,
+      "pageCompId": "1060051468340527104",
+      "config": {
+        "chartData": "[  {    \"name\": \"1月\",    \"value\": 300  },  {    \"name\": \"2月\",    \"value\": 500  },  {    \"name\": \"3月\",    \"value\": 920  },  {    \"name\": \"4月\",    \"value\": 320  },  {    \"name\": \"5月\",    \"value\": 200  },  {    \"name\": \"6月\",    \"value\": 400  },  {    \"name\": \"7月\",    \"value\": 260  },  {    \"name\": \"8月\",    \"value\": 120  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 663,
+          "height": 364
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "symbolSize": 20,
+              "itemStyle": {
+                "color": "#64b5f6"
+              },
+              "label": {
+                "color": "#787575",
+                "show": false
+              },
+              "type": "scatter"
+            }
+          ],
+          "tooltip": {
+            "formatter": "x:{b}<br/>y:{c}",
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "消费权益相关话题",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "2c485bcb-6e03-43b2-8f8d-25aee3637bb1"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 56,
+      "h": 24,
+      "i": "4aeb9633-f22d-4b40-8ec3-45111146e9fa",
+      "orderNum": 54,
+      "component": "JStepLine",
+      "w": 8,
+      "x": 6,
+      "y": 56,
+      "pageCompId": "1060051468361498624",
+      "config": {
+        "chartData": "[  {    \"value\": 10,    \"name\": \"1月\"  },  {    \"value\": 15,    \"name\": \"2月\"  },  {    \"value\": 30,    \"name\": \"3月\"  },  {    \"value\": 29,    \"name\": \"4月\"  },  {    \"value\": 20,    \"name\": \"5月\"  },  {    \"value\": 10,    \"name\": \"6月\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 254
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "name": "阅读量(亿)",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 37,
+            "left": 34,
+            "bottom": 65,
+            "show": false,
+            "right": 25
+          },
+          "series": [
+            {
+              "data": [],
+              "step": "middle",
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "阶梯折线图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "6d8562e2-42a4-47e3-83ec-8632e80fd222"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 20,
+      "h": 38,
+      "i": "147b58fb-4401-49b9-9db4-017b3c34ca40",
+      "orderNum": 59,
+      "component": "JRing",
+      "w": 6,
+      "x": 0,
+      "y": 20,
+      "pageCompId": "1060051468374081536",
+      "config": {
+        "chartData": "[  {    \"value\": 1048,    \"name\": \"视频\"  },  {    \"value\": 735,    \"name\": \"网站\"  },  {    \"value\": 580,    \"name\": \"微信\"  },  {    \"value\": 484,    \"name\": \"微博\"  },  {    \"value\": 300,    \"name\": \"客户端\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 394,
+          "height": 408
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "customColor": [
+            {
+              "color": "#70B324"
+            },
+            {
+              "color": "#50E3C2"
+            },
+            {
+              "color": "#F0E032"
+            },
+            {
+              "color": "#7ED321"
+            },
+            {
+              "color": "#FFA600"
+            }
+          ],
+          "grid": {
+            "top": 49,
+            "left": 51,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "show": false
+          },
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "top": 1,
+            "left": 1,
+            "show": true,
+            "text": "内容来源占比",
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "e73c4768-778a-46ab-8748-06713f11cc49"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 41,
+      "h": 15,
+      "i": "ab89cda3-73f8-4e04-8259-669cc5411a1c",
+      "orderNum": 58,
+      "component": "JProgress",
+      "w": 8,
+      "x": 6,
+      "y": 41,
+      "pageCompId": "1060051468386664448",
+      "config": {
+        "chartData": "[  {    \"name\": \"阅读量\",    \"value\": 69.86  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 155
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#000000"
+            }
+          },
+          "grid": {
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 19,
+              "color": "#417505",
+              "itemStyle": {
+                "normal": {
+                  "barBorderRadius": 10
+                }
+              },
+              "zlevel": 1,
+              "label": {
+                "formatter": "{c}{a}",
+                "offset": [
+                  0,
+                  -40
+                ],
+                "color": "black",
+                "show": true,
+                "fontSize": 24,
+                "position": "right"
+              }
+            },
+            {
+              "barWidth": 19,
+              "color": "#DCF2C2",
+              "barGap": "-100%",
+              "itemStyle": {
+                "normal": {
+                  "barBorderRadius": 10
+                }
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": false,
+            "text": "基础进度图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      },
+      "key": "89c3f808-8423-4fd2-b2e3-29563cc00716"
+    },
+    {
+      "component": "JPie",
+      "pcX": 0,
+      "w": 6,
+      "moved": false,
+      "pcY": 58,
+      "x": 0,
+      "h": 22,
+      "i": "5b345a14-4a1a-462d-8653-1bd8555039c1",
+      "y": 58,
+      "orderNum": 58,
+      "pageCompId": "1060051468399247360",
+      "config": {
+        "chartData": "[  {    \"value\": 1048,    \"name\": \"中性信息\"  },  {    \"value\": 735,    \"name\": \"敏感信息\"  },  {    \"value\": 580,    \"name\": \"非敏感信息\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 394,
+          "height": 232
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "option": {
+          "customColor": [
+            {
+              "color": "#417505"
+            },
+            {
+              "color": "#B8E986"
+            },
+            {
+              "color": "#F5A623"
+            }
+          ],
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical",
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "isRadius": false,
+          "tooltip": {
+            "trigger": "item"
+          },
+          "outRadius": 43,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "敏感信息与非敏感信息占比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "innerRadius": 87,
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 1,
+  "appMenuGroupId": null,
+  "createTime": "2024-03-08 15:54:04",
+  "updateBy": "admin",
+  "updateTime": "2025-03-13 14:32:55",
+  "updateCount": 69,
+  "visitsNum": 11,
+  "delFlag": 0
+}

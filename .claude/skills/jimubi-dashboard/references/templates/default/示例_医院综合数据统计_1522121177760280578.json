@@ -1,0 +1,958 @@
+{
+  "id": "1522121177760280578",
+  "name": "示例_医院综合数据统计",
+  "path": "/drag/page/view/1522121177760280578",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 8,
+      "i": "5df901ff-2237-4aaf-91b2-74eb9103dc09",
+      "y": 0,
+      "pageCompId": "1523906947722629122",
+      "config": {
+        "chartData": "医院综合数据统计",
+        "size": {
+          "width": 607,
+          "height": 78
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 25,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 216
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JStackBar",
+      "w": 8,
+      "moved": false,
+      "x": 0,
+      "h": 37,
+      "i": "35c97a7b-966d-4124-8589-9ad9175085e2",
+      "y": 0,
+      "pageCompId": "1523906947861041153",
+      "config": {
+        "chartData": "[{\"name\":\"内科\",\"value\":10079,\"type\":\"床位\"},{\"name\":\"外科\",\"value\":34879,\"type\":\"床位\"},{\"name\":\"儿科\",\"value\":20879,\"type\":\"床位\"},{\"name\":\"骨科\",\"value\":5879,\"type\":\"床位\"},{\"name\":\"放射科\",\"value\":3479,\"type\":\"床位\"},{\"name\":\"内科\",\"value\":1879,\"type\":\"接诊\"},{\"name\":\"外科\",\"value\":3879,\"type\":\"接诊\"},{\"name\":\"儿科\",\"value\":2309,\"type\":\"接诊\"},{\"name\":\"放射科\",\"value\":5409,\"type\":\"接诊\"},{\"name\":\"骨科\",\"value\":3479,\"type\":\"接诊\"}]",
+        "size": {
+          "width": 539,
+          "height": 397
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "category",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "bottom": 115
+          },
+          "series": [],
+          "legend": {
+            "r": 4,
+            "t": 1
+          },
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "机构情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JArea",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 25,
+      "i": "f9936af9-9347-4ea2-8fda-4eef38fc2851",
+      "y": 35,
+      "pageCompId": "1523906947932344321",
+      "config": {
+        "chartData": "[{\"value\":300,\"name\":\"2010\"},{\"value\":605,\"name\":\"2011\"},{\"value\":580,\"name\":\"2012\"},{\"value\":700,\"name\":\"2013\"},{\"value\":1048,\"name\":\"2014\"}]",
+        "size": {
+          "width": 470,
+          "height": 265
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "name": "床位数",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "data": [],
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "name": "年份",
+            "boundaryGap": false,
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "left": 46,
+            "bottom": 46,
+            "right": 25
+          },
+          "series": [
+            {
+              "areaStyle": {},
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "show": true,
+            "text": "床位总数",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 8,
+      "moved": false,
+      "x": 0,
+      "h": 29,
+      "i": "94f35443-fdf7-462c-8ed1-5eff21f41624",
+      "y": 37,
+      "pageCompId": "1523906948037201921",
+      "config": {
+        "chartData": "[{\"name\":\"教授\",\"value\":123},{\"name\":\"博士\",\"value\":98},{\"name\":\"硕士\",\"value\":75},{\"name\":\"本科\",\"value\":66}]",
+        "size": {
+          "width": 539,
+          "height": 309
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 1,
+            "left": 38,
+            "bottom": 70,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "top": 1,
+            "show": false,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JColorGauge",
+      "w": 4,
+      "moved": false,
+      "x": 0,
+      "h": 27,
+      "i": "6685b078-9067-42a5-a14d-9037dbe12131",
+      "y": 66,
+      "pageCompId": "1523906948108505089",
+      "config": {
+        "chartData": "[{\"name\":\"满意度\",\"value\":95,\"unit\":\"%\"}]",
+        "size": {
+          "width": 264,
+          "height": 287
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "名称"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/gauge",
+        "timeOut": 0,
+        "option": {
+          "series": [
+            {
+              "axisLabel": {
+                "show": true,
+                "fontSize": 12
+              },
+              "pointer": {
+                "width": 8
+              },
+              "axisLine": {
+                "lineStyle": {
+                  "color": [
+                    [
+                      0.25,
+                      "#FF6E76"
+                    ],
+                    [
+                      0.5,
+                      "#FDDD60"
+                    ],
+                    [
+                      1,
+                      "#58D9F9"
+                    ]
+                  ],
+                  "width": 10
+                }
+              },
+              "anchor": {
+                "itemStyle": {
+                  "color": "#FAC858"
+                }
+              },
+              "splitLine": {
+                "lineStyle": {
+                  "color": "#EEEEEE",
+                  "width": 4
+                },
+                "length": 12
+              },
+              "axisTick": {
+                "lineStyle": {
+                  "color": "#EEEEEE"
+                },
+                "show": true
+              },
+              "title": {
+                "fontSize": 14
+              }
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%"
+          },
+          "title": {
+            "top": 1,
+            "show": false,
+            "text": "多色仪表盘",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JColorGauge",
+      "w": 4,
+      "moved": false,
+      "x": 4,
+      "h": 27,
+      "i": "1e968150-d9d6-411b-833d-f95b231ae4ad",
+      "y": 66,
+      "pageCompId": "1523906948179808258",
+      "config": {
+        "chartData": "[{\"name\":\"投诉率\",\"value\":4,\"unit\":\"%\"}]",
+        "size": {
+          "width": 264,
+          "height": 287
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "名称"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/gauge",
+        "timeOut": 0,
+        "option": {
+          "series": [
+            {
+              "axisLabel": {
+                "show": true,
+                "fontSize": 12
+              },
+              "pointer": {
+                "width": 8
+              },
+              "axisLine": {
+                "lineStyle": {
+                  "color": [
+                    [
+                      0.25,
+                      "#FF6E76"
+                    ],
+                    [
+                      0.5,
+                      "#FDDD60"
+                    ],
+                    [
+                      1,
+                      "#58D9F9"
+                    ]
+                  ],
+                  "width": 10
+                }
+              },
+              "anchor": {
+                "itemStyle": {
+                  "color": "#FAC858"
+                }
+              },
+              "splitLine": {
+                "lineStyle": {
+                  "color": "#EEEEEE",
+                  "width": 4
+                },
+                "length": 12
+              },
+              "axisTick": {
+                "lineStyle": {
+                  "color": "#EEEEEE"
+                },
+                "show": true
+              },
+              "title": {
+                "fontSize": 14
+              }
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%"
+          },
+          "title": {
+            "show": false,
+            "text": "多色仪表盘",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 32,
+      "i": "cbc6855a-1bc5-403b-be2d-76af53b1eb40",
+      "y": 60,
+      "pageCompId": "1523906948246917122",
+      "config": {
+        "chartData": "[{\"name\":\"核磁共振\",\"value\":1000879},{\"name\":\"呼吸机\",\"value\":3400879},{\"name\":\"CT\",\"value\":2300879},{\"name\":\"彩超\",\"value\":5400879},{\"name\":\"3D打印\",\"value\":3000}]",
+        "size": {
+          "width": 470,
+          "height": 342
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "isRose": true,
+          "grid": {
+            "top": 47,
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 7,
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "设备情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 35,
+      "i": "cc1dde8c-c064-438c-96a2-82a70bcb6815",
+      "y": 0,
+      "pageCompId": "1523906948351774722",
+      "config": {
+        "chartData": "[{\"name\":\"1月\",\"value\":2,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"2月\",\"value\":4.9,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"3月\",\"value\":7,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"4月\",\"value\":23.2,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"5月\",\"value\":25.6,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"6月\",\"value\":76.7,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"7月\",\"value\":135.6,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"8月\",\"value\":162.2,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"9月\",\"value\":32.6,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"10月\",\"value\":20,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"11月\",\"value\":6.4,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"12月\",\"value\":3.3,\"series\":\"医师\",\"type\":\"bar\"},{\"name\":\"1月\",\"value\":2.6,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"2月\",\"value\":5.9,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"3月\",\"value\":9,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"4月\",\"value\":26.4,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"5月\",\"value\":28.7,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"6月\",\"value\":70.7,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"7月\",\"value\":175.6,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"8月\",\"value\":182.2,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"9月\",\"value\":48.7,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"10月\",\"value\":18.8,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"11月\",\"value\":6,\"series\":\"护士\",\"type\":\"bar\"},{\"name\":\"12月\",\"value\":2.3,\"series\":\"护士\",\"type\":\"bar\"}]",
+        "size": {
+          "width": 470,
+          "height": 375
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "name": "人数",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "name": "月份",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "left": 33,
+            "bottom": 87,
+            "show": false,
+            "right": 53
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "人员总数",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 34,
+      "i": "ac652ca3-c956-4e0b-8dc3-b1407f4d8f5c",
+      "y": 24,
+      "pageCompId": "1523906948423077889",
+      "config": {
+        "chartData": "[{\"value\":1048,\"name\":\"消炎药\"},{\"value\":735,\"name\":\"感冒药\"},{\"value\":580,\"name\":\"皮肤类药物\"},{\"value\":484,\"name\":\"外科用药\"}]",
+        "size": {
+          "width": 607,
+          "height": 364
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "show": true,
+            "text": "科室用药",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JFunnel",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 34,
+      "i": "142fe7cf-1e45-4c52-9e6b-625bdf16d002",
+      "y": 58,
+      "pageCompId": "1523906948490186754",
+      "config": {
+        "chartData": "[{\"value\":25,\"name\":\"特级护士\"},{\"value\":310,\"name\":\"住院总医师\"},{\"value\":234,\"name\":\"护士\"},{\"name\":\"主任\",\"value\":50}]",
+        "size": {
+          "width": 607,
+          "height": 364
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/funnel",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "legend": {
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "left": "10%",
+              "gap": 2,
+              "name": "Funnel",
+              "width": "80%",
+              "emphasis": {
+                "label": {
+                  "fontSize": 20
+                }
+              },
+              "itemStyle": {
+                "borderColor": "#fff",
+                "borderWidth": 1
+              },
+              "sort": "descending",
+              "label": {
+                "show": true,
+                "position": "inside"
+              },
+              "labelLine": {
+                "lineStyle": {
+                  "width": 1,
+                  "type": "solid"
+                },
+                "length": 10
+              },
+              "type": "funnel"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%",
+            "trigger": "item"
+          },
+          "title": {
+            "show": true,
+            "text": "基础漏斗图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JGrowCard",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 16,
+      "i": "3d9d75ff-99f5-49da-b16e-88447705dcc3",
+      "y": 8,
+      "pageCompId": "1523906948561489921",
+      "config": {
+        "chartData": "[  {    \"title\": \"床位数\",    \"icon\": \"\",    \"value\": 258,    \"prefix\": \"\",    \"color\": \"green\",    \"action\": \"\"  },  {    \"title\": \"人员数\",    \"icon\": \"\",    \"value\": 1120,    \"total\": \"\",    \"prefix\": \"\",    \"color\": \"blue\",    \"action\": \"\"  },  {    \"title\": \"百万设置\",    \"icon\": \"\",    \"value\": 870,    \"prefix\": \"\",    \"total\": \"\",    \"color\": \"orange\",    \"action\": \"\"  }]",
+        "size": {
+          "width": 607,
+          "height": 166
+        },
+        "w": 12,
+        "dataType": 1,
+        "h": 19,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 20
+          },
+          "body": {
+            "horizontal": 8,
+            "vertical": 8,
+            "span": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "统计卡片"
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-05 15:49:03",
+  "updateBy": "admin",
+  "updateTime": "2022-05-10 14:05:04",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

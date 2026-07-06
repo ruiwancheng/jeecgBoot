@@ -1,0 +1,1163 @@
+{
+  "id": "993390795019681792",
+  "name": "企业门户",
+  "path": "/drag/page/view/993390795019681792",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 0,
+      "h": 21,
+      "i": "9b16ff24-2a99-4e68-9c91-ba13d26fc512",
+      "orderNum": 0,
+      "component": "JCarousel",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "1093318687945531392",
+      "config": {
+        "chartData": "[{\"src\":\"https://jeecgos.oss-cn-beijing.aliyuncs.com/files/site/drag/0.png\"},{\"src\":\"https://jeecgos.oss-cn-beijing.aliyuncs.com/files/site/drag/1.png\"},{\"src\":\"https://jeecgos.oss-cn-beijing.aliyuncs.com/files/site/drag/2.png\"}]",
+        "size": {
+          "width": 1824,
+          "height": 221
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "路径"
+          }
+        ],
+        "w": 24,
+        "dataType": 1,
+        "h": 22,
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/42/carousel",
+        "timeOut": -1,
+        "option": {
+          "dots": true,
+          "autoplay": true,
+          "dotPosition": "bottom"
+        }
+      },
+      "key": "4c100e63-2923-4353-b2e8-d4fc67fb1c6c"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 92,
+      "h": 25,
+      "i": "576af3fe-05a7-4e33-9e6d-c23c93a235a9",
+      "orderNum": 21,
+      "component": "JQuickNav",
+      "w": 8,
+      "x": 16,
+      "y": 92,
+      "pageCompId": "1093318687987474432",
+      "config": {
+        "chartData": "[  {    \"title\": \"官网\",    \"icon\": \"icon-jeecg-homepage\",    \"color\": \"#1fdaca\",    \"href\": \"https://www.jeecg.com/\"  },  {    \"title\": \"BBS\",    \"icon\": \"icon-jeecg-shijian\",    \"color\": \"#bf0c2c\",    \"href\": \"http://bbs.jeecg.com/\"  },  {    \"title\": \"文档\",    \"icon\": \"icon-jeecg-dangan\",    \"color\": \"#e18525\",    \"href\": \"https://help.jeecg.com/\"  },  {    \"title\": \"敲敲云\",    \"icon\": \"icon-jeecg-shezhi\",    \"color\": \"#3fb27f\",    \"href\": \"https://app.qiaoqiaoyun.com/\"  },  {    \"title\": \"积木报表\",    \"icon\": \"icon-jeecg-yuechi\",    \"color\": \"#4daf1bc9\",    \"href\": \"http://jimureport.com/\"  },  {    \"title\": \"百度\",    \"icon\": \"icon-jeecg-fujin\",    \"color\": \"#00d8ff\",    \"href\": \"http://baidu.com/\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 598,
+          "height": 265
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "图标"
+          },
+          {
+            "mapping": "",
+            "filed": "颜色"
+          },
+          {
+            "mapping": "",
+            "filed": "跳转"
+          }
+        ],
+        "background": "#FFFFFF",
+        "w": 12,
+        "dataType": 1,
+        "h": 26,
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": -1,
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 30
+          },
+          "body": {
+            "textAlign": "center",
+            "column": 3,
+            "iconAlign": "top"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "快捷导航"
+          }
+        }
+      },
+      "key": "be4256dc-531c-461f-8b55-6f73fa038735"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 21,
+      "h": 30,
+      "i": "bcb3f4d1-c77e-424a-b872-f23c37efa4e4",
+      "orderNum": 21,
+      "component": "JList",
+      "w": 8,
+      "x": 16,
+      "y": 21,
+      "pageCompId": "1093318687995863040",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "titile",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "sendTime",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "通知公告",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "{{ domainURL }}/sys/sysAnnouncementSend/getMyAnnouncementSend",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[  {    \"title\": \"通知一\",    \"date\": \"2022-3-9 14:20:21\"  },  {    \"title\": \"通知二\",    \"date\": \"2022-3-8 14:20:21\"  },  {    \"title\": \"通知三\",    \"date\": \"2022-3-7 14:20:21\"  },  {    \"title\": \"通知四\",    \"date\": \"2022-3-4 14:20:21\"  }]",
+        "size": {
+          "width": 488,
+          "height": 320
+        },
+        "dataSetId": "993820539708145664",
+        "fieldOption": [
+          {
+            "label": "busId",
+            "text": "busId",
+            "value": "busId"
+          },
+          {
+            "label": "readFlag",
+            "text": "readFlag",
+            "value": "readFlag"
+          },
+          {
+            "label": "anntId",
+            "text": "anntId",
+            "value": "anntId"
+          },
+          {
+            "label": "pageSize",
+            "text": "pageSize",
+            "value": "pageSize"
+          },
+          {
+            "label": "msgAbstract",
+            "text": "msgAbstract",
+            "value": "msgAbstract"
+          },
+          {
+            "label": "priority",
+            "text": "priority",
+            "value": "priority"
+          },
+          {
+            "label": "userId",
+            "text": "userId",
+            "value": "userId"
+          },
+          {
+            "label": "时间",
+            "text": "时间",
+            "value": "sendTime"
+          },
+          {
+            "label": "openType",
+            "text": "openType",
+            "value": "openType"
+          },
+          {
+            "label": "openPage",
+            "text": "openPage",
+            "value": "openPage"
+          },
+          {
+            "label": "标题",
+            "text": "标题",
+            "value": "titile"
+          },
+          {
+            "label": "msgContent",
+            "text": "msgContent",
+            "value": "msgContent"
+          },
+          {
+            "label": "sender",
+            "text": "sender",
+            "value": "sender"
+          },
+          {
+            "label": "bizSource",
+            "text": "bizSource",
+            "value": "bizSource"
+          },
+          {
+            "label": "pageNo",
+            "text": "pageNo",
+            "value": "pageNo"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "msgCategory",
+            "text": "msgCategory",
+            "value": "msgCategory"
+          },
+          {
+            "label": "busType",
+            "text": "busType",
+            "value": "busType"
+          },
+          {
+            "label": "sendTimeEnd",
+            "text": "sendTimeEnd",
+            "value": "sendTimeEnd"
+          },
+          {
+            "label": "sendTimeBegin",
+            "text": "sendTimeBegin",
+            "value": "sendTimeBegin"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "sysNotice",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "titleFontColor": "#9B9B9B",
+          "showTitlePrefix": false,
+          "titleFontSize": 14,
+          "titleFontWeight": "lighter",
+          "showTimePrefix": false,
+          "iconColor": "#9B9B9B",
+          "contentColor": "#9B9B9B",
+          "card": {
+            "rightHref": "/monitor/mynews",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "系统公告"
+          }
+        }
+      },
+      "key": "9c17cf57-927b-4196-8a62-e2a7e44bfcf7"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 51,
+      "h": 41,
+      "i": "6d5b69b0-4b9a-472b-946a-8412ad8e7cce",
+      "orderNum": 21,
+      "component": "JCalendar",
+      "w": 8,
+      "x": 16,
+      "y": 51,
+      "pageCompId": "1093318688000057344",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "startTime",
+            "filed": "开始"
+          },
+          {
+            "mapping": "endTime",
+            "filed": "结束"
+          },
+          {
+            "mapping": "allDay",
+            "filed": "全天"
+          },
+          {
+            "mapping": "planColor",
+            "filed": "颜色"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "我的计划",
+        "query": [],
+        "h": 40,
+        "dataSetApi": "{{ domainURL }}/eoa/plan/queryMyPlan",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/calendar",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"座谈会\",\"start\":\"2022-03-11 11:32:33\",\"end\":\"2022-03-11 18:32:33\",\"color\":\"#000000\",\"allday\":\"0\"},{\"title\":\"冬奥会\",\"start\":\"2022-03-04 11:32:33\",\"end\":\"2022-03-13 18:32:33\",\"color\":\"#4A90E2\",\"allday\":\"1\"}]",
+        "size": {
+          "width": 598,
+          "height": 441
+        },
+        "dataSetId": "997034070565879808",
+        "fieldOption": [
+          {
+            "label": "reminders",
+            "text": "reminders",
+            "value": "reminders"
+          },
+          {
+            "label": "remark",
+            "text": "remark",
+            "value": "remark"
+          },
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "remind",
+            "text": "remind",
+            "value": "remind"
+          },
+          {
+            "label": "allDay",
+            "text": "allDay",
+            "value": "allDay"
+          },
+          {
+            "label": "createBy",
+            "text": "createBy",
+            "value": "createBy"
+          },
+          {
+            "label": "urgentLevel",
+            "text": "urgentLevel",
+            "value": "urgentLevel"
+          },
+          {
+            "label": "createTime",
+            "text": "createTime",
+            "value": "createTime"
+          },
+          {
+            "label": "sysOrgCode",
+            "text": "sysOrgCode",
+            "value": "sysOrgCode"
+          },
+          {
+            "label": "joinPerson",
+            "text": "joinPerson",
+            "value": "joinPerson"
+          },
+          {
+            "label": "startTime",
+            "text": "startTime",
+            "value": "startTime"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "endTime",
+            "text": "endTime",
+            "value": "endTime"
+          },
+          {
+            "label": "remindType",
+            "text": "remindType",
+            "value": "remindType"
+          },
+          {
+            "label": "status",
+            "text": "status",
+            "value": "status"
+          },
+          {
+            "label": "planColor",
+            "text": "planColor",
+            "value": "planColor"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "plan",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 10,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "titleFontColor": "#000000",
+          "iconColor": "#000000",
+          "contentColor": "#000000",
+          "card": {
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            }
+          }
+        }
+      },
+      "key": "f8ab6397-2199-4408-8eae-5ce91af40054"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 45,
+      "h": 45,
+      "i": "1d1ba4ea-ba4d-4a17-8986-89721dd9ecb5",
+      "orderNum": 21,
+      "component": "JTabs",
+      "w": 8,
+      "x": 0,
+      "y": 72,
+      "pageCompId": "1093318688008445952",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 598,
+          "height": 485
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "h": 40,
+        "option": {
+          "rightText": "更多",
+          "titleFontColor": "#000000",
+          "rightHref": "/eoa/cms/eoaCmsArticlePortal?type=A02",
+          "iconColor": "#000000",
+          "title": "选项卡",
+          "contentColor": "#000000",
+          "card": {
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            }
+          }
+        },
+        "child": [
+          {
+            "component": "JList",
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "1c42931a-3a7a-4ee7-8ca9-57b47f97cccf",
+            "title": "规章制度",
+            "config": {
+              "borderColor": "#FFFFFF00",
+              "dataMapping": [
+                {
+                  "mapping": "title",
+                  "filed": "标题"
+                },
+                {
+                  "mapping": "",
+                  "filed": "描述"
+                },
+                {
+                  "mapping": "publishDate",
+                  "filed": "时间"
+                },
+                {
+                  "mapping": "",
+                  "filed": "封面"
+                }
+              ],
+              "paramOption": [
+                {
+                  "defaultVal": "Rule",
+                  "label": "",
+                  "text": "",
+                  "type": "String",
+                  "value": "type"
+                }
+              ],
+              "dataType": 2,
+              "dataSetName": "规章制度",
+              "query": [],
+              "h": 24,
+              "dataSetApi": "{{ domainURL }}/eoa/cms/eoaCmsSite/getSiteData",
+              "drillData": [],
+              "url": "http://api.jeecg.com/mock/42/list",
+              "timeOut": -1,
+              "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1003866964244463616",
+              "fieldOption": [
+                {
+                  "label": "imageHref",
+                  "text": "imageHref",
+                  "value": "imageHref"
+                },
+                {
+                  "label": "columnId",
+                  "text": "columnId",
+                  "value": "columnId"
+                },
+                {
+                  "label": "author",
+                  "text": "author",
+                  "value": "author"
+                },
+                {
+                  "label": "publishDate",
+                  "text": "publishDate",
+                  "value": "publishDate"
+                },
+                {
+                  "label": "updateTime",
+                  "text": "updateTime",
+                  "value": "updateTime"
+                },
+                {
+                  "label": "title",
+                  "text": "title",
+                  "value": "title"
+                },
+                {
+                  "label": "isPublish",
+                  "text": "isPublish",
+                  "value": "isPublish"
+                },
+                {
+                  "label": "type",
+                  "text": "type",
+                  "value": "type"
+                },
+                {
+                  "label": "content",
+                  "text": "content",
+                  "value": "content"
+                },
+                {
+                  "label": "createBy",
+                  "text": "createBy",
+                  "value": "createBy"
+                },
+                {
+                  "label": "readTimes",
+                  "text": "readTimes",
+                  "value": "readTimes"
+                },
+                {
+                  "label": "createTime",
+                  "text": "createTime",
+                  "value": "createTime"
+                },
+                {
+                  "label": "updateBy",
+                  "text": "updateBy",
+                  "value": "updateBy"
+                },
+                {
+                  "label": "sysOrgCode",
+                  "text": "sysOrgCode",
+                  "value": "sysOrgCode"
+                },
+                {
+                  "label": "id",
+                  "text": "id",
+                  "value": "id"
+                }
+              ],
+              "actionConfig": {
+                "operateType": "url",
+                "modalName": "",
+                "url": "/eoa/cms/eoaCmsArticleDetail"
+              },
+              "dataSetType": "api",
+              "background": "#FFFFFF",
+              "seriesType": [],
+              "w": 12,
+              "dictOptions": {},
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "layout": "horizontal",
+                "titleFontColor": "#9B9B9B",
+                "showTitlePrefix": true,
+                "titleFontSize": 16,
+                "titleFontWeight": "normal",
+                "showTimePrefix": true,
+                "iconColor": "#9B9B9B",
+                "contentColor": "#9B9B9B",
+                "card": {
+                  "rightHref": "/eoa/cms/eoaCmsArticlePortal?type=A02",
+                  "extra": "",
+                  "headColor": "#FFFFFF",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  }
+                }
+              }
+            },
+            "parentId": "1d1ba4ea-ba4d-4a17-8986-89721dd9ecb5"
+          },
+          {
+            "h": 42,
+            "index": 0,
+            "i": "4795eee5-3ac6-4973-9c2d-e60ed37ca7eb",
+            "title": "常用下载",
+            "parentId": "1d1ba4ea-ba4d-4a17-8986-89721dd9ecb5",
+            "horizontal": false,
+            "component": "JList",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "text": "0.042",
+            "id": "99530915-3953-44ee-8e7a-a3fbd74623f8",
+            "config": {
+              "borderColor": "#FFFFFF00",
+              "dataMapping": [
+                {
+                  "mapping": "title",
+                  "filed": "标题"
+                },
+                {
+                  "mapping": "",
+                  "filed": "描述"
+                },
+                {
+                  "mapping": "publishDate",
+                  "filed": "时间"
+                },
+                {
+                  "mapping": "",
+                  "filed": "封面"
+                }
+              ],
+              "paramOption": [
+                {
+                  "defaultVal": "DOWNLOAD",
+                  "label": "",
+                  "text": "",
+                  "type": "String",
+                  "value": "type"
+                }
+              ],
+              "dataType": 2,
+              "dataSetName": "常用下载",
+              "query": [],
+              "h": 24,
+              "dataSetApi": "{{ domainURL }}/eoa/cms/eoaCmsSite/getSiteData",
+              "drillData": [],
+              "url": "http://api.jeecg.com/mock/42/list",
+              "timeOut": -1,
+              "chartData": "[  {    \"date\": \"2022-3-9 14:20:21\",    \"title\": \"开发规范文档\"  }]",
+              "paddingBottom": 90,
+              "dataSetId": "1003836435583369216",
+              "fieldOption": [
+                {
+                  "label": "imageHref",
+                  "text": "imageHref",
+                  "value": "imageHref"
+                },
+                {
+                  "label": "columnId",
+                  "text": "columnId",
+                  "value": "columnId"
+                },
+                {
+                  "label": "author",
+                  "text": "author",
+                  "value": "author"
+                },
+                {
+                  "label": "publishDate",
+                  "text": "publishDate",
+                  "value": "publishDate"
+                },
+                {
+                  "label": "title",
+                  "text": "title",
+                  "value": "title"
+                },
+                {
+                  "label": "isPublish",
+                  "text": "isPublish",
+                  "value": "isPublish"
+                },
+                {
+                  "label": "type",
+                  "text": "type",
+                  "value": "type"
+                },
+                {
+                  "label": "createBy",
+                  "text": "createBy",
+                  "value": "createBy"
+                },
+                {
+                  "label": "readTimes",
+                  "text": "readTimes",
+                  "value": "readTimes"
+                },
+                {
+                  "label": "createTime",
+                  "text": "createTime",
+                  "value": "createTime"
+                },
+                {
+                  "label": "sysOrgCode",
+                  "text": "sysOrgCode",
+                  "value": "sysOrgCode"
+                },
+                {
+                  "label": "id",
+                  "text": "id",
+                  "value": "id"
+                },
+                {
+                  "label": "fileUrl",
+                  "text": "fileUrl",
+                  "value": "fileUrl"
+                }
+              ],
+              "dataSetType": "api",
+              "actionConfig": {
+                "operateType": "url",
+                "modalName": "",
+                "url": "fileUrl"
+              },
+              "background": "#FFFFFF",
+              "seriesType": [],
+              "w": 12,
+              "dictOptions": {},
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "layout": "horizontal",
+                "titleFontColor": "#9B9B9B",
+                "showTitlePrefix": true,
+                "titleFontSize": 17,
+                "titleFontWeight": "normal",
+                "showTimePrefix": true,
+                "iconColor": "#9B9B9B",
+                "contentColor": "#9B9B9B",
+                "card": {
+                  "rightHref": "/eoa/cms/eoaCmsArticlePortal?type=A04",
+                  "size": "small",
+                  "extra": "",
+                  "headColor": "#FFFFFF",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  }
+                }
+              }
+            },
+            "child": []
+          }
+        ]
+      },
+      "key": "1315352a-081f-4637-9dca-d3597feaa314"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 45,
+      "h": 45,
+      "i": "11168487-76c0-4945-8d9c-cb08182567e2",
+      "orderNum": 91,
+      "component": "JList",
+      "w": 8,
+      "x": 8,
+      "y": 72,
+      "pageCompId": "1093318688012640256",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "publishDate",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "SIGN_NEWS",
+            "label": "",
+            "text": "",
+            "type": "String",
+            "value": "type"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "签约新闻",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "{{ domainURL }}/eoa/cms/eoaCmsSite/getSiteData",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 598,
+          "height": 485
+        },
+        "dataSetId": "1003867074630156288",
+        "fieldOption": [
+          {
+            "label": "imageHref",
+            "text": "imageHref",
+            "value": "imageHref"
+          },
+          {
+            "label": "columnId",
+            "text": "columnId",
+            "value": "columnId"
+          },
+          {
+            "label": "author",
+            "text": "author",
+            "value": "author"
+          },
+          {
+            "label": "publishDate",
+            "text": "publishDate",
+            "value": "publishDate"
+          },
+          {
+            "label": "updateTime",
+            "text": "updateTime",
+            "value": "updateTime"
+          },
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "isPublish",
+            "text": "isPublish",
+            "value": "isPublish"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "createBy",
+            "text": "createBy",
+            "value": "createBy"
+          },
+          {
+            "label": "readTimes",
+            "text": "readTimes",
+            "value": "readTimes"
+          },
+          {
+            "label": "createTime",
+            "text": "createTime",
+            "value": "createTime"
+          },
+          {
+            "label": "updateBy",
+            "text": "updateBy",
+            "value": "updateBy"
+          },
+          {
+            "label": "sysOrgCode",
+            "text": "sysOrgCode",
+            "value": "sysOrgCode"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          }
+        ],
+        "actionConfig": {
+          "operateType": "url",
+          "modalName": "",
+          "url": "/eoa/cms/eoaCmsArticleDetail"
+        },
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "titleFontColor": "#9B9B9B",
+          "showTitlePrefix": true,
+          "titleFontSize": 14,
+          "titleFontWeight": "normal",
+          "showTimePrefix": true,
+          "iconColor": "#9B9B9B",
+          "contentColor": "#9B9B9B",
+          "card": {
+            "rightHref": "/eoa/cms/eoaCmsArticlePortal?type=A03",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A",
+              "fontSize": 18
+            },
+            "title": "签约新闻"
+          }
+        }
+      },
+      "key": "23568670-5f0a-4e45-adcc-a91f10590dec"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 21,
+      "h": 51,
+      "i": "d683d84f-2aaa-43fd-89e2-556021fe6c23",
+      "orderNum": 51,
+      "component": "JList",
+      "w": 16,
+      "x": 0,
+      "y": 21,
+      "pageCompId": "1093318688021028864",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "content",
+            "filed": "描述"
+          },
+          {
+            "mapping": "publishDate",
+            "filed": "时间"
+          },
+          {
+            "mapping": "imageHref",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "NEWS_INFO",
+            "label": "",
+            "text": "",
+            "type": "String",
+            "value": "type"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "新闻动态",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "{{ domainURL }}/eoa/cms/eoaCmsSite/getSiteData",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 1206,
+          "height": 551
+        },
+        "dataSetId": "994130011013939200",
+        "fieldOption": [
+          {
+            "label": "columnId",
+            "text": "columnId",
+            "value": "columnId"
+          },
+          {
+            "label": "author",
+            "text": "author",
+            "value": "author"
+          },
+          {
+            "label": "publishDate",
+            "text": "publishDate",
+            "value": "publishDate"
+          },
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "isPublish",
+            "text": "isPublish",
+            "value": "isPublish"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "createBy",
+            "text": "createBy",
+            "value": "createBy"
+          },
+          {
+            "label": "readTimes",
+            "text": "readTimes",
+            "value": "readTimes"
+          },
+          {
+            "label": "createTime",
+            "text": "createTime",
+            "value": "createTime"
+          },
+          {
+            "label": "sysOrgCode",
+            "text": "sysOrgCode",
+            "value": "sysOrgCode"
+          },
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "imageHref",
+            "text": "imageHref",
+            "value": "imageHref"
+          },
+          {
+            "label": "updateTime",
+            "text": "updateTime",
+            "value": "updateTime"
+          },
+          {
+            "label": "updateBy",
+            "text": "updateBy",
+            "value": "updateBy"
+          }
+        ],
+        "actionConfig": {
+          "operateType": "url",
+          "modalName": "",
+          "url": "/eoa/cms/eoaCmsArticleDetail"
+        },
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "titleFontColor": "#000000E3",
+          "showTitlePrefix": true,
+          "titleFontSize": 17,
+          "showTimePrefix": true,
+          "iconColor": "#4A4A4A",
+          "contentColor": "#4A4A4A",
+          "card": {
+            "rightHref": "/eoa/cms/eoaCmsArticlePortal?type=A01",
+            "extra": "更多",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "新闻动态"
+          }
+        }
+      },
+      "key": "2177b596-0269-4bff-8b8b-7ad94cb82151"
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 1002,
+  "appMenuGroupId": null,
+  "createTime": "2024-09-10 15:47:12",
+  "updateBy": "admin",
+  "updateTime": "2025-06-13 09:44:58",
+  "updateCount": 2,
+  "visitsNum": 10,
+  "delFlag": 0
+}

@@ -1,0 +1,209 @@
+{
+  "id": "1522823348231397378",
+  "name": "示例_数据表格",
+  "path": "/drag/page/view/1522823348231397378",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JForm",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 12,
+      "i": "2c69541d-4945-4734-8813-f719cccff3e3",
+      "y": 0,
+      "pageCompId": "1524656729709641730",
+      "config": {
+        "size": {
+          "height": 120
+        },
+        "w": 24,
+        "dataType": 2,
+        "h": 12,
+        "linkageConfig": [
+          {
+            "linkageId": "491fc4c0-782c-49ac-838c-ae7003abece2",
+            "linkage": [
+              {
+                "source": "name",
+                "target": "name"
+              },
+              {
+                "source": "sex",
+                "target": "sex"
+              }
+            ]
+          }
+        ],
+        "timeOut": -1,
+        "option": {
+          "fields": [
+            {
+              "fieldName": "sex",
+              "dictCode": "sex",
+              "fieldTxt": "性别",
+              "defaultValue": "1",
+              "searchMode": "",
+              "action": "",
+              "id": "row57227ae2-04d1-4306-8878-314e099cd5ac",
+              "izSearch": "1",
+              "widgetType": "select"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 42,
+      "i": "491fc4c0-782c-49ac-838c-ae7003abece2",
+      "y": 12,
+      "pageCompId": "1524656729776750593",
+      "config": {
+        "paramOption": [
+          {
+            "defaultVal": "1",
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_数据表格",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "select*fromdemowheresex='${sex}'",
+        "drillData": [],
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1522824721899511810",
+        "fieldOption": [
+          {
+            "label": "姓名",
+            "text": "姓名",
+            "value": "name"
+          },
+          {
+            "label": "打卡时间",
+            "text": "打卡时间",
+            "value": "punch_time"
+          },
+          {
+            "label": "工资",
+            "text": "工资",
+            "value": "salary_money"
+          },
+          {
+            "label": "奖金",
+            "text": "奖金",
+            "value": "bonus_money"
+          },
+          {
+            "label": "性别",
+            "text": "性别",
+            "value": "sex"
+          },
+          {
+            "label": "年龄",
+            "text": "年龄",
+            "value": "age"
+          },
+          {
+            "label": "生日",
+            "text": "生日",
+            "value": "birthday"
+          },
+          {
+            "label": "邮箱",
+            "text": "邮箱",
+            "value": "email"
+          },
+          {
+            "label": "个人简介",
+            "text": "个人简介",
+            "value": "content"
+          }
+        ],
+        "dataSetType": "sql",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "姓名"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "punch_time",
+              "title": "打卡时间"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "salary_money",
+              "title": "工资"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "bonus_money",
+              "title": "奖金"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "sex",
+              "title": "性别"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "age",
+              "title": "年龄"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "birthday",
+              "title": "生日"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "email",
+              "title": "邮箱"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "content",
+              "title": "个人简介"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-07 14:19:14",
+  "updateBy": "admin",
+  "updateTime": "2022-05-12 15:44:26",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

@@ -1,0 +1,684 @@
+{
+  "id": "1522460228585529346",
+  "name": "示例_旅游数据监控",
+  "path": "/drag/page/view/1522460228585529346",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JRing",
+      "w": 8,
+      "moved": false,
+      "x": 0,
+      "h": 30,
+      "i": "3e514383-e7b8-4038-8037-da02ceeb251f",
+      "y": 0,
+      "pageCompId": "1522466576295534593",
+      "config": {
+        "chartData": "[{\"name\":\"18~30岁\",\"value\":5500},{\"name\":\"30~40岁\",\"value\":2000},{\"name\":\"40~60岁\",\"value\":1500},{\"name\":\"60岁以上\",\"value\":1200},{\"name\":\"18岁以下\",\"value\":800}]",
+        "size": {
+          "width": 411,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "orient": "vertical"
+          },
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "show": true,
+            "text": "年龄占比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 8,
+      "moved": false,
+      "x": 0,
+      "h": 24,
+      "i": "7c31dea0-fdf9-46ae-83f3-a3c1e50641f6",
+      "y": 30,
+      "pageCompId": "1522466576429752321",
+      "config": {
+        "chartData": "[{\"name\":\"石家庄\",\"value\":51},{\"name\":\"邢台\",\"value\":121},{\"name\":\"邯郸\",\"value\":78},{\"name\":\"保定\",\"value\":66},{\"name\":\"廊坊\",\"value\":80},{\"name\":\"唐山\",\"value\":100}]",
+        "size": {
+          "width": 411,
+          "height": 254
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "grid": {
+            "bottom": 63,
+            "show": false,
+            "right": 14
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "游客地区分部",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "w": 8,
+      "moved": false,
+      "x": 0,
+      "h": 26,
+      "i": "661c80a4-668f-4446-8f56-d8628e2511f9",
+      "y": 54,
+      "pageCompId": "1522466576526221314",
+      "config": {
+        "chartData": "[{\"name\":\"5/1\",\"value\":1000},{\"name\":\"5/2\",\"value\":7350},{\"name\":\"5/3\",\"value\":5800},{\"name\":\"5/4\",\"value\":6000},{\"name\":\"5/5\",\"value\":3000}]",
+        "size": {
+          "width": 411,
+          "height": 276
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "left": 46,
+            "bottom": 58,
+            "show": false,
+            "right": 1
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "游客趋势分析",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 31,
+      "i": "09a859e0-d906-4d6a-92d2-5cb9966aedfb",
+      "y": 0,
+      "pageCompId": "1522466576605913090",
+      "config": {
+        "chartData": "[{\"value\":1048,\"name\":\"火车\"},{\"value\":735,\"name\":\"飞机\"},{\"value\":580,\"name\":\"轮船\"},{\"value\":484,\"name\":\"自驾\"},{\"value\":300,\"name\":\"徒步\"}]",
+        "size": {
+          "width": 358,
+          "height": 331
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "isRose": true,
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 1,
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "交通方式",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 25,
+      "i": "c30dbcb0-4d27-4f25-83f5-de2bbbac401c",
+      "y": 11,
+      "pageCompId": "1522466576702382082",
+      "config": {
+        "size": {
+          "width": 463,
+          "height": 265
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "http://minio.jeecg.com/otatest/111_1651818408914.png"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 8,
+      "h": 5,
+      "i": "d4f386cb-6074-4f46-84a7-7328b2b147bf",
+      "y": 0,
+      "pageCompId": "1522466576777879554",
+      "config": {
+        "chartData": "五星级",
+        "size": {
+          "width": 253,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 13,
+      "h": 5,
+      "i": "e355be6c-3c7f-4f6e-8014-7ff591f8c9b0",
+      "y": 0,
+      "pageCompId": "1522466576878542849",
+      "config": {
+        "chartData": "四星级",
+        "size": {
+          "width": 200,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 8,
+      "h": 5,
+      "i": "f6cb6f0f-3e74-4f97-8965-c83102f62248",
+      "y": 5,
+      "pageCompId": "1522466576954040321",
+      "config": {
+        "chartData": "56789",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 13,
+      "h": 6,
+      "i": "3e3d8fee-844f-4437-a593-899b6b1ff811",
+      "y": 5,
+      "pageCompId": "1522466577054703617",
+      "config": {
+        "chartData": "6789",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 9,
+      "moved": false,
+      "x": 8,
+      "h": 44,
+      "i": "c3bb7ba4-8dc9-4e2a-8252-77ed74dd10d0",
+      "y": 36,
+      "pageCompId": "1522466577159561217",
+      "config": {
+        "chartData": "[{\"name\":\"2~3小时\",\"value\":3500},{\"name\":\">=3小时\",\"value\":2400},{\"name\":\"1~2小时\",\"value\":2300},{\"name\":\"<=1小时\",\"value\":1800}]",
+        "size": {
+          "width": 463,
+          "height": 474
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "基础饼图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 49,
+      "i": "d3edcc06-4e00-4934-ab1e-066f058ea618",
+      "y": 31,
+      "pageCompId": "1522466577264418817",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "旅游数据监控",
+        "h": 42,
+        "dataSetApi": "[{\"type1\":\"路线1\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线2\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线3\",\"type3\":\"1111\",\"type2\":\"1111\"},{\"type1\":\"路线4\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线5\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线6\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线7\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线8\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线9\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线10\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线11\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线12\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线13\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线14\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线15\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线16\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线17\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线18\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线19\",\"type2\":\"1111\",\"type3\":\"1111\"},{\"type1\":\"路线20\",\"type2\":\"1111\",\"type3\":\"1111\"}]",
+        "drillData": [],
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 358,
+          "height": 529
+        },
+        "dataSetId": "1522464505970302978",
+        "fieldOption": [
+          {
+            "label": "路线",
+            "text": "路线",
+            "value": "type1"
+          },
+          {
+            "label": "车辆",
+            "text": "车辆",
+            "value": "type2"
+          },
+          {
+            "label": "人数",
+            "text": "人数",
+            "value": "type3"
+          }
+        ],
+        "dataSetType": "json",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "type1",
+              "title": "路线"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "type2",
+              "title": "车辆"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "type3",
+              "title": "人数"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-06 14:16:19",
+  "updateBy": "admin",
+  "updateTime": "2022-05-06 14:41:33",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

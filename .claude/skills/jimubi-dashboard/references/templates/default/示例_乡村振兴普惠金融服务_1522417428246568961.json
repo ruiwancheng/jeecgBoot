@@ -1,0 +1,938 @@
+{
+  "id": "1522417428246568961",
+  "name": "示例_乡村振兴普惠金融服务",
+  "path": "/drag/page/view/1522417428246568961",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "62cb9a5f-eb84-4f74-8e35-3fa54fd867f0",
+      "y": 8,
+      "pageCompId": "1522524336454377473",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 6,
+      "moved": false,
+      "x": 0,
+      "h": 8,
+      "i": "7e21b964-9332-4348-b36e-30314b6f92c2",
+      "y": 0,
+      "pageCompId": "1522524336693452802",
+      "config": {
+        "chartData": "乡村振兴普惠金融服务平台",
+        "size": {
+          "width": 306,
+          "height": 78
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 23,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "1edb6c33-8eb8-4f22-8711-55aef46767d7",
+      "y": 8,
+      "pageCompId": "1522524336823476225",
+      "config": {
+        "chartData": "农牧耕田（亩）：12345",
+        "size": {
+          "width": 253,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 13
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "f4d32efe-0cff-4845-8c38-bde3fdb0657c",
+      "y": 13,
+      "pageCompId": "1522524336903168002",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "6b640017-ec02-407e-87d3-35b4da262384",
+      "y": 18,
+      "pageCompId": "1522524336974471169",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "f64eb1a5-faec-4b42-8490-88cddf20669b",
+      "y": 13,
+      "pageCompId": "1522524337066745858",
+      "config": {
+        "chartData": "农牧产量（斤）：56789",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "402b8a18-951c-4bd0-b817-17b75d18cbd2",
+      "y": 18,
+      "pageCompId": "1522524337146437633",
+      "config": {
+        "chartData": "综合产品：4567768",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 13
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 14,
+      "moved": false,
+      "x": 0,
+      "h": 43,
+      "i": "aafe3aec-5265-4769-8ba3-c3f693287100",
+      "y": 38,
+      "pageCompId": "1522524337251295233",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "乡村振兴_表格",
+        "h": 42,
+        "dataSetApi": "[{\"name\":\"数据\",\"sj\":\"1000\",\"type\":\"担保\",\"je\":\"50\",\"jg\":\"机构\",\"jl\":\"数据2\"},{\"name\":\"数据1\",\"sj\":\"1500\",\"type\":\"担保\",\"je\":\"100\",\"jg\":\"机构2\",\"jl\":\"李四\"},{\"name\":\"数据\",\"sj\":\"1000\",\"type\":\"担保\",\"je\":\"50\",\"jg\":\"机构\",\"jl\":\"数据2\"},{\"name\":\"数据1\",\"sj\":\"1500\",\"type\":\"担保\",\"je\":\"100\",\"jg\":\"机构2\",\"jl\":\"李四\"},{\"name\":\"数据\",\"sj\":\"1000\",\"type\":\"担保\",\"je\":\"50\",\"jg\":\"机构\",\"jl\":\"数据2\"},{\"name\":\"数据1\",\"sj\":\"1500\",\"type\":\"担保\",\"je\":\"100\",\"jg\":\"机构2\",\"jl\":\"李四\"},{\"name\":\"数据\",\"sj\":\"1000\",\"type\":\"担保\",\"je\":\"50\",\"jg\":\"机构\",\"jl\":\"数据2\"},{\"name\":\"数据1\",\"sj\":\"1500\",\"type\":\"担保\",\"je\":\"100\",\"jg\":\"机构2\",\"jl\":\"李四\"}]",
+        "drillData": [],
+        "timeOut": 0,
+        "chartData": "",
+        "size": {
+          "width": 726,
+          "height": 463
+        },
+        "dataSetId": "1522422772532256770",
+        "fieldOption": [
+          {
+            "label": "客户姓名",
+            "text": "客户姓名",
+            "value": "name"
+          },
+          {
+            "label": "放款时间",
+            "text": "放款时间",
+            "value": "sj"
+          },
+          {
+            "label": "担保方式",
+            "text": "担保方式",
+            "value": "type"
+          },
+          {
+            "label": "放款金额",
+            "text": "放款金额",
+            "value": "je"
+          },
+          {
+            "label": "法人机构",
+            "text": "法人机构",
+            "value": "jg"
+          },
+          {
+            "label": "客户经理",
+            "text": "客户经理",
+            "value": "jl"
+          }
+        ],
+        "dataSetType": "json",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "客户姓名"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "sj",
+              "title": "放款时间"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "type",
+              "title": "担保方式"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "je",
+              "title": "放款金额"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "jg",
+              "title": "法人机构"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "jl",
+              "title": "客户经理"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "w": 10,
+      "moved": false,
+      "x": 14,
+      "h": 29,
+      "i": "ba474f88-f06a-4459-adc0-53929c564e5f",
+      "y": 0,
+      "pageCompId": "1522524337356152834",
+      "config": {
+        "chartData": "[{\"value\":1000,\"name\":\"苹果\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"梨\"},{\"value\":6000,\"name\":\"葡萄\"},{\"value\":3000,\"name\":\"山楂\"}]",
+        "size": {
+          "width": 516,
+          "height": 309
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 61,
+            "show": false,
+            "right": 62
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "五年产业变化趋势",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 10,
+      "moved": false,
+      "x": 14,
+      "h": 28,
+      "i": "88f93cd9-3a51-42aa-9a11-6edf685a5db9",
+      "y": 29,
+      "pageCompId": "1522524337461010433",
+      "config": {
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"大豆\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"小麦\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"果蔬\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 516,
+          "height": 298
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "left": 66,
+            "bottom": 65,
+            "show": false,
+            "right": 1
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "农产品排名",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 10,
+      "moved": false,
+      "x": 14,
+      "h": 24,
+      "i": "4e7bb9d5-72c2-4f21-85cb-0f6289d9099e",
+      "y": 57,
+      "pageCompId": "1522524337565868034",
+      "config": {
+        "chartData": "[{\"value\":1048,\"name\":\"蔬菜\"},{\"value\":735,\"name\":\"果物\"},{\"value\":580,\"name\":\"粮食\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"养殖\"}]",
+        "size": {
+          "width": 516,
+          "height": 254
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "农业占比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "53d91193-8d89-4291-be1b-cc6e43ef1bf9",
+      "y": 23,
+      "pageCompId": "1522524337670725634",
+      "config": {
+        "chartData": "综合收入：678904",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "e04f860d-3355-4ce2-8ad7-c7597f7365e2",
+      "y": 23,
+      "pageCompId": "1522524337742028802",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "e52f5ced-8159-46e6-8a60-7349e9eb26b9",
+      "y": 28,
+      "pageCompId": "1522524337813331969",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "b6d236f0-827a-4b32-a556-e85fe44e7df1",
+      "y": 28,
+      "pageCompId": "1522524337884635138",
+      "config": {
+        "chartData": "农牧产量（斤）：56789",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 5,
+      "moved": false,
+      "x": 1,
+      "h": 5,
+      "i": "018f02bb-eb4b-43f3-a98e-9a712681bb26",
+      "y": 33,
+      "pageCompId": "1522524337951744001",
+      "config": {
+        "chartData": "农牧产量（斤）：56789",
+        "size": {
+          "height": 50
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JImg",
+      "w": 1,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "ecc0ff70-9aa0-48ee-84c1-625c5069044c",
+      "y": 33,
+      "pageCompId": "1522524338023047170",
+      "config": {
+        "size": {
+          "width": 43,
+          "height": 45
+        },
+        "w": 10,
+        "dataType": 1,
+        "h": 20,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "url": "https://jeecgos.oss-cn-beijing.aliyuncs.com/bigscreen/images/8830d68590e34dfdadd8ca0845763fd4.jpg"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JFunnel",
+      "w": 8,
+      "moved": false,
+      "x": 6,
+      "h": 38,
+      "i": "19ab2147-2c5c-47c7-8dce-bec960353793",
+      "y": 0,
+      "pageCompId": "1522524338094350337",
+      "config": {
+        "chartData": "[{\"value\":335,\"name\":\"果蔬\"},{\"value\":310,\"name\":\"粮食\"},{\"value\":234,\"name\":\"养殖\"}]",
+        "size": {
+          "width": 411,
+          "height": 408
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/funnel",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "legend": {
+            "orient": "horizontal",
+            "show": false
+          },
+          "series": [
+            {
+              "left": "10%",
+              "gap": 2,
+              "name": "Funnel",
+              "width": "80%",
+              "emphasis": {
+                "label": {
+                  "fontSize": 20
+                }
+              },
+              "itemStyle": {
+                "borderColor": "#fff",
+                "borderWidth": 1
+              },
+              "sort": "descending",
+              "label": {
+                "show": true,
+                "position": "inside"
+              },
+              "labelLine": {
+                "lineStyle": {
+                  "width": 1,
+                  "type": "solid"
+                },
+                "length": 10
+              },
+              "type": "funnel"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%",
+            "trigger": "item"
+          },
+          "title": {
+            "show": true,
+            "text": "农产品收入排行",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-06 11:26:15",
+  "updateBy": "admin",
+  "updateTime": "2022-05-06 18:31:04",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

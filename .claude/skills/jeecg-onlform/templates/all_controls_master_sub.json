@@ -1,0 +1,133 @@
+{
+  "_comment": "全控件主子表模板：主表覆盖26种控件+3种数值类型(int/long/BigDecimal)，一对多+一对一子表各覆盖18种控件+3种数值类型。使用前需修改9处：主表的 tableName/tableTxt/subTableStr，以及两个子表各自的 tableName/tableTxt/mainTable（mainTable 必须与主表 tableName 保持一致）。注意：数值类型控件选文本框(fieldShowType=text)，dbType 填 int/long/BigDecimal，范围查询用 queryMode=group。",
+  "action": "create",
+  "tables": [
+    {
+      "tableName": "demo_ctrl_main",
+      "tableTxt": "全控件演示主表",
+      "tableType": 2,
+      "themeTemplate": "normal",
+      "formTemplate": "2",
+      "subTableStr": "demo_ctrl_detail,demo_ctrl_extend",
+      "fields": [
+        {"dbFieldName": "fname",       "dbFieldTxt": "单行文本",   "fieldShowType": "text",           "dbType": "string",   "dbLength": 100, "isQuery": "1", "queryMode": "like", "sortFlag": "1"},
+        {"dbFieldName": "fnum_int",    "dbFieldTxt": "整数(int)",      "fieldShowType": "text",           "dbType": "int",        "dbLength": 10,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "fnum_long",   "dbFieldTxt": "长整数(long)",   "fieldShowType": "text",           "dbType": "long",       "dbLength": 19,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "fnum_decimal","dbFieldTxt": "小数(BigDecimal)","fieldShowType": "text",          "dbType": "BigDecimal", "dbLength": 10,  "dbPointLength": 2, "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "fpassword",   "dbFieldTxt": "密码框",     "fieldShowType": "password",       "dbType": "string",   "dbLength": 32},
+        {"dbFieldName": "fremark",     "dbFieldTxt": "多行文本",   "fieldShowType": "textarea",       "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "fdate",       "dbFieldTxt": "日期",       "fieldShowType": "date",           "dbType": "Date",     "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "fdatetime",   "dbFieldTxt": "日期时间",   "fieldShowType": "datetime",       "dbType": "Datetime"},
+        {"dbFieldName": "ftime",       "dbFieldTxt": "时间选择",   "fieldShowType": "time",           "dbType": "string",   "dbLength": 50},
+        {"dbFieldName": "fswitch",     "dbFieldTxt": "开关",       "fieldShowType": "switch",         "dbType": "string",   "dbLength": 50,  "fieldExtendJson": "{\"switchOptions\":[\"Y\",\"N\"]}"},
+        {"dbFieldName": "fradio",      "dbFieldTxt": "单选框",     "fieldShowType": "radio",          "dbType": "string",   "dbLength": 50,  "dictField": "sex", "isQuery": "1"},
+        {"dbFieldName": "flist",       "dbFieldTxt": "下拉框",     "fieldShowType": "list",           "dbType": "string",   "dbLength": 50,  "dictField": "priority", "isQuery": "1"},
+        {"dbFieldName": "fcheckbox",   "dbFieldTxt": "多选框",     "fieldShowType": "checkbox",       "dbType": "string",   "dbLength": 200, "dictField": "urgent_level"},
+        {"dbFieldName": "flist_multi", "dbFieldTxt": "下拉多选",   "fieldShowType": "list_multi",     "dbType": "string",   "dbLength": 250, "dictField": "urgent_level"},
+        {"dbFieldName": "fsel_search", "dbFieldTxt": "下拉搜索",   "fieldShowType": "sel_search",     "dbType": "string",   "dbLength": 50,  "dictTable": "sys_user", "dictField": "username", "dictText": "realname"},
+        {"dbFieldName": "fimage",      "dbFieldTxt": "图片上传",   "fieldShowType": "image",          "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "ffile",       "dbFieldTxt": "文件附件",   "fieldShowType": "file",           "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "fumeditor",   "dbFieldTxt": "富文本",     "fieldShowType": "umeditor",       "dbType": "Text",     "dbLength": 0,   "fieldExtendJson": "{\"isOneRow\":true}"},
+        {"dbFieldName": "fmarkdown",   "dbFieldTxt": "Markdown",  "fieldShowType": "markdown",       "dbType": "Blob",     "dbLength": 0,   "fieldExtendJson": "{\"isOneRow\":true}"},
+        {"dbFieldName": "fsel_user",   "dbFieldTxt": "用户选择",   "fieldShowType": "sel_user",       "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "fsel_depart", "dbFieldTxt": "部门选择",   "fieldShowType": "sel_depart",     "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "fpca",        "dbFieldTxt": "省市区",     "fieldShowType": "pca",            "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "fcat_tree",   "dbFieldTxt": "分类字典树", "fieldShowType": "cat_tree",       "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "fsel_tree",   "dbFieldTxt": "自定义树",   "fieldShowType": "sel_tree",       "dbType": "string",   "dbLength": 255, "dictTable": "sys_category", "dictField": "0", "dictText": "id,pid,name,has_child"},
+        {"dbFieldName": "fpopup",      "dbFieldTxt": "弹窗选择",   "fieldShowType": "popup",          "dbType": "string",   "dbLength": 100, "dictTable": "report_user", "dictField": "username,realname", "dictText": "fpopup,fpopback"},
+        {"dbFieldName": "fpopback",    "dbFieldTxt": "弹窗回填",   "fieldShowType": "text",           "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "fpopup_dict", "dbFieldTxt": "Pop字典",    "fieldShowType": "popup_dict",     "dbType": "string",   "dbLength": 100, "dictTable": "report_user", "dictField": "id", "dictText": "realname"},
+        {
+          "dbFieldName": "flink_table", "dbFieldTxt": "关联记录", "fieldShowType": "link_table",
+          "dbType": "string", "dbLength": 200,
+          "dictTable": "user_info", "dictField": "id", "dictText": "user_code,phone",
+          "fieldExtendJson": "{\"showType\":\"card\",\"multiSelect\":false,\"imageField\":\"\"}"
+        },
+        {"dbFieldName": "flink_field", "dbFieldTxt": "他表字段",   "fieldShowType": "link_table_field","dbType": "string",  "dbLength": 32,  "dictTable": "flink_table", "dictField": "", "dictText": "user_code", "dbIsPersist": "0"},
+        {
+          "dbFieldName": "flink_down", "dbFieldTxt": "联动下拉父", "fieldShowType": "link_down",
+          "dbType": "string", "dbLength": 255,
+          "dictTable": "{\n\ttable: \"sys_category\",\n\ttxt: \"name\",\n\tkey: \"id\",\n\tlinkField: \"flink_child\",\n\tidField: \"id\",\n\tpidField: \"pid\",\n\tcondition:\"pid = '0'\"\n}",
+          "dictField": "", "dictText": ""
+        },
+        {"dbFieldName": "flink_child", "dbFieldTxt": "联动下拉子", "fieldShowType": "text",           "dbType": "string",   "dbLength": 100}
+      ]
+    },
+    {
+      "tableName": "demo_ctrl_detail",
+      "tableTxt": "全控件明细子表(一对多)",
+      "tableType": 3,
+      "relationType": 0,
+      "tabOrderNum": 1,
+      "mainTable": "demo_ctrl_main",
+      "mainField": "id",
+      "fields": [
+        {"dbFieldName": "dtext",       "dbFieldTxt": "单行文本",   "fieldShowType": "text",       "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "dnum_int",    "dbFieldTxt": "整数(int)",      "fieldShowType": "text",       "dbType": "int",        "dbLength": 10,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "dnum_long",   "dbFieldTxt": "长整数(long)",   "fieldShowType": "text",       "dbType": "long",       "dbLength": 19,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "dnum_decimal","dbFieldTxt": "小数(BigDecimal)","fieldShowType": "text",      "dbType": "BigDecimal", "dbLength": 10,  "dbPointLength": 2, "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "dradio",      "dbFieldTxt": "单选框",     "fieldShowType": "radio",      "dbType": "string",   "dbLength": 50,  "dictField": "sex"},
+        {"dbFieldName": "dswitch",     "dbFieldTxt": "开关",       "fieldShowType": "switch",     "dbType": "string",   "dbLength": 50,  "fieldExtendJson": "{\"switchOptions\":[\"Y\",\"N\"]}"},
+        {"dbFieldName": "ddate",       "dbFieldTxt": "日期",       "fieldShowType": "date",       "dbType": "Date"},
+        {"dbFieldName": "ddatetime",   "dbFieldTxt": "日期时间",   "fieldShowType": "datetime",   "dbType": "Datetime"},
+        {"dbFieldName": "dtime",       "dbFieldTxt": "时间",       "fieldShowType": "time",       "dbType": "string",   "dbLength": 50},
+        {"dbFieldName": "dfile",       "dbFieldTxt": "文件",       "fieldShowType": "file",       "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "dimage",      "dbFieldTxt": "图片",       "fieldShowType": "image",      "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "dlist",       "dbFieldTxt": "下拉框",     "fieldShowType": "list",       "dbType": "string",   "dbLength": 50,  "dictField": "priority"},
+        {"dbFieldName": "dlist_multi", "dbFieldTxt": "下拉多选",   "fieldShowType": "list_multi", "dbType": "string",   "dbLength": 250, "dictField": "urgent_level"},
+        {"dbFieldName": "dsel_search", "dbFieldTxt": "下拉搜索",   "fieldShowType": "sel_search", "dbType": "string",   "dbLength": 50,  "dictTable": "sys_user", "dictField": "username", "dictText": "realname"},
+        {"dbFieldName": "dpopup",      "dbFieldTxt": "弹窗选择",   "fieldShowType": "popup",      "dbType": "string",   "dbLength": 100, "dictTable": "report_user", "dictField": "username,realname", "dictText": "dpopup,dpopback"},
+        {"dbFieldName": "dpopback",    "dbFieldTxt": "弹窗回填",   "fieldShowType": "text",       "dbType": "string",   "dbLength": 100},
+        {
+          "dbFieldName": "dlink_table", "dbFieldTxt": "关联记录", "fieldShowType": "link_table",
+          "dbType": "string", "dbLength": 200,
+          "dictTable": "user_info", "dictField": "id", "dictText": "user_code,phone",
+          "fieldExtendJson": "{\"showType\":\"card\",\"multiSelect\":false,\"imageField\":\"\"}"
+        },
+        {"dbFieldName": "dlink_field", "dbFieldTxt": "他表字段",   "fieldShowType": "link_table_field","dbType": "string","dbLength": 32, "dictTable": "dlink_table", "dictField": "", "dictText": "user_code", "dbIsPersist": "0"},
+        {"dbFieldName": "dsel_depart", "dbFieldTxt": "部门选择",   "fieldShowType": "sel_depart", "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "dsel_user",   "dbFieldTxt": "用户选择",   "fieldShowType": "sel_user",   "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "dpca",        "dbFieldTxt": "省市区",     "fieldShowType": "pca",        "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "dtextarea",   "dbFieldTxt": "多行文本",   "fieldShowType": "textarea",   "dbType": "string",   "dbLength": 500}
+      ]
+    },
+    {
+      "tableName": "demo_ctrl_extend",
+      "tableTxt": "全控件扩展子表(一对一)",
+      "tableType": 3,
+      "relationType": 1,
+      "tabOrderNum": 2,
+      "mainTable": "demo_ctrl_main",
+      "mainField": "id",
+      "fields": [
+        {"dbFieldName": "etext",       "dbFieldTxt": "单行文本",   "fieldShowType": "text",       "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "enum_int",    "dbFieldTxt": "整数(int)",      "fieldShowType": "text",       "dbType": "int",        "dbLength": 10,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "enum_long",   "dbFieldTxt": "长整数(long)",   "fieldShowType": "text",       "dbType": "long",       "dbLength": 19,  "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "enum_decimal","dbFieldTxt": "小数(BigDecimal)","fieldShowType": "text",      "dbType": "BigDecimal", "dbLength": 10,  "dbPointLength": 2, "isQuery": "1", "queryMode": "group"},
+        {"dbFieldName": "eradio",      "dbFieldTxt": "单选框",     "fieldShowType": "radio",      "dbType": "string",   "dbLength": 50,  "dictField": "sex"},
+        {"dbFieldName": "eswitch",     "dbFieldTxt": "开关",       "fieldShowType": "switch",     "dbType": "string",   "dbLength": 50,  "fieldExtendJson": "{\"switchOptions\":[\"Y\",\"N\"]}"},
+        {"dbFieldName": "edate",       "dbFieldTxt": "日期",       "fieldShowType": "date",       "dbType": "Date"},
+        {"dbFieldName": "edatetime",   "dbFieldTxt": "日期时间",   "fieldShowType": "datetime",   "dbType": "Datetime"},
+        {"dbFieldName": "etime",       "dbFieldTxt": "时间",       "fieldShowType": "time",       "dbType": "string",   "dbLength": 50},
+        {"dbFieldName": "efile",       "dbFieldTxt": "文件",       "fieldShowType": "file",       "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "eimage",      "dbFieldTxt": "图片",       "fieldShowType": "image",      "dbType": "string",   "dbLength": 500},
+        {"dbFieldName": "elist",       "dbFieldTxt": "下拉框",     "fieldShowType": "list",       "dbType": "string",   "dbLength": 50,  "dictField": "priority"},
+        {"dbFieldName": "elist_multi", "dbFieldTxt": "下拉多选",   "fieldShowType": "list_multi", "dbType": "string",   "dbLength": 250, "dictField": "urgent_level"},
+        {"dbFieldName": "esel_search", "dbFieldTxt": "下拉搜索",   "fieldShowType": "sel_search", "dbType": "string",   "dbLength": 50,  "dictTable": "sys_user", "dictField": "username", "dictText": "realname"},
+        {"dbFieldName": "epopup",      "dbFieldTxt": "弹窗选择",   "fieldShowType": "popup",      "dbType": "string",   "dbLength": 100, "dictTable": "report_user", "dictField": "username,realname", "dictText": "epopup,epopback"},
+        {"dbFieldName": "epopback",    "dbFieldTxt": "弹窗回填",   "fieldShowType": "text",       "dbType": "string",   "dbLength": 100},
+        {
+          "dbFieldName": "elink_table", "dbFieldTxt": "关联记录", "fieldShowType": "link_table",
+          "dbType": "string", "dbLength": 200,
+          "dictTable": "user_info", "dictField": "id", "dictText": "user_code,phone",
+          "fieldExtendJson": "{\"showType\":\"card\",\"multiSelect\":false,\"imageField\":\"\"}"
+        },
+        {"dbFieldName": "elink_field", "dbFieldTxt": "他表字段",   "fieldShowType": "link_table_field","dbType": "string","dbLength": 32, "dictTable": "elink_table", "dictField": "", "dictText": "user_code", "dbIsPersist": "0"},
+        {"dbFieldName": "esel_depart", "dbFieldTxt": "部门选择",   "fieldShowType": "sel_depart", "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "esel_user",   "dbFieldTxt": "用户选择",   "fieldShowType": "sel_user",   "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "epca",        "dbFieldTxt": "省市区",     "fieldShowType": "pca",        "dbType": "string",   "dbLength": 100},
+        {"dbFieldName": "etextarea",   "dbFieldTxt": "多行文本",   "fieldShowType": "textarea",   "dbType": "string",   "dbLength": 500}
+      ]
+    }
+  ]
+}

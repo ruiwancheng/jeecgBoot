@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:activiti="http://activiti.org/bpmn" targetNamespace="http://www.jeecg.com">
+  <process id="process1609125744738" name="包含网关测试">
+    <documentation>流程描述</documentation>
+    <extensionElements>
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.ProcessEndListener" event="end" id="402880e54803a496014805e5d9190012" />
+    </extensionElements>
+    <startEvent id="start" name="开始节点" flowable:initiator="applyUserId" />
+    <endEvent id="end" name="结束节点" />
+    <userTask id="task1609125750431" name="领取体检单" flowable:assignee="admin" />
+    <userTask id="task1609125786551" name="常规体检" flowable:assignee="admin" />
+    <userTask id="task1609125793898" name="抽血化验" flowable:assignee="admin" />
+    <userTask id="task1609125799296" name="深度体检" flowable:assignee="admin" />
+    <userTask id="task1609125820935" name="领取早餐" flowable:assignee="admin" />
+    <inclusiveGateway id="inclusiveGateway1609125773518" name="" />
+    <inclusiveGateway id="inclusiveGateway1609125834234" name="" />
+    <sequenceFlow id="flow1609125751935" name="" sourceRef="start" targetRef="task1609125750431" />
+    <sequenceFlow id="flow1609125775311" name="" sourceRef="task1609125750431" targetRef="inclusiveGateway1609125773518" />
+    <sequenceFlow id="flow1609125788617" name="普通员工" sourceRef="inclusiveGateway1609125773518" targetRef="task1609125786551">
+      <conditionExpression xsi:type="tFormalExpression">${user_type=='1'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow1609125802774" name="全部" sourceRef="inclusiveGateway1609125773518" targetRef="task1609125793898">
+      <conditionExpression xsi:type="tFormalExpression">${user_type=='1' || user_type=='2'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow1609125805530" name="领导" sourceRef="inclusiveGateway1609125773518" targetRef="task1609125799296">
+      <conditionExpression xsi:type="tFormalExpression">${user_type=='2'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow1609125822376" name="" sourceRef="task1609125793898" targetRef="task1609125820935" />
+    <sequenceFlow id="flow1609125836653" name="" sourceRef="task1609125786551" targetRef="inclusiveGateway1609125834234" />
+    <sequenceFlow id="flow1609125838174" name="" sourceRef="task1609125820935" targetRef="inclusiveGateway1609125834234" />
+    <sequenceFlow id="flow1609125840922" name="" sourceRef="task1609125799296" targetRef="inclusiveGateway1609125834234" />
+    <sequenceFlow id="flow1609125859731" name="" sourceRef="inclusiveGateway1609125834234" targetRef="end" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process1609125744738">
+    <bpmndi:BPMNPlane id="BPMNPlane_process1609125744738" bpmnElement="process1609125744738">
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125859731" bpmnElement="flow1609125859731">
+        <omgdi:waypoint x="648" y="553" />
+        <omgdi:waypoint x="648" y="616" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125840922" bpmnElement="flow1609125840922">
+        <omgdi:waypoint x="839" y="404" />
+        <omgdi:waypoint x="839" y="533" />
+        <omgdi:waypoint x="668" y="533" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125838174" bpmnElement="flow1609125838174">
+        <omgdi:waypoint x="648" y="474" />
+        <omgdi:waypoint x="648" y="513" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125836653" bpmnElement="flow1609125836653">
+        <omgdi:waypoint x="468" y="401" />
+        <omgdi:waypoint x="468" y="533" />
+        <omgdi:waypoint x="628" y="533" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125822376" bpmnElement="flow1609125822376">
+        <omgdi:waypoint x="648" y="357" />
+        <omgdi:waypoint x="648" y="409" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125805530" bpmnElement="flow1609125805530">
+        <omgdi:waypoint x="668" y="218" />
+        <omgdi:waypoint x="839" y="218" />
+        <omgdi:waypoint x="839" y="339" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125802774" bpmnElement="flow1609125802774">
+        <omgdi:waypoint x="648" y="238" />
+        <omgdi:waypoint x="648" y="292" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125788617" bpmnElement="flow1609125788617">
+        <omgdi:waypoint x="628" y="218" />
+        <omgdi:waypoint x="468" y="218" />
+        <omgdi:waypoint x="468" y="336" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125775311" bpmnElement="flow1609125775311">
+        <omgdi:waypoint x="648" y="161" />
+        <omgdi:waypoint x="648" y="198" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1609125751935" bpmnElement="flow1609125751935">
+        <omgdi:waypoint x="648" y="58" />
+        <omgdi:waypoint x="648" y="96" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_start" bpmnElement="start">
+        <omgdc:Bounds x="633" y="28" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_end" bpmnElement="end">
+        <omgdc:Bounds x="633" y="616" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1609125750431" bpmnElement="task1609125750431">
+        <omgdc:Bounds x="603" y="101" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1609125786551" bpmnElement="task1609125786551">
+        <omgdc:Bounds x="423" y="341" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1609125793898" bpmnElement="task1609125793898">
+        <omgdc:Bounds x="603" y="297" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1609125799296" bpmnElement="task1609125799296">
+        <omgdc:Bounds x="794" y="344" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1609125820935" bpmnElement="task1609125820935">
+        <omgdc:Bounds x="603" y="414" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_inclusiveGateway1609125773518" bpmnElement="inclusiveGateway1609125773518">
+        <omgdc:Bounds x="628" y="198" width="40" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_inclusiveGateway1609125834234" bpmnElement="inclusiveGateway1609125834234">
+        <omgdc:Bounds x="628" y="513" width="40" height="40" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

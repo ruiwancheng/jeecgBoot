@@ -1,0 +1,372 @@
+{
+  "id": "1517031795361611778",
+  "name": "示例_统计每日大屏创建情况",
+  "path": "/drag/page/view/1517031795361611778",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JTabs",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 51,
+      "i": "f749bb26-5343-499e-89fd-2228c26495c4",
+      "y": 0,
+      "pageCompId": "1517062543422554114",
+      "config": {
+        "size": {
+          "width": 1650,
+          "height": 551
+        },
+        "w": 12,
+        "h": 40,
+        "option": {
+          "title": "选项卡"
+        },
+        "child": [
+          {
+            "component": "JBar",
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "a8461f71-8f4d-420c-9907-298862d2ac9e",
+            "title": "柱形图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "date",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "c",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计每日大屏创建情况",
+              "query": [],
+              "dataSetApi": "SELECTcount(*)c,DATE_FORMAT(create_time,'%Y-%m-%d')asdatefromjmreport_big_screenGROUPBYdateorderbydatedesc",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1517046731341070337",
+              "fieldOption": [
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "date"
+                },
+                {
+                  "label": "数量",
+                  "text": "数量",
+                  "value": "c"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "showBackground": true,
+                    "backgroundStyle": {
+                      "color": "rgba(180,180,180,0.2)"
+                    },
+                    "type": "bar"
+                  }
+                ],
+                "tooltip": {
+                  "axisPointer": {
+                    "label": {
+                      "backgroundColor": "#333",
+                      "show": true
+                    },
+                    "type": "shadow"
+                  },
+                  "trigger": "axis"
+                },
+                "title": {
+                  "show": false,
+                  "text": "基础柱形图",
+                  "textStyle": {
+                    "color": "#464646"
+                  }
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            }
+          },
+          {
+            "horizontal": false,
+            "component": "JArea",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "9e3efbfd-6945-4f9c-8bc9-ab85ba4414a8",
+            "text": "0.042",
+            "id": "cba0d0be-3d5d-474e-b272-011ba64bca2f",
+            "title": "折线图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "date",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "c",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计每日大屏创建情况",
+              "query": [],
+              "dataSetApi": "SELECTcount(*)c,DATE_FORMAT(create_time,'%Y-%m-%d')asdatefromjmreport_big_screenGROUPBYdateorderbydatedesc",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"value\":1048,\"name\":\"华为\"},{\"value\":605,\"name\":\"vivo\"},{\"value\":580,\"name\":\"oppo\"},{\"value\":484,\"name\":\"苹果\"},{\"value\":300,\"name\":\"小米\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1517046731341070337",
+              "fieldOption": [
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "date"
+                },
+                {
+                  "label": "数量",
+                  "text": "数量",
+                  "value": "c"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "xAxis": {
+                  "data": [],
+                  "boundaryGap": false
+                },
+                "grid": {
+                  "bottom": 115
+                },
+                "series": [
+                  {
+                    "areaStyle": {},
+                    "data": [],
+                    "type": "line"
+                  }
+                ],
+                "title": {
+                  "show": false,
+                  "text": "基础面积图"
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            },
+            "child": []
+          },
+          {
+            "horizontal": false,
+            "component": "JPie",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "3441183d-6ca1-4ac9-920c-325a1846e941",
+            "text": "0.042",
+            "id": "995c3285-281b-4b3b-be37-5319add801bd",
+            "title": "饼图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "date",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "c",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计每日大屏创建情况",
+              "query": [],
+              "dataSetApi": "SELECTcount(*)c,DATE_FORMAT(create_time,'%Y-%m-%d')asdatefromjmreport_big_screenGROUPBYdateorderbydatedesc",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1517046731341070337",
+              "fieldOption": [
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "date"
+                },
+                {
+                  "label": "数量",
+                  "text": "数量",
+                  "value": "c"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "legend": {
+                  "orient": "vertical"
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "name": "AccessFrom",
+                    "emphasis": {
+                      "itemStyle": {
+                        "shadowOffsetX": 0,
+                        "shadowBlur": 10,
+                        "shadowColor": "rgba(0,0,0,0.5)"
+                      }
+                    },
+                    "type": "pie",
+                    "radius": "50%"
+                  }
+                ],
+                "tooltip": {
+                  "trigger": "item"
+                },
+                "title": {
+                  "subtext": "",
+                  "left": "left",
+                  "show": false,
+                  "text": "基础饼图"
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            },
+            "child": []
+          }
+        ]
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 42,
+      "i": "746b3b26-8b4e-426d-8e25-c390e05fa947",
+      "y": 51,
+      "pageCompId": "1517062543523217409",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "统计每日大屏创建情况",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "SELECTcount(*)c,DATE_FORMAT(create_time,'%Y-%m-%d')asdatefromjmreport_big_screenGROUPBYdateorderbydatedesc",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1517046731341070337",
+        "fieldOption": [
+          {
+            "label": "日期",
+            "text": "日期",
+            "value": "date"
+          },
+          {
+            "label": "数量",
+            "text": "数量",
+            "value": "c"
+          }
+        ],
+        "dataSetType": "sql",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "date",
+              "title": "日期"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "c",
+              "title": "数量"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-04-21 14:45:40",
+  "updateBy": "admin",
+  "updateTime": "2022-04-21 16:47:51",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

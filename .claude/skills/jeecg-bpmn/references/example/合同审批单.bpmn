@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:flowable="http://flowable.org/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="process_1757598885161_Copy1769744302823" name="合同审批单（津保农科）">
+    <bpmn2:extensionElements>
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.ProcessEndListener" event="end" />
+      <flowable:eventListener class="org.jeecg.modules.listener.tasktip.TaskCreateGlobalListener" />
+    </bpmn2:extensionElements>
+    <bpmn2:startEvent id="start" name="开始" flowable:initiator="applyUserId">
+      <bpmn2:outgoing>Flow_0yb0cn8</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="Task_0iow9ab" name="选择部长" flowable:assignee="${applyUserId}">
+      <bpmn2:incoming>Flow_1hbdhol</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1xbxp0f</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1og68yt</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="End_13hztj7">
+      <bpmn2:incoming>Flow_0gtibrb</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:userTask id="Task_1deyg2s" name="部门副部长" flowable:candidateUsers="${oaFlowExpression.getApplyUserDeptPositionLevel(sys_org_code, applyUserId, &#39;1958470865577902082&#39;)}" flowable:groupType="position">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1xbxp0f</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0xvcnmm</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1xbxp0f" name="部门副部长" sourceRef="Task_0iow9ab" targetRef="Task_1deyg2s" />
+    <bpmn2:userTask id="Task_0bpjtwx" name="部门负责人" flowable:candidateUsers="${oaFlowExpression.getApplyUserDeptPositionLevel(sys_org_code, applyUserId, &#39;1958470912214368258&#39;)}" flowable:groupType="position">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1og68yt</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0xvcnmm</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0r60abv</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1og68yt" name="部门负责人" sourceRef="Task_0iow9ab" targetRef="Task_0bpjtwx" />
+    <bpmn2:sequenceFlow id="Flow_0xvcnmm" sourceRef="Task_1deyg2s" targetRef="Task_0bpjtwx" />
+    <bpmn2:userTask id="Task_0xx203f" name="成本采购部长" flowable:candidateGroups="1960962870865465345" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0r60abv</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1e5tjly</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0r60abv" sourceRef="Task_0bpjtwx" targetRef="Task_0xx203f" />
+    <bpmn2:userTask id="Task_0a0p4gn" name="法律顾问" flowable:candidateGroups="1960962862476857345" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1e5tjly</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_05uouf2</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1e5tjly" sourceRef="Task_0xx203f" targetRef="Task_0a0p4gn" />
+    <bpmn2:userTask id="Task_0g460ja" name="公司法务" flowable:assignee="sunjingyu">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:false}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_05uouf2</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0awgo05</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_05uouf2" sourceRef="Task_0a0p4gn" targetRef="Task_0g460ja" />
+    <bpmn2:userTask id="Task_075tij5" name="风控部长意见" flowable:candidateGroups="1962405428149764097" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0awgo05</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1q9efh1</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0awgo05" sourceRef="Task_0g460ja" targetRef="Task_075tij5" />
+    <bpmn2:userTask id="Task_17iuxyd" name="选择协办" flowable:assignee="${applyUserId}">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:false}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1q9efh1</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1o3qg32</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1sdeni7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1q9efh1" sourceRef="Task_075tij5" targetRef="Task_17iuxyd" />
+    <bpmn2:userTask id="Task_1mx9pdx" name="协办主管意见" flowable:assignee="${assigneeUserId}" flowable:candidateUsers="${flowUtil.getUsersByFormData(execution,&#39;select_user_1757424592515_554890&#39;,&#39;select-user&#39;)}" flowable:groupType="formData" flowable:countersignRule="countersign_all">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:false,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:false}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+        <flowable:taskCountersignExtendJson value="eyJhdWRpdG9yVXNlclR5cGUiOiJmb3JtRGF0YSIsImF1ZGl0b3JDb3VudGVyc2lnbkZvcm1GaWVsZCI6InNlbGVjdF91c2VyXzE3NTc0MjQ1OTI1MTVfNTU0ODkwIiwiYXVkaXRvckNvdW50ZXJzaWduRm9ybUZpZWxkVHlwZSI6InNlbGVjdC11c2VyIiwidGltZXN0YW1wIjoxNzY5NzQzNzM2ODczfQ==" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1o3qg32</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0o6i6r8</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics flowable:collection="${flowUtil.getAssigneeUsers(execution,&#39;eyJhdWRpdG9yVXNlclR5cGUiOiJmb3JtRGF0YSIsImF1ZGl0b3JDb3VudGVyc2lnbkZvcm1GaWVsZCI6InNlbGVjdF91c2VyXzE3NTc0MjQ1OTI1MTVfNTU0ODkwIiwiYXVkaXRvckNvdW50ZXJzaWduRm9ybUZpZWxkVHlwZSI6InNlbGVjdC11c2VyIiwiZGVzZm9ybUNvZGUiOiJndW9qdS1oZV90b25nX3NoZW5fcGlfZGFuX2ppbmJhb3poaWtlIn0=&#39;)}" flowable:elementVariable="assigneeUserId">
+        <bpmn2:completionCondition xsi:type="bpmn2:tFormalExpression">${nrOfCompletedInstances/nrOfInstances==1}</bpmn2:completionCondition>
+      </bpmn2:multiInstanceLoopCharacteristics>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1o3qg32" name="协办主管" sourceRef="Task_17iuxyd" targetRef="Task_1mx9pdx" />
+    <bpmn2:userTask id="Task_19z078t" name="财务部长意见" flowable:candidateGroups="1960962863265386498" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1sdeni7</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0o6i6r8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_12wit1t</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1sdeni7" name="财务部长" sourceRef="Task_17iuxyd" targetRef="Task_19z078t" />
+    <bpmn2:sequenceFlow id="Flow_0o6i6r8" sourceRef="Task_1mx9pdx" targetRef="Task_19z078t" />
+    <bpmn2:exclusiveGateway id="Gateway_1wx2g6v">
+      <bpmn2:incoming>Flow_12wit1t</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0otfktt</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1wblljm</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_12wit1t" sourceRef="Task_19z078t" targetRef="Gateway_1wx2g6v" />
+    <bpmn2:userTask id="Task_0ka84im" name="分管领导（员工）" flowable:candidateUsers="${flowNodeExecution.getUserSuperPositionLevel2(execution)}">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0otfktt</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0bvgove</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0otfktt" name="拟稿人职位级别不是部长" sourceRef="Gateway_1wx2g6v" targetRef="Task_0ka84im">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${flowUtil.evaluateExpression(execution, 'W3sibG9naWMiOiJhbmQiLCJjb25kaXRpb25zIjpbeyJvcGVyYXRvciI6Im5lIiwiZmllbGQiOiJhcHBseVVzZXJQb3N0TGV2ZWwiLCJleHBlY3RlZFZhbHVlIjoiMTk1ODQ3MDkxMjIxNDM2ODI1OCJ9XX1d', 'and')}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="Task_17lx9tw" name="分管领导（部长）" flowable:candidateUsers="${flowNodeExecution.getUserSuperPositionLevel1(execution)}">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1wblljm</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0hnodme</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1wblljm" name="拟稿人职位级别是部长" sourceRef="Gateway_1wx2g6v" targetRef="Task_17lx9tw">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${flowUtil.evaluateExpression(execution, 'W3sibG9naWMiOiJhbmQiLCJjb25kaXRpb25zIjpbeyJvcGVyYXRvciI6ImVxIiwiZmllbGQiOiJhcHBseVVzZXJQb3N0TGV2ZWwiLCJleHBlY3RlZFZhbHVlIjoiMTk1ODQ3MDkxMjIxNDM2ODI1OCJ9XX1d', 'and')}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="Task_19h0git" name="成本采购副总" flowable:candidateGroups="1962787693681852417" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0bvgove</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0hnodme</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0mut7pk</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0bvgove" sourceRef="Task_0ka84im" targetRef="Task_19h0git" />
+    <bpmn2:sequenceFlow id="Flow_0hnodme" sourceRef="Task_17lx9tw" targetRef="Task_19h0git" />
+    <bpmn2:userTask id="Task_0xvphxx" name="总经理意见" flowable:candidateGroups="1960962863860977666" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0mut7pk</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_11emv9k</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0mut7pk" sourceRef="Task_19h0git" targetRef="Task_0xvphxx" />
+    <bpmn2:exclusiveGateway id="Gateway_01ih3l6">
+      <bpmn2:incoming>Flow_11emv9k</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1gq2o33</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0kso016</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_11emv9k" sourceRef="Task_0xvphxx" targetRef="Gateway_01ih3l6" />
+    <bpmn2:userTask id="Task_04yadz6" name="董事长意见" flowable:candidateGroups="1960962864179744770" flowable:groupType="deptPosition">
+      <bpmn2:extensionElements>
+        <flowable:taskExtendJson value="{&#34;sameMode&#34;:0,&#34;isSkipAssigneeEmpty&#34;:false,&#34;isSkipAssigneeOnePersion&#34;:true,&#34;isSkipApproval&#34;:false,&#34;isAssignedByPreviousNode&#34;:false,&#34;isEmptyAssignedByPreviousNode&#34;:true}" />
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskSkipApprovalListener" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0kso016</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1nd4qv7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Task_0zkraig" name="通知拟稿人" flowable:assignee="${applyUserId}">
+      <bpmn2:incoming>Flow_1gq2o33</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1nd4qv7</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0gtibrb</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1gq2o33" name="合同金额小于等于1000000" sourceRef="Gateway_01ih3l6" targetRef="Task_0zkraig">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${flowUtil.evaluateExpression(execution, 'W3sibG9naWMiOiJhbmQiLCJjb25kaXRpb25zIjpbeyJvcGVyYXRvciI6Imx0ZSIsImZpZWxkIjoibW9uZXlfMTc1NzQyMTQ3Mjc5N183NDYwMTYiLCJmaWVsZFR5cGUiOiJtb25leSIsImZpZWxkTmFtZSI6IuWQiOWQjOS7t+asvuWwj+WGmSIsImV4cGVjdGVkVmFsdWUiOiIxMDAwMDAwIn1dfV0=', 'and')}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0kso016" name="合同金额大于1000000" sourceRef="Gateway_01ih3l6" targetRef="Task_04yadz6">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${flowUtil.evaluateExpression(execution, 'W3sibG9naWMiOiJhbmQiLCJjb25kaXRpb25zIjpbeyJvcGVyYXRvciI6Imd0IiwiZmllbGQiOiJtb25leV8xNzU3NDIxNDcyNzk3Xzc0NjAxNiIsImZpZWxkVHlwZSI6Im1vbmV5IiwiZmllbGROYW1lIjoi5ZCI5ZCM5Lu35qy+5bCP5YaZIiwiZXhwZWN0ZWRWYWx1ZSI6IjEwMDAwMDAifV19XQ==', 'and')}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1nd4qv7" sourceRef="Task_04yadz6" targetRef="Task_0zkraig" />
+    <bpmn2:sequenceFlow id="Flow_0gtibrb" sourceRef="Task_0zkraig" targetRef="End_13hztj7" />
+    <bpmn2:userTask id="Task_0z2ffc7" name="拟稿人" flowable:assignee="${applyUserId}">
+      <bpmn2:extensionElements>
+        <flowable:taskListener class="org.jeecg.modules.extbpm.listener.task.TaskCreatedAutoSubmitListener" event="create" id="9c3064baa7074eab62e3c5b3b5458691" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0yb0cn8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1hbdhol</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0yb0cn8" sourceRef="start" targetRef="Task_0z2ffc7" />
+    <bpmn2:sequenceFlow id="Flow_1hbdhol" sourceRef="Task_0z2ffc7" targetRef="Task_0iow9ab" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_1757598885161_Copy1769744302823">
+      <bpmndi:BPMNEdge id="Flow_1hbdhol_di" bpmnElement="Flow_1hbdhol">
+        <di:waypoint x="330" y="230" />
+        <di:waypoint x="390" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yb0cn8_di" bpmnElement="Flow_0yb0cn8">
+        <di:waypoint x="280" y="138" />
+        <di:waypoint x="280" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gtibrb_di" bpmnElement="Flow_0gtibrb">
+        <di:waypoint x="300" y="650" />
+        <di:waypoint x="300" y="712" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nd4qv7_di" bpmnElement="Flow_1nd4qv7">
+        <di:waypoint x="300" y="510" />
+        <di:waypoint x="300" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kso016_di" bpmnElement="Flow_0kso016">
+        <di:waypoint x="420" y="505" />
+        <di:waypoint x="420" y="470" />
+        <di:waypoint x="350" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="393" y="476" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gq2o33_di" bpmnElement="Flow_1gq2o33">
+        <di:waypoint x="420" y="555" />
+        <di:waypoint x="420" y="610" />
+        <di:waypoint x="350" y="610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="391" y="580" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11emv9k_di" bpmnElement="Flow_11emv9k">
+        <di:waypoint x="500" y="530" />
+        <di:waypoint x="445" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mut7pk_di" bpmnElement="Flow_0mut7pk">
+        <di:waypoint x="640" y="530" />
+        <di:waypoint x="600" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hnodme_di" bpmnElement="Flow_0hnodme">
+        <di:waypoint x="810" y="610" />
+        <di:waypoint x="775" y="610" />
+        <di:waypoint x="775" y="530" />
+        <di:waypoint x="740" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bvgove_di" bpmnElement="Flow_0bvgove">
+        <di:waypoint x="810" y="460" />
+        <di:waypoint x="775" y="460" />
+        <di:waypoint x="775" y="530" />
+        <di:waypoint x="740" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wblljm_di" bpmnElement="Flow_1wblljm">
+        <di:waypoint x="950" y="555" />
+        <di:waypoint x="950" y="610" />
+        <di:waypoint x="910" y="610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="927" y="580" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0otfktt_di" bpmnElement="Flow_0otfktt">
+        <di:waypoint x="950" y="505" />
+        <di:waypoint x="950" y="460" />
+        <di:waypoint x="910" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="912" y="476" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12wit1t_di" bpmnElement="Flow_12wit1t">
+        <di:waypoint x="1020" y="530" />
+        <di:waypoint x="975" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o6i6r8_di" bpmnElement="Flow_0o6i6r8">
+        <di:waypoint x="1190" y="610" />
+        <di:waypoint x="1165" y="610" />
+        <di:waypoint x="1165" y="530" />
+        <di:waypoint x="1120" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sdeni7_di" bpmnElement="Flow_1sdeni7">
+        <di:waypoint x="1190" y="470" />
+        <di:waypoint x="1160" y="470" />
+        <di:waypoint x="1160" y="530" />
+        <di:waypoint x="1120" y="530" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1138" y="483" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o3qg32_di" bpmnElement="Flow_1o3qg32">
+        <di:waypoint x="1240" y="510" />
+        <di:waypoint x="1240" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1217" y="537" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q9efh1_di" bpmnElement="Flow_1q9efh1">
+        <di:waypoint x="1240" y="380" />
+        <di:waypoint x="1240" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0awgo05_di" bpmnElement="Flow_0awgo05">
+        <di:waypoint x="1130" y="340" />
+        <di:waypoint x="1190" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05uouf2_di" bpmnElement="Flow_05uouf2">
+        <di:waypoint x="970" y="340" />
+        <di:waypoint x="1030" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e5tjly_di" bpmnElement="Flow_1e5tjly">
+        <di:waypoint x="810" y="340" />
+        <di:waypoint x="870" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r60abv_di" bpmnElement="Flow_0r60abv">
+        <di:waypoint x="660" y="340" />
+        <di:waypoint x="710" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xvcnmm_di" bpmnElement="Flow_0xvcnmm">
+        <di:waypoint x="610" y="270" />
+        <di:waypoint x="610" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1og68yt_di" bpmnElement="Flow_1og68yt">
+        <di:waypoint x="490" y="230" />
+        <di:waypoint x="520" y="230" />
+        <di:waypoint x="520" y="340" />
+        <di:waypoint x="560" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="492" y="293" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xbxp0f_di" bpmnElement="Flow_1xbxp0f">
+        <di:waypoint x="490" y="230" />
+        <di:waypoint x="560" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="498" y="212" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_01ydzqe_di" bpmnElement="start">
+        <dc:Bounds x="262" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="268" y="78" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iow9ab_di" bpmnElement="Task_0iow9ab">
+        <dc:Bounds x="390" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13hztj7_di" bpmnElement="End_13hztj7">
+        <dc:Bounds x="282" y="712" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1deyg2s_di" bpmnElement="Task_1deyg2s">
+        <dc:Bounds x="560" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bpjtwx_di" bpmnElement="Task_0bpjtwx">
+        <dc:Bounds x="560" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xx203f_di" bpmnElement="Task_0xx203f">
+        <dc:Bounds x="710" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a0p4gn_di" bpmnElement="Task_0a0p4gn">
+        <dc:Bounds x="870" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g460ja_di" bpmnElement="Task_0g460ja">
+        <dc:Bounds x="1030" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_075tij5_di" bpmnElement="Task_075tij5">
+        <dc:Bounds x="1190" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17iuxyd_di" bpmnElement="Task_17iuxyd">
+        <dc:Bounds x="1190" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mx9pdx_di" bpmnElement="Task_1mx9pdx">
+        <dc:Bounds x="1190" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19z078t_di" bpmnElement="Task_19z078t">
+        <dc:Bounds x="1020" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1wx2g6v_di" bpmnElement="Gateway_1wx2g6v" isMarkerVisible="true">
+        <dc:Bounds x="925" y="505" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ka84im_di" bpmnElement="Task_0ka84im">
+        <dc:Bounds x="810" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17lx9tw_di" bpmnElement="Task_17lx9tw">
+        <dc:Bounds x="810" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19h0git_di" bpmnElement="Task_19h0git">
+        <dc:Bounds x="640" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xvphxx_di" bpmnElement="Task_0xvphxx">
+        <dc:Bounds x="500" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_01ih3l6_di" bpmnElement="Gateway_01ih3l6" isMarkerVisible="true">
+        <dc:Bounds x="395" y="505" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04yadz6_di" bpmnElement="Task_04yadz6">
+        <dc:Bounds x="250" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zkraig_di" bpmnElement="Task_0zkraig">
+        <dc:Bounds x="250" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z2ffc7_di" bpmnElement="Task_0z2ffc7">
+        <dc:Bounds x="230" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

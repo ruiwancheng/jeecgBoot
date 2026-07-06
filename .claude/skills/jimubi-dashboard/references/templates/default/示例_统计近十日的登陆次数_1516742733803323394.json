@@ -1,0 +1,387 @@
+{
+  "id": "1516742733803323394",
+  "name": "示例_统计近十日的登陆次数",
+  "path": "/drag/page/view/1516742733803323394",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JTabs",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 49,
+      "i": "2a745b71-b463-401e-895a-8067ea72830b",
+      "y": 0,
+      "pageCompId": "1524663978783965186",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "统计近十日的登陆次数",
+        "query": [],
+        "h": 40,
+        "dataSetApi": "SELECT\tcount(*)num,\tDATE_FORMAT(create_time,'%Y-%m-%d')AS`day`FROM\tsys_logWHERE\tlog_type=1ANDcreate_time>DATE_SUB(NOW(),INTERVAL10DAY)GROUPBY\tDATE_FORMAT(create_time,'%Y-%m-%d')",
+        "size": {
+          "width": 1650,
+          "height": 529
+        },
+        "dataSetId": "1516743766914924546",
+        "fieldOption": [
+          {
+            "label": "登录次数",
+            "text": "登录次数",
+            "value": "num"
+          },
+          {
+            "label": "日期",
+            "text": "日期",
+            "value": "day"
+          }
+        ],
+        "dataSetType": "sql",
+        "w": 12,
+        "dataSetIzAgent": "",
+        "option": {
+          "title": "选项卡"
+        },
+        "child": [
+          {
+            "component": "JBar",
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "2c5a2c1f-2cab-48bc-9a0c-c3c9b648e9b9",
+            "title": "柱状图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "day",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "num",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计近十日的登陆次数",
+              "query": [],
+              "dataSetApi": "SELECT\tcount(*)num,\tDATE_FORMAT(create_time,'%Y-%m-%d')AS`day`FROM\tsys_logWHERE\tlog_type=1ANDcreate_time>DATE_SUB(NOW(),INTERVAL10DAY)GROUPBY\tDATE_FORMAT(create_time,'%Y-%m-%d')",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1516743766914924546",
+              "fieldOption": [
+                {
+                  "label": "登录次数",
+                  "text": "登录次数",
+                  "value": "num"
+                },
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "day"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "showBackground": true,
+                    "backgroundStyle": {
+                      "color": "rgba(180,180,180,0.2)"
+                    },
+                    "type": "bar"
+                  }
+                ],
+                "tooltip": {
+                  "axisPointer": {
+                    "label": {
+                      "backgroundColor": "#333",
+                      "show": true
+                    },
+                    "type": "shadow"
+                  },
+                  "trigger": "axis"
+                },
+                "title": {
+                  "show": true,
+                  "text": "基础柱形图",
+                  "textStyle": {
+                    "color": "#464646"
+                  }
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            }
+          },
+          {
+            "horizontal": false,
+            "component": "JLine",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "34e3d56e-f567-45e7-bb59-346a8ec23fc6",
+            "text": "0.042",
+            "id": "a466d3c1-3a35-45f1-9ef1-271ca1a2e37c",
+            "title": "曲线图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "day",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "num",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计近十日的登陆次数",
+              "query": [],
+              "dataSetApi": "SELECT\tcount(*)num,\tDATE_FORMAT(create_time,'%Y-%m-%d')AS`day`FROM\tsys_logWHERE\tlog_type=1ANDcreate_time>DATE_SUB(NOW(),INTERVAL10DAY)GROUPBY\tDATE_FORMAT(create_time,'%Y-%m-%d')",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1516743766914924546",
+              "fieldOption": [
+                {
+                  "label": "登录次数",
+                  "text": "登录次数",
+                  "value": "num"
+                },
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "day"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "type": "line"
+                  }
+                ],
+                "title": {
+                  "subtext": "",
+                  "left": "left",
+                  "text": "基础折线图"
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            },
+            "child": []
+          },
+          {
+            "horizontal": false,
+            "component": "JPie",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "9e2087e1-fd80-4096-995c-27d35d05478a",
+            "text": "0.042",
+            "id": "be62c001-795b-4b77-9a91-d6be1ad6d1ce",
+            "title": "饼图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "day",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "num",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "统计近十日的登陆次数",
+              "query": [],
+              "dataSetApi": "SELECT\tcount(*)num,\tDATE_FORMAT(create_time,'%Y-%m-%d')AS`day`FROM\tsys_logWHERE\tlog_type=1ANDcreate_time>DATE_SUB(NOW(),INTERVAL10DAY)GROUPBY\tDATE_FORMAT(create_time,'%Y-%m-%d')",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1516743766914924546",
+              "fieldOption": [
+                {
+                  "label": "登录次数",
+                  "text": "登录次数",
+                  "value": "num"
+                },
+                {
+                  "label": "日期",
+                  "text": "日期",
+                  "value": "day"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "legend": {
+                  "orient": "vertical"
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "name": "AccessFrom",
+                    "emphasis": {
+                      "itemStyle": {
+                        "shadowOffsetX": 0,
+                        "shadowBlur": 10,
+                        "shadowColor": "rgba(0,0,0,0.5)"
+                      }
+                    },
+                    "type": "pie",
+                    "radius": "50%"
+                  }
+                ],
+                "tooltip": {
+                  "trigger": "item"
+                },
+                "title": {
+                  "subtext": "",
+                  "left": "left",
+                  "show": true,
+                  "text": "基础饼图"
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "title": ""
+                }
+              }
+            },
+            "child": []
+          }
+        ]
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 49,
+      "i": "952b9508-df94-4612-abd8-69ca24157572",
+      "y": 49,
+      "pageCompId": "1524663978893017089",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "统计近十日的登陆次数",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "SELECT\tcount(*)num,\tDATE_FORMAT(create_time,'%Y-%m-%d')AS`day`FROM\tsys_logWHERE\tlog_type=1ANDcreate_time>DATE_SUB(NOW(),INTERVAL10DAY)GROUPBY\tDATE_FORMAT(create_time,'%Y-%m-%d')",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 1636,
+          "height": 529
+        },
+        "dataSetId": "1516743766914924546",
+        "fieldOption": [
+          {
+            "label": "日期",
+            "text": "日期",
+            "value": "day"
+          },
+          {
+            "label": "登录次数",
+            "text": "登录次数",
+            "value": "num"
+          }
+        ],
+        "dataSetType": "sql",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "day",
+              "title": "日期"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "num",
+              "title": "登录次数"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-04-20 19:37:02",
+  "updateBy": "admin",
+  "updateTime": "2022-05-12 16:13:14",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

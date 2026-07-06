@@ -1,0 +1,997 @@
+{
+  "id": "1060100061204631552",
+  "name": "示例_查询_联动",
+  "path": "/drag/page/view/1060100061204631552",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "pcW": 24,
+      "moved": false,
+      "pcY": 0,
+      "h": 12,
+      "i": "d83aab3e-fb0e-4f5a-8c04-3b870e7d0cdd",
+      "component": "JForm",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "1060115766792736768",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [
+          {
+            "defaultVal": "1",
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_参数查询",
+        "query": [],
+        "h": 12,
+        "dataSetApi": "select*fromdemowherenamelike'%${name}%'",
+        "timeOut": -1,
+        "size": {
+          "height": 120
+        },
+        "dataSetId": "1516317603268657153",
+        "fieldOption": [
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "姓名",
+            "text": "姓名",
+            "value": "name"
+          },
+          {
+            "label": "key_word",
+            "text": "key_word",
+            "value": "key_word"
+          },
+          {
+            "label": "punch_time",
+            "text": "punch_time",
+            "value": "punch_time"
+          },
+          {
+            "label": "salary_money",
+            "text": "salary_money",
+            "value": "salary_money"
+          },
+          {
+            "label": "bonus_money",
+            "text": "bonus_money",
+            "value": "bonus_money"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          },
+          {
+            "label": "birthday",
+            "text": "birthday",
+            "value": "birthday"
+          },
+          {
+            "label": "email",
+            "text": "email",
+            "value": "email"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "create_by",
+            "text": "create_by",
+            "value": "create_by"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          },
+          {
+            "label": "update_by",
+            "text": "update_by",
+            "value": "update_by"
+          },
+          {
+            "label": "update_time",
+            "text": "update_time",
+            "value": "update_time"
+          },
+          {
+            "label": "sys_org_code",
+            "text": "sys_org_code",
+            "value": "sys_org_code"
+          },
+          {
+            "label": "tenant_id",
+            "text": "tenant_id",
+            "value": "tenant_id"
+          }
+        ],
+        "dataSetType": "sql",
+        "background": "#FFFFFF",
+        "w": 24,
+        "linkageConfig": [
+          {
+            "linkageId": "79f3e507-d7ab-4cd5-9402-ca5b41086a73",
+            "linkage": [
+              {
+                "source": "name",
+                "target": "name"
+              }
+            ]
+          },
+          {
+            "linkageId": "95f190fb-69cc-4dc7-8f4c-b9f33460ad60",
+            "linkage": [
+              {
+                "source": "name",
+                "target": "name"
+              }
+            ]
+          }
+        ],
+        "dataSetIzAgent": "",
+        "option": {
+          "fields": [
+            {
+              "fieldName": "name",
+              "fieldTxt": "姓名",
+              "id": "row0789b9da-89e4-4402-af25-2bb1043d68f7",
+              "izSearch": "1",
+              "widgetType": "input"
+            }
+          ]
+        }
+      },
+      "key": "39f4e3eb-0e45-413a-bbef-83a5f594bf25"
+    },
+    {
+      "pcX": 0,
+      "pcW": 12,
+      "moved": false,
+      "pcY": 12,
+      "h": 42,
+      "i": "79f3e507-d7ab-4cd5-9402-ca5b41086a73",
+      "component": "JBar",
+      "w": 24,
+      "x": 0,
+      "y": 12,
+      "pageCompId": "1060115766822096896",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "age",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "",
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_参数查询",
+        "query": [],
+        "dataSetApi": "select*fromdemowherenamelike'%${name}%'",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1516317603268657153",
+        "fieldOption": [
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "key_word",
+            "text": "key_word",
+            "value": "key_word"
+          },
+          {
+            "label": "punch_time",
+            "text": "punch_time",
+            "value": "punch_time"
+          },
+          {
+            "label": "salary_money",
+            "text": "salary_money",
+            "value": "salary_money"
+          },
+          {
+            "label": "bonus_money",
+            "text": "bonus_money",
+            "value": "bonus_money"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          },
+          {
+            "label": "birthday",
+            "text": "birthday",
+            "value": "birthday"
+          },
+          {
+            "label": "email",
+            "text": "email",
+            "value": "email"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "create_by",
+            "text": "create_by",
+            "value": "create_by"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          },
+          {
+            "label": "update_by",
+            "text": "update_by",
+            "value": "update_by"
+          },
+          {
+            "label": "update_time",
+            "text": "update_time",
+            "value": "update_time"
+          },
+          {
+            "label": "sys_org_code",
+            "text": "sys_org_code",
+            "value": "sys_org_code"
+          },
+          {
+            "label": "tenant_id",
+            "text": "tenant_id",
+            "value": "tenant_id"
+          }
+        ],
+        "dataSetType": "sql",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "turnConfig": {
+          "url": ""
+        },
+        "dictOptions": {},
+        "linkageConfig": [
+          {
+            "linkageId": "a7de05b4-3eab-40ce-bb95-39d650ea3c1b",
+            "linkage": [
+              {
+                "source": "age",
+                "target": "age"
+              }
+            ]
+          }
+        ],
+        "dataSetIzAgent": "",
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#6E707A"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#464646"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#464646"
+            }
+          },
+          "grid": {
+            "top": 40,
+            "left": 31,
+            "bottom": 37,
+            "show": false,
+            "right": 1
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "#EDEDED"
+              },
+              "itemStyle": {
+                "color": "#64B5F6"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "基础柱形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "e0f6561e-74e6-45a7-8284-696328eee8da"
+    },
+    {
+      "pcX": 12,
+      "pcW": 12,
+      "moved": false,
+      "pcY": 12,
+      "h": 42,
+      "i": "95f190fb-69cc-4dc7-8f4c-b9f33460ad60",
+      "component": "JPie",
+      "w": 24,
+      "x": 0,
+      "y": 54,
+      "pageCompId": "1060115766830485504",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "age",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "",
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_参数查询",
+        "query": [],
+        "dataSetApi": "select*fromdemowherenamelike'%${name}%'",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1516317603268657153",
+        "fieldOption": [
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "key_word",
+            "text": "key_word",
+            "value": "key_word"
+          },
+          {
+            "label": "punch_time",
+            "text": "punch_time",
+            "value": "punch_time"
+          },
+          {
+            "label": "salary_money",
+            "text": "salary_money",
+            "value": "salary_money"
+          },
+          {
+            "label": "bonus_money",
+            "text": "bonus_money",
+            "value": "bonus_money"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          },
+          {
+            "label": "birthday",
+            "text": "birthday",
+            "value": "birthday"
+          },
+          {
+            "label": "email",
+            "text": "email",
+            "value": "email"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "create_by",
+            "text": "create_by",
+            "value": "create_by"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          },
+          {
+            "label": "update_by",
+            "text": "update_by",
+            "value": "update_by"
+          },
+          {
+            "label": "update_time",
+            "text": "update_time",
+            "value": "update_time"
+          },
+          {
+            "label": "sys_org_code",
+            "text": "sys_org_code",
+            "value": "sys_org_code"
+          },
+          {
+            "label": "tenant_id",
+            "text": "tenant_id",
+            "value": "tenant_id"
+          }
+        ],
+        "dataSetType": "sql",
+        "background": "#FFFFFF",
+        "turnConfig": {
+          "url": ""
+        },
+        "dictOptions": {},
+        "linkageConfig": [
+          {
+            "linkageId": "9e46a297-752b-40bc-95c7-d28f87ce7cd5",
+            "linkage": [
+              {
+                "source": "age",
+                "target": "age"
+              }
+            ]
+          },
+          {
+            "linkageId": "a7de05b4-3eab-40ce-bb95-39d650ea3c1b",
+            "linkage": [
+              {
+                "source": "age",
+                "target": "age"
+              }
+            ]
+          }
+        ],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "top": 50,
+            "left": 43,
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 1,
+            "orient": "vertical",
+            "t": 8
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "label": {
+                "color": "#464646"
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "基础饼图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "0e404bb9-92e5-494e-82d3-c76b5cd285c7"
+    },
+    {
+      "pcX": 0,
+      "pcW": 12,
+      "moved": false,
+      "pcY": 54,
+      "h": 35,
+      "i": "a7de05b4-3eab-40ce-bb95-39d650ea3c1b",
+      "component": "JLine",
+      "w": 24,
+      "x": 0,
+      "y": 96,
+      "pageCompId": "1060115766843068416",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "age",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "",
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_根据年龄查询用户",
+        "query": [],
+        "dataSetApi": "select*fromdemowhereage=${age}",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 762,
+          "height": 375
+        },
+        "dataSetId": "1517071247723233281",
+        "fieldOption": [
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "key_word",
+            "text": "key_word",
+            "value": "key_word"
+          },
+          {
+            "label": "punch_time",
+            "text": "punch_time",
+            "value": "punch_time"
+          },
+          {
+            "label": "salary_money",
+            "text": "salary_money",
+            "value": "salary_money"
+          },
+          {
+            "label": "bonus_money",
+            "text": "bonus_money",
+            "value": "bonus_money"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          },
+          {
+            "label": "birthday",
+            "text": "birthday",
+            "value": "birthday"
+          },
+          {
+            "label": "email",
+            "text": "email",
+            "value": "email"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "create_by",
+            "text": "create_by",
+            "value": "create_by"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          },
+          {
+            "label": "update_by",
+            "text": "update_by",
+            "value": "update_by"
+          },
+          {
+            "label": "update_time",
+            "text": "update_time",
+            "value": "update_time"
+          },
+          {
+            "label": "sys_org_code",
+            "text": "sys_org_code",
+            "value": "sys_org_code"
+          },
+          {
+            "label": "tenant_id",
+            "text": "tenant_id",
+            "value": "tenant_id"
+          }
+        ],
+        "dataSetType": "sql",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "turnConfig": {
+          "url": ""
+        },
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "left": 50,
+            "bottom": 84,
+            "show": false,
+            "right": 36
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "基础折线图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "ca51edd4-c226-499e-8c7e-98d8cf08db65"
+    },
+    {
+      "pcX": 12,
+      "pcW": 12,
+      "moved": false,
+      "pcY": 54,
+      "h": 16,
+      "i": "9e46a297-752b-40bc-95c7-d28f87ce7cd5",
+      "component": "JProgress",
+      "w": 24,
+      "x": 0,
+      "y": 131,
+      "pageCompId": "1060115766855651328",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "age",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "",
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_根据年龄查询用户",
+        "query": [],
+        "dataSetApi": "select*fromdemowhereage=${age}",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"内存使用率\",\"value\":50}]",
+        "size": {
+          "width": 762,
+          "height": 166
+        },
+        "dataSetId": "1517071247723233281",
+        "fieldOption": [
+          {
+            "label": "id",
+            "text": "id",
+            "value": "id"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "key_word",
+            "text": "key_word",
+            "value": "key_word"
+          },
+          {
+            "label": "punch_time",
+            "text": "punch_time",
+            "value": "punch_time"
+          },
+          {
+            "label": "salary_money",
+            "text": "salary_money",
+            "value": "salary_money"
+          },
+          {
+            "label": "bonus_money",
+            "text": "bonus_money",
+            "value": "bonus_money"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "age",
+            "text": "age",
+            "value": "age"
+          },
+          {
+            "label": "birthday",
+            "text": "birthday",
+            "value": "birthday"
+          },
+          {
+            "label": "email",
+            "text": "email",
+            "value": "email"
+          },
+          {
+            "label": "content",
+            "text": "content",
+            "value": "content"
+          },
+          {
+            "label": "create_by",
+            "text": "create_by",
+            "value": "create_by"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          },
+          {
+            "label": "update_by",
+            "text": "update_by",
+            "value": "update_by"
+          },
+          {
+            "label": "update_time",
+            "text": "update_time",
+            "value": "update_time"
+          },
+          {
+            "label": "sys_org_code",
+            "text": "sys_org_code",
+            "value": "sys_org_code"
+          },
+          {
+            "label": "tenant_id",
+            "text": "tenant_id",
+            "value": "tenant_id"
+          }
+        ],
+        "dataSetType": "sql",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "show": false,
+            "right": 85
+          },
+          "series": [
+            {
+              "barWidth": 19,
+              "color": "#151B87",
+              "itemStyle": {
+                "normal": {
+                  "barBorderRadius": 10
+                }
+              },
+              "zlevel": 1,
+              "label": {
+                "formatter": "{c}{a}",
+                "offset": [
+                  0,
+                  -40
+                ],
+                "color": "black",
+                "show": true,
+                "fontSize": 24,
+                "position": "right"
+              }
+            },
+            {
+              "barWidth": 19,
+              "color": "#eeeeee",
+              "barGap": "-100%",
+              "itemStyle": {
+                "normal": {
+                  "barBorderRadius": 10
+                }
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "基础进度图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      },
+      "key": "3c4aa0ba-9473-4426-9aa5-7515b9c15fd0"
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": "",
+  "theme": "default",
+  "style": "default",
+  "designType": 30,
+  "protectionCode": "",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": "",
+  "tenantId": 3,
+  "appMenuGroupId": null,
+  "createTime": "2025-03-13 14:46:01",
+  "updateBy": "admin",
+  "updateTime": "2025-03-13 18:48:51",
+  "updateCount": 2,
+  "visitsNum": 0,
+  "delFlag": 0
+}

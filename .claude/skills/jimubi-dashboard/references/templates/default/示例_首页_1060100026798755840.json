@@ -1,0 +1,471 @@
+{
+  "id": "1060100026798755840",
+  "name": "示例_首页",
+  "path": "/drag/page/view/1060100026798755840",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "pcW": 13,
+      "moved": false,
+      "pcY": 19,
+      "h": 25,
+      "i": "a80f65fe-cdc3-4fbe-a383-c526eda9886e",
+      "mobileY": 0,
+      "mobileX": 0,
+      "component": "JQuickNav",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "1064102585364434944",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "首页快速导航",
+        "query": [],
+        "h": 26,
+        "dataSetApi": "https://api.jeecg.com/mock/51/home/quick",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "[{\"title\":\"首页\",\"icon\":\"icon-jeecg-homepage\",\"color\":\"#1fdaca\"},{\"title\":\"仪表盘\",\"icon\":\"icon-jeecg-shijian\",\"color\":\"#bf0c2c\"},{\"title\":\"组件\",\"icon\":\"icon-jeecg-dangan\",\"color\":\"#e18525\"},{\"title\":\"系统管理\",\"icon\":\"icon-jeecg-shezhi\",\"color\":\"#3fb27f\"},{\"title\":\"权限管理\",\"icon\":\"icon-jeecg-yuechi\",\"color\":\"#4daf1bc9\"},{\"title\":\"图表\",\"icon\":\"icon-jeecg-fujin\",\"color\":\"#00d8ff\"}]",
+        "size": {
+          "width": 826,
+          "height": 265
+        },
+        "dataSetId": "1519962879095332865",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "icon",
+            "text": "icon",
+            "value": "icon"
+          },
+          {
+            "label": "color",
+            "text": "color",
+            "value": "color"
+          },
+          {
+            "label": "href",
+            "text": "href",
+            "value": "href"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 30
+          },
+          "body": {
+            "textAlign": "center",
+            "column": 3,
+            "iconAlign": "top"
+          },
+          "card": {
+            "rightHref": "http://jeecg.com",
+            "size": "default",
+            "extra": "更多",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "快捷导航"
+          }
+        }
+      },
+      "key": "ebb10884-4571-4a62-976e-0de8d515d8bb"
+    },
+    {
+      "pcX": 13,
+      "pcW": 11,
+      "moved": false,
+      "pcY": 39,
+      "h": 51,
+      "i": "4d7f78a3-6520-45ae-85e4-ac0cfca514b3",
+      "mobileY": 28,
+      "mobileX": 0,
+      "component": "JList",
+      "w": 24,
+      "x": 0,
+      "y": 25,
+      "pageCompId": "1064102585402183680",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "remark",
+            "filed": "描述"
+          },
+          {
+            "mapping": "date",
+            "filed": "时间"
+          },
+          {
+            "mapping": "pic",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "数据列表",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/datalist/list",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": 0,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-914:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-814:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-714:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-414:20:21\"}]",
+        "size": {
+          "width": 698,
+          "height": 551
+        },
+        "dataSetId": "1519945036454813698",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "date",
+            "text": "date",
+            "value": "date"
+          },
+          {
+            "label": "remark",
+            "text": "remark",
+            "value": "remark"
+          },
+          {
+            "label": "pic",
+            "text": "pic",
+            "value": "pic"
+          }
+        ],
+        "dataSetType": "api",
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "vertical",
+          "titleFontColor": "#000000",
+          "showTitlePrefix": true,
+          "titleFontSize": 18,
+          "showTimePrefix": true,
+          "iconColor": "#000000",
+          "contentColor": "#000000",
+          "card": {
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#333333"
+            }
+          }
+        }
+      },
+      "key": "8c0dfa3a-91a6-4429-8f29-80a225f6c862"
+    },
+    {
+      "pcX": 0,
+      "pcW": 24,
+      "moved": false,
+      "pcY": 0,
+      "h": 36,
+      "i": "1aab1f6b-316e-4046-9ec0-d68d35fa6142",
+      "mobileY": 72,
+      "mobileX": 0,
+      "component": "JGrowCard",
+      "w": 24,
+      "x": 0,
+      "y": 76,
+      "pageCompId": "1064102585435738112",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataType": 1,
+        "h": 19,
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "[{\"title\":\"访问数\",\"icon\":\"icon-jeecg-qianbao\",\"value\":2000,\"total\":120000,\"color\":\"green\",\"action\":\"月\"},{\"title\":\"成交额\",\"icon\":\"icon-jeecg-youhuiquan\",\"value\":20000,\"total\":500000,\"color\":\"blue\",\"action\":\"月\"},{\"title\":\"下载数\",\"icon\":\"icon-jeecg-tupian\",\"value\":8000,\"total\":120000,\"color\":\"orange\",\"action\":\"周\"},{\"title\":\"成交数\",\"icon\":\"icon-jeecg-jifen\",\"value\":5000,\"total\":50000,\"color\":\"purple\",\"action\":\"年\"}]",
+        "size": {
+          "width": 1534,
+          "height": 386
+        },
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 20
+          },
+          "body": {
+            "horizontal": 1,
+            "vertical": 1,
+            "span": 12
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "统计卡片"
+          }
+        }
+      },
+      "key": "ad8ecb70-a148-425d-8c0e-66a500da3f6b"
+    },
+    {
+      "pcX": 0,
+      "pcW": 13,
+      "moved": false,
+      "pcY": 47,
+      "h": 88,
+      "i": "ab1fcd58-e150-4816-b06a-5d2a62517510",
+      "mobileY": 108,
+      "mobileX": 0,
+      "component": "JProjectCard",
+      "w": 24,
+      "x": 0,
+      "y": 112,
+      "pageCompId": "1064102585456709632",
+      "config": {
+        "chartData": "[{\"title\":\"Github\",\"icon\":\"icon-jeecg-social-github\",\"color\":\"\",\"desc\":\"不要等待机会，而要创造机会。\",\"group\":\"开源组\",\"date\":\"2021-04-01\"},{\"title\":\"Vue\",\"icon\":\"icon-jeecg-social-buysellads\",\"color\":\"#3fb27f\",\"desc\":\"现在的你决定将来的你。\",\"group\":\"算法组\",\"date\":\"2021-04-01\"},{\"title\":\"Html5\",\"icon\":\"icon-jeecg-html5\",\"color\":\"#e18525\",\"desc\":\"没有什么才能比努力更重要。\",\"group\":\"上班摸鱼\",\"date\":\"2021-04-01\"},{\"title\":\"Angular\",\"icon\":\"icon-jeecg-social-product-hunt\",\"color\":\"#bf0c2c\",\"desc\":\"热情和欲望可以突破一切难关。\",\"group\":\"UI\",\"date\":\"2021-04-01\"},{\"title\":\"React\",\"icon\":\"icon-jeecg-social-skype\",\"color\":\"#00d8ff\",\"desc\":\"健康的身体是实目标的基石。\",\"group\":\"技术牛\",\"date\":\"2021-04-01\"},{\"title\":\"Js\",\"icon\":\"icon-jeecg-social-pengyou\",\"color\":\"#4daf1bc9\",\"desc\":\"路是走出来的，而不是空想出来的。\",\"group\":\"架构组\",\"date\":\"2021-04-01\"}]",
+        "borderColor": "#FFFFFF",
+        "size": {
+          "width": 826,
+          "height": 958
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "dataType": 1,
+        "h": 33,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 30
+          },
+          "body": {
+            "column": 1
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "项目列表"
+          }
+        }
+      },
+      "key": "dba2cb08-ac72-471d-b2d0-57b005d4abe1"
+    },
+    {
+      "pcX": 13,
+      "pcW": 11,
+      "moved": false,
+      "pcY": 19,
+      "h": 33,
+      "i": "e5a73961-e1ba-462c-bf86-78fbb94390d4",
+      "mobileY": 144,
+      "mobileX": 0,
+      "component": "JWaitMatter",
+      "w": 24,
+      "x": 0,
+      "y": 200,
+      "pageCompId": "1064102585507041280",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataType": 1,
+        "h": 19,
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "[{\"title\":\"待办公文\",\"icon\":\"icon-jeecg-yudu\",\"content\":23,\"desc\":\"今日已办3\",\"date\":\"2021-04-01\"},{\"title\":\"待办流程\",\"icon\":\"icon-jeecg-shuju\",\"content\":23,\"desc\":\"今日已办3\",\"date\":\"2021-04-01\"},{\"title\":\"待办任务\",\"icon\":\"icon-jeecg-tongzhi\",\"content\":23,\"desc\":\"今日已办3今日更新5\",\"date\":\"2021-04-01\"}]",
+        "size": {
+          "width": 698,
+          "height": 353
+        },
+        "actionConfig": {
+          "operateType": "modal",
+          "modalName": "",
+          "url": ""
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 25
+          },
+          "body": {
+            "column": 2
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "待办事项"
+          }
+        }
+      },
+      "key": "a289d618-3c4c-4739-b922-1d2da94f616c"
+    },
+    {
+      "pcX": 0,
+      "pcW": 24,
+      "moved": false,
+      "pcY": 83,
+      "h": 41,
+      "i": "b1786985-070f-4f7b-8c46-b61c0ac9b8c7",
+      "mobileY": 164,
+      "mobileX": 0,
+      "component": "JLine",
+      "w": 24,
+      "x": 0,
+      "y": 233,
+      "pageCompId": "1064102585540595712",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "type",
+            "filed": "维度"
+          },
+          {
+            "mapping": "visit",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "首页_近一周访问量",
+        "dataSetApi": "selectcount(*)asvisit\t,count(distinct(ip))asip\t,DATE_FORMAT(create_time,'%Y-%m-%d')astian\t,DATE_FORMAT(create_time,'%m-%d')astype\tfromsys_logwherelog_type=1andcreate_time<=sysdate()andcreate_time>=(selectdate_sub(curdate(),interval7day))groupbytian,typeorderbytianasc",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 1252,
+          "height": 441
+        },
+        "dataSetId": "1522503560003067906",
+        "fieldOption": [
+          {
+            "label": "visit",
+            "text": "visit",
+            "value": "visit"
+          },
+          {
+            "label": "ip",
+            "text": "ip",
+            "value": "ip"
+          },
+          {
+            "label": "tian",
+            "text": "tian",
+            "value": "tian"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          }
+        ],
+        "dataSetType": "sql",
+        "turnConfig": {
+          "url": ""
+        },
+        "dictOptions": {},
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 57,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "近一周在线访问量",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "67ef02cb-e6af-4864-8c35-f389caee9c0c"
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": "",
+  "theme": "default",
+  "style": "default",
+  "designType": 30,
+  "protectionCode": "",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": "",
+  "tenantId": 3,
+  "appMenuGroupId": null,
+  "createTime": "2025-03-13 14:50:52",
+  "updateBy": "admin",
+  "updateTime": "2025-03-24 18:50:42",
+  "updateCount": 2,
+  "visitsNum": 0,
+  "delFlag": 0
+}

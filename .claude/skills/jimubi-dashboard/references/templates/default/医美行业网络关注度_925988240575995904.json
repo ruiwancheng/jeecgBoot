@@ -1,0 +1,1508 @@
+{
+  "id": "925988240575995904",
+  "name": "医美行业网络关注度",
+  "path": "/drag/page/view/925988240575995904",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 0,
+      "h": 8,
+      "i": "95729a29-9b15-4102-8ca0-4474bcdfd6ea",
+      "orderNum": 0,
+      "component": "JText",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "927766205680885760",
+      "config": {
+        "chartData": "2023年度医美行业网络关注度",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1604,
+          "height": 78
+        },
+        "background": "#23BAD9",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 500
+          },
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "d55088fd-e43d-4a1d-9b05-5649a8eb596c"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 78,
+      "h": 6,
+      "i": "89ac8d65-5a17-4c62-83cc-05f29f629734",
+      "orderNum": 13,
+      "component": "JText",
+      "w": 8,
+      "x": 0,
+      "y": 78,
+      "pageCompId": "927766205706051584",
+      "config": {
+        "chartData": "公立整形外科热度指数TOP10美誉度",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 56
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 24
+          },
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "1c4e0fa2-b239-4f6e-a421-da3e0025d890"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 77,
+      "h": 6,
+      "i": "f5f244fb-deed-48eb-8ada-78dadbe08bd8",
+      "orderNum": 21,
+      "component": "JText",
+      "w": 8,
+      "x": 16,
+      "y": 78,
+      "pageCompId": "927766205718634496",
+      "config": {
+        "chartData": "敏感信息与非敏感信息占比",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 56
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 11
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "a97e4d8e-1a35-4259-8450-602159ee4549"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 78,
+      "h": 6,
+      "i": "de17aaaf-b81c-48b3-8309-854b1d0b3d14",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 8,
+      "x": 8,
+      "y": 78,
+      "pageCompId": "927766205731217408",
+      "config": {
+        "chartData": "医美行业事件",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 56
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 24
+          },
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "19e0a67a-1f13-4af0-83ad-e6b8fde95a4f"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 13,
+      "h": 30,
+      "i": "59cce641-ef13-4a49-835b-4ad20a3cc477",
+      "orderNum": 20,
+      "component": "JFunnel",
+      "w": 8,
+      "x": 16,
+      "y": 13,
+      "pageCompId": "927766205743800320",
+      "config": {
+        "chartData": "[  {    \"value\": 15,    \"name\": \"美白针\"  },  {    \"value\": 5,    \"name\": \"光子嫩肤\"  },  {    \"value\": 23,    \"name\": \"半永久纹眉\"  },  {    \"value\": 10,    \"name\": \"果酸换肤\"  },  {    \"value\": 234,    \"name\": \"全瓷牙\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/funnel",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "bottom": 115
+          },
+          "legend": {
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "left": "10%",
+              "gap": 2,
+              "name": "Funnel",
+              "width": "80%",
+              "emphasis": {
+                "label": {
+                  "fontSize": 20
+                }
+              },
+              "itemStyle": {
+                "borderColor": "#fff",
+                "borderWidth": 1
+              },
+              "sort": "descending",
+              "label": {
+                "color": "#787575",
+                "show": true,
+                "position": "inside"
+              },
+              "labelLine": {
+                "lineStyle": {
+                  "width": 1,
+                  "type": "solid"
+                },
+                "length": 10
+              },
+              "type": "funnel"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a} <br/>{b} : {c}%",
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "基础漏斗图",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "5d922cdd-ec89-4e9a-964f-c1ae3eedb607"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "6979473b-9eb1-4d90-887c-483378b89886",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 8,
+      "x": 0,
+      "y": 8,
+      "pageCompId": "927766205756383232",
+      "config": {
+        "chartData": "非公立连锁医美机构热度指数TOP10",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "4aaeb68b-8d14-48ba-89fc-4d22c13adaae"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "fabcd19e-73a2-4a44-9035-d18bccfa77ba",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 8,
+      "x": 8,
+      "y": 8,
+      "pageCompId": "927766205773160448",
+      "config": {
+        "chartData": "医美行业全网信息量走势",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 5
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "3cf7deaa-fb9d-4ef2-8cd7-d32d0a785690"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "e5eb46cd-4d1a-447e-b42a-6e390fa7080e",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 8,
+      "x": 16,
+      "y": 8,
+      "pageCompId": "927766205794131968",
+      "config": {
+        "chartData": "医美项目热度",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 8
+          },
+          "title": {
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "88d4fdcd-ff1c-4d46-8466-200ef9e65a69"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 13,
+      "h": 30,
+      "i": "f42ce4f9-0e56-47da-8220-254436afea6d",
+      "orderNum": 25,
+      "component": "JSmoothLine",
+      "w": 8,
+      "x": 8,
+      "y": 13,
+      "pageCompId": "927766205806714880",
+      "config": {
+        "chartData": "[  {    \"value\": 10,    \"name\": \"1月\"  },  {    \"value\": 15,    \"name\": \"2月\"  },  {    \"value\": 6,    \"name\": \"3月\"  },  {    \"value\": 19,    \"name\": \"4月\"  },  {    \"value\": 30,    \"name\": \"5月\"  },  {    \"value\": 20,    \"name\": \"6月\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 33,
+            "left": 23,
+            "bottom": 77,
+            "show": false,
+            "right": 25
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line",
+              "smooth": true
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "top": 1,
+            "left": 1,
+            "show": false,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "5e423a51-6773-44a3-88e3-34b9589c696c"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 43,
+      "h": 5,
+      "i": "102fa102-3bd7-4e86-83ea-77cc7ef23651",
+      "orderNum": 44,
+      "component": "JText",
+      "w": 8,
+      "x": 0,
+      "y": 43,
+      "pageCompId": "927766205823492096",
+      "config": {
+        "chartData": "公立整形外科热度指数TOP10",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 5
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "344516b7-8a19-4cd5-85f8-398c3480f814"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 48,
+      "h": 30,
+      "i": "6841deb3-d062-42d8-8a2b-b58f6da64159",
+      "orderNum": 49,
+      "component": "JMultipleBar",
+      "w": 8,
+      "x": 16,
+      "y": 48,
+      "pageCompId": "927766205836075008",
+      "config": {
+        "chartData": "[  {    \"name\": \"19岁以下\",    \"value\": 150,    \"type\": \"光子嫩肤\"  },  {    \"name\": \"20-29岁\",    \"value\": 269,    \"type\": \"光子嫩肤\"  },  {    \"name\": \"30-39岁\",    \"value\": 81,    \"type\": \"光子嫩肤\"  },  {    \"name\": \"39岁以上\",    \"value\": 67,    \"type\": \"光子嫩肤\"  },  {    \"name\": \"19岁以下\",    \"value\": 50,    \"type\": \"热玛吉\"  },  {    \"name\": \"20-29岁\",    \"value\": 100,    \"type\": \"热玛吉\"  },  {    \"name\": \"30-39岁\",    \"value\": 10,    \"type\": \"热玛吉\"  },  {    \"name\": \"39岁以上\",    \"value\": 45,    \"type\": \"热玛吉\"  },  {    \"name\": \"19岁以下\",    \"value\": 13,    \"type\": \"水光针\"  },  {    \"name\": \"20-29岁\",    \"value\": 24,    \"type\": \"水光针\"  },  {    \"name\": \"30-39岁\",    \"value\": 5,    \"type\": \"水光针\"  },  {    \"name\": \"39岁以上\",    \"value\": 25,    \"type\": \"水光针\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 29,
+            "left": 31,
+            "bottom": 62,
+            "right": 8
+          },
+          "series": [
+            {
+              "label": {
+                "color": "#787575"
+              }
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "多数据对比柱形图",
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "6d8a2052-2429-418f-80ab-e9e78af70de0"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 43,
+      "h": 5,
+      "i": "201a48c1-924c-4da0-87e5-9dc0eb2579a9",
+      "orderNum": 69,
+      "component": "JText",
+      "w": 8,
+      "x": 8,
+      "y": 43,
+      "pageCompId": "927766205852852224",
+      "config": {
+        "chartData": "医美行业热点事件TOP50分类",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "bodyColor": "#000000",
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 11
+          },
+          "bodyBgColor": "#FFFFFF",
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "b499b520-7880-4630-b223-b0d8b5aed79d"
+    },
+    {
+      "pcX": 16,
+      "moved": false,
+      "pcY": 43,
+      "h": 5,
+      "i": "7e2ecc0a-7930-4c76-9c9a-76af22a58f59",
+      "orderNum": 78,
+      "component": "JText",
+      "w": 8,
+      "x": 16,
+      "y": 43,
+      "pageCompId": "927766205865435136",
+      "config": {
+        "chartData": "各年龄段对医美项目TOP3关注度对比",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 45
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#23BAD9",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "89b201f0-871e-4ec8-96b0-eb03c9b31357"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 13,
+      "h": 30,
+      "i": "88e40b11-fc48-4d59-8ba8-5d106f3dfa2b",
+      "orderNum": 53,
+      "component": "JMixLineBar",
+      "w": 8,
+      "x": 0,
+      "y": 13,
+      "pageCompId": "927766205873823744",
+      "config": {
+        "chartData": "[  {    \"name\": \"华美美容院\",    \"value\": 10,    \"type\": \"传播热度指数\"  },  {    \"name\": \"美莱美容院\",    \"value\": 9,    \"type\": \"传播热度指数\"  },  {    \"name\": \"爱美美容院\",    \"value\": 5,    \"type\": \"传播热度指数\"  },  {    \"name\": \"一星美容院\",    \"value\": 9,    \"type\": \"传播热度指数\"  },  {    \"name\": \"慧美美容院\",    \"value\": 2,    \"type\": \"传播热度指数\"  },  {    \"name\": \"华美美容院\",    \"value\": 33,    \"type\": \"美誉度\"  },  {    \"name\": \"美莱美容院\",    \"value\": 35,    \"type\": \"美誉度\"  },  {    \"name\": \"爱美美容院\",    \"value\": 37,    \"type\": \"美誉度\"  },  {    \"name\": \"一星美容院\",    \"value\": 35,    \"type\": \"美誉度\"  },  {    \"name\": \"慧美美容院\",    \"value\": 34.9,    \"type\": \"美誉度\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "seriesType": [
+          {
+            "series": "传播热度指数",
+            "type": "bar"
+          },
+          {
+            "series": "美誉度",
+            "type": "line"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "rotate": -33,
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 90,
+            "bottom": 115
+          },
+          "series": [],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "折柱图",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "0d8ade3b-02e8-4a6b-a0ed-f0dd46ebe87f"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 48,
+      "h": 30,
+      "i": "000017d9-054b-492f-9327-537c64b25f0f",
+      "orderNum": 54,
+      "component": "JDynamicBar",
+      "w": 8,
+      "x": 0,
+      "y": 48,
+      "pageCompId": "927766205890600960",
+      "config": {
+        "chartData": "[  {    \"name\": \"江苏人民医院\",    \"value\": 55,    \"type\": \"传播热度\"  },  {    \"name\": \"上海人民医院\",    \"value\": 14,    \"type\": \"传播热度\"  },  {    \"name\": \"北京大学第一医院\",    \"value\": 31.5,    \"type\": \"传播热度\"  },  {    \"name\": \"北京朝阳医院\",    \"value\": 53,    \"type\": \"传播热度\"  },  {    \"name\": \"北京协和医院\",    \"value\": 41.9,    \"type\": \"传播热度\"  },  {    \"name\": \"八大处医院\",    \"value\": 61,    \"type\": \"传播热度\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 8,
+            "left": 113,
+            "bottom": 71,
+            "right": 59
+          },
+          "series": [
+            {
+              "barWidth": 17,
+              "itemStyle": {
+                "color": "#F099E1EE"
+              },
+              "label": {
+                "color": "#000000"
+              }
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "动态柱形图",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "64b531f1-56d4-49ad-9afa-e03bd45d0c8b"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 84,
+      "h": 29,
+      "i": "0331fad4-d098-4aa4-84e1-0583a0ed828f",
+      "orderNum": 80,
+      "component": "JDynamicBar",
+      "w": 8,
+      "x": 0,
+      "y": 84,
+      "pageCompId": "927766205903183872",
+      "config": {
+        "chartData": "[  {    \"name\": \"江苏人民医院\",    \"value\": 88,    \"type\": \"美誉度\"  },  {    \"name\": \"上海人民医院\",    \"value\": 76,    \"type\": \"美誉度\"  },  {    \"name\": \"北京大学第一医院\",    \"value\": 92,    \"type\": \"美誉度\"  },  {    \"name\": \"北京朝阳医院\",    \"value\": 53,    \"type\": \"美誉度\"  },  {    \"name\": \"北京协和医院\",    \"value\": 90,    \"type\": \"美誉度\"  },  {    \"name\": \"八大处医院\",    \"value\": 98.7,    \"type\": \"美誉度\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 309
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "top": 19,
+            "left": 109,
+            "bottom": 60,
+            "right": 31
+          },
+          "series": [
+            {
+              "barWidth": 18,
+              "itemStyle": {
+                "color": "#50E3C2"
+              }
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": false,
+            "text": "动态柱形图",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "7f656710-b951-4dce-860b-b5421fc62070"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 48,
+      "h": 30,
+      "i": "f36d52f6-942b-438b-881a-2fd02ebfd7f0",
+      "orderNum": 109,
+      "component": "JRing",
+      "w": 8,
+      "x": 8,
+      "y": 48,
+      "pageCompId": "927766205915766784",
+      "config": {
+        "chartData": "[  {    \"value\": 46,    \"name\": \"涉机构事件\"  },  {    \"value\": 54,    \"name\": \"涉行业事件\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "customColor": [
+            {
+              "color": "#F099E1EE"
+            },
+            {
+              "color": "#23BAD9"
+            }
+          ],
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "itemStyle": {
+                "color": "#64B5F6"
+              },
+              "label": {
+                "color": "#000000",
+                "show": true,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "r": 26
+          },
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "基础环形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "423d760e-342e-473b-8af1-67e1c538c725"
+    },
+    {
+      "pcX": 8,
+      "moved": false,
+      "pcY": 84,
+      "h": 29,
+      "i": "7c994b82-cde8-41a2-9192-21f8c92085b9",
+      "orderNum": 109,
+      "component": "JCommonTable",
+      "w": 8,
+      "x": 8,
+      "y": 84,
+      "pageCompId": "927766205924155392",
+      "config": {
+        "chartData": "[  {    \"医美行业热点事件\": \"FDA批准新一代A型肉毒素上市\",    \"传播热度指数\": 6.25  },  {    \"医美行业热点事件\": \"多地医保局发布口腔种植收费调查登记的通知\",    \"传播热度指数\": 5.3  },  {    \"医美行业热点事件\": \"种植牙服务价格下调\",    \"传播热度指数\": 4  },  {    \"医美行业热点事件\": \"消保委2023年受理消费者投诉41万余件 涉及医美等多个方面\",    \"传播热度指数\": 7.23  },  {    \"医美行业热点事件\": \"轻医美-收费不透明\",    \"传播热度指数\": 3.6  },  {    \"医美行业热点事件\": \"专家提醒:低价医美有风险\",    \"传播热度指数\": 2  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 309
+        },
+        "background": "#FFFFFF",
+        "w": 24,
+        "dataType": 1,
+        "h": 42,
+        "linkageConfig": [],
+        "timeOut": -1,
+        "option": {
+          "headerBgColor": "#C1EEF7",
+          "headerColor": "#417505",
+          "bodyColor": "#000000",
+          "bodyBgColor": "#FFFFFF",
+          "body": {
+            "color": "#000000"
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      },
+      "key": "d4c825d1-c807-47f1-ac75-452de7f492bd"
+    },
+    {
+      "component": "JRing",
+      "pcX": 16,
+      "w": 8,
+      "moved": false,
+      "pcY": 83,
+      "x": 16,
+      "h": 29,
+      "i": "7759c7d3-2ea1-4f89-9c49-9866e9d6cc77",
+      "y": 84,
+      "orderNum": 113,
+      "pageCompId": "927766205936738304",
+      "config": {
+        "chartData": "[  {    \"value\": 4.61,    \"name\": \"敏感\"  },  {    \"value\": 95.39,    \"name\": \"非敏感\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 528,
+          "height": 309
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "customColor": [
+            {
+              "color": "#F099E1EE"
+            },
+            {
+              "color": "#6AD5EB"
+            }
+          ],
+          "grid": {
+            "top": 45,
+            "left": 42,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "itemStyle": {
+                "color": "#64B5F6"
+              },
+              "label": {
+                "color": "#000000",
+                "show": true,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "基础环形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 1,
+  "appMenuGroupId": null,
+  "createTime": "2024-03-08 15:53:31",
+  "updateBy": "admin",
+  "updateTime": "2024-03-13 14:05:24",
+  "updateCount": 73,
+  "visitsNum": 7,
+  "delFlag": 0
+}

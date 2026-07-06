@@ -1,0 +1,1054 @@
+{
+  "id": "1522172834409885698",
+  "name": "示例_智慧社区",
+  "path": "/drag/page/view/1522172834409885698",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "w": 10,
+      "moved": false,
+      "x": 7,
+      "h": 7,
+      "i": "a027c162-fc08-430b-aaca-428a40bf6757",
+      "y": 0,
+      "pageCompId": "1524661142020980737",
+      "config": {
+        "chartData": "智慧社区内网比对平台",
+        "size": {
+          "width": 676,
+          "height": 67
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "fontSize": 25,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 188
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 6,
+      "i": "08290325-ab4c-4637-9533-50bb9ce0e92b",
+      "y": 0,
+      "pageCompId": "1524661142121644034",
+      "config": {
+        "chartData": "当前对比数据",
+        "size": {
+          "width": 470,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#182FC7",
+            "fontSize": 15,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 50
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 6,
+      "i": "543590d0-763e-4871-8c8b-72258b10f68e",
+      "y": 6,
+      "pageCompId": "1524661142226501634",
+      "config": {
+        "chartData": "256321",
+        "size": {
+          "width": 470,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 60
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 5,
+      "i": "6253853a-75fb-42b4-ad93-b94cdd66b2c0",
+      "y": 12,
+      "pageCompId": "1524661142331359233",
+      "config": {
+        "chartData": "违法犯罪人员分析",
+        "size": {
+          "width": 470,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 36,
+      "i": "a20e09ed-a2db-4b0b-8c9a-e745eb747378",
+      "y": 17,
+      "pageCompId": "1524661142436216833",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "智慧社区_违法犯罪人员分析",
+        "dataSetApi": "http://api.jeecg.com/mock/51/Illegal",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 470,
+          "height": 386
+        },
+        "dataSetId": "1522181219549196289",
+        "fieldOption": [
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 7,
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "基础饼图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 6,
+      "i": "64040039-455f-47c8-800e-f6061af70451",
+      "y": 53,
+      "pageCompId": "1524661142541074433",
+      "config": {
+        "chartData": "人口出入记录",
+        "size": {
+          "width": 470,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 7,
+      "moved": false,
+      "x": 0,
+      "h": 43,
+      "i": "485ad866-aeae-4137-8227-bef27c9275b0",
+      "y": 59,
+      "pageCompId": "1524661142645932033",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "智慧社区_人员出入记录",
+        "h": 42,
+        "dataSetApi": "http://api.jeecg.com/mock/51/ace",
+        "drillData": [],
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 470,
+          "height": 463
+        },
+        "dataSetId": "1522182473872584705",
+        "fieldOption": [
+          {
+            "label": "姓名",
+            "text": "姓名",
+            "value": "name"
+          },
+          {
+            "label": "类型",
+            "text": "类型",
+            "value": "type"
+          },
+          {
+            "label": "开门方式",
+            "text": "开门方式",
+            "value": "mode"
+          },
+          {
+            "label": "日期",
+            "text": "日期",
+            "value": "date"
+          }
+        ],
+        "dataSetType": "api",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "姓名"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "type",
+              "title": "类型"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "mode",
+              "title": "开门方式"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "date",
+              "title": "日期"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 5,
+      "i": "aa8f5bac-5cdd-484b-b7ec-145b34119d94",
+      "y": 0,
+      "pageCompId": "1524661142750789634",
+      "config": {
+        "chartData": "JeecgBoot面板设计",
+        "size": {
+          "width": 470,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 5,
+      "i": "cd378afa-20ce-4d37-abcd-9b73af9bd70a",
+      "y": 35,
+      "pageCompId": "1524661142855647234",
+      "config": {
+        "chartData": "JeecgBoot面板设计",
+        "size": {
+          "width": 470,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 5,
+      "i": "0b9d4f60-d3a2-43bd-a444-2378974cbac0",
+      "y": 69,
+      "pageCompId": "1524661142960504833",
+      "config": {
+        "chartData": "JeecgBoot面板设计",
+        "size": {
+          "width": 470,
+          "height": 45
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 28,
+      "i": "a88af204-bba2-48e0-857a-056f77a62838",
+      "y": 74,
+      "pageCompId": "1524661143065362433",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "智慧社区_时间分部",
+        "dataSetApi": "[{\"name\":\"6:00-9:00\",\"value\":800},{\"name\":\"10:00-12:00\",\"value\":300},{\"name\":\"13:00-15:00\",\"value\":500},{\"name\":\"16:00-20:00\",\"value\":800},{\"name\":\"21:00-24:00\",\"value\":600}]",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 470,
+          "height": 298
+        },
+        "dataSetId": "1522187101267832833",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "json",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "时间分部",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 29,
+      "i": "fc62f6b2-54b2-42fb-ac49-730a458365f7",
+      "y": 40,
+      "pageCompId": "1524661143170220033",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "智慧社区_地区分部",
+        "dataSetApi": "http://api.jeecg.com/mock/51/region",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 470,
+          "height": 309
+        },
+        "dataSetId": "1522185936018878466",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "地域分部",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "w": 7,
+      "moved": false,
+      "x": 17,
+      "h": 30,
+      "i": "a0fd33e9-ad35-4f54-8f1c-15e6d6a0e1a8",
+      "y": 5,
+      "pageCompId": "1524661143275077633",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "智慧社区_年龄分部",
+        "dataSetApi": "http://api.jeecg.com/mock/51/age",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"oppo\"},{\"value\":735,\"name\":\"vivo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 470,
+          "height": 320
+        },
+        "dataSetId": "1522184215045615618",
+        "fieldOption": [
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          },
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "show": false,
+            "text": "年龄分部",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JGauge",
+      "w": 10,
+      "moved": false,
+      "x": 7,
+      "h": 30,
+      "i": "a65c5a00-3a09-488e-8ed7-957c37c74ec5",
+      "y": 7,
+      "pageCompId": "1524661143379935234",
+      "config": {
+        "chartData": "[{\"min\":1,\"max\":10,\"label\":\"名称\",\"value\":10,\"unit\":\"%\"}]",
+        "size": {
+          "width": 516,
+          "height": 320
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "名称"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/gauge",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "series": [
+            {
+              "axisLabel": {
+                "show": true,
+                "fontSize": 12
+              },
+              "data": [],
+              "splitLine": {
+                "lineStyle": {
+                  "color": "#eee",
+                  "width": 4
+                },
+                "length": 12
+              },
+              "axisTick": {
+                "lineStyle": {
+                  "color": "#eee"
+                },
+                "show": true
+              },
+              "progress": {
+                "show": true
+              },
+              "detail": {
+                "formatter": "{value}",
+                "fontSize": 25
+              },
+              "type": "gauge"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%"
+          },
+          "title": {
+            "text": "环比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JColorGauge",
+      "w": 10,
+      "moved": false,
+      "x": 7,
+      "h": 31,
+      "i": "0633a426-0e0a-4b4d-9813-575166ab382e",
+      "y": 37,
+      "pageCompId": "1524661143518347265",
+      "config": {
+        "chartData": "[{\"name\":\"降低率\",\"value\":4,\"unit\":\"%\"}]",
+        "size": {
+          "width": 516,
+          "height": 331
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "名称"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/gauge",
+        "timeOut": 0,
+        "option": {
+          "series": [
+            {
+              "axisLabel": {
+                "show": true,
+                "fontSize": 12
+              },
+              "pointer": {
+                "width": 8
+              },
+              "axisLine": {
+                "lineStyle": {
+                  "color": [
+                    [
+                      0.25,
+                      "#FF6E76"
+                    ],
+                    [
+                      0.5,
+                      "#FDDD60"
+                    ],
+                    [
+                      1,
+                      "#58D9F9"
+                    ]
+                  ],
+                  "width": 10
+                }
+              },
+              "anchor": {
+                "itemStyle": {
+                  "color": "#FAC858"
+                }
+              },
+              "splitLine": {
+                "lineStyle": {
+                  "color": "#eee",
+                  "width": 4
+                },
+                "length": 12
+              },
+              "axisTick": {
+                "lineStyle": {
+                  "color": "#eee"
+                },
+                "show": true
+              },
+              "title": {
+                "fontSize": 14
+              }
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%"
+          },
+          "title": {
+            "text": "同比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JStackBar",
+      "w": 10,
+      "moved": false,
+      "x": 7,
+      "h": 34,
+      "i": "0be25d6b-60e4-40a3-8af2-637bab222491",
+      "y": 68,
+      "pageCompId": "1524661143660953602",
+      "config": {
+        "chartData": "[{\"name\":\"1991\",\"value\":3,\"type\":\"Lon\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Lon\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Lon\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Lon\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Lon\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Lon\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Lon\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Lon\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Lon\"},{\"name\":\"1991\",\"value\":3,\"type\":\"Bor\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Bor\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Bor\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Bor\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Bor\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Bor\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Bor\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Bor\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Bor\"}]",
+        "size": {
+          "width": 676,
+          "height": 364
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "series": [],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "年份分部",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-05 19:14:19",
+  "updateBy": "admin",
+  "updateTime": "2022-05-12 16:01:58",
+  "updateCount": 1,
+  "visitsNum": 1,
+  "delFlag": 0
+}

@@ -1,0 +1,1312 @@
+{
+  "id": "910744177604083712",
+  "name": "物业消防巡检状态",
+  "path": "/drag/page/view/910744177604083712",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 0,
+      "x": 0,
+      "h": 8,
+      "i": "5d85e389-7ee4-40dd-8544-80049646ee34",
+      "y": 0,
+      "orderNum": 0,
+      "pageCompId": "912578020841668608",
+      "config": {
+        "chartData": "小 区 消 防 巡 检 状 态",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 1817,
+          "height": 78
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "fontSize": 36,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 10,
+      "x": 0,
+      "h": 6,
+      "i": "878306f4-8ff4-412c-b8d8-744b0897ae8f",
+      "y": 8,
+      "orderNum": 10,
+      "pageCompId": "912578020875223040",
+      "config": {
+        "chartData": "区域基本情况",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 599,
+          "height": 56
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 22,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 37
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JList",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 20,
+      "x": 0,
+      "h": 17,
+      "i": "fe852828-ba3d-46d1-884a-1c723b870d55",
+      "y": 14,
+      "orderNum": 20,
+      "pageCompId": "912578020896194560",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "value",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "区域基本情况",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=regionBasicInformation",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 599,
+          "height": 177
+        },
+        "dataSetId": "910750488542625792",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "showTitlePrefix": true,
+          "titleFontSize": 18,
+          "showTimePrefix": false,
+          "body": {
+            "color": "#000000"
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 37,
+      "x": 0,
+      "h": 7,
+      "i": "57fd4478-440a-4a6e-a115-186e14d5047a",
+      "y": 31,
+      "orderNum": 38,
+      "pageCompId": "912578020917166080",
+      "config": {
+        "chartData": "设备总数",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 599,
+          "height": 67
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 22,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 16,
+            "marginLeft": 34
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 47,
+      "x": 0,
+      "h": 12,
+      "i": "bb98b9db-042b-445e-8672-34182191871d",
+      "y": 38,
+      "orderNum": 48,
+      "pageCompId": "912578020938137600",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataType": 2,
+        "dataSetName": "正常设备",
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=normalDevice",
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{  \"value\": \"15990\"}",
+        "size": {
+          "width": 599,
+          "height": 122
+        },
+        "dataSetId": "910754028661030912",
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#464646",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "正常设备"
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 57,
+      "x": 0,
+      "h": 12,
+      "i": "7eeab8ac-66f7-4d80-81a8-2e75dcb7093a",
+      "y": 50,
+      "orderNum": 58,
+      "pageCompId": "912578020959109120",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "异常设备",
+        "query": [],
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=abnormalDevice",
+        "drillData": [],
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{\"value\":\"1024\"}",
+        "size": {
+          "width": 599,
+          "height": 122
+        },
+        "dataSetId": "910754465934000128",
+        "fieldOption": [
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#464646",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "异常设备"
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 67,
+      "x": 0,
+      "h": 7,
+      "i": "d7a87bcb-e5a6-4092-9b44-be37c284761d",
+      "y": 62,
+      "orderNum": 69,
+      "pageCompId": "912578020980080640",
+      "config": {
+        "chartData": "设备异常明细",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 599,
+          "height": 67
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 22,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 15,
+            "marginLeft": 32
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 0,
+      "w": 8,
+      "moved": false,
+      "pcY": 77,
+      "x": 0,
+      "h": 51,
+      "i": "1397ca94-7293-48bd-bb4f-673355c0355e",
+      "y": 69,
+      "orderNum": 79,
+      "pageCompId": "912578021005246464",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "设备异常明细",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=equipmentDetails",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 599,
+          "height": 551
+        },
+        "dataSetId": "910759432656830464",
+        "fieldOption": [
+          {
+            "label": "小区名称",
+            "text": "小区名称",
+            "value": "name"
+          },
+          {
+            "label": "设备名称",
+            "text": "设备名称",
+            "value": "deviceName"
+          },
+          {
+            "label": "设备地址",
+            "text": "设备地址",
+            "value": "deviceAddress"
+          },
+          {
+            "label": "设备状态",
+            "text": "设备状态",
+            "value": "deviceStatus"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "小区名称"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "deviceName",
+              "title": "设备名称"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "deviceAddress",
+              "title": "设备地址"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "deviceStatus",
+              "title": "设备状态"
+            }
+          ],
+          "body": {
+            "color": "#000000"
+          }
+        }
+      }
+    },
+    {
+      "component": "JBubbleMap",
+      "pcX": 8,
+      "w": 8,
+      "moved": false,
+      "pcY": 20,
+      "x": 8,
+      "h": 32,
+      "i": "f0f84536-4ae3-43ff-aadb-6a1f113b1ab9",
+      "y": 14,
+      "orderNum": 109,
+      "pageCompId": "912578021026217984",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "commonOption": {
+          "barSize": 10,
+          "gradientColor": false,
+          "breadcrumb": {
+            "drillDown": false,
+            "textColor": "#000000"
+          },
+          "areaColor": {
+            "color1": "#f7f7f7",
+            "color2": "#fcc02e"
+          },
+          "barColor": "#fff176",
+          "barColor2": "#fcc02e",
+          "inRange": {
+            "color": [
+              "#04387b",
+              "#467bc0"
+            ]
+          }
+        },
+        "paramOption": [],
+        "dataSetName": "小区地图分布",
+        "activeKey": 1,
+        "chartData": "[  {    \"name\": \"廊坊\",    \"value\": 199  },  {    \"name\": \"新疆\",    \"value\": 180  },  {    \"name\": \"河南\",    \"value\": 137  },  {    \"name\": \"四川\",    \"value\": 125  },  {    \"name\": \"黑龙江\",    \"value\": 123  },  {    \"name\": \"广东\",    \"value\": 123  },  {    \"name\": \"山东\",    \"value\": 119  },  {    \"name\": \"福建\",    \"value\": 116  },  {    \"name\": \"湖北\",    \"value\": 116  },  {    \"name\": \"浙江\",    \"value\": 114  },  {    \"name\": \"湖南\",    \"value\": 114  },  {    \"name\": \"安徽\",    \"value\": 109  },  {    \"name\": \"河北\",    \"value\": 102  },  {    \"name\": \"江苏\",    \"value\": 92  },  {    \"name\": \"江西\",    \"value\": 91  },  {    \"name\": \"重庆\",    \"value\": 91  },  {    \"name\": \"云南\",    \"value\": 83  },  {    \"name\": \"吉林\",    \"value\": 82  },  {    \"name\": \"山西\",    \"value\": 81  },  {    \"name\": \"陕西\",    \"value\": 80  },  {    \"name\": \"辽宁\",    \"value\": 67  },  {    \"name\": \"贵州\",    \"value\": 62  },  {    \"name\": \"广西\",    \"value\": 59  },  {    \"name\": \"甘肃\",    \"value\": 56  },  {    \"name\": \"内蒙古\",    \"value\": 47  },  {    \"name\": \"天津\",    \"value\": 42  },  {    \"name\": \"上海\",    \"value\": 24  },  {    \"name\": \"宁夏\",    \"value\": 18  },  {    \"name\": \"海南\",    \"value\": 14  },  {    \"name\": \"青海\",    \"value\": 10  },  {    \"name\": \"西藏\",    \"value\": 9  }]",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "seriesType": [],
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "区域"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "jsConfig": "",
+        "dataType": 2,
+        "query": [],
+        "h": 50,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=residentialDistributionMap",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/radar",
+        "timeOut": 0,
+        "size": {
+          "width": 599,
+          "height": 342
+        },
+        "dataSetId": "910765056765509632",
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "drillDown": false,
+          "area": {
+            "markerColor": "#DDE330",
+            "shadowBlur": 10,
+            "markerCount": 5,
+            "markerOpacity": 1,
+            "name": [
+              "河北省"
+            ],
+            "scatterLabelShow": false,
+            "shadowColor": "#DDE330",
+            "value": [
+              "13"
+            ],
+            "markerType": "effectScatter"
+          },
+          "geo": {
+            "top": 27,
+            "aspectScale": 0.92,
+            "itemStyle": {
+              "normal": {
+                "shadowOffsetX": 0,
+                "borderColor": "#a9a9a9",
+                "shadowOffsetY": 0,
+                "areaColor": "",
+                "shadowBlur": 0,
+                "borderWidth": 1,
+                "shadowColor": "#80d9f8"
+              },
+              "emphasis": {
+                "areaColor": "#fff59c",
+                "borderWidth": 0
+              }
+            },
+            "zoom": 1,
+            "label": {
+              "emphasis": {
+                "color": "#fff",
+                "show": false
+              }
+            },
+            "roam": true
+          },
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "data": []
+          },
+          "title": {
+            "left": 10,
+            "show": true,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "graphic": [],
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          },
+          "visualMap": {
+            "min": 0,
+            "top": "bottom",
+            "max": 200,
+            "left": "5%",
+            "calculable": true,
+            "show": false,
+            "type": "continuous",
+            "seriesIndex": [
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 8,
+      "w": 16,
+      "moved": false,
+      "pcY": 10,
+      "x": 8,
+      "h": 6,
+      "i": "52c28b77-268c-4dc4-805e-a48b37657be1",
+      "y": 8,
+      "orderNum": 109,
+      "pageCompId": "912578021047189504",
+      "config": {
+        "chartData": "小区地图分布",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 1208,
+          "height": 56
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "fontSize": 22,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 16,
+      "w": 8,
+      "moved": false,
+      "pcY": 20,
+      "x": 16,
+      "h": 32,
+      "i": "8b2b0a47-c1fb-47bf-b8af-9c249d903baa",
+      "y": 14,
+      "orderNum": 109,
+      "pageCompId": "912578021068161024",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "小区分布地图表格",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=residentialDistributionTable",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 599,
+          "height": 342
+        },
+        "dataSetId": "910773111884398592",
+        "fieldOption": [
+          {
+            "label": "区域名称",
+            "text": "区域名称",
+            "value": "areaName"
+          },
+          {
+            "label": "小区数量",
+            "text": "小区数量",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "areaName",
+              "title": "区域名称"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "value",
+              "title": "小区数量"
+            }
+          ],
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "pcX": 8,
+      "w": 8,
+      "moved": false,
+      "pcY": 52,
+      "x": 8,
+      "h": 34,
+      "i": "619921d9-f1fe-4d09-8f3d-09238f6d3e4f",
+      "y": 46,
+      "orderNum": 109,
+      "pageCompId": "912578021093326848",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "室外消火栓泵",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=deviceCountProportion",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 599,
+          "height": 364
+        },
+        "dataSetId": "910776816075587584",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "color": [
+                "#3BB1E3",
+                "#DB771F",
+                "#B6C5D1"
+              ],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "设备类型数量占比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 16,
+      "w": 8,
+      "moved": false,
+      "pcY": 52,
+      "x": 16,
+      "h": 34,
+      "i": "2598e9f8-7611-49c1-97a5-018fba23f0e0",
+      "y": 46,
+      "orderNum": 109,
+      "pageCompId": "912578021114298368",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "区域设备数量\t",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=areaDeviceCount",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 599,
+          "height": 364
+        },
+        "dataSetId": "910790230315417600",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 90,
+            "left": 62,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 21,
+              "data": [],
+              "color": [
+                "#3BB1E3",
+                "#DB771F",
+                "#B6C5D1"
+              ],
+              "itemStyle": {
+                "color": "#3BB1E3",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "区域设备数量",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "pcX": 8,
+      "w": 8,
+      "moved": false,
+      "pcY": 98,
+      "x": 8,
+      "h": 33,
+      "i": "01569400-637c-4d01-986e-c6604f88cc32",
+      "y": 87,
+      "orderNum": 109,
+      "pageCompId": "912578021131075584",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "巡检任务数",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=inspectionTasksCount",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 599,
+          "height": 353
+        },
+        "dataSetId": "910794755508060160",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "customColor": [
+            {
+              "color": "#38B4EA"
+            }
+          ],
+          "grid": {
+            "top": 90,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "lineType": "area",
+              "itemStyle": {
+                "color": "#64B5F6"
+              },
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": 10,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 16,
+      "w": 8,
+      "moved": false,
+      "pcY": 86,
+      "x": 16,
+      "h": 33,
+      "i": "4fd26be3-3138-4cf5-9e7a-e24ff75bafad",
+      "y": 87,
+      "orderNum": 114,
+      "pageCompId": "912578021156241408",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "巡检任务数表格",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "https://api.jeecg.com/mock/51/propertyFireFighting?type=inspectionTasksTable",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 599,
+          "height": 353
+        },
+        "dataSetId": "910797586147360768",
+        "fieldOption": [
+          {
+            "label": "检查时间",
+            "text": "检查时间",
+            "value": "inspectTime"
+          },
+          {
+            "label": "设备名称",
+            "text": "设备名称",
+            "value": "deviceName"
+          },
+          {
+            "label": "设备地址",
+            "text": "设备地址",
+            "value": "deviceAddress"
+          },
+          {
+            "label": "检查人",
+            "text": "检查人",
+            "value": "inspected"
+          },
+          {
+            "label": "检查内容",
+            "text": "检查内容",
+            "value": "content"
+          },
+          {
+            "label": "巡查结果",
+            "text": "巡查结果",
+            "value": "inspectResult"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "inspectTime",
+              "title": "检查时间"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "deviceName",
+              "title": "设备名称"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "deviceAddress",
+              "title": "设备地址"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "inspected",
+              "title": "检查人"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "content",
+              "title": "检查内容"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "inspectResult",
+              "title": "巡查结果"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 8,
+      "w": 16,
+      "moved": false,
+      "pcY": 86,
+      "x": 8,
+      "h": 7,
+      "i": "e3bea36a-c897-41ec-9c8d-c572609a74e5",
+      "y": 80,
+      "orderNum": 114,
+      "pageCompId": "912578021181407232",
+      "config": {
+        "chartData": "巡检任务数",
+        "borderColor": "#DB771F",
+        "size": {
+          "width": 1208,
+          "height": 67
+        },
+        "background": "#DB771F",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "fontSize": 22,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 12,
+            "marginLeft": 0
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 6902,
+  "appMenuGroupId": null,
+  "createTime": "2024-01-26 14:19:02",
+  "updateBy": "admin",
+  "updateTime": "2024-01-31 15:46:14",
+  "updateCount": 35,
+  "visitsNum": 5,
+  "delFlag": 0
+}

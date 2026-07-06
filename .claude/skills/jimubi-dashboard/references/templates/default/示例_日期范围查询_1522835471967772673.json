@@ -1,0 +1,359 @@
+{
+  "id": "1522835471967772673",
+  "name": "示例_日期范围查询",
+  "path": "/drag/page/view/1522835471967772673",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JBar",
+      "w": 12,
+      "moved": false,
+      "x": 0,
+      "h": 42,
+      "i": "918fc3ea-c88a-4c42-892b-d2a14967258e",
+      "y": 12,
+      "pageCompId": "1526496110877696002",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "username",
+            "filed": "维度"
+          },
+          {
+            "mapping": "sex",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "2011-01-01",
+            "label": "createTime_begin",
+            "text": "createTime_begin",
+            "value": "createTime_begin"
+          },
+          {
+            "defaultVal": "2022-12-31",
+            "label": "createTime_end",
+            "text": "createTime_end",
+            "value": "createTime_end"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_日期范围查询",
+        "query": [],
+        "dataSetApi": "select * from sys_user where create_time >= '${createTime_begin}' and create_time <='${createTime_end}'",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1522853857095376898",
+        "fieldOption": [
+          {
+            "label": "username",
+            "text": "username",
+            "value": "username"
+          },
+          {
+            "label": "realname",
+            "text": "realname",
+            "value": "realname"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          }
+        ],
+        "dataSetType": "sql",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "表单日期范围查询",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 12,
+      "moved": false,
+      "x": 12,
+      "h": 42,
+      "i": "d14e4994-171d-4ca1-8bd8-85dc821f56a7",
+      "y": 12,
+      "pageCompId": "1526496110948999169",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "username",
+            "filed": "维度"
+          },
+          {
+            "mapping": "sex",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [
+          {
+            "defaultVal": "2011-01-01",
+            "label": "createTime_begin",
+            "text": "createTime_begin",
+            "value": "createTime_begin"
+          },
+          {
+            "defaultVal": "2022-12-31",
+            "label": "createTime_end",
+            "text": "createTime_end",
+            "value": "createTime_end"
+          }
+        ],
+        "dataType": 2,
+        "dataSetName": "示例_日期范围查询",
+        "query": [
+          {
+            "field": "createTime",
+            "widgetType": "date"
+          }
+        ],
+        "dataSetApi": "select * from sys_user where create_time >= '${createTime_begin}' and create_time <='${createTime_end}'",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1522853857095376898",
+        "fieldOption": [
+          {
+            "label": "username",
+            "text": "username",
+            "value": "username"
+          },
+          {
+            "label": "realname",
+            "text": "realname",
+            "value": "realname"
+          },
+          {
+            "label": "sex",
+            "text": "sex",
+            "value": "sex"
+          },
+          {
+            "label": "create_time",
+            "text": "create_time",
+            "value": "create_time"
+          }
+        ],
+        "dataSetType": "sql",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F0EDED"
+              },
+              "show": true,
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#7ED321"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#417505"
+              },
+              "show": false
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": "单个组件日期范围查询"
+          }
+        }
+      }
+    },
+    {
+      "component": "JForm",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 12,
+      "i": "eba57ed3-52c2-4ebd-aa70-81ed565d8488",
+      "y": 0,
+      "pageCompId": "1526496111003525121",
+      "config": {
+        "size": {
+          "height": 120
+        },
+        "w": 24,
+        "dataType": 2,
+        "h": 12,
+        "linkageConfig": [
+          {
+            "linkageId": "918fc3ea-c88a-4c42-892b-d2a14967258e",
+            "linkage": [
+              {
+                "source": "createTime_begin",
+                "target": "createTime_begin"
+              },
+              {
+                "source": "createTime_end",
+                "target": "createTime_end"
+              }
+            ]
+          }
+        ],
+        "timeOut": -1,
+        "option": {
+          "fields": [
+            {
+              "fieldName": "createTime",
+              "dictCode": "",
+              "fieldTxt": "创建时间",
+              "defaultValue": "",
+              "searchMode": "range",
+              "action": "",
+              "id": "rowdffe5384-d885-4ae7-9eab-81b8ee76265c",
+              "izSearch": "1",
+              "widgetType": "date"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-07 15:07:24",
+  "updateBy": "admin",
+  "updateTime": "2022-05-17 17:33:28",
+  "updateCount": 1,
+  "visitsNum": 1,
+  "delFlag": 0
+}

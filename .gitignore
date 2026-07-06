@@ -15,4 +15,10 @@ os_del_doc.cmd
 derby.log
 .cursor
 .history
-.claude
+.claude/settings.local.json
+.claude/worktrees/
+
+## harness engineering artifacts (disposable)
+harness/
+hermes/
+.remember/

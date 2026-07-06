@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:activiti="http://activiti.org/bpmn" targetNamespace="http://www.jeecg.org">
+  <process id="joa_loan" name="借款申请(子流程)">
+    <documentation>流程描述</documentation>
+    <extensionElements>
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.ProcessEndListener" event="end" id="402880e54803a496014805e5d9190012" />
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.SubProcessStartListener" event="start" id="64d675c1a3adcb514ea5f9835093c29b" />
+    </extensionElements>
+    <startEvent id="start1" name="开始节点" flowable:initiator="applyUserId" />
+    <endEvent id="end" name="结束节点" />
+    <userTask id="task1554898063090" name="部门领导审批" flowable:assignee="admin" />
+    <userTask id="task1554898171984" name="会计审批" flowable:assignee="admin" />
+    <userTask id="task1554898182628" name="出纳放款" flowable:assignee="admin" />
+    <sequenceFlow id="flow1554898068323" name="" sourceRef="start1" targetRef="task1554898063090" />
+    <sequenceFlow id="flow1554898196767" name="" sourceRef="task1554898171984" targetRef="task1554898182628" />
+    <sequenceFlow id="flow1554898198653" name="" sourceRef="task1554898182628" targetRef="end" />
+    <sequenceFlow id="flow1554898455196" name="" sourceRef="task1554898063090" targetRef="task1554898171984" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_joa_loan">
+    <bpmndi:BPMNPlane id="BPMNPlane_joa_loan" bpmnElement="joa_loan">
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1554898455196" bpmnElement="flow1554898455196">
+        <omgdi:waypoint x="358" y="142" />
+        <omgdi:waypoint x="406" y="142" />
+        <omgdi:waypoint x="406" y="141" />
+        <omgdi:waypoint x="454" y="141" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1554898198653" bpmnElement="flow1554898198653">
+        <omgdi:waypoint x="746" y="141" />
+        <omgdi:waypoint x="786" y="141" />
+        <omgdi:waypoint x="786" y="142" />
+        <omgdi:waypoint x="825" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1554898196767" bpmnElement="flow1554898196767">
+        <omgdi:waypoint x="544" y="141" />
+        <omgdi:waypoint x="656" y="141" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1554898068323" bpmnElement="flow1554898068323">
+        <omgdi:waypoint x="175" y="142" />
+        <omgdi:waypoint x="268" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_start1" bpmnElement="start1">
+        <omgdc:Bounds x="145" y="127" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="138" y="157" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_end" bpmnElement="end">
+        <omgdc:Bounds x="825" y="127" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="818" y="157" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1554898063090" bpmnElement="task1554898063090">
+        <omgdc:Bounds x="268" y="115" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1554898171984" bpmnElement="task1554898171984">
+        <omgdc:Bounds x="454" y="114" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1554898182628" bpmnElement="task1554898182628">
+        <omgdc:Bounds x="656" y="114" width="90" height="55" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

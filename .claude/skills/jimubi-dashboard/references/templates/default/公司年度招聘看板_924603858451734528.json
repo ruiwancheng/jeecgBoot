@@ -1,0 +1,1316 @@
+{
+  "id": "924603858451734528",
+  "name": "公司年度招聘看板",
+  "path": "/drag/page/view/924603858451734528",
+  "desJson": null,
+  "template": [
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 0,
+      "h": 8,
+      "i": "95729a29-9b15-4102-8ca0-4474bcdfd6ea",
+      "orderNum": 0,
+      "component": "JText",
+      "w": 24,
+      "x": 0,
+      "y": 0,
+      "pageCompId": "925744261272031232",
+      "config": {
+        "chartData": "北京公司2023年度招聘看板",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1604,
+          "height": 78
+        },
+        "background": "#4A90E2",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 500
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "c65d42a5-a824-49a9-83c0-c4596aa219d4"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 13,
+      "h": 6,
+      "i": "89ac8d65-5a17-4c62-83cc-05f29f629734",
+      "orderNum": 13,
+      "component": "JText",
+      "w": 3,
+      "x": 0,
+      "y": 13,
+      "pageCompId": "925744261330751488",
+      "config": {
+        "chartData": "简历投递数",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#22B6D4",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 24
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "45bb9ca9-ade1-44b4-8a8c-f912aa5920b6"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 19,
+      "h": 6,
+      "i": "f5f244fb-deed-48eb-8ada-78dadbe08bd8",
+      "orderNum": 21,
+      "component": "JText",
+      "w": 3,
+      "x": 0,
+      "y": 19,
+      "pageCompId": "925744261351723008",
+      "config": {
+        "chartData": "386",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#22B6D4",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 50
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "37d8b7ad-6b59-480f-8af1-c44a03ffca00"
+    },
+    {
+      "pcX": 3,
+      "moved": false,
+      "pcY": 13,
+      "h": 6,
+      "i": "de17aaaf-b81c-48b3-8309-854b1d0b3d14",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 3,
+      "x": 3,
+      "y": 13,
+      "pageCompId": "925744261381083136",
+      "config": {
+        "chartData": "入职人数",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#69AAF5",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 24
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "41b3d153-7e04-4751-94a3-2f6b466e9424"
+    },
+    {
+      "pcX": 3,
+      "moved": false,
+      "pcY": 19,
+      "h": 6,
+      "i": "2df4f63e-b1a9-4a53-8972-08947f5f011b",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 3,
+      "x": 3,
+      "y": 19,
+      "pageCompId": "925744261402054656",
+      "config": {
+        "chartData": "15",
+        "borderColor": "#69AAF5",
+        "size": {
+          "width": 144,
+          "height": 56
+        },
+        "background": "#4A90E2",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 47
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "e065a06b-e251-42b3-8ecf-e115459ae476"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 13,
+      "h": 16,
+      "i": "2429182c-a58b-4cd9-8c88-8ad9b2b6a1e2",
+      "orderNum": 20,
+      "component": "JRing",
+      "w": 6,
+      "x": 6,
+      "y": 13,
+      "pageCompId": "925744261427220480",
+      "config": {
+        "chartData": "[  {    \"value\": 121,    \"name\": \"四川省\"  },  {    \"value\": 251,    \"name\": \"山东省\"  },  {    \"value\": 580,    \"name\": \"北京市\"  },  {    \"value\": 484,    \"name\": \"河北省\"  },  {    \"value\": 300,    \"name\": \"河南省\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 166
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "top": 38,
+            "left": 52,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "show": false
+          },
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "基础环形图",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      },
+      "key": "0bd2ecf1-d948-411c-8c49-09530f9ccae0"
+    },
+    {
+      "pcX": 12,
+      "moved": false,
+      "pcY": 13,
+      "h": 31,
+      "i": "33c42a31-ee7f-4f0a-b9bb-280bef0f4c02",
+      "orderNum": 20,
+      "component": "JBubbleMap",
+      "w": 6,
+      "x": 12,
+      "y": 13,
+      "pageCompId": "925744261464969216",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "commonOption": {
+          "barSize": 10,
+          "gradientColor": false,
+          "breadcrumb": {
+            "drillDown": false,
+            "textColor": "#000000"
+          },
+          "areaColor": {
+            "color1": "#F7F7F7",
+            "color2": "#fcc02e"
+          },
+          "barColor": "#fff176",
+          "barColor2": "#fcc02e",
+          "inRange": {
+            "color": [
+              "#04387b",
+              "#467bc0"
+            ]
+          }
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "区域"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "jsConfig": "",
+        "dataType": 1,
+        "h": 50,
+        "activeKey": 1,
+        "url": "http://api.jeecg.com/mock/33/radar",
+        "timeOut": 0,
+        "chartData": "[  {    \"name\": \"北京\",    \"value\": 199  },  {    \"name\": \"山东\",    \"value\": 180  },  {    \"name\": \"四川\",    \"value\": 137  },  {    \"name\": \"新疆\",    \"value\": 125  },  {    \"name\": \"河南\",    \"value\": 123  },  {    \"name\": \"广东\",    \"value\": 123  }]",
+        "size": {
+          "width": 298,
+          "height": 331
+        },
+        "background": "#FFFFFF",
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "option": {
+          "area": {
+            "markerColor": "#DDE330",
+            "shadowBlur": 10,
+            "markerCount": 5,
+            "markerOpacity": 1,
+            "name": [
+              "中国"
+            ],
+            "scatterLabelShow": false,
+            "shadowColor": "#DDE330",
+            "value": [
+              "china"
+            ],
+            "markerType": "effectScatter"
+          },
+          "headerBgColor": "#FFFFFF",
+          "bodyColor": "#000000",
+          "legend": {
+            "data": []
+          },
+          "title": {
+            "top": 1,
+            "left": 10,
+            "show": true,
+            "text": "",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "bodyBgColor": "#FFFFFF",
+          "drillDown": false,
+          "geo": {
+            "top": 38,
+            "itemStyle": {
+              "normal": {
+                "shadowOffsetX": 0,
+                "borderColor": "#A9A9A9",
+                "shadowOffsetY": 0,
+                "areaColor": "",
+                "shadowBlur": 0,
+                "borderWidth": 1,
+                "shadowColor": "#80D9F8"
+              },
+              "emphasis": {
+                "areaColor": "#FFF59C",
+                "borderWidth": 0
+              }
+            },
+            "zoom": 1,
+            "label": {
+              "emphasis": {
+                "color": "#fff",
+                "show": false
+              }
+            },
+            "roam": true
+          },
+          "headerColor": "#000000",
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "graphic": [],
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          },
+          "visualMap": {
+            "min": 0,
+            "top": "bottom",
+            "max": 200,
+            "left": "5%",
+            "calculable": true,
+            "show": false,
+            "type": "continuous",
+            "seriesIndex": [
+              1
+            ]
+          }
+        }
+      },
+      "key": "6f298d57-db77-4801-9dc8-76b14967300f"
+    },
+    {
+      "pcX": 18,
+      "moved": false,
+      "pcY": 13,
+      "h": 31,
+      "i": "59cce641-ef13-4a49-835b-4ad20a3cc477",
+      "orderNum": 20,
+      "component": "JFunnel",
+      "w": 6,
+      "x": 18,
+      "y": 13,
+      "pageCompId": "925744261490135040",
+      "config": {
+        "chartData": "[  {    \"value\": 15,    \"name\": \"入职\"  },  {    \"value\": 5,    \"name\": \"待入职\"  },  {    \"value\": 23,    \"name\": \"一面\"  },  {    \"value\": 10,    \"name\": \"HR沟通\"  },  {    \"value\": 234,    \"name\": \"收到简历\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 331
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/funnel",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "legend": {
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "left": "10%",
+              "gap": 2,
+              "name": "Funnel",
+              "width": "80%",
+              "emphasis": {
+                "label": {
+                  "fontSize": 20
+                }
+              },
+              "itemStyle": {
+                "borderColor": "#fff",
+                "borderWidth": 1
+              },
+              "sort": "descending",
+              "label": {
+                "show": true,
+                "position": "inside"
+              },
+              "labelLine": {
+                "lineStyle": {
+                  "width": 1,
+                  "type": "solid"
+                },
+                "length": 10
+              },
+              "type": "funnel"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a} <br/>{b} : {c}%",
+            "trigger": "item"
+          },
+          "title": {
+            "show": false,
+            "text": "基础漏斗图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "e8e525b9-051b-4f45-88ec-00dfcca1ffc8"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "6979473b-9eb1-4d90-887c-483378b89886",
+      "orderNum": 20,
+      "component": "JText",
+      "w": 6,
+      "x": 0,
+      "y": 8,
+      "pageCompId": "925744261519495168",
+      "config": {
+        "chartData": "概览",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "79a6e469-54b4-46dd-88f2-896c07e6ec0b"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "fabcd19e-73a2-4a44-9035-d18bccfa77ba",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 12,
+      "x": 6,
+      "y": 8,
+      "pageCompId": "925744261544660992",
+      "config": {
+        "chartData": "候选人分布",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 605,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 5
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "808ca03a-2f22-4f5e-851b-cdd19a2e059d"
+    },
+    {
+      "pcX": 18,
+      "moved": false,
+      "pcY": 8,
+      "h": 5,
+      "i": "e5eb46cd-4d1a-447e-b42a-6e390fa7080e",
+      "orderNum": 25,
+      "component": "JText",
+      "w": 6,
+      "x": 18,
+      "y": 8,
+      "pageCompId": "925744261569826816",
+      "config": {
+        "chartData": "漏斗图",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "8b2edadf-cdaf-43f4-86a1-2735219e5980"
+    },
+    {
+      "pcX": 6,
+      "moved": false,
+      "pcY": 29,
+      "h": 15,
+      "i": "a53c49e6-435a-402d-8de1-b8644b87486b",
+      "orderNum": 25,
+      "component": "JPie",
+      "w": 6,
+      "x": 6,
+      "y": 29,
+      "pageCompId": "925744261594992640",
+      "config": {
+        "chartData": "[  {    \"value\": 1048,    \"name\": \"双一流大学\"  },  {    \"value\": 735,    \"name\": \"双一流学科\"  },  {    \"value\": 580,    \"name\": \"211\"  },  {    \"value\": 484,    \"name\": \"985\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 155
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "option": {
+          "grid": {
+            "top": 30,
+            "left": 46,
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 1,
+            "orient": "vertical",
+            "t": 2,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "基础饼图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "e8bdb58d-8950-4791-93dd-37a064e886f4"
+    },
+    {
+      "pcX": 0,
+      "moved": false,
+      "pcY": 25,
+      "h": 19,
+      "i": "f42ce4f9-0e56-47da-8220-254436afea6d",
+      "orderNum": 25,
+      "component": "JSmoothLine",
+      "w": 6,
+      "x": 0,
+      "y": 25,
+      "pageCompId": "925744261615964160",
+      "config": {
+        "chartData": "[  {    \"value\": 10,    \"name\": \"03-12\"  },  {    \"value\": 15,    \"name\": \"03-22\"  },  {    \"value\": 6,    \"name\": \"03-18\"  },  {    \"value\": 19,    \"name\": \"04-12\"  },  {    \"value\": 30,    \"name\": \"05-29\"  },  {    \"value\": 20,    \"name\": \"08-29\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 199
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 33,
+            "left": 23,
+            "bottom": 77,
+            "show": false,
+            "right": 25
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line",
+              "smooth": true
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "",
+            "top": 1,
+            "left": 1,
+            "text": "简历投递日期分布",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      },
+      "key": "891346e4-3bb3-46d0-af0d-da0a6cc118b8"
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 6,
+      "moved": false,
+      "pcY": 44,
+      "x": 0,
+      "h": 5,
+      "i": "102fa102-3bd7-4e86-83ea-77cc7ef23651",
+      "y": 44,
+      "orderNum": 44,
+      "pageCompId": "925744261636935680",
+      "config": {
+        "chartData": "渠道质量",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 3,
+            "marginLeft": 5
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JMultipleBar",
+      "pcX": 0,
+      "w": 6,
+      "moved": false,
+      "pcY": 49,
+      "x": 0,
+      "h": 29,
+      "i": "6841deb3-d062-42d8-8a2b-b58f6da64159",
+      "y": 49,
+      "orderNum": 49,
+      "pageCompId": "925744261662101504",
+      "config": {
+        "chartData": "[  {    \"name\": \"人才库\",    \"value\": 150,    \"type\": \"投递数\"  },  {    \"name\": \"招聘网站\",    \"value\": 269,    \"type\": \"投递数\"  },  {    \"name\": \"其他渠道\",    \"value\": 81,    \"type\": \"投递数\"  },  {    \"name\": \"内推\",    \"value\": 67,    \"type\": \"投递数\"  },  {    \"name\": \"人才库\",    \"value\": 50,    \"type\": \"面试数\"  },  {    \"name\": \"招聘网站\",    \"value\": 100,    \"type\": \"面试数\"  },  {    \"name\": \"其他渠道\",    \"value\": 10,    \"type\": \"面试数\"  },  {    \"name\": \"内推\",    \"value\": 45,    \"type\": \"面试数\"  },  {    \"name\": \"人才库\",    \"value\": 13,    \"type\": \"通过数\"  },  {    \"name\": \"招聘网站\",    \"value\": 24,    \"type\": \"通过数\"  },  {    \"name\": \"其他渠道\",    \"value\": 5,    \"type\": \"通过数\"  },  {    \"name\": \"内推\",    \"value\": 25,    \"type\": \"通过数\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 309
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "background": "#FFFFFF",
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "top": 29,
+            "left": 31,
+            "bottom": 62,
+            "right": 8
+          },
+          "series": [],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": false,
+            "text": "多数据对比柱形图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 6,
+      "w": 12,
+      "moved": false,
+      "pcY": 49,
+      "x": 6,
+      "h": 29,
+      "i": "92758754-3165-4df6-a897-6da821492f81",
+      "y": 49,
+      "orderNum": 69,
+      "pageCompId": "925744261687267328",
+      "config": {
+        "chartData": "[  {    \"姓名\": \"陈萌萌\",    \"筛选简历数\": \"122\",    \"推给用人部门\": \"89\",    \"面试安排\": \"40\",    \"面试通过\": \"10\"  },  {    \"姓名\": \"肖强\",    \"筛选简历数\": \"62\",    \"推给用人部门\": \"19\",    \"面试安排\": \"9\",    \"面试通过\": \"1\"  },  {    \"姓名\": \"陈晨\",    \"筛选简历数\": \"97\",    \"推给用人部门\": \"49\",    \"面试安排\": \"29\",    \"面试通过\": \"15\"  },  {    \"姓名\": \"李丽\",    \"筛选简历数\": \"47\",    \"推给用人部门\": \"29\",    \"面试安排\": \"19\",    \"面试通过\": \"5\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 605,
+          "height": 309
+        },
+        "background": "#FFFFFF",
+        "w": 24,
+        "dataType": 1,
+        "h": 42,
+        "linkageConfig": [],
+        "timeOut": -1,
+        "option": {
+          "headerBgColor": "#50E3C2",
+          "headerColor": "#7ED321",
+          "bodyColor": "#000000",
+          "bodyBgColor": "#FFFFFF",
+          "body": {
+            "color": "#000000"
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 6,
+      "w": 12,
+      "moved": false,
+      "pcY": 44,
+      "x": 6,
+      "h": 5,
+      "i": "201a48c1-924c-4da0-87e5-9dc0eb2579a9",
+      "y": 44,
+      "orderNum": 69,
+      "pageCompId": "925744261712433152",
+      "config": {
+        "chartData": "招聘工作量细化",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 605,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "headerBgColor": "#FFFFFF",
+          "headerColor": "#000000",
+          "bodyColor": "#000000",
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 11
+          },
+          "bodyBgColor": "#FFFFFF",
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 18,
+      "w": 6,
+      "moved": false,
+      "pcY": 44,
+      "x": 18,
+      "h": 5,
+      "i": "7e2ecc0a-7930-4c76-9c9a-76af22a58f59",
+      "y": 44,
+      "orderNum": 78,
+      "pageCompId": "925744261745987584",
+      "config": {
+        "chartData": "工作年限对岗位偏好与匹配",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JStackBar",
+      "pcX": 18,
+      "w": 6,
+      "moved": false,
+      "pcY": 49,
+      "x": 18,
+      "h": 29,
+      "i": "a9f3e66d-cfcd-41bb-908b-fc2e95cdb125",
+      "y": 49,
+      "orderNum": 78,
+      "pageCompId": "925744261766959104",
+      "config": {
+        "chartData": "[  {    \"name\": \"不满1年\",    \"value\": 150,    \"type\": \"投递数\"  },  {    \"name\": \"1-3年\",    \"value\": 269,    \"type\": \"投递数\"  },  {    \"name\": \"3-5年\",    \"value\": 81,    \"type\": \"投递数\"  },  {    \"name\": \"5-10年\",    \"value\": 67,    \"type\": \"投递数\"  },  {    \"name\": \"不满1年\",    \"value\": 50,    \"type\": \"面试数\"  },  {    \"name\": \"1-3年\",    \"value\": 100,    \"type\": \"面试数\"  },  {    \"name\": \"3-5年\",    \"value\": 10,    \"type\": \"面试数\"  },  {    \"name\": \"5-10年\",    \"value\": 45,    \"type\": \"面试数\"  },  {    \"name\": \"不满1年\",    \"value\": 13,    \"type\": \"通过数\"  },  {    \"name\": \"1-3年\",    \"value\": 24,    \"type\": \"通过数\"  },  {    \"name\": \"3-5年\",    \"value\": 5,    \"type\": \"通过数\"  },  {    \"name\": \"5-10年\",    \"value\": 25,    \"type\": \"通过数\"  }]",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 298,
+          "height": 309
+        },
+        "background": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "分组"
+          },
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "option": {
+          "customColor": [
+            {
+              "color": "#7ED321"
+            },
+            {
+              "color": "#F8E71C"
+            },
+            {
+              "color": "#F5A623"
+            }
+          ],
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 90,
+            "bottom": 115
+          },
+          "series": [],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "堆叠柱形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 1,
+  "appMenuGroupId": null,
+  "createTime": "2024-03-04 20:12:28",
+  "updateBy": "admin",
+  "updateTime": "2024-03-13 14:05:31",
+  "updateCount": 41,
+  "visitsNum": 8,
+  "delFlag": 0
+}

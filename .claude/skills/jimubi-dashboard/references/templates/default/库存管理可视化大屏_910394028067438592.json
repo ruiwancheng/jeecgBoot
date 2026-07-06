@@ -1,0 +1,1501 @@
+{
+  "id": "910394028067438592",
+  "name": "库存管理可视化大屏",
+  "path": "/drag/page/view/910394028067438592",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 0,
+      "x": 0,
+      "h": 8,
+      "i": "377bfc6b-26f1-4fb0-8fe1-0acbc39149e2",
+      "y": 0,
+      "orderNum": 0,
+      "pageCompId": "912577433139986432",
+      "config": {
+        "chartData": "库存管理可视化大屏",
+        "borderColor": "#059DA8",
+        "size": {
+          "width": 1817,
+          "height": 78
+        },
+        "background": "#059DA8",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 13,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JGrowCard",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 8,
+      "x": 0,
+      "h": 31,
+      "i": "94fb7d28-1f93-4506-8310-f39f6ca8f356",
+      "y": 8,
+      "orderNum": 10,
+      "pageCompId": "912577433169346560",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "库存管理-卡片",
+        "query": [],
+        "h": 19,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryManagement",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "[  {    \"title\": \"访问数\",    \"icon\": \"icon-jeecg-qianbao\",    \"value\": 2000,    \"total\": 120000,    \"prefix\": \"$\",    \"color\": \"green\",    \"action\": \"月\"  },  {    \"title\": \"成交额\",    \"icon\": \"icon-jeecg-youhuiquan\",    \"value\": 20000,    \"total\": 500000,    \"prefix\": \"$\",    \"color\": \"blue\",    \"action\": \"月\"  },  {    \"title\": \"下载数\",    \"icon\": \"icon-jeecg-tupian\",    \"value\": 8000,    \"prefix\": \"$\",    \"total\": 120000,    \"color\": \"orange\",    \"action\": \"周\"  },  {    \"title\": \"成交数\",    \"icon\": \"icon-jeecg-jifen\",    \"value\": 5000,    \"prefix\": \"$\",    \"total\": 50000,    \"color\": \"purple\",    \"action\": \"年\"  }]",
+        "size": {
+          "width": 1817,
+          "height": 331
+        },
+        "dataSetId": "910406419257802752",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "icon",
+            "text": "icon",
+            "value": "icon"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          },
+          {
+            "label": "action",
+            "text": "action",
+            "value": "action"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 20
+          },
+          "body": {
+            "horizontal": 7,
+            "color": "#000000",
+            "vertical": 5,
+            "span": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "统计卡片"
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 39,
+      "x": 0,
+      "h": 5,
+      "i": "79eb8d80-8720-4dac-b4ab-a1bd295d3fa5",
+      "y": 39,
+      "orderNum": 65,
+      "pageCompId": "912577433190318080",
+      "config": {
+        "chartData": "AIR 库存情况",
+        "borderColor": "#059DA8",
+        "size": {
+          "width": 371,
+          "height": 45
+        },
+        "background": "#059DA8",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 7,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JList",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 44,
+      "x": 0,
+      "h": 11,
+      "i": "3e12ea9a-04b8-4f1a-819a-1666be83bb2c",
+      "y": 44,
+      "orderNum": 51,
+      "pageCompId": "912577433207095296",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "value",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "air库存情况",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryStatus?type=air",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[  {    \"title\": \"通知一\",    \"date\": \"10000\"  },  {    \"title\": \"通知二\",    \"date\": \"20000\"  },  {    \"title\": \"通知三\",    \"date\": \"30000\"  },  {    \"title\": \"通知四\",    \"date\": \"40000\"  }]",
+        "size": {
+          "width": 371,
+          "height": 111
+        },
+        "dataSetId": "910419343896526848",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "showTitlePrefix": false,
+          "titleFontSize": 15,
+          "showTimePrefix": false,
+          "body": {
+            "color": "#000000"
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 55,
+      "x": 0,
+      "h": 5,
+      "i": "b1bc2b1b-4e38-4042-942d-50978e79236f",
+      "y": 55,
+      "orderNum": 61,
+      "pageCompId": "912577433228066816",
+      "config": {
+        "chartData": "LITE 库存情况",
+        "borderColor": "#059DA8",
+        "size": {
+          "width": 371,
+          "height": 45
+        },
+        "background": "#059DA8",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 7,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JList",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 60,
+      "x": 0,
+      "h": 11,
+      "i": "ee6f5621-53ef-4d0f-a6c9-fd33982b2be1",
+      "y": 60,
+      "orderNum": 71,
+      "pageCompId": "912577433249038336",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "value",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "lite库存情况",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryStatus?type=lite",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 371,
+          "height": 111
+        },
+        "dataSetId": "910423953398874112",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "showTitlePrefix": false,
+          "titleFontSize": 15,
+          "showTimePrefix": false
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 71,
+      "x": 0,
+      "h": 5,
+      "i": "9d1b768d-17ac-461b-8597-41a969fd1589",
+      "y": 71,
+      "orderNum": 82,
+      "pageCompId": "912577433274204160",
+      "config": {
+        "chartData": "SUPER 库存情况",
+        "borderColor": "#059DA8",
+        "size": {
+          "width": 371,
+          "height": 45
+        },
+        "background": "#059DA8",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 7,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JList",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 76,
+      "x": 0,
+      "h": 11,
+      "i": "380b67f4-ada6-47df-83a0-83b9c62fa435",
+      "y": 76,
+      "orderNum": 92,
+      "pageCompId": "912577433295175680",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "value",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "super库存情况",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryStatus?type=super",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 371,
+          "height": 111
+        },
+        "dataSetId": "910425301976662016",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "showTitlePrefix": false,
+          "titleFontSize": 15,
+          "showTimePrefix": false
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 87,
+      "x": 0,
+      "h": 5,
+      "i": "0b6da57d-9804-4bfa-8ab8-54d690f8a09a",
+      "y": 87,
+      "orderNum": 103,
+      "pageCompId": "912577433316147200",
+      "config": {
+        "chartData": "ULTRA 库存情况",
+        "borderColor": "#059DA8",
+        "size": {
+          "width": 371,
+          "height": 45
+        },
+        "background": "#059DA8",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#FFFFFF",
+            "textAlign": "center",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 7,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JList",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 92,
+      "x": 0,
+      "h": 11,
+      "i": "c2551fe6-5a8f-4d45-bb3a-aa86dd6b46cd",
+      "y": 92,
+      "orderNum": 113,
+      "pageCompId": "912577433337118720",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "描述"
+          },
+          {
+            "mapping": "value",
+            "filed": "时间"
+          },
+          {
+            "mapping": "",
+            "filed": "封面"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "ultra库存情况",
+        "query": [],
+        "h": 24,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryStatus?type=ultra",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/list",
+        "timeOut": -1,
+        "chartData": "[{\"title\":\"通知一\",\"date\":\"2022-3-9 14:20:21\"},{\"title\":\"通知二\",\"date\":\"2022-3-8 14:20:21\"},{\"title\":\"通知三\",\"date\":\"2022-3-7 14:20:21\"},{\"title\":\"通知四\",\"date\":\"2022-3-4 14:20:21\"}]",
+        "size": {
+          "width": 371,
+          "height": 111
+        },
+        "dataSetId": "910427052079366144",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "layout": "horizontal",
+          "showTitlePrefix": false,
+          "titleFontSize": 15,
+          "showTimePrefix": false,
+          "body": {
+            "color": "#000000"
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 5,
+      "w": 10,
+      "moved": false,
+      "pcY": 39,
+      "x": 5,
+      "h": 20,
+      "i": "acecbdec-0b6b-4744-aeed-3f969e7915b6",
+      "y": 39,
+      "orderNum": 124,
+      "pageCompId": "912577433366478848",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "产品库存占比情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=storkProportion",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 751,
+          "height": 210
+        },
+        "dataSetId": "910430104345690112",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "rotate": 0,
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 50,
+            "left": 76,
+            "bottom": 67,
+            "show": false,
+            "right": 3
+          },
+          "series": [
+            {
+              "barWidth": 39,
+              "data": [],
+              "color": [
+                "#207B85",
+                "#2C5E5A",
+                "#36756E"
+              ],
+              "itemStyle": {
+                "color": "#009BA7",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "产品库存占比情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 5,
+      "w": 10,
+      "moved": false,
+      "pcY": 59,
+      "x": 5,
+      "h": 22,
+      "i": "a3420701-faac-4d38-b7e2-9c12c3dc45e2",
+      "y": 59,
+      "orderNum": 124,
+      "pageCompId": "912577433387450368",
+      "config": {
+        "borderColor": "#FFFFFF",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "当月出库情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=outbound",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 751,
+          "height": 232
+        },
+        "dataSetId": "910435726206222336",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 48,
+            "left": 62,
+            "bottom": 62,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 40,
+              "data": [],
+              "color": [
+                "#075A63",
+                "#285754",
+                "#37706A",
+                "#63968F",
+                "#09A7B3"
+              ],
+              "itemStyle": {
+                "color": "#059DA8",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "当月出库情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 15,
+      "w": 9,
+      "moved": false,
+      "pcY": 59,
+      "x": 15,
+      "h": 22,
+      "i": "a100e000-aee6-4138-8c72-0e4a830ec8de",
+      "y": 59,
+      "orderNum": 124,
+      "pageCompId": "912577433408421888",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "当月入库情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=warehousing",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 675,
+          "height": 232
+        },
+        "dataSetId": "910441161197928448",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "grid": {
+            "top": 45,
+            "bottom": 58,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 40,
+              "data": [],
+              "itemStyle": {
+                "color": "#059DA8",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "当月入库情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JMultipleBar",
+      "pcX": 15,
+      "w": 9,
+      "moved": false,
+      "pcY": 81,
+      "x": 15,
+      "h": 22,
+      "i": "7d4ec916-020b-4f35-baff-87951bf2aa48",
+      "y": 81,
+      "orderNum": 124,
+      "pageCompId": "912577433429393408",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "type",
+            "filed": "分组"
+          },
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "产品库龄分布情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=stockAge",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"1991\",\"value\":3,\"type\":\"Lon\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Lon\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Lon\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Lon\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Lon\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Lon\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Lon\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Lon\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Lon\"},{\"name\":\"1991\",\"value\":3,\"type\":\"Bor\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Bor\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Bor\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Bor\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Bor\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Bor\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Bor\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Bor\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Bor\"}]",
+        "size": {
+          "width": 675,
+          "height": 232
+        },
+        "dataSetId": "910447275230674944",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 54,
+            "bottom": 54
+          },
+          "series": [
+            {
+              "color": [
+                "#09A7B3",
+                "#499E91",
+                "#03A2AD",
+                "#68F7D8"
+              ]
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "产品库龄分布情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 110,
+      "x": 0,
+      "h": 45,
+      "i": "49592c96-4da5-4afb-9c15-fa7bea72bbc1",
+      "y": 103,
+      "orderNum": 131,
+      "pageCompId": "912577433450364928",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "产品库存状态监控",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=monitor",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[  {    \"name\": \"4月\",    \"value\": 50  },  {    \"name\": \"2月\",    \"value\": 200  },  {    \"name\": \"3月\",    \"value\": 300  },  {    \"name\": \"4月\",    \"value\": 400  },  {    \"name\": \"5月\",    \"value\": 50  },  {    \"name\": \"6月\",    \"value\": 120  }]",
+        "size": {
+          "width": 1817,
+          "height": 485
+        },
+        "dataSetId": "910455640270880768",
+        "fieldOption": [
+          {
+            "label": "仓库",
+            "text": "仓库",
+            "value": "name"
+          },
+          {
+            "label": "系列",
+            "text": "系列",
+            "value": "series"
+          },
+          {
+            "label": "市场名",
+            "text": "市场名",
+            "value": "marketName"
+          },
+          {
+            "label": "机型",
+            "text": "机型",
+            "value": "model"
+          },
+          {
+            "label": "产品状态",
+            "text": "产品状态",
+            "value": "productStatus"
+          },
+          {
+            "label": "当前库存",
+            "text": "当前库存",
+            "value": "inventory"
+          },
+          {
+            "label": "库存状态",
+            "text": "库存状态",
+            "value": "inventoryStatus"
+          }
+        ],
+        "dataSetType": "api",
+        "seriesType": [],
+        "background": "#FFFFFF",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "仓库"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "series",
+              "title": "系列"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "marketName",
+              "title": "市场名"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "model",
+              "title": "机型"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "productStatus",
+              "title": "产品状态"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "inventory",
+              "title": "当前库存"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "inventoryStatus",
+              "title": "库存状态"
+            }
+          ],
+          "body": {
+            "color": "#000000"
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "pcX": 15,
+      "w": 9,
+      "moved": false,
+      "pcY": 39,
+      "x": 15,
+      "h": 20,
+      "i": "ed714128-19d1-4117-a7b0-029620389fda",
+      "y": 39,
+      "orderNum": 148,
+      "pageCompId": "912577433471336448",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "仓库状态情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=warehouseStatus",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 675,
+          "height": 210
+        },
+        "dataSetId": "910431120222896128",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "color": [
+                "#05A0AB",
+                "#65A89E",
+                "#469C8F"
+              ],
+              "name": "Access From",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0, 0, 0, 0.5)"
+                }
+              },
+              "label": {
+                "color": "#000000",
+                "show": true
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "仓库状态情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JMultipleBar",
+      "pcX": 5,
+      "w": 10,
+      "moved": false,
+      "pcY": 81,
+      "x": 5,
+      "h": 22,
+      "i": "7bcdb3a7-eff0-4373-9911-e900d3e3ec7d",
+      "y": 81,
+      "orderNum": 148,
+      "pageCompId": "912577433496502272",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "type",
+            "filed": "分组"
+          },
+          {
+            "mapping": "title",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "产品库存覆盖率情况",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/inventoryChart?type=coverage",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"1991\",\"value\":3,\"type\":\"Lon\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Lon\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Lon\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Lon\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Lon\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Lon\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Lon\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Lon\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Lon\"},{\"name\":\"1991\",\"value\":3,\"type\":\"Bor\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Bor\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Bor\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Bor\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Bor\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Bor\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Bor\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Bor\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Bor\"}]",
+        "size": {
+          "width": 751,
+          "height": 232
+        },
+        "dataSetId": "910442989620871168",
+        "fieldOption": [
+          {
+            "label": "title",
+            "text": "title",
+            "value": "title"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 41,
+            "left": 104,
+            "bottom": 52,
+            "right": 90
+          },
+          "series": [
+            {
+              "color": [
+                "#05A5B0",
+                "#6BB3A8",
+                "#4AA194",
+                "#1D828A"
+              ]
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "产品库存覆盖率情况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 0,
+  "appMenuGroupId": null,
+  "createTime": "2024-01-25 15:07:40",
+  "updateBy": "admin",
+  "updateTime": "2024-01-30 20:04:50",
+  "updateCount": 53,
+  "visitsNum": 5,
+  "delFlag": 0
+}

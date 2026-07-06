@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "description": "Bug反哺的测试用例推导规则。gen-tests 每次运行时读取此文件，合并内置规则 + 自定义规则后生成测试。",
+  "rules": [
+    {
+      "id": "R001",
+      "bugType": "空值NPE",
+      "trigger": "Controller方法参数含 @RequestBody 或 @RequestParam(required=false)",
+      "httpMethod": ["POST", "PUT"],
+      "missingScenario": "只测了正常参数，没测 null/undefined body",
+      "addCase": {
+        "api": "传入 null body → 期望 400 或业务异常",
+        "e2e": "不填任何必填项直接点保存 → 期望校验红字提示"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    },
+    {
+      "id": "R002",
+      "bugType": "越权访问",
+      "trigger": "Controller方法含 @Permission 或 @RequiresPermissions 注解",
+      "httpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "missingScenario": "只测了有权限用户，没测无权限角色",
+      "addCase": {
+        "api": "无权限角色调用接口 → 期望 403",
+        "e2e": "无权限角色登录后访问页面 → 期望无菜单入口或403提示"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    },
+    {
+      "id": "R003",
+      "bugType": "数值溢出 / 边界值",
+      "trigger": "Controller方法参数含 Integer / Long / BigDecimal 类型字段",
+      "httpMethod": ["POST", "PUT"],
+      "missingScenario": "没测边界值（MAX_VALUE、负数、0）",
+      "addCase": {
+        "api": "传入 Integer.MAX_VALUE / Long.MAX_VALUE / 负数 / 0 → 期望业务校验或正常处理",
+        "e2e": "输入框填入超大数值 → 期望前端校验或后端报错提示"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    },
+    {
+      "id": "R004",
+      "bugType": "唯一约束冲突",
+      "trigger": "Entity 字段含 @TableField(unique=true) 或数据库唯一索引",
+      "httpMethod": ["POST", "PUT"],
+      "missingScenario": "没测重复值提交",
+      "addCase": {
+        "api": "用已存在记录的唯一字段值提交 → 期望返回重复数据错误",
+        "e2e": "新增/编辑时填入已存在的唯一值 → 期望提示已存在"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    },
+    {
+      "id": "R005",
+      "bugType": "SQL注入 / 特殊字符",
+      "trigger": "Controller方法接收字符串参数用于查询（@RequestParam / 搜索接口）",
+      "httpMethod": ["GET"],
+      "missingScenario": "没测特殊字符输入（单引号、百分号、SQL关键字）",
+      "addCase": {
+        "api": "搜索参数传入 ' OR '1'='1 / % / DROP → 期望正常转义不报错",
+        "e2e": "搜索框输入特殊字符 → 期望不报错、结果正确"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    },
+    {
+      "id": "R006",
+      "bugType": "并发重复提交",
+      "trigger": "@PostMapping 且涉及唯一约束字段",
+      "httpMethod": ["POST"],
+      "missingScenario": "没测快速双击/并发提交",
+      "addCase": {
+        "api": "相同参数并发2次 POST → 期望第2次返回重复或幂等处理",
+        "e2e": "快速双击保存按钮 → 期望只创建一条记录"
+      },
+      "source": "内置规则",
+      "created": "2026-07-05"
+    }
+  ]
+}

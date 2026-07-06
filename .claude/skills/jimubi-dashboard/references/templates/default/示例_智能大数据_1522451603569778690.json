@@ -1,0 +1,810 @@
+{
+  "id": "1522451603569778690",
+  "name": "示例_智能大数据",
+  "path": "/drag/page/view/1522451603569778690",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 0,
+      "h": 6,
+      "i": "6070607f-f8cd-48f9-b8e6-74511388b222",
+      "y": 0,
+      "pageCompId": "1522523872572743681",
+      "config": {
+        "chartData": "本日产量",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 0,
+      "h": 6,
+      "i": "0ced8073-18dc-4d50-84be-5364d338a6b4",
+      "y": 6,
+      "pageCompId": "1522523872849567745",
+      "config": {
+        "chartData": "456786",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 12,
+      "moved": false,
+      "x": 0,
+      "h": 44,
+      "i": "e8e1e96a-6bcd-470f-8d52-3be655942a97",
+      "y": 12,
+      "pageCompId": "1522523872954425346",
+      "config": {
+        "chartData": "[{\"name\":\"19日\",\"value\":100879,\"type\":\"手机品牌\"},{\"name\":\"20日\",\"value\":340879,\"type\":\"手机品牌\"},{\"name\":\"21日\",\"value\":230879,\"type\":\"手机品牌\"},{\"name\":\"22日\",\"value\":540879,\"type\":\"手机品牌\"},{\"name\":\"23日\",\"value\":340879,\"type\":\"手机品牌\"},{\"name\":\"24日\",\"value\":30879,\"type\":\"手机品牌\"},{\"name\":\"25日\",\"value\":34879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 621,
+          "height": 474
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "grid": {
+            "bottom": 57,
+            "show": false,
+            "right": 6
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "每日产能",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 6,
+      "moved": false,
+      "x": 0,
+      "h": 42,
+      "i": "5d40565e-8ac4-4156-8130-ab627e98a80c",
+      "y": 56,
+      "pageCompId": "1522523873038311426",
+      "config": {
+        "chartData": "[{\"name\":\"未完成\",\"value\":4.9},{\"name\":\"已完成\",\"value\":95.1}]",
+        "size": {
+          "width": 306,
+          "height": 452
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 10,
+            "orient": "horizontal",
+            "t": 1
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "昨日概况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JPie",
+      "w": 6,
+      "moved": false,
+      "x": 6,
+      "h": 42,
+      "i": "60495499-f2d4-463d-ad7f-2487ee47592d",
+      "y": 56,
+      "pageCompId": "1522523873143169025",
+      "config": {
+        "chartData": "[{\"name\":\"未完成\",\"value\":3.8},{\"name\":\"已完成\",\"value\":96.2}]",
+        "size": {
+          "width": 306,
+          "height": 452
+        },
+        "dataMapping": [
+          {
+            "mapping": "",
+            "filed": "维度"
+          },
+          {
+            "mapping": "",
+            "filed": "数值"
+          }
+        ],
+        "dataType": 1,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "r": 12,
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "innerRadius": 50,
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "月概况",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JTabs",
+      "w": 12,
+      "moved": false,
+      "x": 12,
+      "h": 50,
+      "i": "a83d340c-a493-4d37-935c-be8a35c09097",
+      "y": 0,
+      "pageCompId": "1522523873235443714",
+      "config": {
+        "size": {
+          "width": 621,
+          "height": 540
+        },
+        "w": 12,
+        "h": 40,
+        "option": {
+          "title": "选项卡"
+        },
+        "child": [
+          {
+            "h": 42,
+            "index": 0,
+            "i": "4c96d729-f16d-4fea-a9c5-f82a6aef0225",
+            "title": "实际生产",
+            "horizontal": false,
+            "component": "JCommonTable",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "text": "0.042",
+            "id": "1daf6c6b-7061-40d3-8980-cd20c163da40",
+            "config": {
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "智能大数据_实际生产",
+              "h": 42,
+              "dataSetApi": "[{\"gh\":\"ATJDS01\",\"gjbm\":\"TYIY-908\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"ATJDS01\",\"gjbm\":\"11CPER-44\",\"jgsj\":\"2021-03-2918:07\",\"dqgx\":\"工序2\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"F56677\",\"jgsj\":\"2021-02-2807:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"99CVB-1\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序3\",\"zt\":\"已完成\"},{\"gh\":\"ATJDS01\",\"gjbm\":\"TYIY-908\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"ATJDS01\",\"gjbm\":\"11CPER-44\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序2\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"F56677\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"99CVB-1\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序3\",\"zt\":\"已完成\"},{\"gh\":\"ATJDS01\",\"gjbm\":\"TYIY-908\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"ATJDS01\",\"gjbm\":\"11CPER-44\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序2\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"F56677\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序1\",\"zt\":\"已完成\"},{\"gh\":\"PFTE56\",\"gjbm\":\"99CVB-1\",\"jgsj\":\"2021-03-2817:07\",\"dqgx\":\"工序3\",\"zt\":\"已完成\"}]",
+              "drillData": [],
+              "timeOut": 0,
+              "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+              "paddingBottom": 90,
+              "dataSetId": "1522522034783920129",
+              "fieldOption": [
+                {
+                  "label": "工号",
+                  "text": "工号",
+                  "value": "gh"
+                },
+                {
+                  "label": "编码",
+                  "text": "编码",
+                  "value": "gjbm"
+                },
+                {
+                  "label": "完成时间",
+                  "text": "完成时间",
+                  "value": "jgsj"
+                },
+                {
+                  "label": "工序",
+                  "text": "工序",
+                  "value": "dqgx"
+                },
+                {
+                  "label": "状态",
+                  "text": "状态",
+                  "value": "zt"
+                }
+              ],
+              "dataSetType": "json",
+              "w": 24,
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "columns": [
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "gh",
+                    "title": "工号"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "gjbm",
+                    "title": "编码"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "jgsj",
+                    "title": "完成时间"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "dqgx",
+                    "title": "工序"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "zt",
+                    "title": "状态"
+                  }
+                ]
+              }
+            },
+            "child": []
+          },
+          {
+            "h": 42,
+            "index": 0,
+            "i": "6163f3c5-7cd3-471f-84df-b53603bc922f",
+            "title": "计划生产",
+            "horizontal": false,
+            "component": "JCommonTable",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "text": "0.042",
+            "id": "59ce013b-526f-487a-816a-de2d87ce4b9d",
+            "config": {
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "智能大数据",
+              "h": 42,
+              "dataSetApi": "[{\"gh\":\"ACDFE_0045\",\"gjbm\":\"56-REE-4\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"ACDFE_0045\",\"gjbm\":\"BB-1L-0004\",\"jh\":\"2\",\"dqgx\":\"工序\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"DB-F5GNT-1\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"A5-0001\",\"jh\":\"1\",\"dqgx\":\"总装工序\",\"zt\":\"未开始\"},{\"gh\":\"ACDFE_0045\",\"gjbm\":\"56-REE-4\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"ACDFE_0045\",\"gjbm\":\"BB-1L-0004\",\"jh\":\"2\",\"dqgx\":\"工序\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"DB-F5GNT-1\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"A5-0001\",\"jh\":\"1\",\"dqgx\":\"总装工序\",\"zt\":\"未开始\"},{\"gh\":\"ACDFE_0045\",\"gjbm\":\"56-REE-4\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"ACDFE_0045\",\"gjbm\":\"BB-1L-0004\",\"jh\":\"2\",\"dqgx\":\"工序\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"DB-F5GNT-1\",\"jh\":\"1\",\"dqgx\":\"工程\",\"zt\":\"未开始\"},{\"gh\":\"JFL5GZ1-01\",\"gjbm\":\"A5-0001\",\"jh\":\"1\",\"dqgx\":\"总装工序\",\"zt\":\"未开始\"}]",
+              "drillData": [],
+              "timeOut": 0,
+              "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+              "paddingBottom": 90,
+              "dataSetId": "1522455203175997442",
+              "fieldOption": [
+                {
+                  "label": "工号",
+                  "text": "工号",
+                  "value": "gh"
+                },
+                {
+                  "label": "构件编号",
+                  "text": "构件编号",
+                  "value": "gjbm"
+                },
+                {
+                  "label": "序号",
+                  "text": "序号",
+                  "value": "jh"
+                },
+                {
+                  "label": "状态",
+                  "text": "状态",
+                  "value": "zt"
+                },
+                {
+                  "label": "当前工序",
+                  "text": "当前工序",
+                  "value": "dqgx"
+                }
+              ],
+              "dataSetType": "json",
+              "w": 24,
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "columns": [
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "gh",
+                    "title": "工号"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "gjbm",
+                    "title": "构件编号"
+                  },
+                  {
+                    "izShow": "N",
+                    "dataIndex": "jh",
+                    "title": "序号"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "zt",
+                    "title": "状态"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "dqgx",
+                    "title": "当前工序"
+                  }
+                ]
+              }
+            },
+            "child": []
+          }
+        ]
+      }
+    },
+    {
+      "component": "JTabs",
+      "w": 12,
+      "moved": false,
+      "x": 12,
+      "h": 48,
+      "i": "7903672e-9139-4db9-ab25-24c0612537cb",
+      "y": 50,
+      "pageCompId": "1522523873340301313",
+      "config": {
+        "size": {
+          "width": 621,
+          "height": 518
+        },
+        "w": 12,
+        "h": 40,
+        "option": {
+          "title": "选项卡"
+        },
+        "child": [
+          {
+            "h": 42,
+            "index": 0,
+            "i": "7b87441d-0f82-454a-80b9-6040dc1f8f5a",
+            "title": "项目履约一览表",
+            "horizontal": false,
+            "component": "JCommonTable",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "text": "0.042",
+            "id": "f437ad36-afbd-475b-8402-e8be433022a2",
+            "config": {
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "智能大数据_一览表",
+              "h": 42,
+              "dataSetApi": "[{\"ddh\":\"A5CCU_2017...\",\"zcxm\":\"国际城0902\",\"zl\":\"2548\",\"jhrq\":\"2021-04-21\",\"scjd\":\"100%\"},{\"ddh\":\"A5CCU_2017...\",\"zcxm\":\"新城ERT\",\"zl\":\"27215\",\"jhrq\":\"2021-05-21\",\"scjd\":\"54%\"},{\"ddh\":\"A5CCU_2018...\",\"zcxm\":\"天桥TTY\",\"zl\":\"5423\",\"jhrq\":\"2021-12-21\",\"scjd\":\"100%\"},{\"ddh\":\"A5CCU_2018...\",\"zcxm\":\"国际中心地\",\"zl\":\"14427\",\"jhrq\":\"2021-12-21\",\"scjd\":\"88%\"},{\"ddh\":\"A5CCU_2019...\",\"zcxm\":\"新生广场\",\"zl\":\"2808\",\"jhrq\":\"2021-08-21\",\"scjd\":\"98%\"},{\"ddh\":\"A5CCU_2017...\",\"zcxm\":\"国际城0902\",\"zl\":\"2548\",\"jhrq\":\"2021-04-21\",\"scjd\":\"100%\"},{\"ddh\":\"A5CCU_2019...\",\"zcxm\":\"新生广场\",\"zl\":\"2808\",\"jhrq\":\"2021-08-21\",\"scjd\":\"98%\"},{\"ddh\":\"A5CCU_2017...\",\"zcxm\":\"新城ERT\",\"zl\":\"27215\",\"jhrq\":\"2021-05-21\",\"scjd\":\"54%\"}]",
+              "drillData": [],
+              "timeOut": 0,
+              "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+              "paddingBottom": 90,
+              "dataSetId": "1522523544120991745",
+              "fieldOption": [
+                {
+                  "label": "订单号",
+                  "text": "订单号",
+                  "value": "ddh"
+                },
+                {
+                  "label": "在产项目",
+                  "text": "在产项目",
+                  "value": "zcxm"
+                },
+                {
+                  "label": "重量",
+                  "text": "重量",
+                  "value": "zl"
+                },
+                {
+                  "label": "交货日期",
+                  "text": "交货日期",
+                  "value": "jhrq"
+                },
+                {
+                  "label": "产量进度",
+                  "text": "产量进度",
+                  "value": "scjd"
+                }
+              ],
+              "dataSetType": "json",
+              "w": 24,
+              "linkageConfig": [],
+              "dataSetIzAgent": "0",
+              "option": {
+                "columns": [
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "ddh",
+                    "title": "订单号"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "zcxm",
+                    "title": "在产项目"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "zl",
+                    "title": "重量"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "jhrq",
+                    "title": "交货日期"
+                  },
+                  {
+                    "izShow": "Y",
+                    "dataIndex": "scjd",
+                    "title": "产量进度"
+                  }
+                ]
+              }
+            },
+            "child": []
+          }
+        ]
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 4,
+      "h": 6,
+      "i": "38364ada-5aeb-4ca3-8bfe-c81c3894846d",
+      "y": 0,
+      "pageCompId": "1522523873445158914",
+      "config": {
+        "chartData": "本周产量",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 4,
+      "h": 6,
+      "i": "6f1363fd-4306-4452-82ac-b0427e064b59",
+      "y": 6,
+      "pageCompId": "1522523873529044994",
+      "config": {
+        "chartData": "1234678",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 8,
+      "h": 6,
+      "i": "8a101ba0-496e-451c-8d37-fefa1858f19c",
+      "y": 0,
+      "pageCompId": "1522523873621319682",
+      "config": {
+        "chartData": "本月产量",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "w": 4,
+      "moved": false,
+      "x": 8,
+      "h": 6,
+      "i": "45600ba8-6cff-4083-8db8-fead5cfc88ab",
+      "y": 6,
+      "pageCompId": "1522523873726177281",
+      "config": {
+        "chartData": "87653908",
+        "size": {
+          "width": 200,
+          "height": 56
+        },
+        "w": 5,
+        "dataType": 1,
+        "h": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4A90E2",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 10,
+            "marginLeft": 76
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-05-06 13:42:03",
+  "updateBy": "admin",
+  "updateTime": "2022-05-06 18:29:13",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

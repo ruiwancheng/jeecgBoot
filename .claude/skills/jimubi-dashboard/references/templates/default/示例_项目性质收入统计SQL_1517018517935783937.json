@@ -1,0 +1,415 @@
+{
+  "id": "1517018517935783937",
+  "name": "示例_项目性质收入统计SQL",
+  "path": "/drag/page/view/1517018517935783937",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JTabs",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 56,
+      "i": "19dd2a57-e10d-418b-8146-cd30de6e9aea",
+      "y": 0,
+      "pageCompId": "1524663379220791297",
+      "config": {
+        "size": {
+          "width": 1650,
+          "height": 606
+        },
+        "w": 12,
+        "h": 40,
+        "option": {
+          "title": "选项卡"
+        },
+        "child": [
+          {
+            "component": "JPie",
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "68ebef80-9ded-4168-8d89-19ec64bc21d9",
+            "title": "饼图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "nature",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "total",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "项目性质收入统计SQL",
+              "query": [],
+              "dataSetApi": "SELECT\tid,\tnature,\tinsurance_fee,\trisk_consulting_fee,\tevaluation_fee,\tinsurance_evaluation_fee,\tbidding_consulting_fee,\tinterol_consulting_fee,\t(\t\tinsurance_fee+\t\trisk_consulting_fee+\t\trisk_consulting_fee+\t\tevaluation_fee+\t\tinsurance_evaluation_fee+\t\tbidding_consulting_fee+\t\tinterol_consulting_fee\t)AS'total'FROM\tjeecg_project_nature_income",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1517020649262972930",
+              "fieldOption": [
+                {
+                  "label": "项目性质",
+                  "text": "项目性质",
+                  "value": "nature"
+                },
+                {
+                  "label": "保险经纪佣金费",
+                  "text": "保险经纪佣金费",
+                  "value": "insurance_fee"
+                },
+                {
+                  "label": "风险咨询费",
+                  "text": "风险咨询费",
+                  "value": "risk_consulting_fee"
+                },
+                {
+                  "label": "承保公估评估费",
+                  "text": "承保公估评估费",
+                  "value": "evaluation_fee"
+                },
+                {
+                  "label": "保险公估费",
+                  "text": "保险公估费",
+                  "value": "insurance_evaluation_fee"
+                },
+                {
+                  "label": "投标咨询费",
+                  "text": "投标咨询费",
+                  "value": "bidding_consulting_fee"
+                },
+                {
+                  "label": "内控咨询费",
+                  "text": "内控咨询费",
+                  "value": "interol_consulting_fee"
+                },
+                {
+                  "label": "total",
+                  "text": "total",
+                  "value": "total"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "legend": {
+                  "orient": "vertical"
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "name": "AccessFrom",
+                    "emphasis": {
+                      "itemStyle": {
+                        "shadowOffsetX": 0,
+                        "shadowBlur": 10,
+                        "shadowColor": "rgba(0,0,0,0.5)"
+                      }
+                    },
+                    "type": "pie",
+                    "radius": "50%"
+                  }
+                ],
+                "tooltip": {
+                  "trigger": "item"
+                },
+                "title": {
+                  "subtext": "",
+                  "left": "left",
+                  "show": true,
+                  "text": "基础饼图"
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "textStyle": {
+                    "color": "#4A4A4A"
+                  },
+                  "title": ""
+                }
+              }
+            }
+          },
+          {
+            "horizontal": false,
+            "component": "JBar",
+            "size": 10,
+            "w": 12,
+            "x": 0,
+            "h": 42,
+            "i": "305bdc5d-37d6-42a4-baf3-a7a1f27b6bfb",
+            "text": "0.042",
+            "id": "0b42743d-492f-467b-bfaf-0769110749ab",
+            "title": "柱形图",
+            "config": {
+              "dataMapping": [
+                {
+                  "mapping": "nature",
+                  "filed": "维度"
+                },
+                {
+                  "mapping": "total",
+                  "filed": "数值"
+                }
+              ],
+              "paramOption": [],
+              "dataType": 2,
+              "dataSetName": "项目性质收入统计SQL",
+              "query": [],
+              "dataSetApi": "SELECT\tid,\tnature,\tinsurance_fee,\trisk_consulting_fee,\tevaluation_fee,\tinsurance_evaluation_fee,\tbidding_consulting_fee,\tinterol_consulting_fee,\t(\t\tinsurance_fee+\t\trisk_consulting_fee+\t\trisk_consulting_fee+\t\tevaluation_fee+\t\tinsurance_evaluation_fee+\t\tbidding_consulting_fee+\t\tinterol_consulting_fee\t)AS'total'FROM\tjeecg_project_nature_income",
+              "url": "http://api.jeecg.com/mock/33/chart",
+              "timeOut": -1,
+              "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+              "paddingBottom": 90,
+              "dataSetId": "1517020649262972930",
+              "fieldOption": [
+                {
+                  "label": "项目性质",
+                  "text": "项目性质",
+                  "value": "nature"
+                },
+                {
+                  "label": "保险经纪佣金费",
+                  "text": "保险经纪佣金费",
+                  "value": "insurance_fee"
+                },
+                {
+                  "label": "风险咨询费",
+                  "text": "风险咨询费",
+                  "value": "risk_consulting_fee"
+                },
+                {
+                  "label": "承保公估评估费",
+                  "text": "承保公估评估费",
+                  "value": "evaluation_fee"
+                },
+                {
+                  "label": "保险公估费",
+                  "text": "保险公估费",
+                  "value": "insurance_evaluation_fee"
+                },
+                {
+                  "label": "投标咨询费",
+                  "text": "投标咨询费",
+                  "value": "bidding_consulting_fee"
+                },
+                {
+                  "label": "内控咨询费",
+                  "text": "内控咨询费",
+                  "value": "interol_consulting_fee"
+                },
+                {
+                  "label": "total",
+                  "text": "total",
+                  "value": "total"
+                }
+              ],
+              "dataSetType": "sql",
+              "turnConfig": {
+                "url": ""
+              },
+              "linkageConfig": [],
+              "dataSetIzAgent": "",
+              "option": {
+                "grid": {
+                  "bottom": 115,
+                  "show": false
+                },
+                "series": [
+                  {
+                    "data": [],
+                    "showBackground": true,
+                    "backgroundStyle": {
+                      "color": "rgba(180,180,180,0.2)"
+                    },
+                    "type": "bar"
+                  }
+                ],
+                "tooltip": {
+                  "axisPointer": {
+                    "label": {
+                      "backgroundColor": "#333",
+                      "show": true
+                    },
+                    "type": "shadow"
+                  },
+                  "trigger": "axis"
+                },
+                "title": {
+                  "show": true,
+                  "text": "基础柱形图",
+                  "textStyle": {
+                    "color": "#464646"
+                  }
+                },
+                "card": {
+                  "rightHref": "",
+                  "size": "default",
+                  "extra": "",
+                  "title": ""
+                }
+              }
+            },
+            "child": []
+          }
+        ]
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 48,
+      "i": "e9e93d41-076f-436a-b466-3c327478e94d",
+      "y": 56,
+      "pageCompId": "1524663379359203329",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "项目性质收入统计SQL",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "SELECT\tid,\tnature,\tinsurance_fee,\trisk_consulting_fee,\tevaluation_fee,\tinsurance_evaluation_fee,\tbidding_consulting_fee,\tinterol_consulting_fee,\t(\t\tinsurance_fee+\t\trisk_consulting_fee+\t\trisk_consulting_fee+\t\tevaluation_fee+\t\tinsurance_evaluation_fee+\t\tbidding_consulting_fee+\t\tinterol_consulting_fee\t)AS'total'FROM\tjeecg_project_nature_income",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 1636,
+          "height": 518
+        },
+        "dataSetId": "1517020649262972930",
+        "fieldOption": [
+          {
+            "label": "项目性质",
+            "text": "项目性质",
+            "value": "nature"
+          },
+          {
+            "label": "保险经纪佣金费",
+            "text": "保险经纪佣金费",
+            "value": "insurance_fee"
+          },
+          {
+            "label": "风险咨询费",
+            "text": "风险咨询费",
+            "value": "risk_consulting_fee"
+          },
+          {
+            "label": "承保公估评估费",
+            "text": "承保公估评估费",
+            "value": "evaluation_fee"
+          },
+          {
+            "label": "保险公估费",
+            "text": "保险公估费",
+            "value": "insurance_evaluation_fee"
+          },
+          {
+            "label": "投标咨询费",
+            "text": "投标咨询费",
+            "value": "bidding_consulting_fee"
+          },
+          {
+            "label": "内控咨询费",
+            "text": "内控咨询费",
+            "value": "interol_consulting_fee"
+          },
+          {
+            "label": "total",
+            "text": "total",
+            "value": "total"
+          }
+        ],
+        "dataSetType": "sql",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "columns": [
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "nature",
+              "title": "项目性质"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "insurance_fee",
+              "title": "保险经纪佣金费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "risk_consulting_fee",
+              "title": "风险咨询费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "evaluation_fee",
+              "title": "承保公估评估费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "insurance_evaluation_fee",
+              "title": "保险公估费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "bidding_consulting_fee",
+              "title": "投标咨询费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "interol_consulting_fee",
+              "title": "内控咨询费"
+            },
+            {
+              "izTotal": "N",
+              "izShow": "N",
+              "dataIndex": "total",
+              "title": "total"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-04-21 13:52:54",
+  "updateBy": "admin",
+  "updateTime": "2022-05-12 16:10:51",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

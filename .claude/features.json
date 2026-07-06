@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "project": "JeecgBoot ERP",
+  "modules": [
+    {"id":"user","name":"用户管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/user/","apiBase":"/sys/user","entity":"SysUser"},
+    {"id":"role","name":"角色管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/role/","apiBase":"/sys/role","entity":"SysRole"},
+    {"id":"permission","name":"菜单管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/menu/","apiBase":"/sys/permission","entity":"SysPermission"},
+    {"id":"depart","name":"部门管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/depart/","apiBase":"/sys/depart","entity":"SysDepart"},
+    {"id":"dict","name":"数据字典","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/dict/","apiBase":"/sys/dict","entity":"SysDict"},
+    {"id":"message","name":"消息管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/message/","apiBase":"/sys/message","entity":"SysMessage"},
+    {"id":"quartz","name":"定时任务","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/quartz/","apiBase":"/sys/quartzJob","entity":"QuartzJob"},
+    {"id":"oss","name":"文件管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/oss/","apiBase":"/sys/oss","entity":"OssFile"},
+    {"id":"announcement","name":"系统公告","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/notice/","apiBase":"/sys/annountCement","entity":"SysAnnouncement"},
+    {"id":"openapi","name":"开放API","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"","apiBase":"/openapi","entity":""},
+    {"id":"demo","name":"演示示例","category":"demo","backendPath":"jeecg-boot-module/jeecg-module-demo/","frontendPath":"src/views/demo/","apiBase":"/test/jeecgDemo","entity":"JeecgDemo"}
+  ],
+  "projects": [{"id":"demo","name":"demo客户","backendPath":"jeecg-boot-module/customer-demo/","frontendPath":"src/views/customer/demo/"}]
+}

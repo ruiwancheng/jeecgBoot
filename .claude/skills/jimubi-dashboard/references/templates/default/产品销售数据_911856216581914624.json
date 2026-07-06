@@ -1,0 +1,1235 @@
+{
+  "id": "911856216581914624",
+  "name": "产品销售数据",
+  "path": "/drag/page/view/911856216581914624",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 0,
+      "x": 0,
+      "h": 8,
+      "i": "8faf5811-d619-4ff2-839e-86ecb4e0328f",
+      "y": 0,
+      "orderNum": 0,
+      "pageCompId": "912581733916393472",
+      "config": {
+        "chartData": "产品销售数据仪表板",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 1817,
+          "height": 78
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4570F2",
+            "textAlign": "center",
+            "fontSize": 36,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 8,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 8,
+      "x": 0,
+      "h": 30,
+      "i": "b5fa4269-1d38-4a62-80a3-52490943ff59",
+      "y": 8,
+      "orderNum": 38,
+      "pageCompId": "912581733949947904",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "本月渠道销售",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=salesThisMonth",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"oppo\"},{\"value\":735,\"name\":\"vivo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 371,
+          "height": 320
+        },
+        "dataSetId": "911887596497977344",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "top": 53,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "t": 1,
+            "orient": "vertical"
+          },
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": " 华东区、华中区为主要渠道销售区域。",
+            "top": 1,
+            "show": true,
+            "text": "本月渠道销售",
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 38,
+      "x": 0,
+      "h": 41,
+      "i": "de23faa0-ffa7-482c-857e-8dbfaea7dd47",
+      "y": 38,
+      "orderNum": 38,
+      "pageCompId": "912581733975113728",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "本月代理商销售排行",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=salesRanking",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 371,
+          "height": 441
+        },
+        "dataSetId": "911887691259887616",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "rotate": 3,
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 69,
+            "left": 94,
+            "bottom": 58,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 17,
+              "data": [],
+              "itemStyle": {
+                "color": "#64B5F6",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "本月代理商销售排行/元",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 5,
+      "w": 4,
+      "moved": false,
+      "pcY": 8,
+      "x": 5,
+      "h": 5,
+      "i": "f2158c50-22b0-4978-98b9-6e2cc784650e",
+      "y": 8,
+      "orderNum": 84,
+      "pageCompId": "912581734000279552",
+      "config": {
+        "chartData": "本月销售额/元",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 21
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 5,
+      "w": 4,
+      "moved": false,
+      "pcY": 13,
+      "x": 5,
+      "h": 5,
+      "i": "a28c1804-cb6b-4c70-8e57-ce352ff09d63",
+      "y": 13,
+      "orderNum": 84,
+      "pageCompId": "912581734025445376",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "paramOption": [],
+        "dataType": 1,
+        "dataSetName": "本月产品销售",
+        "query": [],
+        "h": 12,
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=productSalesThisMonth",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "15,458,757",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "dataSetId": "911889006916583424",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "w": 8,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "body": {
+            "color": "#4D71FE",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 0,
+            "marginLeft": 16
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 5,
+      "w": 4,
+      "moved": false,
+      "pcY": 18,
+      "x": 5,
+      "h": 5,
+      "i": "63506dd7-e376-42c5-b39f-b2211ad8ebdc",
+      "y": 18,
+      "orderNum": 84,
+      "pageCompId": "912581734050611200",
+      "config": {
+        "chartData": "月环比 -50%",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#34C874",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 21
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 9,
+      "w": 4,
+      "moved": false,
+      "pcY": 8,
+      "x": 9,
+      "h": 5,
+      "i": "de7e9a36-1234-4792-835a-c20687c433ed",
+      "y": 8,
+      "orderNum": 84,
+      "pageCompId": "912581734084165632",
+      "config": {
+        "chartData": "今日销售额/元",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 18
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 9,
+      "w": 4,
+      "moved": false,
+      "pcY": 13,
+      "x": 9,
+      "h": 5,
+      "i": "ee6464c3-bda1-424a-8c0f-37fdfce6d8cb",
+      "y": 13,
+      "orderNum": 84,
+      "pageCompId": "912581734113525760",
+      "config": {
+        "chartData": "657,554",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4D71FE",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 0,
+            "marginLeft": 19
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 9,
+      "w": 4,
+      "moved": false,
+      "pcY": 18,
+      "x": 9,
+      "h": 5,
+      "i": "c6de77fa-b17a-4549-bda8-0e00e65a7748",
+      "y": 18,
+      "orderNum": 84,
+      "pageCompId": "912581734138691584",
+      "config": {
+        "chartData": "日环比 -12%",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#34C874",
+            "fontSize": 14,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 11,
+            "marginLeft": 24
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 13,
+      "w": 4,
+      "moved": false,
+      "pcY": 8,
+      "x": 13,
+      "h": 5,
+      "i": "3dc483bb-0067-48ee-98bd-dfa2e7534909",
+      "y": 8,
+      "orderNum": 84,
+      "pageCompId": "912581734163857408",
+      "config": {
+        "chartData": "今年目标销售额达成率",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 5,
+            "marginLeft": 16
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 13,
+      "w": 4,
+      "moved": false,
+      "pcY": 13,
+      "x": 13,
+      "h": 10,
+      "i": "ecd623a6-2e08-47f2-8dd6-c25ff5c29a66",
+      "y": 13,
+      "orderNum": 84,
+      "pageCompId": "912581734189023232",
+      "config": {
+        "chartData": "42%",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 295,
+          "height": 100
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#4D71FE",
+            "textAlign": "center",
+            "fontSize": 30,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 24,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "pcX": 5,
+      "w": 12,
+      "moved": false,
+      "pcY": 23,
+      "x": 5,
+      "h": 27,
+      "i": "b910f04d-6a4d-4d79-811d-dc5d2f807713",
+      "y": 23,
+      "orderNum": 83,
+      "pageCompId": "912581734209994752",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "近七天销售额趋势",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=salesTrend",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 904,
+          "height": 287
+        },
+        "dataSetId": "911888632709169152",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "top": 90,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "itemStyle": {
+                "color": "#64b5f6"
+              },
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "日销售额（元）",
+            "left": 10,
+            "text": "近七天销售额趋势",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646",
+              "fontWeight": "bold"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JStackBar",
+      "pcX": 5,
+      "w": 12,
+      "moved": false,
+      "pcY": 50,
+      "x": 5,
+      "h": 29,
+      "i": "406be0c9-dc13-4cad-ac22-17a4a5c22bff",
+      "y": 50,
+      "orderNum": 83,
+      "pageCompId": "912581734230966272",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "type",
+            "filed": "分组"
+          },
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "本月重点城市的重点产品销售额",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=productSalesRevenue",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/26/stackedBar",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"1991\",\"value\":3,\"type\":\"Lon\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Lon\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Lon\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Lon\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Lon\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Lon\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Lon\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Lon\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Lon\"},{\"name\":\"1991\",\"value\":3,\"type\":\"Bor\"},{\"name\":\"1992\",\"value\":4,\"type\":\"Bor\"},{\"name\":\"1993\",\"value\":3.5,\"type\":\"Bor\"},{\"name\":\"1994\",\"value\":5,\"type\":\"Bor\"},{\"name\":\"1995\",\"value\":4.9,\"type\":\"Bor\"},{\"name\":\"1996\",\"value\":6,\"type\":\"Bor\"},{\"name\":\"1997\",\"value\":7,\"type\":\"Bor\"},{\"name\":\"1998\",\"value\":9,\"type\":\"Bor\"},{\"name\":\"1999\",\"value\":13,\"type\":\"Bor\"}]",
+        "size": {
+          "width": 904,
+          "height": 309
+        },
+        "dataSetId": "911888715248877568",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          },
+          {
+            "label": "type",
+            "text": "type",
+            "value": "type"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "customColor": [
+            {
+              "color": "#67BBFF"
+            },
+            {
+              "color": "#9982FD"
+            },
+            {
+              "color": "#62DDCC"
+            }
+          ],
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 90,
+            "bottom": 115
+          },
+          "series": [],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "本月重点城市的重点产品销售额/元",
+            "textStyle": {
+              "color": "#464646",
+              "fontSize": 16
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "pcX": 17,
+      "w": 7,
+      "moved": false,
+      "pcY": 8,
+      "x": 17,
+      "h": 32,
+      "i": "76d16482-fd7f-4e92-ba27-68980b8b0029",
+      "y": 8,
+      "orderNum": 83,
+      "pageCompId": "912581734256132096",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "本月产品销售",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=productSalesThisMonth",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"oppo\"},{\"value\":735,\"name\":\"vivo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 523,
+          "height": 342
+        },
+        "dataSetId": "911889006916583424",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "top": 55,
+            "left": 47,
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "itemStyle": {
+                "color": "#64B5F6"
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "legend": {
+            "t": 10
+          },
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "subtext": "",
+            "show": true,
+            "text": " 产品3为主推产品产品2为近期上线产品。",
+            "textStyle": {
+              "color": "#464646",
+              "fontSize": 14,
+              "fontWeight": "bold"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JText",
+      "pcX": 17,
+      "w": 7,
+      "moved": false,
+      "pcY": 40,
+      "x": 17,
+      "h": 5,
+      "i": "211ebf49-1284-4b1c-99c9-08066a50f9ae",
+      "y": 40,
+      "orderNum": 82,
+      "pageCompId": "912581734272909312",
+      "config": {
+        "chartData": "本月产品销售",
+        "borderColor": "#DBEAFF",
+        "size": {
+          "width": 523,
+          "height": 45
+        },
+        "background": "#DBEAFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#000000",
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 8,
+            "marginLeft": 21
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 17,
+      "w": 7,
+      "moved": false,
+      "pcY": 45,
+      "x": 17,
+      "h": 34,
+      "i": "c89556db-678a-418b-8121-1052958f4149",
+      "y": 45,
+      "orderNum": 115,
+      "pageCompId": "912581734289686528",
+      "config": {
+        "borderColor": "#DBEAFF",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "本月产品小类销售排行",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/productSales?type=rankingCategorySales",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 523,
+          "height": 364
+        },
+        "dataSetId": "911889086163763200",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#DBEAFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "interval": 2
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 44,
+            "bottom": 62,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 16,
+              "data": [],
+              "itemStyle": {
+                "color": "#64B5F6",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "subtext": "",
+            "show": true,
+            "text": " 本月产品小类销售排行/元",
+            "textStyle": {
+              "color": "#464646",
+              "fontSize": 14
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 6902,
+  "appMenuGroupId": null,
+  "createTime": "2024-01-29 15:57:53",
+  "updateBy": "admin",
+  "updateTime": "2024-01-30 14:21:56",
+  "updateCount": 24,
+  "visitsNum": 0,
+  "delFlag": 0
+}

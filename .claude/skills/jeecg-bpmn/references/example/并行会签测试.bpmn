@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:activiti="http://activiti.org/bpmn" targetNamespace="http://www.jeecg.org">
+  <process id="joa_onl_bthuiq" name="并行会签测试">
+    <documentation>流程描述</documentation>
+    <extensionElements>
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.ProcessEndListener" event="end" id="402880e54803a496014805e5d9190012" />
+    </extensionElements>
+    <startEvent id="start1" name="开始节点" flowable:initiator="applyUserId" />
+    <endEvent id="end" name="结束节点" />
+    <userTask id="task1557561204791" name="选择会签人员" flowable:assignee="${applyUserId}" />
+    <userTask id="task1557561208150" name="会签审阅" flowable:assignee="${assigneeUserId}">
+      <multiInstanceLoopCharacteristics flowable:collection="${flowUtil.stringToList(assigneeUserIdList)}" flowable:elementVariable="assigneeUserId" />
+    </userTask>
+    <sequenceFlow id="flow1557561259013" name="" sourceRef="start1" targetRef="task1557561204791" />
+    <sequenceFlow id="flow1557561260674" name="" sourceRef="task1557561204791" targetRef="task1557561208150" />
+    <sequenceFlow id="flow1557561265853" name="" sourceRef="task1557561208150" targetRef="end" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_joa_onl_bthuiq">
+    <bpmndi:BPMNPlane id="BPMNPlane_joa_onl_bthuiq" bpmnElement="joa_onl_bthuiq">
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1557561265853" bpmnElement="flow1557561265853">
+        <omgdi:waypoint x="215" y="337" />
+        <omgdi:waypoint x="215" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1557561260674" bpmnElement="flow1557561260674">
+        <omgdi:waypoint x="215" y="206" />
+        <omgdi:waypoint x="215" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1557561259013" bpmnElement="flow1557561259013">
+        <omgdi:waypoint x="215" y="80" />
+        <omgdi:waypoint x="215" y="141" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_start1" bpmnElement="start1">
+        <omgdc:Bounds x="200" y="50" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_end" bpmnElement="end">
+        <omgdc:Bounds x="200" y="400" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1557561204791" bpmnElement="task1557561204791">
+        <omgdc:Bounds x="170" y="146" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1557561208150" bpmnElement="task1557561208150">
+        <omgdc:Bounds x="170" y="277" width="90" height="55" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

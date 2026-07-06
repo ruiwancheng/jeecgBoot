@@ -1,0 +1,1308 @@
+{
+  "id": "910820508471705600",
+  "name": "某连锁饮品销售看板",
+  "path": "/drag/page/view/910820508471705600",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JText",
+      "pcX": 0,
+      "w": 15,
+      "moved": false,
+      "pcY": 0,
+      "x": 0,
+      "h": 10,
+      "i": "dcd6e80e-8865-4238-844b-2bb8998f755e",
+      "y": 0,
+      "orderNum": 0,
+      "pageCompId": "912577878868672512",
+      "config": {
+        "chartData": "某 连 锁 饮 品 销 售",
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 1132,
+          "height": 100
+        },
+        "background": "#FFFFFF",
+        "w": 8,
+        "dataType": 1,
+        "h": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "option": {
+          "body": {
+            "color": "#000000",
+            "textAlign": "center",
+            "fontSize": 40,
+            "text": "",
+            "fontWeight": "bold",
+            "marginTop": 18,
+            "marginLeft": 0
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JForm",
+      "pcX": 15,
+      "w": 9,
+      "moved": false,
+      "pcY": 0,
+      "x": 15,
+      "h": 10,
+      "i": "50040bd1-c081-4e5b-a36a-ea6a5afce396",
+      "y": 0,
+      "orderNum": 10,
+      "pageCompId": "912577878898032640",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "size": {
+          "width": 675,
+          "height": 100
+        },
+        "background": "#FFFFFF",
+        "w": 24,
+        "dataType": 1,
+        "h": 12,
+        "linkageConfig": [
+          {
+            "linkageId": "0efe3637-39ac-4f2e-82f4-e09540ee332a",
+            "linkage": []
+          },
+          {
+            "linkageId": "2db8c9de-9f8b-49f8-8d7a-6b3166de0ed5",
+            "linkage": []
+          },
+          {
+            "linkageId": "6f773617-eca8-4598-8260-dc701cc16e8b",
+            "linkage": []
+          },
+          {
+            "linkageId": "868c63d3-cfc2-4e49-a1c5-6ee0418fd303",
+            "linkage": []
+          },
+          {
+            "linkageId": "35a7308b-0482-48c8-8e46-ed50cfb67961",
+            "linkage": []
+          },
+          {
+            "linkageId": "cd981a55-258c-48cd-8e92-742185a711a3",
+            "linkage": []
+          },
+          {
+            "linkageId": "715ebf76-9228-4b2e-8ab7-dcb351c2ff03",
+            "linkage": []
+          },
+          {
+            "linkageId": "2323a8fb-42ff-4a23-9b13-8f4f514dafb5",
+            "linkage": []
+          },
+          {
+            "linkageId": "0b68bd42-a0e9-48f8-9a7b-794ba9ebf8cf",
+            "linkage": []
+          },
+          {
+            "linkageId": "5130130f-6076-45b1-8977-d9b5a4c894fc",
+            "linkage": []
+          },
+          {
+            "linkageId": "82016a70-aa98-42cb-b205-c14e5e212cf8",
+            "linkage": []
+          }
+        ],
+        "timeOut": -1,
+        "option": {
+          "fields": [
+            {
+              "fieldName": "date",
+              "dictCode": "",
+              "dateFormat": "YYYY-MM",
+              "fieldTxt": "日期",
+              "defaultValue": "2024-01",
+              "searchMode": "single",
+              "orderNum": "",
+              "action": "",
+              "id": "rowa82899dc-1e6b-47a1-acd8-ba2fb6f5df02",
+              "izSearch": "1",
+              "widgetType": "date"
+            }
+          ],
+          "body": {
+            "color": "#000000"
+          },
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      }
+    },
+    {
+      "component": "JGrowCard",
+      "pcX": 0,
+      "w": 24,
+      "moved": false,
+      "pcY": 10,
+      "x": 0,
+      "h": 30,
+      "i": "0efe3637-39ac-4f2e-82f4-e09540ee332a",
+      "y": 10,
+      "orderNum": 10,
+      "pageCompId": "912577878919004160",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "标题"
+          },
+          {
+            "mapping": "",
+            "filed": "图标"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          },
+          {
+            "mapping": "",
+            "filed": "总计"
+          },
+          {
+            "mapping": "",
+            "filed": "前缀"
+          },
+          {
+            "mapping": "color",
+            "filed": "颜色"
+          },
+          {
+            "mapping": "action",
+            "filed": "单位"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "销量额",
+        "query": [],
+        "h": 19,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=salesVolume",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/42/nav",
+        "timeOut": 0,
+        "chartData": "[  {    \"title\": \"访问数\",    \"icon\": \"icon-jeecg-qianbao\",    \"value\": 2000,    \"total\": 120000,    \"prefix\": \"$\",    \"color\": \"green\",    \"action\": \"月\"  },  {    \"title\": \"成交额\",    \"icon\": \"icon-jeecg-youhuiquan\",    \"value\": 20000,    \"total\": 500000,    \"prefix\": \"$\",    \"color\": \"blue\",    \"action\": \"月\"  },  {    \"title\": \"下载数\",    \"icon\": \"icon-jeecg-tupian\",    \"value\": 8000,    \"prefix\": \"$\",    \"total\": 120000,    \"color\": \"orange\",    \"action\": \"周\"  },  {    \"title\": \"成交数\",    \"icon\": \"icon-jeecg-jifen\",    \"value\": 5000,    \"prefix\": \"$\",    \"total\": 50000,    \"color\": \"purple\",    \"action\": \"年\"  }]",
+        "size": {
+          "width": 1817,
+          "height": 320
+        },
+        "dataSetId": "911792028287287296",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          },
+          {
+            "label": "icon",
+            "text": "icon",
+            "value": "icon"
+          },
+          {
+            "label": "action",
+            "text": "action",
+            "value": "action"
+          },
+          {
+            "label": "color",
+            "text": "color",
+            "value": "color"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "w": 12,
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "icon": {
+            "scriptUrl": "//at.alicdn.com/t/font_3237315_b3fqd960glt.js",
+            "fontSize": 20
+          },
+          "body": {
+            "horizontal": 6,
+            "vertical": 4,
+            "span": 8
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "更多",
+            "title": "统计卡片"
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 40,
+      "x": 0,
+      "h": 17,
+      "i": "2db8c9de-9f8b-49f8-8d7a-6b3166de0ed5",
+      "y": 40,
+      "orderNum": 40,
+      "pageCompId": "912577878944169984",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "单月最高销售量分店\t",
+        "query": [],
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=topSellingBranch",
+        "drillData": [],
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{\"value\":\"1024\"}",
+        "size": {
+          "width": 371,
+          "height": 177
+        },
+        "dataSetId": "911836343134896128",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#F3EFF0",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#F9B632",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#FF9736",
+            "textStyle": {
+              "color": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "单月最高销量分店（新洲店）"
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 57,
+      "x": 0,
+      "h": 16,
+      "i": "6f773617-eca8-4598-8260-dc701cc16e8b",
+      "y": 57,
+      "orderNum": 50,
+      "pageCompId": "912577878965141504",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "单月最高销量品线\t",
+        "query": [],
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=salesLine",
+        "drillData": [],
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{\"value\":\"1024\"}",
+        "size": {
+          "width": 371,
+          "height": 166
+        },
+        "dataSetId": "911836426450550784",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#E9F2FF",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#547BFE",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#547BFE",
+            "textStyle": {
+              "color": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "单月最高销量品线（醇香奶茶）"
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 73,
+      "x": 0,
+      "h": 16,
+      "i": "868c63d3-cfc2-4e49-a1c5-6ee0418fd303",
+      "y": 73,
+      "orderNum": 59,
+      "pageCompId": "912577878990307328",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "单月最高销量单品",
+        "query": [],
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=highestSellingItem",
+        "drillData": [],
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{\"value\":\"1024\"}",
+        "size": {
+          "width": 371,
+          "height": 166
+        },
+        "dataSetId": "911836535531814912",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#EDFAFE",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#44C8F3",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#44C8F3",
+            "textStyle": {
+              "color": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "单月最高销量单品（珍珠奶茶）"
+          }
+        }
+      }
+    },
+    {
+      "component": "JNumber",
+      "pcX": 0,
+      "w": 5,
+      "moved": false,
+      "pcY": 89,
+      "x": 0,
+      "h": 17,
+      "i": "35a7308b-0482-48c8-8e46-ed50cfb67961",
+      "y": 89,
+      "orderNum": 83,
+      "pageCompId": "912577879023861760",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "单月最高销量规格",
+        "query": [],
+        "h": 9,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=maximumSalesSpecs",
+        "drillData": [],
+        "analysis": {
+          "isCompare": false,
+          "compareType": "",
+          "trendType": "1"
+        },
+        "timeOut": 0,
+        "chartData": "{\"value\":\"1024\"}",
+        "size": {
+          "width": 371,
+          "height": 177
+        },
+        "dataSetId": "911836717715603456",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#F2FCF7",
+        "seriesType": [],
+        "w": 5,
+        "turnConfig": {
+          "url": ""
+        },
+        "dataSetIzAgent": "0",
+        "option": {
+          "isCompare": false,
+          "trendType": "1",
+          "body": {
+            "color": "#58DC92",
+            "text": "",
+            "fontWeight": "bold"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#9EFFB6",
+            "textStyle": {
+              "color": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            },
+            "title": "单月最高销量规格（磨砂）"
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "pcX": 5,
+      "w": 8,
+      "moved": false,
+      "pcY": 40,
+      "x": 5,
+      "h": 23,
+      "i": "2323a8fb-42ff-4a23-9b13-8f4f514dafb5",
+      "y": 40,
+      "orderNum": 96,
+      "pageCompId": "912577879044833280",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "销售额走势",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=salesTrend",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 599,
+          "height": 243
+        },
+        "dataSetId": "911836839023263744",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              },
+              "show": false
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "show": true
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "customColor": [
+            {
+              "color": "#FBE1C2"
+            }
+          ],
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#FFFFFF"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 178,
+            "bottom": 157,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "lineType": "area",
+              "itemStyle": {
+                "color": "#64b5f6"
+              },
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "销售金额（元）",
+            "left": 10,
+            "text": "销售额走势",
+            "subtextStyle": {
+              "color": "#464646"
+            },
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "small",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "pcX": 5,
+      "w": 8,
+      "moved": false,
+      "pcY": 63,
+      "x": 5,
+      "h": 22,
+      "i": "715ebf76-9228-4b2e-8ab7-dcb351c2ff03",
+      "y": 63,
+      "orderNum": 96,
+      "pageCompId": "912577879065804800",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "销量走势",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=salesTendency",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 599,
+          "height": 232
+        },
+        "dataSetId": "911836922162757632",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "customColor": [
+            {
+              "color": "#D7EBFB"
+            }
+          ],
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 71,
+            "bottom": 62,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "lineType": "area",
+              "itemStyle": {
+                "color": "#64b5f6"
+              },
+              "type": "line"
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "销售数量（杯）",
+            "left": 1,
+            "text": "销量走势",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646",
+              "fontWeight": "normal"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "pcX": 5,
+      "w": 8,
+      "moved": false,
+      "pcY": 85,
+      "x": 5,
+      "h": 21,
+      "i": "cd981a55-258c-48cd-8e92-742185a711a3",
+      "y": 85,
+      "orderNum": 96,
+      "pageCompId": "912577879086776320",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "原料支出趋势",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=expenditureTrends",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 599,
+          "height": 221
+        },
+        "dataSetId": "911845934736392192",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "customColor": [
+            {
+              "color": "#D5DFFE"
+            }
+          ],
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              }
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 54,
+            "bottom": 61,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "lineType": "area",
+              "itemStyle": {
+                "color": "#64b5f6"
+              },
+              "type": "line"
+            }
+          ],
+          "tooltip": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "subtext": "支出费用（元）",
+            "left": 10,
+            "text": "原料支出趋势",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "body": {
+            "color": "#000000"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "pcX": 13,
+      "w": 11,
+      "moved": false,
+      "pcY": 40,
+      "x": 13,
+      "h": 33,
+      "i": "82016a70-aa98-42cb-b205-c14e5e212cf8",
+      "y": 40,
+      "orderNum": 106,
+      "pageCompId": "912577879103553536",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "订单销售量\t",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=orderSalesVolume",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "width": 827,
+          "height": 353
+        },
+        "dataSetId": "911837008343121920",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "yAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "lineStyle": {
+              "color": "#f3f3f3"
+            },
+            "splitLine": {
+              "lineStyle": {
+                "color": "#F3F3F3"
+              },
+              "interval": 2
+            },
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "xAxis": {
+            "axisLabel": {
+              "color": "#909198"
+            },
+            "axisLine": {
+              "lineStyle": {
+                "color": "#333333"
+              }
+            },
+            "type": "value",
+            "nameTextStyle": {
+              "color": "#333333"
+            }
+          },
+          "grid": {
+            "top": 48,
+            "left": 85,
+            "bottom": 60,
+            "show": false
+          },
+          "series": [
+            {
+              "barWidth": 0,
+              "data": [],
+              "showBackground": false,
+              "backgroundStyle": {
+                "color": "#51626E"
+              },
+              "itemStyle": {
+                "color": "#85C6F3",
+                "borderRadius": 0
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": true,
+            "text": "订单销售量",
+            "textStyle": {
+              "color": "#464646"
+            },
+            "subtextStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "headColor": "#FFFFFF",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "pcX": 13,
+      "w": 6,
+      "moved": false,
+      "pcY": 73,
+      "x": 13,
+      "h": 33,
+      "i": "0b68bd42-a0e9-48f8-9a7b-794ba9ebf8cf",
+      "y": 73,
+      "orderNum": 106,
+      "pageCompId": "912577879116136448",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "店铺销售额排名",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=salesRanking",
+        "drillData": [],
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 447,
+          "height": 353
+        },
+        "dataSetId": "911837091507781632",
+        "fieldOption": [
+          {
+            "label": "店铺",
+            "text": "店铺",
+            "value": "name"
+          },
+          {
+            "label": "销售金额（元）",
+            "text": "销售金额（元）",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "seriesType": [],
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "店铺"
+            },
+            {
+              "izShow": "Y",
+              "dataIndex": "value",
+              "title": "销售金额（元）"
+            }
+          ],
+          "title": {
+            "textStyle": {
+              "color": "#464646"
+            }
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "pcX": 19,
+      "w": 5,
+      "moved": false,
+      "pcY": 73,
+      "x": 19,
+      "h": 33,
+      "i": "5130130f-6076-45b1-8977-d9b5a4c894fc",
+      "y": 73,
+      "orderNum": 106,
+      "pageCompId": "912577879132913664",
+      "config": {
+        "borderColor": "#FFFFFF00",
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": " 冷热占比",
+        "query": [],
+        "dataSetApi": "https://api.jeecg.com/mock/51/beverageSales?type=coldAndHostProportion",
+        "drillData": [],
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"oppo\"},{\"value\":735,\"name\":\"vivo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 371,
+          "height": 353
+        },
+        "dataSetId": "911837168896884736",
+        "fieldOption": [
+          {
+            "label": "name",
+            "text": "name",
+            "value": "name"
+          },
+          {
+            "label": "value",
+            "text": "value",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "background": "#FFFFFF",
+        "seriesType": [],
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "0",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "Access From",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "top": 1,
+            "show": true,
+            "text": "冷热占比",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "title": ""
+          }
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": "default",
+  "style": "default",
+  "designType": 100,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": 6902,
+  "appMenuGroupId": null,
+  "createTime": "2024-01-26 19:22:21",
+  "updateBy": "admin",
+  "updateTime": "2024-01-29 15:56:38",
+  "updateCount": 36,
+  "visitsNum": 3,
+  "delFlag": 0
+}

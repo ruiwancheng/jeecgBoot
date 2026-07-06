@@ -1,0 +1,507 @@
+{
+  "id": "1516747539813007362",
+  "name": "示例_项目性质收入统计JSON",
+  "path": "/drag/page/view/1516747539813007362",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JPie",
+      "w": 12,
+      "moved": false,
+      "x": 0,
+      "h": 42,
+      "i": "a2ada7ba-ff55-4d2c-ba1b-10eb3c04b5f7",
+      "y": 0,
+      "pageCompId": "1517018288431857665",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "column1",
+            "filed": "维度"
+          },
+          {
+            "mapping": "column8",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "项目性质收入统计JSON",
+        "query": [],
+        "dataSetApi": "[{\"column1\":\"市场化-电商业务\",\"column2\":4865.41,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":4865.41},{\"column1\":\"统筹型\",\"column2\":35767081.88,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":35767081.88},{\"column1\":\"市场化-非股东\",\"column2\":1487045.35,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1487045.35},{\"column1\":\"市场化-参控股\",\"column2\":382690.56,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":382690.56},{\"column1\":\"市场化-员工福利\",\"column2\":256684.91,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":265684.91},{\"column1\":\"市场化-再保险\",\"column2\":563451.03,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":563451.03},{\"column1\":\"市场化-海外业务\",\"column2\":760576.25,\"column3\":770458.75,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1531035.00},{\"column1\":\"市场化-风险咨询\",\"column2\":0.00,\"column3\":910183.93,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":226415.09,\"column8\":1136599.02}]",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1048,\"name\":\"vivo\"},{\"value\":735,\"name\":\"oppo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1516748630344630273",
+        "fieldOption": [
+          {
+            "label": "项目性质",
+            "text": "项目性质",
+            "value": "column1"
+          },
+          {
+            "label": "保险公估费",
+            "text": "保险公估费",
+            "value": "column5"
+          },
+          {
+            "label": "承保公估评估费",
+            "text": "承保公估评估费",
+            "value": "column4"
+          },
+          {
+            "label": "风险咨询费",
+            "text": "风险咨询费",
+            "value": "column3"
+          },
+          {
+            "label": "保险经纪佣金费",
+            "text": "保险经纪佣金费",
+            "value": "column2"
+          },
+          {
+            "label": "总计",
+            "text": "总计",
+            "value": "column8"
+          },
+          {
+            "label": "内控咨询费",
+            "text": "内控咨询费",
+            "value": "column7"
+          },
+          {
+            "label": "投标咨询费",
+            "text": "投标咨询费",
+            "value": "column6"
+          }
+        ],
+        "dataSetType": "json",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "legend": {
+            "orient": "vertical"
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "emphasis": {
+                "itemStyle": {
+                  "shadowOffsetX": 0,
+                  "shadowBlur": 10,
+                  "shadowColor": "rgba(0,0,0,0.5)"
+                }
+              },
+              "type": "pie",
+              "radius": "50%"
+            }
+          ],
+          "tooltip": {
+            "trigger": "item"
+          },
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": true,
+            "text": "基础饼图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JBar",
+      "w": 12,
+      "moved": false,
+      "x": 12,
+      "h": 42,
+      "i": "195569f9-8bd3-4e8f-892a-f81f60a25ba8",
+      "y": 0,
+      "pageCompId": "1517018288566075393",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "column1",
+            "filed": "维度"
+          },
+          {
+            "mapping": "column8",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "项目性质收入统计JSON",
+        "query": [],
+        "dataSetApi": "[{\"column1\":\"市场化-电商业务\",\"column2\":4865.41,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":4865.41},{\"column1\":\"统筹型\",\"column2\":35767081.88,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":35767081.88},{\"column1\":\"市场化-非股东\",\"column2\":1487045.35,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1487045.35},{\"column1\":\"市场化-参控股\",\"column2\":382690.56,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":382690.56},{\"column1\":\"市场化-员工福利\",\"column2\":256684.91,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":265684.91},{\"column1\":\"市场化-再保险\",\"column2\":563451.03,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":563451.03},{\"column1\":\"市场化-海外业务\",\"column2\":760576.25,\"column3\":770458.75,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1531035.00},{\"column1\":\"市场化-风险咨询\",\"column2\":0.00,\"column3\":910183.93,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":226415.09,\"column8\":1136599.02}]",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"苹果\",\"value\":1000879,\"type\":\"手机品牌\"},{\"name\":\"三星\",\"value\":3400879,\"type\":\"手机品牌\"},{\"name\":\"小米\",\"value\":2300879,\"type\":\"手机品牌\"},{\"name\":\"oppo\",\"value\":5400879,\"type\":\"手机品牌\"},{\"name\":\"vivo\",\"value\":3400879,\"type\":\"手机品牌\"}]",
+        "size": {
+          "height": 420
+        },
+        "dataSetId": "1516748630344630273",
+        "fieldOption": [
+          {
+            "label": "项目性质",
+            "text": "项目性质",
+            "value": "column1"
+          },
+          {
+            "label": "保险公估费",
+            "text": "保险公估费",
+            "value": "column5"
+          },
+          {
+            "label": "承保公估评估费",
+            "text": "承保公估评估费",
+            "value": "column4"
+          },
+          {
+            "label": "风险咨询费",
+            "text": "风险咨询费",
+            "value": "column3"
+          },
+          {
+            "label": "保险经纪佣金费",
+            "text": "保险经纪佣金费",
+            "value": "column2"
+          },
+          {
+            "label": "总计",
+            "text": "总计",
+            "value": "column8"
+          },
+          {
+            "label": "内控咨询费",
+            "text": "内控咨询费",
+            "value": "column7"
+          },
+          {
+            "label": "投标咨询费",
+            "text": "投标咨询费",
+            "value": "column6"
+          }
+        ],
+        "dataSetType": "json",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "showBackground": true,
+              "backgroundStyle": {
+                "color": "rgba(180,180,180,0.2)"
+              },
+              "type": "bar"
+            }
+          ],
+          "tooltip": {
+            "axisPointer": {
+              "label": {
+                "backgroundColor": "#333",
+                "show": true
+              },
+              "type": "shadow"
+            },
+            "trigger": "axis"
+          },
+          "title": {
+            "show": true,
+            "text": "基础柱形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JLine",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 44,
+      "i": "5cde89e3-1174-4a95-8385-065c1ee1a22d",
+      "y": 42,
+      "pageCompId": "1517018288670932994",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "column1",
+            "filed": "维度"
+          },
+          {
+            "mapping": "column8",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "项目性质收入统计JSON",
+        "query": [],
+        "dataSetApi": "[{\"column1\":\"市场化-电商业务\",\"column2\":4865.41,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":4865.41},{\"column1\":\"统筹型\",\"column2\":35767081.88,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":35767081.88},{\"column1\":\"市场化-非股东\",\"column2\":1487045.35,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1487045.35},{\"column1\":\"市场化-参控股\",\"column2\":382690.56,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":382690.56},{\"column1\":\"市场化-员工福利\",\"column2\":256684.91,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":265684.91},{\"column1\":\"市场化-再保险\",\"column2\":563451.03,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":563451.03},{\"column1\":\"市场化-海外业务\",\"column2\":760576.25,\"column3\":770458.75,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1531035.00},{\"column1\":\"市场化-风险咨询\",\"column2\":0.00,\"column3\":910183.93,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":226415.09,\"column8\":1136599.02}]",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 1650,
+          "height": 474
+        },
+        "dataSetId": "1516748630344630273",
+        "fieldOption": [
+          {
+            "label": "项目性质",
+            "text": "项目性质",
+            "value": "column1"
+          },
+          {
+            "label": "保险公估费",
+            "text": "保险公估费",
+            "value": "column5"
+          },
+          {
+            "label": "承保公估评估费",
+            "text": "承保公估评估费",
+            "value": "column4"
+          },
+          {
+            "label": "风险咨询费",
+            "text": "风险咨询费",
+            "value": "column3"
+          },
+          {
+            "label": "保险经纪佣金费",
+            "text": "保险经纪佣金费",
+            "value": "column2"
+          },
+          {
+            "label": "总计",
+            "text": "总计",
+            "value": "column8"
+          },
+          {
+            "label": "内控咨询费",
+            "text": "内控咨询费",
+            "value": "column7"
+          },
+          {
+            "label": "投标咨询费",
+            "text": "投标咨询费",
+            "value": "column6"
+          }
+        ],
+        "dataSetType": "json",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "text": "基础折线图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 24,
+      "moved": false,
+      "x": 0,
+      "h": 48,
+      "i": "2ed05f21-e822-4c4e-8657-02edb10b1cca",
+      "y": 86,
+      "pageCompId": "1517018288775790593",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "项目性质收入统计JSON",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "[{\"column1\":\"市场化-电商业务\",\"column2\":4865.41,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":4865.41},{\"column1\":\"统筹型\",\"column2\":35767081.88,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":35767081.88},{\"column1\":\"市场化-非股东\",\"column2\":1487045.35,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1487045.35},{\"column1\":\"市场化-参控股\",\"column2\":382690.56,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":382690.56},{\"column1\":\"市场化-员工福利\",\"column2\":256684.91,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":265684.91},{\"column1\":\"市场化-再保险\",\"column2\":563451.03,\"column3\":0,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":563451.03},{\"column1\":\"市场化-海外业务\",\"column2\":760576.25,\"column3\":770458.75,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":0,\"column8\":1531035.00},{\"column1\":\"市场化-风险咨询\",\"column2\":0.00,\"column3\":910183.93,\"column4\":0,\"column5\":0,\"column6\":0,\"column7\":226415.09,\"column8\":1136599.02}]",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 1650,
+          "height": 518
+        },
+        "dataSetId": "1516748630344630273",
+        "fieldOption": [
+          {
+            "label": "项目性质",
+            "text": "项目性质",
+            "value": "column1"
+          },
+          {
+            "label": "保险公估费",
+            "text": "保险公估费",
+            "value": "column5"
+          },
+          {
+            "label": "承保公估评估费",
+            "text": "承保公估评估费",
+            "value": "column4"
+          },
+          {
+            "label": "风险咨询费",
+            "text": "风险咨询费",
+            "value": "column3"
+          },
+          {
+            "label": "保险经纪佣金费",
+            "text": "保险经纪佣金费",
+            "value": "column2"
+          },
+          {
+            "label": "总计",
+            "text": "总计",
+            "value": "column8"
+          },
+          {
+            "label": "内控咨询费",
+            "text": "内控咨询费",
+            "value": "column7"
+          },
+          {
+            "label": "投标咨询费",
+            "text": "投标咨询费",
+            "value": "column6"
+          }
+        ],
+        "dataSetType": "json",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "columns": [
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column1",
+              "title": "项目性质"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column5",
+              "title": "保险公估费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column4",
+              "title": "承保公估评估费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column3",
+              "title": "风险咨询费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column2",
+              "title": "保险经纪佣金费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column8",
+              "title": "总计"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column7",
+              "title": "内控咨询费"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "column6",
+              "title": "投标咨询费"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-04-20 19:56:08",
+  "updateBy": "admin",
+  "updateTime": "2022-04-21 13:52:00",
+  "updateCount": 1,
+  "visitsNum": null,
+  "delFlag": 0
+}

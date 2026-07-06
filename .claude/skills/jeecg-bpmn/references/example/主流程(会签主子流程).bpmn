@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:activiti="http://activiti.org/bpmn" targetNamespace="http://www.jeecg.org">
+  <process id="mainflow" name="主流程(会签主子流程)">
+    <documentation>流程描述</documentation>
+    <extensionElements>
+      <flowable:executionListener class="org.jeecg.modules.extbpm.listener.execution.ProcessEndListener" event="end" id="402880e54803a496014805e5d9190012" />
+    </extensionElements>
+    <startEvent id="start1" name="开始节点" flowable:initiator="applyUserId" />
+    <endEvent id="end" name="结束节点" />
+    <userTask id="task1568615412011" name="主流程经理审批" flowable:candidateUsers="zhoujf,admin" />
+    <userTask id="task1568615414124" name="主流程总监审批" flowable:assignee="admin" />
+    <callActivity id="callSubProcess1568615439083" name="" calledElement="subflow">
+      <extensionElements>
+        <flowable:in source="assigneeUserId" target="assigneeUserId" />
+        <flowable:in source="applyUserId" target="applyUserId" />
+        <flowable:in source="JG_LOCAL_PROCESS_ID" target="JG_SUB_MAIN_PROCESS_ID" />
+        <flowable:out source="applyUserId" target="applyUserId" />
+      </extensionElements>
+      <multiInstanceLoopCharacteristics flowable:collection="${flowUtil.stringToList(assigneeUserIdList)}" flowable:elementVariable="assigneeUserId" />
+    </callActivity>
+    <sequenceFlow id="flow1568615431826" name="" sourceRef="start1" targetRef="task1568615412011" />
+    <sequenceFlow id="flow1568615434460" name="" sourceRef="task1568615414124" targetRef="end" />
+    <sequenceFlow id="flow1568615440940" name="" sourceRef="task1568615412011" targetRef="callSubProcess1568615439083" />
+    <sequenceFlow id="flow1568615449144" name="" sourceRef="callSubProcess1568615439083" targetRef="task1568615414124" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_mainflow">
+    <bpmndi:BPMNPlane id="BPMNPlane_mainflow" bpmnElement="mainflow">
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1568615449144" bpmnElement="flow1568615449144">
+        <omgdi:waypoint x="480" y="241" />
+        <omgdi:waypoint x="480" y="300" />
+        <omgdi:waypoint x="268" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1568615440940" bpmnElement="flow1568615440940">
+        <omgdi:waypoint x="265" y="160" />
+        <omgdi:waypoint x="480" y="160" />
+        <omgdi:waypoint x="480" y="211" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1568615434460" bpmnElement="flow1568615434460">
+        <omgdi:waypoint x="218" y="333" />
+        <omgdi:waypoint x="218" y="398" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow1568615431826" bpmnElement="flow1568615431826">
+        <omgdi:waypoint x="215" y="79" />
+        <omgdi:waypoint x="215" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_start1" bpmnElement="start1">
+        <omgdc:Bounds x="200" y="49" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_end" bpmnElement="end">
+        <omgdc:Bounds x="203" y="398" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1568615412011" bpmnElement="task1568615412011">
+        <omgdc:Bounds x="170" y="133" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_task1568615414124" bpmnElement="task1568615414124">
+        <omgdc:Bounds x="173" y="273" width="90" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_callSubProcess1568615439083" bpmnElement="callSubProcess1568615439083">
+        <omgdc:Bounds x="465" y="211" width="30" height="30" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,378 @@
+{
+  "id": "1517062686729338882",
+  "name": "示例_年龄占比API",
+  "path": "/drag/page/view/1517062686729338882",
+  "desJson": null,
+  "template": [
+    {
+      "component": "JLine",
+      "w": 13,
+      "moved": false,
+      "x": 0,
+      "h": 44,
+      "i": "503ecff5-5f00-4188-90f7-227f5847b895",
+      "y": 0,
+      "pageCompId": "1517064663387373570",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "图表API示例-年龄占比",
+        "query": [],
+        "dataSetApi": "http://api.jeecg.com/mock/51/jingwu/nianling",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": -1,
+        "chartData": "[{\"value\":1000,\"name\":\"联想\"},{\"value\":7350,\"name\":\"小米\"},{\"value\":5800,\"name\":\"华为\"},{\"value\":6000,\"name\":\"苹果\"},{\"value\":3000,\"name\":\"戴尔\"}]",
+        "size": {
+          "width": 889,
+          "height": 474
+        },
+        "dataSetId": "1517046231342284802",
+        "fieldOption": [
+          {
+            "label": "年龄",
+            "text": "年龄",
+            "value": "name"
+          },
+          {
+            "label": "数量",
+            "text": "数量",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "type": "line"
+            }
+          ],
+          "title": {
+            "subtext": "",
+            "left": "left",
+            "show": false,
+            "text": "基础折线图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JRing",
+      "w": 11,
+      "moved": false,
+      "x": 13,
+      "h": 44,
+      "i": "5a72ce0b-838d-4777-838a-1a0505ef8394",
+      "y": 0,
+      "pageCompId": "1517064663563534337",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "图表API示例-年龄占比",
+        "query": [],
+        "dataSetApi": "http://api.jeecg.com/mock/51/jingwu/nianling",
+        "url": "http://api.jeecg.com/mock/33/chart",
+        "timeOut": 0,
+        "chartData": "[{\"value\":1048,\"name\":\"oppo\"},{\"value\":735,\"name\":\"vivo\"},{\"value\":580,\"name\":\"苹果\"},{\"value\":484,\"name\":\"小米\"},{\"value\":300,\"name\":\"三星\"}]",
+        "size": {
+          "width": 751,
+          "height": 474
+        },
+        "dataSetId": "1517046231342284802",
+        "fieldOption": [
+          {
+            "label": "年龄",
+            "text": "年龄",
+            "value": "name"
+          },
+          {
+            "label": "数量",
+            "text": "数量",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115,
+            "show": false
+          },
+          "series": [
+            {
+              "data": [],
+              "name": "AccessFrom",
+              "avoidLabelOverlap": false,
+              "emphasis": {
+                "label": {
+                  "show": true,
+                  "fontSize": "25",
+                  "fontWeight": "bold"
+                }
+              },
+              "label": {
+                "show": false,
+                "position": "center"
+              },
+              "labelLine": {
+                "show": false
+              },
+              "type": "pie",
+              "radius": [
+                "40%",
+                "70%"
+              ]
+            }
+          ],
+          "tooltip": {
+            "trigger": "item",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "title": {
+            "show": false,
+            "text": "基础环形图",
+            "textStyle": {
+              "color": "#464646"
+            }
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JFunnel",
+      "w": 13,
+      "moved": false,
+      "x": 0,
+      "h": 49,
+      "i": "39790ea2-63de-41b4-957b-5a51b7e11f29",
+      "y": 44,
+      "pageCompId": "1517064663664197634",
+      "config": {
+        "dataMapping": [
+          {
+            "mapping": "name",
+            "filed": "维度"
+          },
+          {
+            "mapping": "value",
+            "filed": "数值"
+          }
+        ],
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "图表API示例-年龄占比",
+        "query": [],
+        "dataSetApi": "http://api.jeecg.com/mock/51/jingwu/nianling",
+        "url": "http://api.jeecg.com/mock/26/funnel",
+        "timeOut": 0,
+        "chartData": "[{\"value\":335,\"name\":\"直接访问\"},{\"value\":310,\"name\":\"邮件营销\"},{\"value\":234,\"name\":\"联盟广告\"}]",
+        "size": {
+          "width": 889,
+          "height": 529
+        },
+        "dataSetId": "1517046231342284802",
+        "fieldOption": [
+          {
+            "label": "年龄",
+            "text": "年龄",
+            "value": "name"
+          },
+          {
+            "label": "数量",
+            "text": "数量",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "turnConfig": {
+          "url": ""
+        },
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "grid": {
+            "bottom": 115
+          },
+          "legend": {
+            "orient": "horizontal"
+          },
+          "series": [
+            {
+              "left": "10%",
+              "gap": 2,
+              "name": "Funnel",
+              "width": "80%",
+              "emphasis": {
+                "label": {
+                  "fontSize": 20
+                }
+              },
+              "itemStyle": {
+                "borderColor": "#fff",
+                "borderWidth": 1
+              },
+              "sort": "descending",
+              "label": {
+                "show": true,
+                "position": "inside"
+              },
+              "labelLine": {
+                "lineStyle": {
+                  "width": 1,
+                  "type": "solid"
+                },
+                "length": 10
+              },
+              "type": "funnel"
+            }
+          ],
+          "tooltip": {
+            "formatter": "{a}<br/>{b}:{c}%",
+            "trigger": "item"
+          },
+          "title": {
+            "show": true,
+            "text": "基础漏斗图"
+          },
+          "card": {
+            "rightHref": "",
+            "size": "default",
+            "extra": "",
+            "textStyle": {
+              "color": "#4A4A4A"
+            },
+            "title": ""
+          }
+        }
+      }
+    },
+    {
+      "component": "JCommonTable",
+      "w": 11,
+      "moved": false,
+      "x": 13,
+      "h": 49,
+      "i": "9c1f12e1-d71d-4a12-b601-d6730fcd0223",
+      "y": 44,
+      "pageCompId": "1517064663798415361",
+      "config": {
+        "paramOption": [],
+        "dataType": 2,
+        "dataSetName": "图表API示例-年龄占比",
+        "query": [],
+        "h": 42,
+        "dataSetApi": "http://api.jeecg.com/mock/51/jingwu/nianling",
+        "timeOut": -1,
+        "chartData": "[{\"name\":\"4月\",\"value\":50},{\"name\":\"2月\",\"value\":200},{\"name\":\"3月\",\"value\":300},{\"name\":\"4月\",\"value\":400},{\"name\":\"5月\",\"value\":50},{\"name\":\"6月\",\"value\":120}]",
+        "size": {
+          "width": 751,
+          "height": 529
+        },
+        "dataSetId": "1517046231342284802",
+        "fieldOption": [
+          {
+            "label": "年龄",
+            "text": "年龄",
+            "value": "name"
+          },
+          {
+            "label": "数量",
+            "text": "数量",
+            "value": "value"
+          }
+        ],
+        "dataSetType": "api",
+        "w": 24,
+        "linkageConfig": [],
+        "dataSetIzAgent": "",
+        "option": {
+          "columns": [
+            {
+              "izShow": "Y",
+              "dataIndex": "name",
+              "title": "年龄"
+            },
+            {
+              "izTotal": "Y",
+              "izShow": "Y",
+              "dataIndex": "value",
+              "title": "数量"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coverUrl": null,
+  "backgroundColor": null,
+  "backgroundImage": null,
+  "theme": null,
+  "style": null,
+  "designType": null,
+  "protectionCode": "amVlY2cxMzE0",
+  "type": "0",
+  "izTemplate": "1",
+  "createBy": "admin",
+  "lowAppId": null,
+  "tenantId": null,
+  "appMenuGroupId": null,
+  "createTime": "2022-04-21 16:48:25",
+  "updateBy": "admin",
+  "updateTime": "2022-04-21 16:56:16",
+  "updateCount": 1,
+  "visitsNum": 1,
+  "delFlag": 0
+}
