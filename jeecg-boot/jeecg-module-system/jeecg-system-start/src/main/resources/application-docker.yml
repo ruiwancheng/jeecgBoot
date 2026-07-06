@@ -258,6 +258,8 @@ jeecg:
     dataSourceSafe: false
     # 低代码模式（dev:开发模式，prod:发布模式——关闭所有在线开发配置能力）
     lowCodeMode: dev
+    is-concurrent: true
+    enableLoginCaptcha: false
   # 签名密钥串(前后端要一致，正式发布请自行修改)
   signatureSecret: dd05f1c54d63749eda95f9fa6d49v442a
   #签名拦截接口
