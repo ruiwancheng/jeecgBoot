@@ -9,7 +9,6 @@ PROTECTED_DIRS=(
   "jeecg-boot/jeecg-module-system/jeecg-system-start/src/"
   "jeecgboot-vue3/src/views/system/"
   "jeecgboot-vue3/src/components/"
-  ".claude/"
 )
 
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)
