@@ -4,7 +4,9 @@
 
 PROTECTED_DIRS=(
   "jeecg-boot/jeecg-boot-base-core/"
-  "jeecg-boot/jeecg-module-system/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-biz/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-api/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-start/src/"
   "jeecgboot-vue3/src/views/system/"
   "jeecgboot-vue3/src/components/"
   ".claude/"

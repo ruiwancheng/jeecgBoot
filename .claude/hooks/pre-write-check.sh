@@ -6,7 +6,9 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-/mnt/d/project/JeecgBoot}"
 
 PROTECTED_PATHS=(
   "jeecg-boot/jeecg-boot-base-core/"
-  "jeecg-boot/jeecg-module-system/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-biz/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-api/"
+  "jeecg-boot/jeecg-module-system/jeecg-system-start/src/"
   "jeecgboot-vue3/src/views/system/"
 )
 
