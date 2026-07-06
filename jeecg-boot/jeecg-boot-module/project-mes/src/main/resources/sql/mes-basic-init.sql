@@ -92,17 +92,22 @@ INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort
 SELECT REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code='mes_location_type'), '暂存区', '3', '暂存区域', 3, 1, 'admin', NOW(), 'admin', NOW()
 WHERE NOT EXISTS (SELECT 1 FROM sys_dict_item WHERE dict_id=(SELECT id FROM sys_dict WHERE dict_code='mes_location_type') AND item_value='3');
 
--- 5. 菜单: 基础设置（挂在已有 MES 菜单 mes_menu_001 下）
+-- 5. 菜单: MES 一级菜单（可重复执行）
+INSERT INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
+SELECT 'mes_menu_001', '', 'MES系统', '/project/mes', 'layouts/default/index', 1, '', '/project/mes/basic', 0, '1', 90.00, 0, 'ant-design:appstore-outlined', 0, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0
+WHERE NOT EXISTS (SELECT 1 FROM sys_permission WHERE id='mes_menu_001');
+
+-- 6. 菜单: 基础设置（挂在 MES 一级菜单下）
 INSERT INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
 SELECT 'mes_basic', 'mes_menu_001', '基础设置', '/project/mes/basic', 'layouts/default/index', 1, '', '/project/mes/basic/warehouse', 1, '1', 10.00, 0, 'ant-design:setting-outlined', 0, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0
 WHERE NOT EXISTS (SELECT 1 FROM sys_permission WHERE id='mes_basic');
 
--- 6. 菜单: 仓库管理
+-- 7. 菜单: 仓库管理
 INSERT INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
 SELECT 'mes_basic_wh', 'mes_basic', '仓库管理', '/project/mes/basic/warehouse', 'project/mes/basic/warehouse/index', 1, 'MesBasicWarehouse', NULL, 1, '1', 1.00, 0, 'ant-design:database-filled', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0
 WHERE NOT EXISTS (SELECT 1 FROM sys_permission WHERE id='mes_basic_wh');
 
--- 7. 菜单: 库位管理
+-- 8. 菜单: 库位管理
 INSERT INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
 SELECT 'mes_basic_loc', 'mes_basic', '库位管理', '/project/mes/basic/location', 'project/mes/basic/location/index', 1, 'MesBasicLocation', NULL, 1, '1', 2.00, 0, 'ant-design:environment-filled', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0
 WHERE NOT EXISTS (SELECT 1 FROM sys_permission WHERE id='mes_basic_loc');
