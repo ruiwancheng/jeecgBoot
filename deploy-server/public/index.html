@@ -142,6 +142,7 @@
   <div class="btn-row">
     <button id="btnDeploy" class="btn btn-deploy" disabled>开始部署</button>
     <button id="btnClear" class="btn btn-clear">清空日志</button>
+<button id="btnReset" class="btn btn-clear" style="background:#4a1a1a;color:#f87171;">重置状态</button>
     <span id="elapsed" class="elapsed"></span>
   </div>
 
@@ -331,6 +332,12 @@ BTN_CLEAR.addEventListener('click', () => {
   TERMINAL.innerHTML = '';
   resetProgress();
   PROGRESS_SECTION.classList.remove('visible');
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (ws?.readyState === WebSocket.OPEN) {
+    ws.send('reset');
+  }
 });
 
 connect();

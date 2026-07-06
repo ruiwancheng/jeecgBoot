@@ -22,3 +22,6 @@ derby.log
 harness/
 hermes/
 .remember/
+
+## deploy-server dependencies
+deploy-server/node_modules/

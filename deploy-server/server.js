@@ -7,6 +7,7 @@ const path = require('path');
 const PORT = 3101;
 const PROJECT_DIR = path.resolve(__dirname, '..');
 const DEPLOY_SCRIPT = path.join(PROJECT_DIR, 'deploy.sh');
+const DEPLOY_TIMEOUT = 15 * 60 * 1000; // 15分钟超时自动重置
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,6 +17,7 @@ const wss = new WebSocketServer({ server });
 
 let deploying = false;
 let lastDeploy = null;
+let timeoutHandle = null;
 
 const ERROR_DIAGNOSIS = [
   { pattern: /\[less\] timed-out/i, hint: 'Less 编译超时——可能是服务器内存不足，尝试重启后重试' },
@@ -46,10 +48,15 @@ wss.on('connection', (ws) => {
     const msg = data.toString();
     if (msg === 'deploy') {
       if (deploying) {
-        ws.send(JSON.stringify({ type: 'error', message: '部署正在进行中，请稍后再试' }));
+        ws.send(JSON.stringify({ type: 'error', message: '部署正在进行中，请稍后再试。如果确认上次部署已中断，可以手动重置状态。' }));
         return;
       }
       startDeploy(ws);
+    } else if (msg === 'reset') {
+      deploying = false;
+      if (timeoutHandle) { clearTimeout(timeoutHandle); timeoutHandle = null; }
+      log('部署状态已手动重置');
+      ws.send(JSON.stringify({ type: 'ready', message: '部署状态已重置，可以开始新部署', history: lastDeploy }));
     } else if (msg === 'ping') {
       ws.send(JSON.stringify({ type: 'pong' }));
     }
@@ -59,7 +66,8 @@ wss.on('connection', (ws) => {
     log('客户端已断开');
   });
 
-  ws.send(JSON.stringify({ type: 'ready', message: '就绪，等待部署指令', history: lastDeploy }));
+  const payload = { type: 'ready', message: deploying ? '警告：上次部署可能未正常结束，如确认已中断请手动重置' : '就绪，等待部署指令', history: lastDeploy };
+  ws.send(JSON.stringify(payload));
 });
 
 const STEP_LABELS = {
@@ -76,6 +84,15 @@ function startDeploy(ws) {
   deploying = true;
   const startTime = Date.now();
 
+  // 超时自动重置
+  timeoutHandle = setTimeout(() => {
+    if (deploying) {
+      deploying = false;
+      log('部署超时（15分钟），自动重置状态');
+      ws.send(JSON.stringify({ type: 'error', message: '部署超时（超过15分钟），状态已自动重置，请重试' }));
+    }
+  }, DEPLOY_TIMEOUT);
+
   log('开始部署...');
   ws.send(JSON.stringify({ type: 'start', message: '========== 开始部署 ==========' }));
 
@@ -87,24 +104,7 @@ function startDeploy(ws) {
   proc.stdout.on('data', (data) => {
     const text = data.toString();
     ws.send(JSON.stringify({ type: 'log', line: text }));
-    // 检测步骤进度标记 [N/6]
-    const match = text.match(STEP_PATTERN);
-    if (match) {
-      const key = match[1];
-      const label = STEP_LABELS[key] || '';
-      const step = parseInt(key);
-      ws.send(JSON.stringify({ type: 'step', step, total: 6, label: `[${key}] ${label}` }));
-    }
-  });
 
-  let deployLog = '';
-
-  proc.stdout.on('data', (data) => {
-    const text = data.toString();
-    deployLog += text;
-    ws.send(JSON.stringify({ type: 'log', line: text }));
-
-    // 错误诊断
     const hint = diagnose(text);
     if (hint) {
       ws.send(JSON.stringify({ type: 'hint', message: hint }));
@@ -121,7 +121,6 @@ function startDeploy(ws) {
 
   proc.stderr.on('data', (data) => {
     const text = data.toString();
-    deployLog += text;
     ws.send(JSON.stringify({ type: 'log', line: text }));
     const hint = diagnose(text);
     if (hint) {
@@ -131,6 +130,7 @@ function startDeploy(ws) {
 
   proc.on('close', (code) => {
     deploying = false;
+    if (timeoutHandle) { clearTimeout(timeoutHandle); timeoutHandle = null; }
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     const result = { time: new Date().toISOString(), code, duration: elapsed + 's', status: code === 0 ? '成功' : '失败' };
     lastDeploy = result;
@@ -147,6 +147,7 @@ function startDeploy(ws) {
 
   proc.on('error', (err) => {
     deploying = false;
+    if (timeoutHandle) { clearTimeout(timeoutHandle); timeoutHandle = null; }
     const msg = `进程启动失败: ${err.message}`;
     log(msg);
     ws.send(JSON.stringify({ type: 'error', message: msg }));
