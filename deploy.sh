@@ -58,7 +58,25 @@ echo -e "${GREEN}[OK] 后端编译完成${NC}"
 echo -e "[5/6] 编译前端项目..."
 cd ../jeecgboot-vue3
 pnpm install
+
+# 清理 Less 缓存，加大 Node 内存（防止 Less 编译超时）
+rm -rf node_modules/.cache
+export NODE_OPTIONS="--max-old-space-size=8192"
+echo "  前端编译环境已就绪（内存上限 8GB，已清理缓存）"
+
 pnpm run build:docker
+BUILD_EXIT=$?
+if [ $BUILD_EXIT -ne 0 ]; then
+    echo -e "${RED}========================================="
+    echo "  前端编译失败 (退出码: $BUILD_EXIT)"
+    echo "=========================================${NC}"
+    echo "  可能原因和解决方案："
+    echo "  1. Less 编译超时 → 内存不足，尝试调大 Docker 容器内存"
+    echo "  2. 缺少新依赖 → 检查 package.json 是否更新"
+    echo "  3. TypeScript 类型错误 → 查看上方报错的具体文件和行号"
+    echo "  4. 磁盘空间不足 → 运行 df -h 检查"
+    exit 1
+fi
 echo -e "${GREEN}[OK] 前端编译完成${NC}"
 
 # 启动Docker容器

@@ -177,7 +177,9 @@
     </div>
   </div>
 
-  <div id="terminal" class="terminal"></div>
+  <div id="hintBox" style="display:none;background:#2d1f1f;border:1px solid #f87171;border-radius:6px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#fca5a5;"></div>
+<div id="historyBox" style="font-size:12px;color:#666;margin-bottom:8px;"></div>
+<div id="terminal" class="terminal"></div>
 </div>
 
 <script>
@@ -186,6 +188,8 @@ const BTN_DEPLOY = document.getElementById('btnDeploy');
 const BTN_CLEAR = document.getElementById('btnClear');
 const STATUS = document.getElementById('status');
 const ELAPSED = document.getElementById('elapsed');
+const HINT_BOX = document.getElementById('hintBox');
+const HISTORY_BOX = document.getElementById('historyBox');
 const PROGRESS_SECTION = document.getElementById('progressSection');
 const PROGRESS_BAR = document.getElementById('progressBar');
 const STEPS_CONTAINER = document.getElementById('steps');
@@ -209,8 +213,17 @@ function connect() {
     const msg = JSON.parse(event.data);
     switch (msg.type) {
       case 'ready':
+        HINT_BOX.style.display = 'none';
+        if (msg.history) {
+          HISTORY_BOX.innerHTML = '上次部署：<span style="color:' + (msg.history.code === 0 ? '#52b788' : '#f87171') + '">' + msg.history.status + '</span> ' + msg.history.duration + ' (' + new Date(msg.history.time).toLocaleString('zh-CN') + ')';
+        }
+        break;
+      case 'hint':
+        HINT_BOX.style.display = 'block';
+        HINT_BOX.textContent = '诊断建议：' + msg.message;
         break;
       case 'start':
+        HINT_BOX.style.display = 'none';
         startTime = Date.now();
         ELAPSED.textContent = '';
         BTN_DEPLOY.disabled = true;
@@ -235,6 +248,9 @@ function connect() {
           appendLine('error', msg.message);
         }
         ELAPSED.textContent = '';
+        if (msg.history) {
+          HISTORY_BOX.innerHTML = '上次部署：<span style="color:' + (msg.history.code === 0 ? '#52b788' : '#f87171') + '">' + msg.history.status + '</span> ' + msg.history.duration + ' (' + new Date(msg.history.time).toLocaleString('zh-CN') + ')';
+        }
         break;
       case 'error':
         clearInterval(timerInterval);

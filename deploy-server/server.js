@@ -15,6 +15,24 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 let deploying = false;
+let lastDeploy = null;
+
+const ERROR_DIAGNOSIS = [
+  { pattern: /\[less\] timed-out/i, hint: 'Less 编译超时——可能是服务器内存不足，尝试重启后重试' },
+  { pattern: /out of memory/i, hint: '内存溢出——增加 Docker 容器内存或减少并发任务' },
+  { pattern: /Could not autowire/i, hint: 'Maven 依赖未注册——检查 pom.xml 是否缺少新模块的依赖声明' },
+  { pattern: /Table.*doesn\'t exist/i, hint: '数据库表不存在——检查是否执行了对应的 SQL 初始化脚本' },
+  { pattern: /Module.*not found/i, hint: 'pnpm 依赖缺失——运行 pnpm install 后重试' },
+  { pattern: /Cannot find module/i, hint: 'npm 包缺失——检查 package.json 是否有新依赖' },
+  { pattern: /ERR_NAME_NOT_RESOLVED/i, hint: 'Docker 容器主机名解析失败——检查 /etc/hosts 配置' },
+];
+
+function diagnose(text) {
+  for (const d of ERROR_DIAGNOSIS) {
+    if (d.pattern.test(text)) return d.hint;
+  }
+  return null;
+}
 
 function log(msg) {
   const ts = new Date().toISOString().slice(11, 19);
@@ -41,7 +59,7 @@ wss.on('connection', (ws) => {
     log('客户端已断开');
   });
 
-  ws.send(JSON.stringify({ type: 'ready', message: '就绪，等待部署指令' }));
+  ws.send(JSON.stringify({ type: 'ready', message: '就绪，等待部署指令', history: lastDeploy }));
 });
 
 const STEP_LABELS = {
@@ -79,22 +97,51 @@ function startDeploy(ws) {
     }
   });
 
+  let deployLog = '';
+
+  proc.stdout.on('data', (data) => {
+    const text = data.toString();
+    deployLog += text;
+    ws.send(JSON.stringify({ type: 'log', line: text }));
+
+    // 错误诊断
+    const hint = diagnose(text);
+    if (hint) {
+      ws.send(JSON.stringify({ type: 'hint', message: hint }));
+    }
+
+    const match = text.match(STEP_PATTERN);
+    if (match) {
+      const key = match[1];
+      const label = STEP_LABELS[key] || '';
+      const step = parseInt(key);
+      ws.send(JSON.stringify({ type: 'step', step, total: 6, label: `[${key}] ${label}` }));
+    }
+  });
+
   proc.stderr.on('data', (data) => {
     const text = data.toString();
+    deployLog += text;
     ws.send(JSON.stringify({ type: 'log', line: text }));
+    const hint = diagnose(text);
+    if (hint) {
+      ws.send(JSON.stringify({ type: 'hint', message: hint }));
+    }
   });
 
   proc.on('close', (code) => {
     deploying = false;
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    const result = { time: new Date().toISOString(), code, duration: elapsed + 's', status: code === 0 ? '成功' : '失败' };
+    lastDeploy = result;
     if (code === 0) {
-      const msg = `========== 部署完成 (耗时 ${elapsed}s) ==========`;
+      const msg = `========== 部署成功 (耗时 ${elapsed}s) ==========`;
       log(msg);
-      ws.send(JSON.stringify({ type: 'done', code: 0, message: msg }));
+      ws.send(JSON.stringify({ type: 'done', code: 0, message: msg, history: result }));
     } else {
-      const msg = `========== 部署失败，退出码: ${code} (耗时 ${elapsed}s) ==========`;
+      const msg = `========== 部署失败 (耗时 ${elapsed}s) ==========`;
       log(msg);
-      ws.send(JSON.stringify({ type: 'done', code, message: msg }));
+      ws.send(JSON.stringify({ type: 'done', code, message: msg, history: result }));
     }
   });
 
