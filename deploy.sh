@@ -60,7 +60,23 @@ echo -e "${GREEN}[OK] 后端编译完成${NC}"
 # 编译前端
 echo -e "[5/7] 编译前端项目..."
 cd ../jeecgboot-vue3
-pnpm install
+
+# 预防 node_modules 权限锁定：清理残留锁文件并修复权限
+find node_modules -name "*.lock" -delete 2>/dev/null || true
+find node_modules -name "*_tmp_*" -maxdepth 3 -exec rm -rf {} + 2>/dev/null || true
+chmod -R u+w node_modules 2>/dev/null || true
+
+# 如果权限修复失败，直接重建
+if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
+    if grep -q "EACCES\|permission denied" /tmp/pnpm-install.log 2>/dev/null; then
+        echo -e "${YELLOW}  pnpm install 权限错误，重建 node_modules...${NC}"
+        rm -rf node_modules pnpm-lock.yaml
+        pnpm install
+    else
+        echo -e "${RED}pnpm install 失败${NC}"
+        exit 1
+    fi
+fi
 
 # 清理 Less 缓存，加大 Node 内存（防止 Less 编译超时）
 rm -rf node_modules/.cache
