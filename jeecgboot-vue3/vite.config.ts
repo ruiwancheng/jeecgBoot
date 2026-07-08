@@ -31,21 +31,20 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
 
   const isBuild = command === 'build';
 
-  const serverOptions: Recordable = {}
+  const serverOptions: Recordable = {};
 
   // ----- [begin] 【JEECG作为乾坤子应用】 -----
-  const {VITE_GLOB_QIANKUN_MICRO_APP_NAME, VITE_GLOB_QIANKUN_MICRO_APP_ENTRY} = viteEnv;
+  const { VITE_GLOB_QIANKUN_MICRO_APP_NAME, VITE_GLOB_QIANKUN_MICRO_APP_ENTRY } = viteEnv;
   const isQiankunMicro = VITE_GLOB_QIANKUN_MICRO_APP_NAME != null && VITE_GLOB_QIANKUN_MICRO_APP_NAME !== '';
   if (isQiankunMicro && !isBuild) {
     serverOptions.cors = true;
     serverOptions.origin = VITE_GLOB_QIANKUN_MICRO_APP_ENTRY!.split('/').slice(0, 3).join('/');
   }
   // ----- [end] 【JEECG作为乾坤子应用】 -----
-  
+
   console.log('[init] Start Port: ', VITE_PORT);
   console.debug('[init] Vite Proxy Config: ', VITE_PROXY);
-  
-  
+
   return {
     base: isQiankunMicro ? VITE_GLOB_QIANKUN_MICRO_APP_ENTRY : VITE_PUBLIC_PATH,
     root,
@@ -110,12 +109,7 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
       // update-begin--author:liaozhiyang---date:20260306---for:【QQYUN-14801】vite启动的时候，预构建一些入口页面，访问时快一些
       // 启动时预构建
       warmup: {
-        clientFiles: [
-          './src/main.ts',
-          './src/App.vue',
-          './src/views/system/loginmini/MiniLogin.vue',
-          'src/layouts/default/index.vue'
-        ],
+        clientFiles: ['./src/main.ts', './src/App.vue', './src/views/system/loginmini/MiniLogin.vue', 'src/layouts/default/index.vue'],
       },
       // update-end--author:liaozhiyang---date:20260306---for:【QQYUN-14801】vite启动的时候，预构建一些入口页面，访问时快一些
     },
@@ -158,6 +152,7 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
         less: {
           modifyVars: generateModifyVars(),
           javascriptEnabled: true,
+          additionalData: `@import (reference) "${resolve('src/design/config.less')}";`,
         },
       },
     },

@@ -29,10 +29,6 @@ export function generateModifyVars() {
   const v3Token = convertLegacyToken(mapToken);
   return {
     ...v3Token,
-    // ...modifyVars,
-    // Used for global import to avoid the need to import each style file separately
-    // reference:  Avoid repeated references
-    hack: `true; @import (reference) "${resolve('src/design/config.less')}";`,
     'primary-color': primary,
     ...primaryColorObj,
     'info-color': primary,

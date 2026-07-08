@@ -78,8 +78,8 @@ if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
     fi
 fi
 
-# 清理 Less 缓存，加大 Node 内存（防止 Less 编译超时）
-rm -rf node_modules/.cache
+# 清理 Vite + Less 缓存（防止 Less 编译超时）
+rm -rf node_modules/.vite node_modules/.cache
 export NODE_OPTIONS="--max-old-space-size=8192"
 echo "  前端编译环境已就绪（内存上限 8GB，已清理缓存）"
 
