@@ -7,3 +7,6 @@
 - [Maven 模块必须 install](learnings/2026-07-06-maven-install-vs-compile.md) — 新增模块用 mvn install 而不是 compile
 - [@TableLogic 复活模式](learnings/2026-07-06-tablelogic-resurrection.md) — 软删除记录查/改都要原始 SQL 绕过，复用时保留 ID
 - [defHttp.delete 参数](learnings/2026-07-06-defhttp-delete-joinparams.md) — 必须加 joinParamsToUrl 才能把参数拼到 URL
+- [部署架构](deployment-architecture.md) — 客户端-服务端分离：网络拓扑、部署模式、控制台操作、故障处理
+- [Vite worker 死锁](learnings/2026-07-09-vite-worker-deadlock.md) — Atomics.wait 5s超时→Less timed-out，patch到60s+重试
+- [set -e 重试陷阱](learnings/2026-07-09-bash-set-e-retry-trap.md) — set -e下编译失败直接退出，重试循环被跳过
