@@ -78,16 +78,33 @@ if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
     fi
 fi
 
-# 清理 Vite + Less 缓存（防止 Less 编译超时）
-rm -rf node_modules/.vite node_modules/.cache
 export NODE_OPTIONS="--max-old-space-size=8192"
-echo "  前端编译环境已就绪（内存上限 8GB，已清理缓存）"
 
-pnpm run build:docker
-BUILD_EXIT=$?
+# Vite worker 线程有间歇性 Atomics.wait 死锁（5 秒超时），加重试机制
+MAX_ATTEMPTS=3
+ATTEMPT=1
+BUILD_EXIT=0
+
+while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+    # 清理缓存（每次重试都清，防止旧缓存干扰）
+    rm -rf node_modules/.vite node_modules/.cache
+    echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
+
+    pnpm run build:docker
+    BUILD_EXIT=$?
+
+    if [ $BUILD_EXIT -eq 0 ]; then
+        break
+    fi
+
+    echo -e "${YELLOW}  第 $ATTEMPT 次编译失败 (退出码: $BUILD_EXIT)，准备重试...${NC}"
+    ATTEMPT=$((ATTEMPT + 1))
+    sleep 5
+done
+
 if [ $BUILD_EXIT -ne 0 ]; then
     echo -e "${RED}========================================="
-    echo "  前端编译失败 (退出码: $BUILD_EXIT)"
+    echo "  前端编译失败 (已重试 $MAX_ATTEMPTS 次，退出码: $BUILD_EXIT)"
     echo "=========================================${NC}"
     echo "  可能原因和解决方案："
     echo "  1. Less 编译超时 → 内存不足，尝试调大 Docker 容器内存"
