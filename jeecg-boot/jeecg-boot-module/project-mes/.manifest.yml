@@ -12,5 +12,6 @@ overrides: []
 additions:
   - table: c_mes_warehouse, c_mes_location
   - controller: MesWarehouseController, MesLocationController
-  - menu: 基础设置, 仓库管理, 库位管理
-  - dict: mes_warehouse_type, mes_location_type
+  - menu: 基础设置, 仓库管理, 库位管理, 客户管理
+  - dict: mes_warehouse_type, mes_location_type, mes_customer_type
+  - table: c_mes_customer

@@ -60,6 +60,13 @@ public final class MesMenuRegistry {
                 .sortNo(2.0)
                 .icon("ant-design:environment-filled"));
 
+        // -- 基础设置 > 客户管理
+        list.add(MesMenuDefinition.leaf("mes_basic_customer", "mes_basic",
+                        "客户管理", "/project/mes/basic/customer",
+                        "project/mes/basic/customer/index", "MesBasicCustomer")
+                .sortNo(3.0)
+                .icon("ant-design:user-outlined"));
+
         // ==================== 后续新页面在此添加 ====================
 
         return list;

@@ -33,6 +33,12 @@ const mes: AppRouteModule = {
           component: () => import('/@/views/project/mes/basic/location/index.vue'),
           meta: { title: '库位管理' },
         },
+        {
+          path: 'customer',
+          name: 'MesBasicCustomer',
+          component: () => import('/@/views/project/mes/basic/customer/index.vue'),
+          meta: { title: '客户管理' },
+        },
       ],
     },
   ],
