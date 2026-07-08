@@ -35,8 +35,28 @@ echo -e "${GREEN}[OK] 工具检查通过${NC}"
 
 # 拉取最新代码
 echo -e "[2/7] 拉取 GitHub 最新代码..."
+OLD_HEAD=$(git rev-parse HEAD)
 git pull origin main
+NEW_HEAD=$(git rev-parse HEAD)
 echo -e "${GREEN}[OK] 代码拉取完成${NC}"
+
+# 自动检测部署模式（只在默认 full 模式下生效，显式 frontend/backend 则跳过）
+if [ "$MODE" = "full" ] && [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+    CHANGED=$(git diff --name-only $OLD_HEAD $NEW_HEAD 2>/dev/null)
+    HAS_FRONTEND=$(echo "$CHANGED" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
+    HAS_BACKEND=$(echo "$CHANGED" | grep -c "^jeecg-boot/" 2>/dev/null || true)
+    HAS_SQL=$(echo "$CHANGED" | grep -c "\.sql$" 2>/dev/null || true)
+
+    if [ "$HAS_FRONTEND" -gt 0 ] && [ "$HAS_BACKEND" -eq 0 ] && [ "$HAS_SQL" -eq 0 ]; then
+        MODE="frontend"
+        echo -e "${YELLOW}  [自动检测] 仅前端文件变更 → 仅前端模式${NC}"
+    elif [ "$HAS_FRONTEND" -eq 0 ] && ( [ "$HAS_BACKEND" -gt 0 ] || [ "$HAS_SQL" -gt 0 ] ); then
+        MODE="backend"
+        echo -e "${YELLOW}  [自动检测] 仅后端/SQL变更 → 仅后端模式${NC}"
+    else
+        echo -e "${YELLOW}  [自动检测] 前后端均有变更 → 全量部署${NC}"
+    fi
+fi
 
 # 设置 hosts
 echo -e "[3/7] 检查 hosts 配置..."

@@ -140,10 +140,12 @@
 </div>
 <div class="main">
   <div class="btn-row">
-    <button id="btnDeployFull" class="btn btn-deploy" disabled>全量部署</button>
-    <button id="btnDeployFrontend" class="btn btn-deploy" style="background:#e67e22" disabled>仅前端</button>
-    <button id="btnDeployBackend" class="btn btn-deploy" style="background:#3498db" disabled>仅后端</button>
+    <button id="btnDeploy" class="btn btn-deploy" disabled>开始部署（自动检测变更范围）</button>
     <button id="btnClear" class="btn btn-clear">清空日志</button>
+    <span style="font-size:11px;color:#666;margin-left:8px">或指定范围：</span>
+    <button id="btnDeployFrontend" class="btn" style="background:#555;color:#ccc;padding:6px 12px;font-size:12px" disabled>仅前端</button>
+    <button id="btnDeployBackend" class="btn" style="background:#555;color:#ccc;padding:6px 12px;font-size:12px" disabled>仅后端</button>
+    <button id="btnDeployFull" class="btn" style="background:#555;color:#ccc;padding:6px 12px;font-size:12px" disabled>强制全量</button>
 <button id="btnReset" class="btn btn-clear" style="background:#4a1a1a;color:#f87171;">重置状态</button>
     <span id="elapsed" class="elapsed"></span>
   </div>
@@ -191,11 +193,19 @@
 
 <script>
 const TERMINAL = document.getElementById('terminal');
+const BTN_DEPLOY = document.getElementById('btnDeploy');
 const BTN_DEPLOY_FULL = document.getElementById('btnDeployFull');
 const BTN_DEPLOY_FRONTEND = document.getElementById('btnDeployFrontend');
 const BTN_DEPLOY_BACKEND = document.getElementById('btnDeployBackend');
 const BTN_CLEAR = document.getElementById('btnClear');
 const STATUS = document.getElementById('status');
+
+function setAllButtons(disabled) {
+  BTN_DEPLOY.disabled = disabled;
+  BTN_DEPLOY_FULL.disabled = disabled;
+  BTN_DEPLOY_FRONTEND.disabled = disabled;
+  BTN_DEPLOY_BACKEND.disabled = disabled;
+}
 const ELAPSED = document.getElementById('elapsed');
 const HINT_BOX = document.getElementById('hintBox');
 const HISTORY_BOX = document.getElementById('historyBox');
@@ -214,9 +224,7 @@ function connect() {
   ws.onopen = () => {
     STATUS.textContent = '已连接';
     STATUS.className = 'status connected';
-    BTN_DEPLOY_FULL.disabled = false;
-BTN_DEPLOY_FRONTEND.disabled = false;
-BTN_DEPLOY_BACKEND.disabled = false;
+    setAllButtons(false);
     appendLine('info', '已连接到部署服务');
   };
 
@@ -237,9 +245,7 @@ BTN_DEPLOY_BACKEND.disabled = false;
         HINT_BOX.style.display = 'none';
         startTime = Date.now();
         ELAPSED.textContent = '';
-        BTN_DEPLOY_FULL.disabled = true;
-BTN_DEPLOY_FRONTEND.disabled = true;
-BTN_DEPLOY_BACKEND.disabled = true;
+        setAllButtons(true);
         resetProgress();
         PROGRESS_SECTION.classList.add('visible');
         appendLine('info', msg.message);
@@ -253,9 +259,7 @@ BTN_DEPLOY_BACKEND.disabled = true;
         break;
       case 'done':
         clearInterval(timerInterval);
-        BTN_DEPLOY_FULL.disabled = false;
-BTN_DEPLOY_FRONTEND.disabled = false;
-BTN_DEPLOY_BACKEND.disabled = false;
+        setAllButtons(false);
         if (msg.code === 0) {
           completeAllSteps();
           appendLine('done', msg.message);
@@ -269,9 +273,7 @@ BTN_DEPLOY_BACKEND.disabled = false;
         break;
       case 'error':
         clearInterval(timerInterval);
-        BTN_DEPLOY_FULL.disabled = false;
-BTN_DEPLOY_FRONTEND.disabled = false;
-BTN_DEPLOY_BACKEND.disabled = false;
+        setAllButtons(false);
         PROGRESS_SECTION.classList.remove('visible');
         appendLine('error', msg.message);
         ELAPSED.textContent = '';
@@ -284,9 +286,7 @@ BTN_DEPLOY_BACKEND.disabled = false;
   ws.onclose = () => {
     STATUS.textContent = '断开';
     STATUS.className = 'status disconnected';
-    BTN_DEPLOY_FULL.disabled = true;
-BTN_DEPLOY_FRONTEND.disabled = true;
-BTN_DEPLOY_BACKEND.disabled = true;
+    setAllButtons(true);
     clearInterval(timerInterval);
     appendLine('error', '连接已断开，3秒后重连...');
     setTimeout(connect, 3000);
@@ -340,6 +340,9 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+BTN_DEPLOY.addEventListener('click', () => {
+  if (ws?.readyState === WebSocket.OPEN) ws.send('deploy');
+});
 BTN_DEPLOY_FULL.addEventListener('click', () => {
   if (ws?.readyState === WebSocket.OPEN) ws.send('deploy:full');
 });
