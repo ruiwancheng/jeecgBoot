@@ -129,12 +129,13 @@ export async function createVitePlugins(
 
   // The following plugins only work in the production environment
   if (isBuild) {
-    
+
     // rollup-plugin-gzip
     vitePlugins.push(configCompressPlugin(VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE));
 
-    // vite-plugin-pwa (PWA 插件注册)
-    if (!isElectron) {
+    // vite-plugin-pwa (PWA 插件注册) — Docker 环境跳过，PWA 离线缓存在 Docker 部署中无意义
+    const isDocker = process.env.NODE_ENV === 'docker';
+    if (!isElectron && !isDocker) {
       vitePlugins.push(configPwaPlugin(isBuild));
     }
   }
