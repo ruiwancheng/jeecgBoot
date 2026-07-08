@@ -49,19 +49,10 @@ jeecg-boot-parent (root pom)
 ├── jeecg-boot-module              # Business feature modules
 │   ├── jeecg-module-demo          # Demo/example code
 │   ├── jeecg-boot-module-airag    # AI/RAG integration
-│   ├── jeecg-boot-module-easyoa   # Simple OA module
-│   ├── jeecg-boot-module-joa-flowable  # OA + Flowable workflow
-│   ├── jeecg-boot-module-pay      # Payment module
-│   └── jeecg-boot-module-wps      # WPS document integration
-└── jeecg-boot-platform            # Low-code platform modules
-    ├── jeecg-boot-module-bpm-flowable       # BPM workflow engine
-    ├── jeecg-boot-module-airag-flow         # AI RAG flow
-    ├── jeecg-boot-module-bigscreen          # Big screen/dashboard designer
-    ├── jeecg-boot-module-desform            # Form designer
-    ├── jeecg-boot-module-drag               # Drag-and-drop report designer
-    ├── jeecg-boot-module-lowapp             # Low-code application engine
-    ├── jeecg-boot-module-mindesflow-flowable # Simple flow designer
-    └── jeecg-boot-module-online             # Online code generator & forms
+│   ├── customer-demo              # Customer demo project (KA)
+│   ├── project-mes                # MES project (KA)
+│   └── project-template           # KA project template
+└── jeecg-boot-platform            # Low-code platform modules (optional, not in repo)
 ```
 
 Optional microservices modules (activated via `-P SpringCloud`):

@@ -14,5 +14,5 @@
     {"id":"openapi","name":"开放API","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"","apiBase":"/openapi","entity":""},
     {"id":"demo","name":"演示示例","category":"demo","backendPath":"jeecg-boot-module/jeecg-module-demo/","frontendPath":"src/views/demo/","apiBase":"/test/jeecgDemo","entity":"JeecgDemo"}
   ],
-  "projects": [{"id":"demo","name":"demo客户","backendPath":"jeecg-boot-module/customer-demo/","frontendPath":"src/views/customer/demo/"}]
+  "projects": [{"id":"demo","name":"demo客户","backendPath":"jeecg-boot-module/customer-demo/","frontendPath":"src/views/customer/demo/"},{"id":"mes","name":"MES项目","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/"}]
 }
