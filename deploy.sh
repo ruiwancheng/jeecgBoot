@@ -82,7 +82,7 @@ fi
 if [ "$MODE" != "frontend" ]; then
     echo -e "[4/7] 编译后端项目..."
     cd jeecg-boot
-    mvn clean install -Pdocker
+    mvn clean package -Pdocker -DskipTests
     echo -e "${GREEN}[OK] 后端编译完成${NC}"
 else
     echo -e "[4/7] ${YELLOW}编译后端项目... 跳过（仅前端模式）${NC}"
@@ -118,9 +118,13 @@ ATTEMPT=1
 BUILD_EXIT=0
 
 while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-    # 清理缓存（每次重试都清，防止旧缓存干扰）
-    rm -rf node_modules/.vite node_modules/.cache
-    echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
+    if [ $ATTEMPT -gt 1 ]; then
+        # 重试时清理缓存，防止死锁残留
+        rm -rf node_modules/.vite node_modules/.cache
+        echo "  第 $ATTEMPT 次重试，已清理缓存..."
+    else
+        echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
+    fi
 
     pnpm run build:docker
     BUILD_EXIT=$?
@@ -168,13 +172,27 @@ for i in $(seq 1 30); do
     sleep 2
 done
 
-# 执行客户模块 SQL 初始化脚本
+# 执行客户模块 SQL 初始化脚本（checksum 去重，已执行过的跳过）
 SQL_EXECUTED=0
+SQL_SKIPPED=0
+CHECKSUM_FILE=".deploy-sql-checksums"
+touch "$CHECKSUM_FILE"
+
 for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/target/*" -prune -o -path "*/sql/*.sql" -type f -print 2>/dev/null | sort); do
-    modname=$(echo "$sqlfile" | sed 's|.*/jeecg-boot-module/\([^/]*\)/.*|\1|')
-    echo "  执行 SQL: $modname/$(basename $sqlfile)"
+    modname=$(echo "$sqlfile" | sed 's|.*/jeecg-boot-module/\([^^/]*\)/.*|\1|')
+    sqlname=$(basename "$sqlfile")
+    checksum=$(md5sum "$sqlfile" | cut -d' ' -f1)
+
+    if grep -qF "$sqlname:$checksum" "$CHECKSUM_FILE" 2>/dev/null; then
+        echo -e "  ${YELLOW}[跳过] $modname/$sqlname（已执行过，未变更）${NC}"
+        SQL_SKIPPED=$((SQL_SKIPPED + 1))
+        continue
+    fi
+
+    echo "  执行 SQL: $modname/$sqlname"
     if $MYSQL_CMD < "$sqlfile" 2>&1 | grep -v "Warning" | head -3; then
         echo -e "  ${GREEN}[OK] $modname SQL 执行完成${NC}"
+        echo "$sqlname:$checksum" >> "$CHECKSUM_FILE"
         SQL_EXECUTED=$((SQL_EXECUTED + 1))
     else
         echo -e "  ${YELLOW}[警告] $modname SQL 执行有误（可能已执行过）${NC}"
@@ -182,13 +200,13 @@ for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/target/*" -prune -o 
 done
 
 if [ $SQL_EXECUTED -gt 0 ]; then
-    echo -e "${GREEN}[OK] 数据库初始化完成（$SQL_EXECUTED 个模块）${NC}"
+    echo -e "${GREEN}[OK] 数据库初始化完成（执行 $SQL_EXECUTED 个，跳过 $SQL_SKIPPED 个）${NC}"
     # 重启后端加载新菜单
     echo "  重启后端服务加载新配置..."
     docker restart jeecg-boot-system > /dev/null 2>&1
     sleep 10
 else
-    echo -e "${GREEN}[OK] 无需执行 SQL（无新脚本）${NC}"
+    echo -e "${GREEN}[OK] 无需执行 SQL（$SQL_SKIPPED 个脚本均无变更）${NC}"
 fi
 
 echo
