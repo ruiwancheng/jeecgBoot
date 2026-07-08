@@ -53,14 +53,35 @@ jeecgboot-vue3/src/views/project/<项目名>/
 | `{客户名称}` | `<项目名>`（.manifest.yml customer 字段） |
 | `{创建日期}` | 当前日期 YYYY-MM-DD |
 
-### Java 包路径重命名
+### Java 源码占位符替换
 
-如果模板中包含 Java 源码，将包路径中的 `template` 替换为 `<项目名>`：
+模板在 `src/main/java/org/jeecg/modules/template/config/init/` 下包含 3 个 Java 文件，需执行两级替换：
+
+**第一级：包路径重命名**
+
+将目录和 Java 文件中的 `modules/template` 替换为 `modules/<项目名>`：
 
 ```
-src/main/java/org/jeecg/boot/module/project/template/
-→ src/main/java/org/jeecg/boot/module/project/<项目名>/
+src/main/java/org/jeecg/modules/template/
+→ src/main/java/org/jeecg/modules/<项目名>/
 ```
+
+Java 文件内的 `package` 和 `import` 声明同步替换：
+- `package org.jeecg.modules.template.config.init;` → `package org.jeecg.modules.<项目名>.config.init;`
+- `import org.jeecg.modules.template.config.init.MesMenuDefinition;` → `import org.jeecg.modules.<项目名>.config.init.MesMenuDefinition;`
+
+**第二级：字符串内 TEMPLATE 占位符替换**
+
+仅 `MesMenuRegistry.java` 文件中包含占位符，将字符串字面量中的 `TEMPLATE` 全部替换为 `<项目名>`：
+
+| 占位符示例 | 替换后 |
+|---|---|
+| `PROJECT_ROLE_ID = "TEMPLATE_role_001"` | `PROJECT_ROLE_ID = "<项目名>_role_001"` |
+| `"TEMPLATE_menu_001"` | `"<项目名>_menu_001"` |
+| `"TEMPLATE系统"` | `"<项目名>系统"` |
+| `"/project/TEMPLATE"` | `"/project/<项目名>"` |
+
+> 注意：`MesMenuDefinition.java` 和 `MesMenuAutoRegisterRunner.java` 不含 `TEMPLATE` 占位符，只需做包路径替换。
 
 ### .manifest.yml
 
