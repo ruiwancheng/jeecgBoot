@@ -4,8 +4,10 @@ package org.jeecg.modules.template.config.init;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.modules.system.entity.SysPermission;
+import org.jeecg.modules.system.entity.SysRole;
 import org.jeecg.modules.system.entity.SysRolePermission;
 import org.jeecg.modules.system.mapper.SysPermissionMapper;
+import org.jeecg.modules.system.mapper.SysRoleMapper;
 import org.jeecg.modules.system.mapper.SysRolePermissionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -17,6 +19,8 @@ import java.util.List;
 
 /**
  * 菜单自动注册 —— 后端启动时自动将 {@link MesMenuRegistry} 中的菜单同步到数据库。
+ * <p>
+ * 同时授权给项目角色和 admin 角色，确保超级管理员能看到所有菜单。
  * <p>
  * 幂等：每个菜单先查后插，重启多次不会产生重复数据。
  * 容错：单条失败记录日志后继续，不阻塞应用启动。
@@ -31,17 +35,23 @@ public class MesMenuAutoRegisterRunner implements ApplicationRunner {
     @Autowired
     private SysRolePermissionMapper sysRolePermissionMapper;
 
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
     @Override
     public void run(ApplicationArguments args) {
         List<MesMenuDefinition> menus = MesMenuRegistry.getMenus();
-        String roleId = MesMenuRegistry.PROJECT_ROLE_ID;
-        log.info("--- 菜单自动注册开始（共 {} 条，角色: {}）---", menus.size(), roleId);
+        String projectRoleId = MesMenuRegistry.PROJECT_ROLE_ID;
+        String adminRoleId = getAdminRoleId();
+        log.info("--- 菜单自动注册开始（共 {} 条，项目角色: {}，admin角色: {}）---",
+                menus.size(), projectRoleId, adminRoleId);
 
         int created = 0, skipped = 0, errors = 0;
         for (MesMenuDefinition def : menus) {
             try {
                 if (registerMenu(def)) created++; else skipped++;
-                if (bindRole(def, roleId)) created++; else skipped++;
+                if (bindRole(def, projectRoleId)) created++; else skipped++;
+                if (adminRoleId != null && bindRole(def, adminRoleId)) created++; else skipped++;
             } catch (Exception e) {
                 log.error("菜单注册失败: id={}, name={}", def.getId(), def.getName(), e);
                 errors++;
@@ -49,6 +59,20 @@ public class MesMenuAutoRegisterRunner implements ApplicationRunner {
         }
         log.info("--- 菜单自动注册完成: 新建 {} 项, 跳过 {} 项, 失败 {} 项 ---",
                 created, skipped, errors);
+    }
+
+    private String getAdminRoleId() {
+        try {
+            LambdaQueryWrapper<SysRole> qw = new LambdaQueryWrapper<>();
+            qw.eq(SysRole::getRoleCode, "admin");
+            SysRole adminRole = sysRoleMapper.selectOne(qw);
+            if (adminRole != null) {
+                return adminRole.getId();
+            }
+        } catch (Exception e) {
+            log.warn("菜单注册: 无法查询admin角色", e);
+        }
+        return null;
     }
 
     private boolean registerMenu(MesMenuDefinition def) {
