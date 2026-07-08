@@ -25,6 +25,13 @@
             <version>${jeecgboot.version}</version>
         </dependency>
 
+        <!-- AI/RAG 集成模块 -->
+        <dependency>
+            <groupId>org.jeecgframework.boot3</groupId>
+            <artifactId>jeecg-boot-module-airag</artifactId>
+            <version>${jeecgboot.version}</version>
+        </dependency>
+
         <!-- KA 客户定制模块 -->
         <dependency>
             <groupId>org.jeecgframework.boot3</groupId>
