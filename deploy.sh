@@ -126,8 +126,10 @@ while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
         echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
     fi
 
+    set +e  # 允许编译失败不退出，交给重试逻辑处理
     pnpm run build:docker
     BUILD_EXIT=$?
+    set -e
 
     if [ $BUILD_EXIT -eq 0 ]; then
         break
