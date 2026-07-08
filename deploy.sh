@@ -1,8 +1,15 @@
 #!/bin/bash
 # JEECG Boot 一键部署脚本 (Linux Bash 版)
 # 从 GitHub 拉取最新代码 → 构建 → 初始化数据库 → Docker 部署
+# 用法: ./deploy.sh [full|frontend|backend]  默认 full
 
 set -e
+
+MODE=${1:-full}
+if [ "$MODE" != "full" ] && [ "$MODE" != "frontend" ] && [ "$MODE" != "backend" ]; then
+    echo "用法: $0 [full|frontend|backend]"
+    exit 1
+fi
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -51,13 +58,18 @@ else
     echo "已存在: $entry2"
 fi
 
-# 编译后端
-echo -e "[4/7] 编译后端项目..."
-cd jeecg-boot
-mvn clean install -Pdocker
-echo -e "${GREEN}[OK] 后端编译完成${NC}"
+# 编译后端 (frontend 模式跳过)
+if [ "$MODE" != "frontend" ]; then
+    echo -e "[4/7] 编译后端项目..."
+    cd jeecg-boot
+    mvn clean install -Pdocker
+    echo -e "${GREEN}[OK] 后端编译完成${NC}"
+else
+    echo -e "[4/7] ${YELLOW}编译后端项目... 跳过（仅前端模式）${NC}"
+fi
 
-# 编译前端
+# 编译前端 (backend 模式跳过)
+if [ "$MODE" != "backend" ]; then
 echo -e "[5/7] 编译前端项目..."
 cd ../jeecgboot-vue3
 
@@ -114,6 +126,9 @@ if [ $BUILD_EXIT -ne 0 ]; then
     exit 1
 fi
 echo -e "${GREEN}[OK] 前端编译完成${NC}"
+else
+    echo -e "[5/7] ${YELLOW}编译前端项目... 跳过（仅后端模式）${NC}"
+fi
 
 # 启动 Docker 容器
 echo -e "[6/7] 启动 Docker 容器..."
@@ -135,7 +150,7 @@ done
 
 # 执行客户模块 SQL 初始化脚本
 SQL_EXECUTED=0
-for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/sql/*.sql" -type f 2>/dev/null | sort); do
+for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/target/*" -prune -o -path "*/sql/*.sql" -type f -print 2>/dev/null | sort); do
     modname=$(echo "$sqlfile" | sed 's|.*/jeecg-boot-module/\([^/]*\)/.*|\1|')
     echo "  执行 SQL: $modname/$(basename $sqlfile)"
     if $MYSQL_CMD < "$sqlfile" 2>&1 | grep -v "Warning" | head -3; then

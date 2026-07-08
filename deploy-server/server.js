@@ -46,12 +46,13 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (data) => {
     const msg = data.toString();
-    if (msg === 'deploy') {
+    if (msg === 'deploy' || msg.startsWith('deploy:')) {
+      const mode = msg.startsWith('deploy:') ? msg.split(':')[1] : 'full';
       if (deploying) {
         ws.send(JSON.stringify({ type: 'error', message: '部署正在进行中，请稍后再试。如果确认上次部署已中断，可以手动重置状态。' }));
         return;
       }
-      startDeploy(ws);
+      startDeploy(ws, mode);
     } else if (msg === 'reset') {
       deploying = false;
       if (timeoutHandle) { clearTimeout(timeoutHandle); timeoutHandle = null; }
@@ -81,9 +82,11 @@ const STEP_LABELS = {
 };
 const STEP_PATTERN = /\[(\d\/7)\]/;
 
-function startDeploy(ws) {
+function startDeploy(ws, mode = 'full') {
   deploying = true;
   const startTime = Date.now();
+
+  const modeLabel = { frontend: '仅前端', backend: '仅后端', full: '全量部署' }[mode] || '全量部署';
 
   // 超时自动重置
   timeoutHandle = setTimeout(() => {
@@ -94,10 +97,10 @@ function startDeploy(ws) {
     }
   }, DEPLOY_TIMEOUT);
 
-  log('开始部署...');
-  ws.send(JSON.stringify({ type: 'start', message: '========== 开始部署 ==========' }));
+  log(`开始部署... (${modeLabel})`);
+  ws.send(JSON.stringify({ type: 'start', message: `========== 开始部署（${modeLabel}）==========` }));
 
-  const proc = spawn('bash', [DEPLOY_SCRIPT], {
+  const proc = spawn('bash', [DEPLOY_SCRIPT, mode], {
     cwd: PROJECT_DIR,
     env: { ...process.env, HOME: process.env.HOME },
   });
