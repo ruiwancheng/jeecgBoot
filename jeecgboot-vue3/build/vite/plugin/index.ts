@@ -32,22 +32,12 @@ import { configPwaPlugin } from './pwa';
  * @param isBuild
  * @param isQiankunMicro 是否【JEECG作为乾坤子应用】
  */
-export async function createVitePlugins(
-  viteEnv: ViteEnv,
-  isBuild: boolean,
-  isQiankunMicro: boolean,
-) {
+export async function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean, isQiankunMicro: boolean) {
   const { VITE_USE_MOCK, VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE } = viteEnv;
 
   // update-begin--author:liaozhiyang---date:20260306---for:【QQYUN-14833】unplugin-icons 使用esm
   // 动态 import ESM-only，避免 CJS 配置链 require 报 ERR_REQUIRE_ESM （解决node 20启动报错）
-  const [
-    { default: Icons },
-    { default: IconsResolver },
-  ] = await Promise.all([
-    import('unplugin-icons/vite'),
-    import('unplugin-icons/resolver'),
-  ]);
+  const [{ default: Icons }, { default: IconsResolver }] = await Promise.all([import('unplugin-icons/vite'), import('unplugin-icons/resolver')]);
   // update-end--author:liaozhiyang---date:20260306---for:【QQYUN-14833】unplugin-icons 使用esm
   const vitePlugins: (PluginOption | PluginOption[])[] = [
     // have to
@@ -96,11 +86,11 @@ export async function createVitePlugins(
   // update-begin--author:liaozhiyang---date:20260304---for:【QQYUN-14802】新增unplugin-icons插件，及icon支持online和local两种模式
   if (viteEnv.VITE_GLOB_ICONIFY_USE_TYPE === 'local') {
     vitePlugins.push(purgeIcons());
-  } 
+  }
   vitePlugins.push(
     Icons({
       compiler: 'vue3',
-       // 自动安装图标集
+      // 自动安装图标集
       autoInstall: false,
       scale: 1,
       defaultClass: 'app-iconify anticon',
@@ -118,7 +108,7 @@ export async function createVitePlugins(
   // 【JEECG作为乾坤子应用】注册乾坤子应用模式插件
   if (isQiankunMicro) {
     // vite-plugin-qiankun
-    vitePlugins.push(...configQiankunMicroPlugin(viteEnv))
+    vitePlugins.push(...configQiankunMicroPlugin(viteEnv));
   }
 
   // // electron plugin
@@ -129,7 +119,6 @@ export async function createVitePlugins(
 
   // The following plugins only work in the production environment
   if (isBuild) {
-
     // rollup-plugin-gzip
     vitePlugins.push(configCompressPlugin(VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE));
 
