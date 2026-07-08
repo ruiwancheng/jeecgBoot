@@ -1,7 +1,8 @@
 #!/bin/bash
 # JEECG Boot 一键部署脚本 (Linux Bash 版)
-# 从 GitHub 拉取最新代码 → 构建 → 初始化数据库 → Docker 部署
 # 用法: ./deploy.sh [full|frontend|backend]  默认 full
+#
+# 自动检测变更范围 + 增量编译 + 并行构建 + Docker 按需重建
 
 set -e
 
@@ -15,6 +16,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
+START_TIME=$(date +%s)
 
 MYSQL_CMD="docker exec -i jeecg-boot-mysql mysql -uroot -proot --default-character-set=utf8mb4 jeecg-boot"
 
@@ -36,16 +38,26 @@ echo -e "${GREEN}[OK] 工具检查通过${NC}"
 # 拉取最新代码
 echo -e "[2/7] 拉取 GitHub 最新代码..."
 OLD_HEAD=$(git rev-parse HEAD)
-git pull origin main
-NEW_HEAD=$(git rev-parse HEAD)
-echo -e "${GREEN}[OK] 代码拉取完成${NC}"
+git fetch origin main 2>/dev/null
+REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null)
 
-# 自动检测部署模式（只在默认 full 模式下生效，显式 frontend/backend 则跳过）
+if [ "$OLD_HEAD" = "$REMOTE_HEAD" ]; then
+    echo -e "${GREEN}[OK] 代码已是最新，无需拉取${NC}"
+    NEW_HEAD="$OLD_HEAD"
+else
+    git pull origin main
+    NEW_HEAD=$(git rev-parse HEAD)
+    echo -e "${GREEN}[OK] 代码拉取完成${NC}"
+fi
+
+# 记录变更文件列表（用于增量编译判断）
+CHANGED_FILES=$(git diff --name-only $OLD_HEAD $NEW_HEAD 2>/dev/null || echo "")
+
+# 自动检测部署模式
 if [ "$MODE" = "full" ] && [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
-    CHANGED=$(git diff --name-only $OLD_HEAD $NEW_HEAD 2>/dev/null)
-    HAS_FRONTEND=$(echo "$CHANGED" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
-    HAS_BACKEND=$(echo "$CHANGED" | grep -c "^jeecg-boot/" 2>/dev/null || true)
-    HAS_SQL=$(echo "$CHANGED" | grep -c "\.sql$" 2>/dev/null || true)
+    HAS_FRONTEND=$(echo "$CHANGED_FILES" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
+    HAS_BACKEND=$(echo "$CHANGED_FILES" | grep -c "^jeecg-boot/" 2>/dev/null || true)
+    HAS_SQL=$(echo "$CHANGED_FILES" | grep -c "\.sql$" 2>/dev/null || true)
 
     if [ "$HAS_FRONTEND" -gt 0 ] && [ "$HAS_BACKEND" -eq 0 ] && [ "$HAS_SQL" -eq 0 ]; then
         MODE="frontend"
@@ -78,91 +90,158 @@ else
     echo "已存在: $entry2"
 fi
 
-# 编译后端 (frontend 模式跳过)
-if [ "$MODE" != "frontend" ]; then
+PROJECT_ROOT=$(pwd)
+
+# ─── 后端编译函数 ───
+build_backend() {
     echo -e "[4/7] 编译后端项目..."
-    cd jeecg-boot
-    mvn clean package -Pdocker -DskipTests
-    echo -e "${GREEN}[OK] 后端编译完成${NC}"
-else
-    echo -e "[4/7] ${YELLOW}编译后端项目... 跳过（仅前端模式）${NC}"
-fi
+    cd "$PROJECT_ROOT/jeecg-boot"
 
-# 编译前端 (backend 模式跳过)
-if [ "$MODE" != "backend" ]; then
-echo -e "[5/7] 编译前端项目..."
-cd ../jeecgboot-vue3
+    # 增量编译：检测变更的 Maven 模块（扫描所有变更路径中的 pom.xml）
+    if [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+        MODULE_LIST=""
+        # 从变更文件路径提取模块目录，找到最近的 pom.xml
+        for changed in $CHANGED_FILES; do
+            dir=$(dirname "$changed")
+            while [ "$dir" != "." ] && [ "$dir" != "jeecg-boot" ]; do
+                if [ -f "$dir/pom.xml" ]; then
+                    # 转为 Maven -pl 格式：相对 jeecg-boot/ 的路径
+                    maven_path=$(echo "$dir" | sed 's|^jeecg-boot/||')
+                    MODULE_LIST="$MODULE_LIST,$maven_path"
+                    break
+                fi
+                dir=$(dirname "$dir")
+            done
+        done
+        MODULE_LIST=$(echo "$MODULE_LIST" | sed 's/^,//' | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+    fi
 
-# 预防 node_modules 权限锁定：清理残留锁文件并修复权限
-find node_modules -name "*.lock" -delete 2>/dev/null || true
-find node_modules -name "*_tmp_*" -maxdepth 3 -exec rm -rf {} + 2>/dev/null || true
-chmod -R u+w node_modules 2>/dev/null || true
-
-# 如果权限修复失败，直接重建
-if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
-    if grep -q "EACCES\|permission denied" /tmp/pnpm-install.log 2>/dev/null; then
-        echo -e "${YELLOW}  pnpm install 权限错误，重建 node_modules...${NC}"
-        rm -rf node_modules pnpm-lock.yaml
-        pnpm install
+    if [ -n "$MODULE_LIST" ]; then
+        echo -e "  ${YELLOW}[增量编译] 变更模块: ${MODULE_LIST//,/, }${NC}"
+        mvn clean package -Pdocker -DskipTests -T 1C -pl "$MODULE_LIST" -am
     else
-        echo -e "${RED}pnpm install 失败${NC}"
+        echo "  全量编译所有模块..."
+        mvn clean package -Pdocker -DskipTests -T 1C
+    fi
+    echo -e "${GREEN}[OK] 后端编译完成${NC}"
+}
+
+# ─── 前端编译函数 ───
+build_frontend() {
+    echo -e "[5/7] 编译前端项目..."
+    cd "$PROJECT_ROOT/jeecgboot-vue3"
+
+    # pnpm install：仅在 lockfile 变更时执行
+    if [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+        LOCKFILE_CHANGED=$(echo "$CHANGED_FILES" | grep -c "pnpm-lock.yaml" 2>/dev/null || true)
+    else
+        LOCKFILE_CHANGED=0
+    fi
+
+    if [ "$LOCKFILE_CHANGED" -gt 0 ]; then
+        echo "  依赖文件有变更，重新安装..."
+        find node_modules -name "*.lock" -delete 2>/dev/null || true
+        find node_modules -name "*_tmp_*" -maxdepth 3 -exec rm -rf {} + 2>/dev/null || true
+        chmod -R u+w node_modules 2>/dev/null || true
+
+        if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
+            if grep -q "EACCES\|permission denied" /tmp/pnpm-install.log 2>/dev/null; then
+                echo -e "${YELLOW}  pnpm install 权限错误，重建 node_modules...${NC}"
+                rm -rf node_modules pnpm-lock.yaml
+                pnpm install
+            else
+                echo -e "${RED}pnpm install 失败${NC}"
+                exit 1
+            fi
+        fi
+    else
+        echo "  依赖未变更，跳过 pnpm install"
+    fi
+
+    export NODE_OPTIONS="--max-old-space-size=8192"
+
+    # Vite worker 重试机制
+    MAX_ATTEMPTS=3
+    ATTEMPT=1
+    BUILD_EXIT=0
+
+    while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+        if [ $ATTEMPT -gt 1 ]; then
+            rm -rf node_modules/.vite node_modules/.cache
+            echo "  第 $ATTEMPT 次重试，已清理缓存..."
+        else
+            echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
+        fi
+
+        set +e
+        pnpm run build:docker
+        BUILD_EXIT=$?
+        set -e
+
+        if [ $BUILD_EXIT -eq 0 ]; then
+            break
+        fi
+
+        echo -e "${YELLOW}  第 $ATTEMPT 次编译失败 (退出码: $BUILD_EXIT)，准备重试...${NC}"
+        ATTEMPT=$((ATTEMPT + 1))
+        sleep 5
+    done
+
+    if [ $BUILD_EXIT -ne 0 ]; then
+        echo -e "${RED}========================================="
+        echo "  前端编译失败 (已重试 $MAX_ATTEMPTS 次，退出码: $BUILD_EXIT)"
+        echo "=========================================${NC}"
+        echo "  可能原因：Less 编译超时 / 缺依赖 / 类型错误"
         exit 1
     fi
-fi
+    echo -e "${GREEN}[OK] 前端编译完成${NC}"
+}
 
-export NODE_OPTIONS="--max-old-space-size=8192"
+# ─── 编译阶段 ───
 
-# Vite worker 线程有间歇性 Atomics.wait 死锁（5 秒超时），加重试机制
-MAX_ATTEMPTS=3
-ATTEMPT=1
-BUILD_EXIT=0
+if [ "$MODE" = "full" ]; then
+    # 全量模式：前后端并行编译
+    echo -e "[4+5/7] 前后端并行编译..."
 
-while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-    if [ $ATTEMPT -gt 1 ]; then
-        # 重试时清理缓存，防止死锁残留
-        rm -rf node_modules/.vite node_modules/.cache
-        echo "  第 $ATTEMPT 次重试，已清理缓存..."
-    else
-        echo "  前端编译环境已就绪（内存上限 8GB，第 $ATTEMPT/$MAX_ATTEMPTS 次尝试）"
-    fi
+    build_backend &
+    BACKEND_PID=$!
 
-    set +e  # 允许编译失败不退出，交给重试逻辑处理
-    pnpm run build:docker
-    BUILD_EXIT=$?
-    set -e
+    build_frontend &
+    FRONTEND_PID=$!
 
-    if [ $BUILD_EXIT -eq 0 ]; then
-        break
-    fi
+    # 等待两者完成，任意失败则退出
+    wait $BACKEND_PID || { echo -e "${RED}后端编译失败${NC}"; exit 1; }
+    wait $FRONTEND_PID || { echo -e "${RED}前端编译失败${NC}"; exit 1; }
 
-    echo -e "${YELLOW}  第 $ATTEMPT 次编译失败 (退出码: $BUILD_EXIT)，准备重试...${NC}"
-    ATTEMPT=$((ATTEMPT + 1))
-    sleep 5
-done
-
-if [ $BUILD_EXIT -ne 0 ]; then
-    echo -e "${RED}========================================="
-    echo "  前端编译失败 (已重试 $MAX_ATTEMPTS 次，退出码: $BUILD_EXIT)"
-    echo "=========================================${NC}"
-    echo "  可能原因和解决方案："
-    echo "  1. Less 编译超时 → 内存不足，尝试调大 Docker 容器内存"
-    echo "  2. 缺少新依赖 → 检查 package.json 是否更新"
-    echo "  3. TypeScript 类型错误 → 查看上方报错的具体文件和行号"
-    echo "  4. 磁盘空间不足 → 运行 df -h 检查"
-    exit 1
-fi
-echo -e "${GREEN}[OK] 前端编译完成${NC}"
-else
+    cd "$PROJECT_ROOT"
+elif [ "$MODE" = "frontend" ]; then
+    echo -e "[4/7] ${YELLOW}编译后端项目... 跳过（仅前端模式）${NC}"
+    build_frontend
+    cd "$PROJECT_ROOT"
+elif [ "$MODE" = "backend" ]; then
+    build_backend
     echo -e "[5/7] ${YELLOW}编译前端项目... 跳过（仅后端模式）${NC}"
+    cd "$PROJECT_ROOT"
 fi
 
-# 启动 Docker 容器
+# ─── Docker 按需重建 ───
 echo -e "[6/7] 启动 Docker 容器..."
-cd ..
-docker-compose up -d --build
+case "$MODE" in
+    frontend)
+        echo "  仅重建前端容器..."
+        docker-compose up -d --build --no-deps jeecgboot-vue3-nginx
+        ;;
+    backend)
+        echo "  仅重建后端容器..."
+        docker-compose up -d --build --no-deps jeecg-boot-system
+        ;;
+    full)
+        docker-compose up -d --build
+        ;;
+esac
 echo -e "${GREEN}[OK] Docker 容器启动完成${NC}"
 
-# 等待 MySQL 就绪
+# ─── 数据库初始化 ───
 echo -e "[7/7] 初始化数据库..."
 echo "  等待 MySQL 就绪..."
 for i in $(seq 1 30); do
@@ -174,7 +253,6 @@ for i in $(seq 1 30); do
     sleep 2
 done
 
-# 执行客户模块 SQL 初始化脚本（checksum 去重，已执行过的跳过）
 SQL_EXECUTED=0
 SQL_SKIPPED=0
 CHECKSUM_FILE=".deploy-sql-checksums"
@@ -203,7 +281,6 @@ done
 
 if [ $SQL_EXECUTED -gt 0 ]; then
     echo -e "${GREEN}[OK] 数据库初始化完成（执行 $SQL_EXECUTED 个，跳过 $SQL_SKIPPED 个）${NC}"
-    # 重启后端加载新菜单
     echo "  重启后端服务加载新配置..."
     docker restart jeecg-boot-system > /dev/null 2>&1
     sleep 10
@@ -211,9 +288,10 @@ else
     echo -e "${GREEN}[OK] 无需执行 SQL（$SQL_SKIPPED 个脚本均无变更）${NC}"
 fi
 
+ELAPSED=$(($(date +%s) - START_TIME))
 echo
 echo "========================================"
-echo "  部署成功! (等待约1分钟容器完全启动)"
+echo "  部署成功! (总耗时 ${ELAPSED}秒)"
 echo "========================================"
 echo "  前端:  http://localhost"
 echo "  后端:  http://localhost:8080/jeecg-boot"
