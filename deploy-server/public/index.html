@@ -141,6 +141,7 @@
 <div class="main">
   <div class="btn-row">
     <button id="btnDeploy" class="btn btn-deploy" disabled>开始部署（自动检测变更范围）</button>
+    <span id="lastDuration" style="font-size:12px;color:#888;margin-left:12px"></span>
     <button id="btnClear" class="btn btn-clear">清空日志</button>
     <span style="font-size:11px;color:#666;margin-left:8px">或指定范围：</span>
     <button id="btnDeployFrontend" class="btn" style="background:#555;color:#ccc;padding:6px 12px;font-size:12px" disabled>仅前端</button>
@@ -207,6 +208,7 @@ function setAllButtons(disabled) {
   BTN_DEPLOY_BACKEND.disabled = disabled;
 }
 const ELAPSED = document.getElementById('elapsed');
+const LAST_DURATION = document.getElementById('lastDuration');
 const HINT_BOX = document.getElementById('hintBox');
 const HISTORY_BOX = document.getElementById('historyBox');
 const PROGRESS_SECTION = document.getElementById('progressSection');
@@ -260,15 +262,18 @@ function connect() {
       case 'done':
         clearInterval(timerInterval);
         setAllButtons(false);
+        const dur = msg.history ? msg.history.duration : '';
         if (msg.code === 0) {
           completeAllSteps();
           appendLine('done', msg.message);
+          LAST_DURATION.innerHTML = '上次耗时：<span style="color:#52b788">' + dur + '</span>';
         } else {
           appendLine('error', msg.message);
+          LAST_DURATION.innerHTML = '上次耗时：<span style="color:#f87171">' + dur + '</span>';
         }
         ELAPSED.textContent = '';
         if (msg.history) {
-          HISTORY_BOX.innerHTML = '上次部署：<span style="color:' + (msg.history.code === 0 ? '#52b788' : '#f87171') + '">' + msg.history.status + '</span> ' + msg.history.duration + ' (' + new Date(msg.history.time).toLocaleString('zh-CN') + ')';
+          HISTORY_BOX.innerHTML = '上次部署：<span style="color:' + (msg.history.code === 0 ? '#52b788' : '#f87171') + '">' + msg.history.status + '</span> ' + dur + ' (' + new Date(msg.history.time).toLocaleString('zh-CN') + ')';
         }
         break;
       case 'error':

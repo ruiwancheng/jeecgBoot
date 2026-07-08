@@ -4,9 +4,12 @@ const http = require('http');
 const { WebSocketServer } = require('ws');
 const path = require('path');
 
+const fs = require('fs');
+
 const PORT = 3101;
 const PROJECT_DIR = path.resolve(__dirname, '..');
 const DEPLOY_SCRIPT = path.join(PROJECT_DIR, 'deploy.sh');
+const DEPLOY_LOG_DIR = path.join(__dirname, 'logs');
 const DEPLOY_TIMEOUT = 15 * 60 * 1000; // 15分钟超时自动重置
 
 const app = express();
@@ -100,6 +103,11 @@ function startDeploy(ws, mode = 'full') {
   log(`开始部署... (${modeLabel})`);
   ws.send(JSON.stringify({ type: 'start', message: `========== 开始部署（${modeLabel}）==========` }));
 
+  // 保存部署日志到文件
+  if (!fs.existsSync(DEPLOY_LOG_DIR)) fs.mkdirSync(DEPLOY_LOG_DIR, { recursive: true });
+  const logFile = path.join(DEPLOY_LOG_DIR, `deploy-${new Date().toISOString().replace(/[:.]/g, '-')}.log`);
+  const logStream = fs.createWriteStream(logFile);
+
   const proc = spawn('bash', [DEPLOY_SCRIPT, mode], {
     cwd: PROJECT_DIR,
     env: { ...process.env, HOME: process.env.HOME },
@@ -108,6 +116,7 @@ function startDeploy(ws, mode = 'full') {
   proc.stdout.on('data', (data) => {
     const text = data.toString();
     ws.send(JSON.stringify({ type: 'log', line: text }));
+    logStream.write(text);
 
     const hint = diagnose(text);
     if (hint) {
@@ -138,6 +147,7 @@ function startDeploy(ws, mode = 'full') {
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     const result = { time: new Date().toISOString(), code, duration: elapsed + 's', status: code === 0 ? '成功' : '失败' };
     lastDeploy = result;
+    logStream.end(`\n========== 部署${result.status} (耗时 ${result.duration}) ==========\n`);
     if (code === 0) {
       const msg = `========== 部署成功 (耗时 ${elapsed}s) ==========`;
       log(msg);
