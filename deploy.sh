@@ -53,8 +53,22 @@ fi
 # 记录变更文件列表（用于增量编译判断）
 CHANGED_FILES=$(git diff --name-only $OLD_HEAD $NEW_HEAD 2>/dev/null || echo "")
 
+# 代码无变更时跳过编译，仅重启容器确保健康
+if [ "$OLD_HEAD" = "$NEW_HEAD" ]; then
+    echo -e "${GREEN}[信息] 代码无变更，跳过编译${NC}"
+    echo -e "[4+5/7] ${GREEN}编译项目... 跳过（代码未变更）${NC}"
+    echo -e "[6/7] 检查 Docker 容器状态..."
+    docker-compose up -d --no-deps jeecgboot-vue3-nginx jeecg-boot-system 2>/dev/null || docker-compose up -d
+    echo -e "${GREEN}[OK] 容器已就绪${NC}"
+    echo
+    echo "========================================"
+    echo "  部署跳过 (代码无变更)"
+    echo "========================================"
+    exit 0
+fi
+
 # 自动检测部署模式
-if [ "$MODE" = "full" ] && [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+if [ "$MODE" = "full" ]; then
     HAS_FRONTEND=$(echo "$CHANGED_FILES" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
     HAS_BACKEND=$(echo "$CHANGED_FILES" | grep -c "^jeecg-boot/" 2>/dev/null || true)
     HAS_SQL=$(echo "$CHANGED_FILES" | grep -c "\.sql$" 2>/dev/null || true)
@@ -119,6 +133,8 @@ build_backend() {
     if [ -n "$MODULE_LIST" ]; then
         echo -e "  ${YELLOW}[增量编译] 变更模块: ${MODULE_LIST//,/, }${NC}"
         mvn clean package -Pdocker -DskipTests -T 1C -pl "$MODULE_LIST" -am
+    elif [ -z "$CHANGED_FILES" ] || [ "$HAS_BACKEND" = "0" ] 2>/dev/null; then
+        echo -e "  ${YELLOW}[跳过] 后端代码无变更${NC}"
     else
         echo "  全量编译所有模块..."
         mvn clean package -Pdocker -DskipTests -T 1C
