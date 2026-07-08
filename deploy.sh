@@ -67,11 +67,13 @@ if [ "$OLD_HEAD" = "$NEW_HEAD" ]; then
     exit 0
 fi
 
+# 设置变更标记默认值
+HAS_FRONTEND=$(echo "$CHANGED_FILES" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
+HAS_BACKEND=$(echo "$CHANGED_FILES" | grep -c "^jeecg-boot/" 2>/dev/null || true)
+HAS_SQL=$(echo "$CHANGED_FILES" | grep -c "\.sql$" 2>/dev/null || true)
+
 # 自动检测部署模式
 if [ "$MODE" = "full" ]; then
-    HAS_FRONTEND=$(echo "$CHANGED_FILES" | grep -c "^jeecgboot-vue3/" 2>/dev/null || true)
-    HAS_BACKEND=$(echo "$CHANGED_FILES" | grep -c "^jeecg-boot/" 2>/dev/null || true)
-    HAS_SQL=$(echo "$CHANGED_FILES" | grep -c "\.sql$" 2>/dev/null || true)
 
     if [ "$HAS_FRONTEND" -gt 0 ] && [ "$HAS_BACKEND" -eq 0 ] && [ "$HAS_SQL" -eq 0 ]; then
         MODE="frontend"
@@ -160,7 +162,11 @@ build_frontend() {
         find node_modules -name "*_tmp_*" -maxdepth 3 -exec rm -rf {} + 2>/dev/null || true
         chmod -R u+w node_modules 2>/dev/null || true
 
-        if ! pnpm install 2>&1 | tee /tmp/pnpm-install.log; then
+        set +o pipefail
+        pnpm install > /tmp/pnpm-install.log 2>&1
+        INSTALL_EXIT=$?
+        set -o pipefail
+        if [ $INSTALL_EXIT -ne 0 ]; then
             if grep -q "EACCES\|permission denied" /tmp/pnpm-install.log 2>/dev/null; then
                 echo -e "${YELLOW}  pnpm install 权限错误，重建 node_modules...${NC}"
                 rm -rf node_modules pnpm-lock.yaml
@@ -273,7 +279,7 @@ for i in $(seq 1 30); do
         echo -e "  ${GREEN}MySQL 已就绪${NC}"
         break
     fi
-    [ $i -eq 30 ] && { echo -e "${YELLOW}  MySQL 启动超时，跳过数据库初始化${NC}"; exit 0; }
+    [ $i -eq 30 ] && { echo -e "${YELLOW}  MySQL 启动超时，跳过数据库初始化${NC}"; exit 1; }
     sleep 2
 done
 
@@ -306,7 +312,7 @@ done
 if [ $SQL_EXECUTED -gt 0 ]; then
     echo -e "${GREEN}[OK] 数据库初始化完成（执行 $SQL_EXECUTED 个，跳过 $SQL_SKIPPED 个）${NC}"
     echo "  重启后端服务加载新配置..."
-    docker restart jeecg-boot-system > /dev/null 2>&1
+    docker restart jeecg-boot-system > /dev/null 2>&1 || true
     sleep 10
 else
     echo -e "${GREEN}[OK] 无需执行 SQL（$SQL_SKIPPED 个脚本均无变更）${NC}"
