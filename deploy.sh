@@ -160,6 +160,14 @@ build_frontend() {
 
     export NODE_OPTIONS="--max-old-space-size=8192"
 
+    # Patch Vite worker timeout：5000ms → 60000ms，防止 Atomics.wait 死锁
+    for vite_chunk in $(find node_modules/.pnpm/vite@*/node_modules/vite/dist/node/chunks/config.js 2>/dev/null); do
+        if grep -q "genWorkerCode(fn, this._isModule, 5 \* 1e3" "$vite_chunk" 2>/dev/null; then
+            sed -i 's/genWorkerCode(fn, this._isModule, 5 \* 1e3/genWorkerCode(fn, this._isModule, 60 * 1e3/g' "$vite_chunk"
+            echo "  [Patch] Vite worker 超时 5s→60s"
+        fi
+    done
+
     # Vite worker 重试机制
     MAX_ATTEMPTS=3
     ATTEMPT=1
