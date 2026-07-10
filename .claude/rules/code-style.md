@@ -13,7 +13,7 @@ version: 1.0
 - Service：`I{Entity}Service` / `{Entity}ServiceImpl`
 - Mapper：`{Entity}Mapper extends BaseMapper<Entity>`
 - 所有修改加 `update-begin`/`update-end` 标记
-- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录(`@Select`原始SQL绕过`@TableLogic`)，找到则复用旧ID/创建人/创建时间，用`@Update`原始SQL将`del_flag`归零并覆盖业务字段。避免唯一索引冲突+保留历史关联
+- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（**用 JdbcTemplate 原生 SQL 绕过 `@TableLogic` 拦截器**，`@Select` 注解不可靠，拦截器会追加 `del_flag=0` 导致查不到），找到则复用旧ID/创建人/创建时间，用 JdbcTemplate 原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联
 
 ## Vue/TypeScript
 - 页面：`index.vue` + `{name}.api.ts` + `{name}.data.ts`

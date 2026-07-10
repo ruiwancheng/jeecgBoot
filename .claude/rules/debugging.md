@@ -26,3 +26,6 @@ version: 1.0
 - `401/403` → Token 过期或权限不足
 - `找不到符号 变量 log` / `@Slf4j` 不生效 → Java 版本过高（Lombok 不兼容 Java 26），切换到 Java 17 编译
 - `timeout of 10000ms exceeded` (登录超时) → MySQL/Redis 未启动，后端收到请求后连接池等待超时
+- `Unknown column 'xxx' in 'field list'` (新增字段后) → Docker 重建容器导致 ALTER TABLE 丢失，需重新执行 SQL 迁移；或 MySQL 5.7 不支持 `ADD COLUMN IF NOT EXISTS`，改用 `ADD COLUMN`
+- `Data too long for column 'code'` → MySQL 严格模式下 `varchar(N)` 超长插入报错，前端加 `maxlength` + 后端 Service 加长度校验给友好提示
+- `Data truncation` (字段截断) → 同上，非严格模式下超长数据被静默截断，需前端 `maxlength` 预防
