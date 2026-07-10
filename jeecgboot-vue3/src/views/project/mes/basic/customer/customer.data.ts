@@ -17,7 +17,7 @@ export const columns: BasicColumn[] = [
 ];
 
 export const searchFormSchema: FormSchema[] = [
-  { field: 'code', label: '客户编码', component: 'Input', colProps: { span: 6 } },
+  { field: 'code', label: '客户编码', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
   { field: 'name', label: '客户名称', component: 'Input', colProps: { span: 6 } },
   { field: 'type', label: '客户类型', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_customer_type' } },
   { field: 'grade', label: '客户等级', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_customer_grade' } },
@@ -30,7 +30,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   // ---- 基础信息 ----
-  { field: 'code', label: '客户编码', component: 'Input', required: true, colProps: { span: 8 } },
+  { field: 'code', label: '客户编码', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
   { field: 'name', label: '客户名称', component: 'Input', required: true, colProps: { span: 8 } },
   { field: 'type', label: '客户类型', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_customer_type' }, required: true },
   { field: 'grade', label: '客户等级', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_customer_grade' } },

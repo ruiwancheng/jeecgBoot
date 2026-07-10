@@ -4,7 +4,9 @@ package org.jeecg.modules.mes.basic.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesCustomer;
 import org.jeecg.modules.mes.basic.mapper.MesCustomerMapper;
 import org.jeecg.modules.mes.basic.service.IMesCustomerService;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,6 +48,8 @@ public class MesCustomerServiceImpl extends ServiceImpl<MesCustomerMapper, MesCu
             entity.setId(old.getId());
             entity.setCreateBy(old.getCreateBy());
             entity.setCreateTime(old.getCreateTime());
+            entity.setUpdateBy(getCurrentUsername());
+            entity.setUpdateTime(new Date());
             resurrectByJdbc(entity);
             return true;
         }
@@ -101,6 +106,15 @@ public class MesCustomerServiceImpl extends ServiceImpl<MesCustomerMapper, MesCu
                 entity.getInvoiceAddress(), entity.getInvoicePhone(), entity.getInvoiceType(),
                 entity.getContact(), entity.getPhone(), entity.getAddress(), entity.getStatus(),
                 entity.getRemark(), entity.getUpdateBy(), entity.getUpdateTime(), entity.getId());
+    }
+
+    private String getCurrentUsername() {
+        try {
+            LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+            return user != null ? user.getUsername() : "system";
+        } catch (Exception e) {
+            return "system";
+        }
     }
 
     private void validateSalesman(String salesmanId) {
