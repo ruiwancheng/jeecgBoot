@@ -151,7 +151,7 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
       preprocessorOptions: {
         less: {
           modifyVars: generateModifyVars(),
-          javascriptEnabled: true,
+          additionalData: `@import (reference) "${resolve('src/design/config.less')}";`,
         },
       },
     },

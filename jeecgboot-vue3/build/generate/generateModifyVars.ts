@@ -29,7 +29,6 @@ export function generateModifyVars() {
   const v3Token = convertLegacyToken(mapToken);
   return {
     ...v3Token,
-    hack: `true; @import (reference) "${resolve('src/design/config.less')}";`,
     'primary-color': primary,
     ...primaryColorObj,
     'info-color': primary,
