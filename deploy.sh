@@ -38,7 +38,10 @@ echo -e "${GREEN}[OK] 工具检查通过${NC}"
 # 拉取最新代码
 echo -e "[2/7] 拉取 GitHub 最新代码..."
 CURRENT_HEAD=$(git rev-parse HEAD)
-git fetch origin main 2>/dev/null
+if ! git fetch origin main 2>/dev/null; then
+    echo -e "${RED}[错误] Git 拉取失败（网络波动或 DNS 问题），请稍后重试${NC}"
+    exit 1
+fi
 REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null)
 
 if [ "$CURRENT_HEAD" = "$REMOTE_HEAD" ]; then
