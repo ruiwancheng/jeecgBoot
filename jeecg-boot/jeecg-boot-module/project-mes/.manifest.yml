@@ -14,4 +14,6 @@ additions:
   - controller: MesWarehouseController, MesLocationController
   - menu: 基础设置, 仓库管理, 库位管理, 客户管理
   - dict: mes_warehouse_type, mes_location_type, mes_customer_type
-  - table: c_mes_customer
+  - table: c_mes_customer, c_mes_customer_contact, c_mes_customer_address, c_mes_customer_follow_up, c_mes_customer_price
+  - controller: MesCustomerContactController, MesCustomerAddressController, MesCustomerFollowUpController, MesCustomerPriceController
+  - dict: mes_customer_grade, mes_customer_industry, mes_customer_region, mes_customer_scale, address_type, follow_type, invoice_type
