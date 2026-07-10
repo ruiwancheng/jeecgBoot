@@ -39,7 +39,7 @@ const [registerTable, { reload }] = useTable({
   showIndexColumn: false,
   showTableSetting: false,
   pagination: { pageSize: 10 },
-  immediate: false,
+  immediate: true,
 });
 
 function handleAdd() { isUpdate.value = false; resetFields(); openDrawer(true); }
