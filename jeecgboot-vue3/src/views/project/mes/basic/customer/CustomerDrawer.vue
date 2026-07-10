@@ -1,21 +1,21 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="900px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <Tabs defaultActiveKey="info">
-      <Tabs.TabPane tab="客户信息" key="info">
+      <TabPane tab="客户信息" key="info">
         <BasicForm @register="registerForm" />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab="联系人" key="contact" v-if="customerId">
+      </TabPane>
+      <TabPane tab="联系人" key="contact" v-if="customerId">
         <ContactTab ref="contactTabRef" :customerId="customerId" />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab="地址" key="address" v-if="customerId">
+      </TabPane>
+      <TabPane tab="地址" key="address" v-if="customerId">
         <AddressTab ref="addressTabRef" :customerId="customerId" />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab="价格表" key="price" v-if="customerId">
+      </TabPane>
+      <TabPane tab="价格表" key="price" v-if="customerId">
         <PriceTab ref="priceTabRef" :customerId="customerId" />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab="跟进记录" key="followUp" v-if="customerId">
+      </TabPane>
+      <TabPane tab="跟进记录" key="followUp" v-if="customerId">
         <FollowUpTab ref="followUpTabRef" :customerId="customerId" />
-      </Tabs.TabPane>
+      </TabPane>
     </Tabs>
   </BasicDrawer>
 </template>
