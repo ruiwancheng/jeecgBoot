@@ -3,19 +3,19 @@
 -- CREATE TABLE: 4 个子表（联系人、地址、跟进记录、价格表）
 
 ALTER TABLE c_mes_customer
-    ADD COLUMN IF NOT EXISTS grade             VARCHAR(32)   COMMENT '客户等级(dict:mes_customer_grade)',
-    ADD COLUMN IF NOT EXISTS credit_limit      DECIMAL(18,2) COMMENT '信用额度',
-    ADD COLUMN IF NOT EXISTS salesman_id       VARCHAR(36)   COMMENT '所属业务员(sys_user.id)',
-    ADD COLUMN IF NOT EXISTS industry          VARCHAR(32)   COMMENT '行业(dict:mes_customer_industry)',
-    ADD COLUMN IF NOT EXISTS region            VARCHAR(32)   COMMENT '区域(dict:mes_customer_region)',
-    ADD COLUMN IF NOT EXISTS scale             VARCHAR(32)   COMMENT '企业规模(dict:mes_customer_scale)',
-    ADD COLUMN IF NOT EXISTS invoice_title     VARCHAR(200)  COMMENT '发票抬头',
-    ADD COLUMN IF NOT EXISTS tax_no            VARCHAR(50)   COMMENT '税号',
-    ADD COLUMN IF NOT EXISTS bank_name         VARCHAR(100)  COMMENT '开户银行',
-    ADD COLUMN IF NOT EXISTS bank_account      VARCHAR(50)   COMMENT '银行账号',
-    ADD COLUMN IF NOT EXISTS invoice_address   VARCHAR(300)  COMMENT '开票地址',
-    ADD COLUMN IF NOT EXISTS invoice_phone     VARCHAR(30)   COMMENT '开票电话',
-    ADD COLUMN IF NOT EXISTS invoice_type      VARCHAR(10)   COMMENT '发票类型(dict:invoice_type)';
+    ADD COLUMN grade             VARCHAR(32)   COMMENT '客户等级(dict:mes_customer_grade)',
+    ADD COLUMN credit_limit      DECIMAL(18,2) COMMENT '信用额度',
+    ADD COLUMN salesman_id       VARCHAR(36)   COMMENT '所属业务员(sys_user.id)',
+    ADD COLUMN industry          VARCHAR(32)   COMMENT '行业(dict:mes_customer_industry)',
+    ADD COLUMN region            VARCHAR(32)   COMMENT '区域(dict:mes_customer_region)',
+    ADD COLUMN scale             VARCHAR(32)   COMMENT '企业规模(dict:mes_customer_scale)',
+    ADD COLUMN invoice_title     VARCHAR(200)  COMMENT '发票抬头',
+    ADD COLUMN tax_no            VARCHAR(50)   COMMENT '税号',
+    ADD COLUMN bank_name         VARCHAR(100)  COMMENT '开户银行',
+    ADD COLUMN bank_account      VARCHAR(50)   COMMENT '银行账号',
+    ADD COLUMN invoice_address   VARCHAR(300)  COMMENT '开票地址',
+    ADD COLUMN invoice_phone     VARCHAR(30)   COMMENT '开票电话',
+    ADD COLUMN invoice_type      VARCHAR(10)   COMMENT '发票类型(dict:invoice_type)';
 
 -- 联系人子表
 CREATE TABLE IF NOT EXISTS c_mes_customer_contact (
