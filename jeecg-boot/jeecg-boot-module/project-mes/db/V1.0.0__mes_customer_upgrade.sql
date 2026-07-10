@@ -98,3 +98,6 @@ CREATE TABLE IF NOT EXISTS c_mes_customer_price (
     PRIMARY KEY (id),
     INDEX idx_price_customer_id (customer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='MES-客户价格表';
+
+-- 客户编码唯一索引（防止并发新增导致编码重复）
+ALTER TABLE c_mes_customer ADD UNIQUE INDEX uk_code (code);
