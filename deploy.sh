@@ -58,7 +58,7 @@ if [ "$OLD_HEAD" = "$NEW_HEAD" ]; then
     echo -e "${GREEN}[信息] 代码无变更，跳过编译${NC}"
     echo -e "[4+5/7] ${GREEN}编译项目... 跳过（代码未变更）${NC}"
     echo -e "[6/7] 检查 Docker 容器状态..."
-    docker-compose up -d --no-deps jeecgboot-vue3-nginx jeecg-boot-system 2>/dev/null || docker-compose up -d
+    docker-compose up -d --no-deps jeecg-vue jeecg-boot-system 2>/dev/null || docker-compose up -d
     echo -e "${GREEN}[OK] 容器已就绪${NC}"
     echo
     echo "========================================"
@@ -259,7 +259,7 @@ echo -e "[6/7] 启动 Docker 容器..."
 case "$MODE" in
     frontend)
         echo "  仅重建前端容器..."
-        docker-compose up -d --build --no-deps jeecgboot-vue3-nginx
+        docker-compose up -d --build --no-deps jeecg-vue
         ;;
     backend)
         echo "  仅重建后端容器..."
