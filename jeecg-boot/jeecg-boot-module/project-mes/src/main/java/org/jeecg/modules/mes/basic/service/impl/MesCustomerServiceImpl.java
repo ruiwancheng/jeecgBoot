@@ -34,6 +34,9 @@ public class MesCustomerServiceImpl extends ServiceImpl<MesCustomerMapper, MesCu
         if (entity.getCreditLimit() != null && entity.getCreditLimit().compareTo(BigDecimal.ZERO) < 0) {
             throw new JeecgBootException("信用额度不能为负数");
         }
+        if (entity.getCode() != null && entity.getCode().length() > 50) {
+            throw new JeecgBootException("客户编码长度不能超过50个字符");
+        }
         if (StringUtils.hasText(entity.getSalesmanId())) {
             validateSalesman(entity.getSalesmanId());
         }
