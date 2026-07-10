@@ -37,24 +37,31 @@ echo -e "${GREEN}[OK] 工具检查通过${NC}"
 
 # 拉取最新代码
 echo -e "[2/7] 拉取 GitHub 最新代码..."
-OLD_HEAD=$(git rev-parse HEAD)
+CURRENT_HEAD=$(git rev-parse HEAD)
 git fetch origin main 2>/dev/null
 REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null)
 
-if [ "$OLD_HEAD" = "$REMOTE_HEAD" ]; then
+if [ "$CURRENT_HEAD" = "$REMOTE_HEAD" ]; then
     echo -e "${GREEN}[OK] 代码已是最新，无需拉取${NC}"
-    NEW_HEAD="$OLD_HEAD"
 else
     git pull origin main
-    NEW_HEAD=$(git rev-parse HEAD)
     echo -e "${GREEN}[OK] 代码拉取完成${NC}"
 fi
+NEW_HEAD=$(git rev-parse HEAD)
 
-# 记录变更文件列表（用于增量编译判断）
-CHANGED_FILES=$(git diff --name-only $OLD_HEAD $NEW_HEAD 2>/dev/null || echo "")
+# 用上次部署记录做基线（而非服务端本地 HEAD），防止跨多提交误判
+LAST_DEPLOY_FILE=".deploy-last-commit"
+BASELINE=$(cat "$LAST_DEPLOY_FILE" 2>/dev/null || echo "")
+if [ -z "$BASELINE" ]; then
+    BASELINE="$CURRENT_HEAD"
+    echo -e "${YELLOW}  [信息] 首次部署，使用当前状态作为基线${NC}"
+fi
+
+# 只检测上次部署后新增的变更
+CHANGED_FILES=$(git diff --name-only $BASELINE $NEW_HEAD 2>/dev/null || echo "")
 
 # 代码无变更时跳过编译，仅重启容器确保健康
-if [ "$OLD_HEAD" = "$NEW_HEAD" ]; then
+if [ "$BASELINE" = "$NEW_HEAD" ]; then
     echo -e "${GREEN}[信息] 代码无变更，跳过编译${NC}"
     echo -e "[4+5/7] ${GREEN}编译项目... 跳过（代码未变更）${NC}"
     echo -e "[6/7] 检查 Docker 容器状态..."
@@ -114,7 +121,7 @@ build_backend() {
     cd "$PROJECT_ROOT/jeecg-boot"
 
     # 增量编译：检测变更的 Maven 模块（扫描所有变更路径中的 pom.xml）
-    if [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+    if [ "$BASELINE" != "$NEW_HEAD" ]; then
         MODULE_LIST=""
         # 从变更文件路径提取模块目录，找到最近的 pom.xml
         for changed in $CHANGED_FILES; do
@@ -150,7 +157,7 @@ build_frontend() {
     cd "$PROJECT_ROOT/jeecgboot-vue3"
 
     # pnpm install：仅在 lockfile 变更时执行
-    if [ "$OLD_HEAD" != "$NEW_HEAD" ]; then
+    if [ "$BASELINE" != "$NEW_HEAD" ]; then
         LOCKFILE_CHANGED=$(echo "$CHANGED_FILES" | grep -c "pnpm-lock.yaml" 2>/dev/null || true)
     else
         LOCKFILE_CHANGED=0
@@ -319,6 +326,8 @@ else
 fi
 
 ELAPSED=$(($(date +%s) - START_TIME))
+# 记录本次部署的提交，作为下次部署的基线
+echo "$NEW_HEAD" > "$LAST_DEPLOY_FILE"
 echo
 echo "========================================"
 echo "  部署成功! (总耗时 ${ELAPSED}秒)"
