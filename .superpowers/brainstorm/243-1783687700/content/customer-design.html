@@ -1,0 +1,158 @@
+<h2>客户表单设计 — 全部字段 & 子表布局</h2>
+<p class="subtitle">基础信息 + 多联系人 + 多地址 + 财务资料 + 跟进记录。选择一个你认为合理的方案</p>
+
+<div class="section">
+  <h3>方案 A：一屏到底（单表单 + 多 Tab）</h3>
+  <p class="subtitle">客户主信息 + 4个Tab页签（联系人/地址/财务/跟进），每个Tab里是内嵌子表</p>
+  <div class="mockup">
+    <div class="mockup-header">客户编辑页面 — 方案A</div>
+    <div class="mockup-body">
+      <div style="border:1px solid #d9d9d9;border-radius:8px;overflow:hidden;background:#fff;">
+        <div style="background:#fafafa;padding:12px 16px;font-weight:600;border-bottom:1px solid #d9d9d9;">客户信息</div>
+        <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 20px;font-size:13px;">
+          <div><span style="color:#999">客户编码*</span> <span style="color:#d9d9d9;float:right">——</span></div>
+          <div><span style="color:#999">客户名称*</span> <span style="color:#d9d9d9;float:right">——</span></div>
+          <div><span style="color:#999">客户类型</span> <span style="color:#d9d9d9;float:right">下拉</span></div>
+          <div><span style="color:#999">客户等级</span> <span style="color:#d9d9d9;float:right">下拉(VIP/高级/普通)</span></div>
+          <div><span style="color:#999">信用额度</span> <span style="color:#d9d9d9;float:right">¥ ——</span></div>
+          <div><span style="color:#999">所属业务员</span> <span style="color:#d9d9d9;float:right">选人</span></div>
+          <div><span style="color:#999">行业</span> <span style="color:#d9d9d9;float:right">下拉</span></div>
+          <div><span style="color:#999">区域</span> <span style="color:#d9d9d9;float:right">下拉</span></div>
+          <div><span style="color:#999">企业规模</span> <span style="color:#d9d9d9;float:right">下拉</span></div>
+          <div style="grid-column:1/-1"><span style="color:#999">备注</span> <span style="color:#d9d9d9;float:right">——</span></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;border:1px solid #d9d9d9;border-radius:8px;overflow:hidden;">
+        <div style="display:flex;background:#fafafa;border-bottom:1px solid #d9d9d9;">
+          <div style="padding:10px 16px;font-weight:600;border-bottom:2px solid #1890ff;">联系人</div>
+          <div style="padding:10px 16px;color:#999;">收货地址</div>
+          <div style="padding:10px 16px;color:#999;">财务资料</div>
+          <div style="padding:10px 16px;color:#999;">跟进记录</div>
+        </div>
+        <div style="padding:12px;color:#999;font-size:13px;">
+          <button class="mock-button" style="margin-bottom:8px;">+ 新增联系人</button>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <tr style="background:#fafafa"><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">姓名</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">职务</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">手机</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">邮箱</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">是否默认</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;">操作</td></tr>
+            <tr><td style="padding:6px 8px;">张三</td><td style="padding:6px 8px;">采购经理</td><td style="padding:6px 8px;">138****</td><td style="padding:6px 8px;">zhang@xx.com</td><td style="padding:6px 8px;color:#52c41a;">默认</td><td style="padding:6px 8px;"><span style="color:#1890ff;">编辑</span> <span style="color:#ff4d4f;margin-left:8px;">删除</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>方案 B：左右分栏（主表单 + 侧边子表导航）</h3>
+  <p class="subtitle">左侧主信息固定，右侧按需展开子表。适合信息量大的场景</p>
+  <div class="mockup">
+    <div class="mockup-header">客户编辑页面 — 方案B</div>
+    <div class="mockup-body">
+      <div style="display:flex;gap:0;">
+        <div style="flex:1;border-right:1px solid #f0f0f0;padding-right:20px;">
+          <div style="font-weight:600;margin-bottom:12px;font-size:13px;">客户信息</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12px;">
+            <div><span style="color:#999">客户编码*</span><br/><span style="color:#d9d9d9">——</span></div>
+            <div><span style="color:#999">客户名称*</span><br/><span style="color:#d9d9d9">——</span></div>
+            <div><span style="color:#999">客户类型</span><br/><span style="color:#d9d9d9">下拉</span></div>
+            <div><span style="color:#999">客户等级</span><br/><span style="color:#d9d9d9">下拉</span></div>
+            <div><span style="color:#999">信用额度</span><br/><span style="color:#d9d9d9">¥ ——</span></div>
+            <div><span style="color:#999">所属业务员</span><br/><span style="color:#d9d9d9">选人</span></div>
+            <div><span style="color:#999">行业</span><br/><span style="color:#d9d9d9">下拉</span></div>
+            <div><span style="color:#999">区域/规模</span><br/><span style="color:#d9d9d9">下拉</span></div>
+          </div>
+        </div>
+        <div style="flex:1.5;padding-left:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-weight:600;font-size:13px;">联系人</span>
+            <button class="mock-button" style="font-size:11px;">+ 新增</button>
+          </div>
+          <div style="border:1px solid #f0f0f0;border-radius:6px;padding:8px 12px;margin-bottom:8px;font-size:12px;">
+            <span style="font-weight:500;">张三</span> · 采购经理 · 138****<br/>
+            <span style="color:#999;">zhang@xx.com</span>
+            <span style="float:right;color:#52c41a;">默认</span>
+          </div>
+          <div style="border:1px solid #f0f0f0;border-radius:6px;padding:8px 12px;font-size:12px;color:#999;">
+            <span>李四</span> · 财务 · 139****
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="a">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Tab 页签式</h3>
+      <p>客户主信息表单 + 联系人/地址/财务/跟进 四个Tab子表。JeecgBoot 标准模式，Drawer 内嵌 Tab + 各自子表</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>左右分栏式</h3>
+      <p>左侧主信息 + 右侧子表卡片。适合联系人、地址不多但需要频繁切换编辑的场景</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="section">
+  <h3>子表字段设计（方案A/B共用）</h3>
+  <p class="subtitle">下面是每个子表的字段规划，请逐项确认</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div style="border:1px solid #d9d9d9;border-radius:8px;padding:12px;">
+      <h4 style="margin:0 0 8px 0;">📇 联系人子表</h4>
+      <table style="width:100%;font-size:12px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">姓名*</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">职务</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">手机</td><td style="color:#999;">手机号校验</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">邮箱</td><td style="color:#999;">邮箱校验</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">QQ/微信</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">是否默认</td><td style="color:#999;">开关</td></tr>
+        <tr><td style="padding:4px 0;font-weight:500;">备注</td><td style="color:#999;">文本</td></tr>
+      </table>
+    </div>
+
+    <div style="border:1px solid #d9d9d9;border-radius:8px;padding:12px;">
+      <h4 style="margin:0 0 8px 0;">📍 地址子表</h4>
+      <table style="width:100%;font-size:12px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">地址类型*</td><td style="color:#999;">收货/发票/办公</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">联系人*</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">联系电话*</td><td style="color:#999;">手机号</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">省/市/区</td><td style="color:#999;">级联选择</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">详细地址*</td><td style="color:#999;">文本域</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">是否默认</td><td style="color:#999;">开关</td></tr>
+        <tr><td style="padding:4px 0;font-weight:500;">备注</td><td style="color:#999;">文本</td></tr>
+      </table>
+    </div>
+
+    <div style="border:1px solid #d9d9d9;border-radius:8px;padding:12px;">
+      <h4 style="margin:0 0 8px 0;">💰 财务资料（主表扩展）</h4>
+      <table style="width:100%;font-size:12px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">发票抬头</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">税号</td><td style="color:#999;">文本，格式校验</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">开户银行</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">银行账号</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">开票地址</td><td style="color:#999;">文本</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">开票电话</td><td style="color:#999;">文本</td></tr>
+        <tr><td style="padding:4px 0;font-weight:500;">发票类型</td><td style="color:#999;">专票/普票</td></tr>
+      </table>
+    </div>
+
+    <div style="border:1px solid #d9d9d9;border-radius:8px;padding:12px;">
+      <h4 style="margin:0 0 8px 0;">📝 跟进记录子表</h4>
+      <table style="width:100%;font-size:12px;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">跟进方式</td><td style="color:#999;">电话/拜访/邮件/其他</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">跟进日期*</td><td style="color:#999;">日期</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">跟进内容*</td><td style="color:#999;">文本域</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">跟进人</td><td style="color:#999;">自动取当前用户</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">下次跟进日</td><td style="color:#999;">日期</td></tr>
+        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;font-weight:500;">附件</td><td style="color:#999;">上传</td></tr>
+        <tr><td style="padding:4px 0;font-weight:500;">备注</td><td style="color:#999;">文本</td></tr>
+      </table>
+    </div>
+  </div>
+</div>

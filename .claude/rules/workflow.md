@@ -8,7 +8,7 @@ version: 2.0
 # 开发流程
 
 ```
-/brainstorm → /plan → 用户确认 → 写代码 → /verify → 分级测试 → /done → 人工验收
+/brainstorm → /plan → 用户确认 → 写代码 → /verify → git commit + push → 部署 → 分级测试 → /done → 人工验收
 ```
 
 ## 防失忆触发条件（强制）
@@ -20,11 +20,14 @@ version: 2.0
 | 需求讨论（/brainstorm 结束） | 提示"确认无误就进入 /plan" | — |
 | 实施计划（/plan 结束） | 提示"确认计划就进入写代码" | — |
 | 写代码完成（最后一批文件写入后） | **自动进入 /verify**（不要等用户说） | git diff 有变更 + 本次写入过文件 |
-| /verify 通过 | 提示进入分级测试（/test-api 等） | — |
+| /verify 通过 | **自动 commit + push，然后提示部署**（不能跳过直接测试） | git diff 有变更，服务端走 git pull |
+| 部署完成 | 提示进入分级测试（/test-api 等） | — |
 | 测试全部通过 | 提示进入 /done | — |
 | 测试有失败 | 进入 /debug，修复后重测 | 报错信息 |
 
 > ⚠️ **最常见失忆点：写完代码直接结束，跳过了 /verify。** 检查方法：如果本次会话写入过文件 + 还没跑过 /verify → 必须自动补上。
+>
+> ⚠️ **第二失忆点：/verify 通过后直接让用户部署，代码没提交推送。** 服务端走 `git pull`，未推送则部署白跑。检查方法：/verify 通过后检查 `git log origin/main..HEAD` 是否有未推送提交。
 
 ## 分级测试规则（AI 自动判定）
 
@@ -74,6 +77,8 @@ version: 2.0
 | 实施计划 | /plan | ✓ | ✓ | ✓ |
 | 编码实现 | - | ✓ | ✓ | ✓ |
 | 自验证 | /verify | ✓ | ✓ | ✓ |
+| 提交推送 | git commit + push | ✓ | ✓ | ✓ |
+| 部署 | 部署控制台 | ✓ | ✓ | ✓ |
 | 前端静态 | /test-frontend | ✓ | ✓ | ✓ |
 | 模块测试 | /test-api | - | ✓ | ✓ |
 | E2E 测试 | /test-e2e | - | - | ✓ |

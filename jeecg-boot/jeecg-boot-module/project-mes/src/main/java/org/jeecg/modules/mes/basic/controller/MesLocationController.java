@@ -47,40 +47,18 @@ public class MesLocationController extends JeecgController<MesLocation, IMesLoca
     @DeleteMapping("/deleteBatch") @RequiresPermissions("mes:location:deleteBatch")
     public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
-    @PutMapping("/deactivate") @RequiresPermissions("mes:location:edit")
-    public Result<String> deactivate(@RequestParam String id) {
-        MesLocation e = service.getById(id);
-        if (e == null) return Result.error("库位不存在");
-        e.setStatus(0);
-        service.updateById(e);
-        return Result.ok("停用成功");
-    }
-
-    @PutMapping("/activate") @RequiresPermissions("mes:location:edit")
-    public Result<String> activate(@RequestParam String id) {
-        MesLocation e = service.getById(id);
-        if (e == null) return Result.error("库位不存在");
-        e.setStatus(1);
-        service.updateById(e);
-        return Result.ok("启用成功");
-    }
-
     @PostMapping("/generate") @RequiresPermissions("mes:location:add")
     public Result<List<String>> generate(@RequestBody Map<String, Object> p) {
         return Result.ok(service.generateLocations(
-            (String) p.get("shelfId"),
-            Integer.parseInt(p.get("rows").toString()),
-            Integer.parseInt(p.get("cols").toString())));
+            (String) p.get("warehouseId"),
+            Integer.parseInt(p.get("count").toString())));
     }
 
-    @GetMapping("/exportXls")
-    @RequiresPermissions("mes:location:export")
+    @GetMapping("/exportXls") @RequiresPermissions("mes:location:export")
     public ModelAndView exportXls(MesLocation entity, HttpServletRequest req) {
         return super.exportXls(req, entity, MesLocation.class, "库位管理");
     }
-
-    @PostMapping("/importExcel")
-    @RequiresPermissions("mes:location:import")
+    @PostMapping("/importExcel") @RequiresPermissions("mes:location:import")
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesLocation.class);
     }

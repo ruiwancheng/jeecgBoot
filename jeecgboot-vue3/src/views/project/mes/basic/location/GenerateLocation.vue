@@ -1,11 +1,10 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" @ok="handleSubmit" width="500px" destroyOnClose>
+  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" @ok="handleSubmit" width="400px" destroyOnClose>
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
 
 <script lang="ts" setup>
-  import { ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { generateFormSchema } from './location.data';
@@ -23,9 +22,7 @@
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     setModalProps({ confirmLoading: false });
-    if (data?.shelfId) {
-      await setFieldsValue({ shelfId: data.shelfId });
-    }
+    if (data?.warehouseId) await setFieldsValue({ warehouseId: data.warehouseId });
   });
 
   async function handleSubmit() {
@@ -37,10 +34,7 @@
       message.success(`成功生成 ${Array.isArray(codes) ? codes.length : 0} 个库位`);
       closeModal();
       emit('success');
-    } catch (e: any) {
-      message.error(e?.message || '生成失败');
-    } finally {
-      setModalProps({ confirmLoading: false });
-    }
+    } catch (e: any) { message.error(e?.message || '生成失败'); }
+    finally { setModalProps({ confirmLoading: false }); }
   }
 </script>
