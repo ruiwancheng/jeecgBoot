@@ -23,14 +23,14 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
-  { field: 'code', label: '仓库编码', component: 'Input', required: true, colProps: { span: 12 } },
-  { field: 'name', label: '仓库名称', component: 'Input', required: true, colProps: { span: 12 } },
+  { field: 'code', label: '仓库编码', component: 'Input', required: true, colProps: { span: 12 }, componentProps: { maxlength: 50 } },
+  { field: 'name', label: '仓库名称', component: 'Input', required: true, colProps: { span: 12 }, componentProps: { maxlength: 100 } },
   { field: 'type', label: '仓库类型', component: 'JDictSelectTag', colProps: { span: 12 }, componentProps: { dictCode: 'mes_warehouse_type' } },
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 12 }, componentProps: { dictCode: 'yn', type: 'radioButton', stringToNumber: true }, defaultValue: 1 },
-  { field: 'address', label: '仓库地址', component: 'Input', colProps: { span: 24 } },
-  { field: 'manager', label: '负责人', component: 'Input', colProps: { span: 12 } },
-  { field: 'phone', label: '联系电话', component: 'Input', colProps: { span: 12 } },
+  { field: 'address', label: '仓库地址', component: 'Input', colProps: { span: 24 }, componentProps: { maxlength: 300 } },
+  { field: 'manager', label: '负责人', component: 'Input', colProps: { span: 12 }, componentProps: { maxlength: 50 } },
+  { field: 'phone', label: '联系电话', component: 'Input', colProps: { span: 12 }, componentProps: { maxlength: 20 } },
   { field: 'factory', label: '所属工厂', component: 'Input', colProps: { span: 12 } },
   { field: 'workshop', label: '所属车间', component: 'Input', colProps: { span: 12 } },
-  { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 } },
+  { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },
 ];
