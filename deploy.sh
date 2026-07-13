@@ -116,6 +116,30 @@ else
     echo "已存在: $entry2"
 fi
 
+# ─── SQL 语法预检：编译前拦截错误 SQL，避免编译白跑 ───
+if [ "$MODE" != "frontend" ] && [ -n "$CHANGED_FILES" ]; then
+    NEW_SQL=$(echo "$CHANGED_FILES" | grep "\.sql$" 2>/dev/null || true)
+    if [ -n "$NEW_SQL" ]; then
+        echo "  检测到 SQL 变更，预检语法..."
+        FAILED=0
+        for sqlfile in $NEW_SQL; do
+            if [ -f "$sqlfile" ]; then
+                if ! docker exec -i jeecg-boot-mysql mysql -uroot -proot --force jeecg-boot < "$sqlfile" > /dev/null 2>&1; then
+                    echo -e "  ${RED}[SQL预检失败] $sqlfile${NC}"
+                    FAILED=1
+                fi
+            fi
+        done
+        if [ $FAILED -eq 1 ]; then
+            echo -e "${RED}========================================="
+            echo "  SQL 脚本有错误，请修正后重新部署"
+            echo "=========================================${NC}"
+            exit 1
+        fi
+        echo -e "${GREEN}[OK] SQL 预检通过${NC}"
+    fi
+fi
+
 PROJECT_ROOT=$(pwd)
 
 # ─── 后端编译函数 ───

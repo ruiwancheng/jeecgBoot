@@ -15,6 +15,25 @@ version: 1.0
 - 所有修改加 `update-begin`/`update-end` 标记
 - **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（**用 JdbcTemplate 原生 SQL 绕过 `@TableLogic` 拦截器**，`@Select` 注解不可靠，拦截器会追加 `del_flag=0` 导致查不到），找到则复用旧ID/创建人/创建时间，用 JdbcTemplate 原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联
 
+## SQL 迁移脚本规范
+
+### 目标环境
+
+MySQL 5.7（Docker 容器 `jeecg-boot-mysql`）。
+
+### 禁止语法
+
+| 禁止 | 原因 | 替代 |
+|------|------|------|
+| `DROP INDEX IF EXISTS` | MySQL 5.7 不支持 | 直接 `DROP INDEX` |
+| `ADD COLUMN IF NOT EXISTS` | MySQL 5.7 不支持 | 存储过程先判断 |
+| 假设标品表结构 | 不同版本表结构不同 | 先 `DESCRIBE` 确认 |
+| 假设 `del_flag` 存在 | `sys_dict_item` 等无此字段 | 查实际结构 |
+
+### 幂等要求
+
+SQL 脚本可能被多次执行（部署控制台自动扫描 `sql/` 和 `db/` 目录）。所有 DDL 必须可重复运行不报错。
+
 ## Vue/TypeScript
 - 页面：`index.vue` + `{name}.api.ts` + `{name}.data.ts`
 - 组件名：`<script setup name="kebab-case">`
