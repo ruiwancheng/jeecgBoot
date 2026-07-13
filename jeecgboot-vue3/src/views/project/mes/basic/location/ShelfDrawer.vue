@@ -1,30 +1,26 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="500px" destroyOnClose :showFooter="true" @ok="handleSubmit">
-    <div style="margin-bottom: 16px">
-      <a-form layout="inline">
-        <a-form-item label="所属仓库" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascWarehouseId"
-            placeholder="选择仓库"
-            style="width: 200px"
-            :options="warehouseOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!canChangeParent"
-            @change="onWhChange"
-          />
-        </a-form-item>
-        <a-form-item label="所属库区" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascZoneId"
-            placeholder="选择库区"
-            style="width: 200px"
-            :options="zoneOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!canChangeParent || !cascWarehouseId"
-            @change="onZoneSelect"
-          />
-        </a-form-item>
-      </a-form>
+    <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center">
+      <span>所属仓库：</span>
+      <a-select
+        v-model:value="cascWarehouseId"
+        placeholder="选择仓库"
+        style="width: 180px"
+        :options="warehouseOptions"
+        :field-names="{ label: 'name', value: 'id' }"
+        :disabled="!canChangeParent"
+        @change="onWhChange"
+      />
+      <span>所属库区：</span>
+      <a-select
+        v-model:value="cascZoneId"
+        placeholder="选择库区"
+        style="width: 180px"
+        :options="zoneOptions"
+        :field-names="{ label: 'name', value: 'id' }"
+        :disabled="!canChangeParent || !cascWarehouseId"
+        @change="onZoneSelect"
+      />
     </div>
     <BasicForm @register="registerForm" />
   </BasicDrawer>
@@ -77,8 +73,10 @@
       cascWarehouseId.value = data.warehouseId || '';
       canChangeParent.value = true;
       await setFieldsValue({ zoneId: data.zoneId, warehouseId: data.warehouseId });
-      const res = await queryZoneTree(data.warehouseId || '');
-      zoneOptions.value = (res as any)?.result || (res as any)?.records || res || [];
+      if (data.warehouseId) {
+        const res = await queryZoneTree(data.warehouseId);
+        zoneOptions.value = (res as any)?.result || (res as any)?.records || res || [];
+      }
     }
   });
 

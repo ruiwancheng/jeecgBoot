@@ -1,40 +1,35 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="700px" destroyOnClose :showFooter="true" @ok="handleSubmit">
-    <div style="margin-bottom: 16px">
-      <a-form layout="inline">
-        <a-form-item label="所属仓库" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascWarehouseId"
-            placeholder="选择仓库"
-            style="width: 180px"
-            :options="warehouseOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            @change="onWhChange"
-          />
-        </a-form-item>
-        <a-form-item label="所属库区" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascZoneId"
-            placeholder="选择库区"
-            style="width: 180px"
-            :options="zoneOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!cascWarehouseId"
-            @change="onZoneChange"
-          />
-        </a-form-item>
-        <a-form-item label="所属货架" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascShelfId"
-            placeholder="选择货架"
-            style="width: 180px"
-            :options="shelfOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!cascZoneId"
-            @change="onShelfChange"
-          />
-        </a-form-item>
-      </a-form>
+    <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center">
+      <span>所属仓库：</span>
+      <a-select
+        v-model:value="cascWarehouseId"
+        placeholder="选择仓库"
+        style="width: 170px"
+        :options="warehouseOptions"
+        :field-names="{ label: 'name', value: 'id' }"
+        @change="onWhChange"
+      />
+      <span>所属库区：</span>
+      <a-select
+        v-model:value="cascZoneId"
+        placeholder="选择库区"
+        style="width: 170px"
+        :options="zoneOptions"
+        :field-names="{ label: 'name', value: 'id' }"
+        :disabled="!cascWarehouseId"
+        @change="onZoneChange"
+      />
+      <span>所属货架：</span>
+      <a-select
+        v-model:value="cascShelfId"
+        placeholder="选择货架"
+        style="width: 170px"
+        :options="shelfOptions"
+        :field-names="{ label: 'name', value: 'id' }"
+        :disabled="!cascZoneId"
+        @change="onShelfChange"
+      />
     </div>
     <BasicForm @register="registerForm" />
   </BasicDrawer>

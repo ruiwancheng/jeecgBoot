@@ -1,6 +1,7 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="500px" destroyOnClose :showFooter="true" @ok="handleSubmit">
-    <a-form-item label="所属仓库" style="margin-bottom: 16px" v-if="canChangeWarehouse">
+    <div style="margin-bottom: 16px" v-if="canChangeWarehouse">
+      <span>所属仓库：</span>
       <a-select
         v-model:value="selectedWarehouseId"
         placeholder="选择所属仓库"
@@ -8,7 +9,7 @@
         :field-names="{ label: 'name', value: 'id' }"
         style="width: 100%"
       />
-    </a-form-item>
+    </div>
     <BasicForm @register="registerForm" />
   </BasicDrawer>
 </template>
