@@ -43,6 +43,8 @@ public class MesMenuDefinition {
     private boolean hidden = false;
     /** 是否隐藏Tab */
     private boolean hideTab = false;
+    /** Shiro 权限标识（@RequiresPermissions 匹配此值，非 id） */
+    private String perms = "";
     /** 绑定的角色ID */
     private String roleId;
 
@@ -69,10 +71,11 @@ public class MesMenuDefinition {
 
     // ============ 便捷设置方法 ============
 
-    /** 权限码条目（不可见，仅用于 @RequiresPermissions 鉴权） */
+    /** 权限码条目（不可见，仅用于 @RequiresPermissions 鉴权）
+     *  Shiro 匹配的是 sys_permission.perms 列，不是 id 列 */
     public static MesMenuDefinition permission(String id, String parentId, String name) {
         return new MesMenuDefinition()
-                .setId(id).setParentId(parentId).setName(name)
+                .setId(id).setParentId(parentId).setName(name).setPerms(id)
                 .setUrl("").setComponent("").setMenuType(2).setLeaf(true).setRoute(false);
     }
 

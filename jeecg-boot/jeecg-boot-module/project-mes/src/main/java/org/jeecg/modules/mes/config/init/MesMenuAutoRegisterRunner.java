@@ -104,6 +104,7 @@ public class MesMenuAutoRegisterRunner implements ApplicationRunner {
         p.setLeaf(def.isLeaf());
         p.setRoute(def.isRoute());
         p.setKeepAlive(def.isKeepAlive());
+        p.setPerms(def.getPerms());
         p.setAlwaysShow(def.isAlwaysShow());
         p.setHidden(def.isHidden());
         p.setHideTab(def.isHideTab());
