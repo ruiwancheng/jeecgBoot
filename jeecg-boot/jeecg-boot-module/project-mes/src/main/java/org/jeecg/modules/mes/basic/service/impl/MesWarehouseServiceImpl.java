@@ -79,10 +79,16 @@ public class MesWarehouseServiceImpl extends ServiceImpl<MesWarehouseMapper, Mes
     @Override
     @Transactional
     public boolean removeById(java.io.Serializable id) {
+        // 三级级联校验：库区 → 货架 → 库位
         QueryWrapper<MesZone> qwZone = new QueryWrapper<>();
         qwZone.eq("warehouse_id", id);
         if (zoneMapper.selectCount(qwZone) > 0) {
             throw new JeecgBootException("该仓库下还有库区，请先删除库区");
+        }
+        QueryWrapper<MesShelf> qwShelf = new QueryWrapper<>();
+        qwShelf.eq("warehouse_id", id);
+        if (shelfMapper.selectCount(qwShelf) > 0) {
+            throw new JeecgBootException("该仓库下还有货架，请先删除货架");
         }
         QueryWrapper<MesLocation> qwLoc = new QueryWrapper<>();
         qwLoc.eq("warehouse_id", id);

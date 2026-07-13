@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.modules.mes.basic.entity.MesZone;
 import org.jeecg.modules.mes.basic.entity.MesShelf;
+import org.jeecg.modules.mes.basic.entity.MesLocation;
 import org.jeecg.modules.mes.basic.mapper.MesZoneMapper;
 import org.jeecg.modules.mes.basic.mapper.MesShelfMapper;
+import org.jeecg.modules.mes.basic.mapper.MesLocationMapper;
 import org.jeecg.modules.mes.basic.service.IMesZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MesZoneServiceImpl extends ServiceImpl<MesZoneMapper, MesZone> implements IMesZoneService {
     @Autowired
     private MesShelfMapper shelfMapper;
+    @Autowired
+    private MesLocationMapper locationMapper;
 
     @Override
     @Transactional
@@ -50,10 +54,16 @@ public class MesZoneServiceImpl extends ServiceImpl<MesZoneMapper, MesZone> impl
     @Override
     @Transactional
     public boolean removeById(java.io.Serializable id) {
+        // 二级级联校验：货架 → 库位
         QueryWrapper<MesShelf> qwShelf = new QueryWrapper<>();
         qwShelf.eq("zone_id", id);
         if (shelfMapper.selectCount(qwShelf) > 0) {
             throw new JeecgBootException("该库区下还有货架，请先删除货架");
+        }
+        QueryWrapper<MesLocation> qwLoc = new QueryWrapper<>();
+        qwLoc.eq("zone_id", id);
+        if (locationMapper.selectCount(qwLoc) > 0) {
+            throw new JeecgBootException("该库区下还有库位，请先删除库位");
         }
         return super.removeById(id);
     }
