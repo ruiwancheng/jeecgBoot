@@ -55,7 +55,7 @@ ALTER TABLE c_mes_location
     ADD INDEX idx_mes_loc_shelf (shelf_id);
 
 -- 仓库类型字典补不良品仓、退货仓
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time, del_flag)
+INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
 VALUES
-(REPLACE(UUID(), '-', ''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_warehouse_type'), '不良品仓', '5', '不良品存放仓库', 5, 1, 'admin', NOW(), 'admin', NOW(), 0),
-(REPLACE(UUID(), '-', ''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_warehouse_type'), '退货仓', '6', '退货存放仓库', 6, 1, 'admin', NOW(), 'admin', NOW(), 0);
+(REPLACE(UUID(), '-', ''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_warehouse_type'), '不良品仓', '5', '不良品存放仓库', 5, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(), '-', ''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_warehouse_type'), '退货仓', '6', '退货存放仓库', 6, 1, 'admin', NOW(), 'admin', NOW());

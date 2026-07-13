@@ -298,7 +298,7 @@ SQL_SKIPPED=0
 CHECKSUM_FILE=".deploy-sql-checksums"
 touch "$CHECKSUM_FILE"
 
-for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/target/*" -prune -o -path "*/sql/*.sql" -type f -print 2>/dev/null | sort); do
+for sqlfile in $(find jeecg-boot/jeecg-boot-module -path "*/target/*" -prune -o \( -path "*/sql/*.sql" -o -path "*/db/*.sql" \) -type f -print 2>/dev/null | sort); do
     modname=$(echo "$sqlfile" | sed 's|.*/jeecg-boot-module/\([^^/]*\)/.*|\1|')
     sqlname=$(basename "$sqlfile")
     checksum=$(md5sum "$sqlfile" | cut -d' ' -f1)
