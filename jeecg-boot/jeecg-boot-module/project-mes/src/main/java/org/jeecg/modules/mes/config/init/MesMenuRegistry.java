@@ -67,6 +67,40 @@ public final class MesMenuRegistry {
                 .sortNo(3.0)
                 .icon("ant-design:user-outlined"));
 
+        // ==================== 权限码注册（@RequiresPermissions 鉴权） ====================
+        // 仓库权限
+        list.add(MesMenuDefinition.permission("mes:warehouse:list", "mes_basic_wh", "仓库列表"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:add", "mes_basic_wh", "仓库新增"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:edit", "mes_basic_wh", "仓库编辑"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:delete", "mes_basic_wh", "仓库删除"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:deleteBatch", "mes_basic_wh", "仓库批量删除"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:export", "mes_basic_wh", "仓库导出"));
+        list.add(MesMenuDefinition.permission("mes:warehouse:import", "mes_basic_wh", "仓库导入"));
+        // 库区权限
+        list.add(MesMenuDefinition.permission("mes:zone:list", "mes_basic_loc", "库区列表"));
+        list.add(MesMenuDefinition.permission("mes:zone:add", "mes_basic_loc", "库区新增"));
+        list.add(MesMenuDefinition.permission("mes:zone:edit", "mes_basic_loc", "库区编辑"));
+        list.add(MesMenuDefinition.permission("mes:zone:delete", "mes_basic_loc", "库区删除"));
+        list.add(MesMenuDefinition.permission("mes:zone:deleteBatch", "mes_basic_loc", "库区批量删除"));
+        list.add(MesMenuDefinition.permission("mes:zone:export", "mes_basic_loc", "库区导出"));
+        list.add(MesMenuDefinition.permission("mes:zone:import", "mes_basic_loc", "库区导入"));
+        // 货架权限
+        list.add(MesMenuDefinition.permission("mes:shelf:list", "mes_basic_loc", "货架列表"));
+        list.add(MesMenuDefinition.permission("mes:shelf:add", "mes_basic_loc", "货架新增"));
+        list.add(MesMenuDefinition.permission("mes:shelf:edit", "mes_basic_loc", "货架编辑"));
+        list.add(MesMenuDefinition.permission("mes:shelf:delete", "mes_basic_loc", "货架删除"));
+        list.add(MesMenuDefinition.permission("mes:shelf:deleteBatch", "mes_basic_loc", "货架批量删除"));
+        list.add(MesMenuDefinition.permission("mes:shelf:export", "mes_basic_loc", "货架导出"));
+        list.add(MesMenuDefinition.permission("mes:shelf:import", "mes_basic_loc", "货架导入"));
+        // 库位权限
+        list.add(MesMenuDefinition.permission("mes:location:list", "mes_basic_loc", "库位列表"));
+        list.add(MesMenuDefinition.permission("mes:location:add", "mes_basic_loc", "库位新增"));
+        list.add(MesMenuDefinition.permission("mes:location:edit", "mes_basic_loc", "库位编辑"));
+        list.add(MesMenuDefinition.permission("mes:location:delete", "mes_basic_loc", "库位删除"));
+        list.add(MesMenuDefinition.permission("mes:location:deleteBatch", "mes_basic_loc", "库位批量删除"));
+        list.add(MesMenuDefinition.permission("mes:location:export", "mes_basic_loc", "库位导出"));
+        list.add(MesMenuDefinition.permission("mes:location:import", "mes_basic_loc", "库位导入"));
+
         // ==================== 后续新页面在此添加 ====================
 
         return list;

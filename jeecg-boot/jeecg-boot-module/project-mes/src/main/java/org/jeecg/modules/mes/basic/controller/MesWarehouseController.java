@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.servlet.ModelAndView;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -23,23 +26,28 @@ import java.util.List;
 @Tag(name = "MES-仓库管理")
 @RestController
 @RequestMapping("/mes/basic/warehouse")
+@Validated
 public class MesWarehouseController extends JeecgController<MesWarehouse, IMesWarehouseService> {
     @Autowired
     private IMesWarehouseService service;
 
     @GetMapping("/list")
+    @RequiresPermissions("mes:warehouse:list")
     public Result<IPage<MesWarehouse>> queryPageList(MesWarehouse entity,
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
         return Result.ok(service.page(new Page<>(pageNo, pageSize), QueryGenerator.initQueryWrapper(entity, req.getParameterMap())));
     }
-    @PostMapping("/add") public Result<String> add(@RequestBody MesWarehouse e) { service.save(e); return Result.ok("添加成功"); }
-    @PutMapping("/edit") public Result<String> edit(@RequestBody MesWarehouse e) { service.updateById(e); return Result.ok("编辑成功"); }
-    @DeleteMapping("/delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
-    @DeleteMapping("/deleteBatch") public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
+    @PostMapping("/add") @RequiresPermissions("mes:warehouse:add")
+    public Result<String> add(@RequestBody @Valid MesWarehouse e) { service.save(e); return Result.ok("添加成功"); }
+    @PutMapping("/edit") @RequiresPermissions("mes:warehouse:edit")
+    public Result<String> edit(@RequestBody @Valid MesWarehouse e) { service.updateById(e); return Result.ok("编辑成功"); }
+    @DeleteMapping("/delete") @RequiresPermissions("mes:warehouse:delete")
+    public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
+    @DeleteMapping("/deleteBatch") @RequiresPermissions("mes:warehouse:deleteBatch")
+    public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
-    //update-begin---author:admin---date:2026-07-13---for: 仓库停用/启用-----------
-    @PutMapping("/deactivate")
+    @PutMapping("/deactivate") @RequiresPermissions("mes:warehouse:edit")
     public Result<String> deactivate(@RequestParam String id) {
         MesWarehouse wh = service.getById(id);
         if (wh == null) {
@@ -50,7 +58,7 @@ public class MesWarehouseController extends JeecgController<MesWarehouse, IMesWa
         return Result.ok("停用成功");
     }
 
-    @PutMapping("/activate")
+    @PutMapping("/activate") @RequiresPermissions("mes:warehouse:edit")
     public Result<String> activate(@RequestParam String id) {
         MesWarehouse wh = service.getById(id);
         if (wh == null) {
@@ -60,19 +68,21 @@ public class MesWarehouseController extends JeecgController<MesWarehouse, IMesWa
         service.updateById(wh);
         return Result.ok("启用成功");
     }
-    //update-end---author:admin---date:2026-07-13---for: 仓库停用/启用-----------
 
     @GetMapping("/queryAll")
+    @RequiresPermissions("mes:warehouse:list")
     public Result<List<MesWarehouse>> queryAll() {
         return Result.ok(service.list());
     }
 
     @GetMapping("/exportXls")
+    @RequiresPermissions("mes:warehouse:export")
     public ModelAndView exportXls(MesWarehouse entity, HttpServletRequest req) {
         return super.exportXls(req, entity, MesWarehouse.class, "仓库管理");
     }
 
     @PostMapping("/importExcel")
+    @RequiresPermissions("mes:warehouse:import")
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesWarehouse.class);
     }

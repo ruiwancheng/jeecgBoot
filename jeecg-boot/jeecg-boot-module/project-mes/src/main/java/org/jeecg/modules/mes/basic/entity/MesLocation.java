@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,15 +34,20 @@ public class MesLocation implements Serializable {
     @Schema(description = "所属仓库ID")
     @Deprecated
     private String warehouseId;
+    @NotNull(message = "所属库区不能为空")
     @Excel(name = "库区ID", width = 20)
     @Schema(description = "所属库区ID")
     private String zoneId;
+    @NotNull(message = "所属货架不能为空")
     @Excel(name = "货架ID", width = 20)
     @Schema(description = "所属货架ID")
     private String shelfId;
+    @NotBlank(message = "库位编码不能为空")
+    @Size(max = 50, message = "库位编码长度不能超过50")
     @Excel(name = "库位编码", width = 25)
     @Schema(description = "库位编码")
     private String code;
+    @Size(max = 100, message = "库位名称长度不能超过100")
     @Excel(name = "库位名称", width = 20)
     @Schema(description = "库位名称")
     private String name;
@@ -73,6 +81,7 @@ public class MesLocation implements Serializable {
     @Excel(name = "承重(kg)", width = 12)
     @Schema(description = "承重(kg)")
     private BigDecimal loadCapacity;
+    @Size(max = 255, message = "存放限制长度不能超过255")
     @Excel(name = "存放限制", width = 20)
     @Schema(description = "存放物料限制")
     private String storageLimit;
@@ -95,6 +104,7 @@ public class MesLocation implements Serializable {
     @Dict(dicCode = "yn")
     @Schema(description = "状态 1启用 0停用")
     private Integer status;
+    @Size(max = 500, message = "备注长度不能超过500")
     @Excel(name = "备注", width = 30)
     @Schema(description = "备注")
     private String remark;

@@ -57,5 +57,16 @@ public class MesZoneServiceImpl extends ServiceImpl<MesZoneMapper, MesZone> impl
         }
         return super.removeById(id);
     }
+
+    //update-begin---author:admin---date:2026-07-13---for: P1-004批量删除走逐条校验-----------
+    @Override
+    @Transactional
+    public boolean removeByIds(java.util.Collection<?> list) {
+        for (Object id : list) {
+            this.removeById((java.io.Serializable) id);
+        }
+        return true;
+    }
+    //update-end---author:admin---date:2026-07-13---for: P1-004批量删除走逐条校验-----------
 }
 //update-end---author:admin---date:2026-07-13---for: MES基础设置-库区Service实现-----------

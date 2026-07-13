@@ -69,6 +69,13 @@ public class MesMenuDefinition {
 
     // ============ 便捷设置方法 ============
 
+    /** 权限码条目（不可见，仅用于 @RequiresPermissions 鉴权） */
+    public static MesMenuDefinition permission(String id, String parentId, String name) {
+        return new MesMenuDefinition()
+                .setId(id).setParentId(parentId).setName(name)
+                .setUrl("").setComponent("").setMenuType(2).setLeaf(true).setRoute(false);
+    }
+
     public MesMenuDefinition icon(String icon) { this.icon = icon; return this; }
     public MesMenuDefinition sortNo(Double sortNo) { this.sortNo = sortNo; return this; }
     public MesMenuDefinition hidden(boolean hidden) { this.hidden = hidden; return this; }

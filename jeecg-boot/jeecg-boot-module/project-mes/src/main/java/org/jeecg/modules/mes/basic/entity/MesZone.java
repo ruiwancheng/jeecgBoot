@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -25,12 +28,16 @@ public class MesZone implements Serializable {
     @TableId(type = IdType.ASSIGN_ID)
     @Schema(description = "id")
     private String id;
+    @NotNull(message = "所属仓库不能为空")
     @Excel(name = "所属仓库ID", width = 20)
     @Schema(description = "所属仓库ID")
     private String warehouseId;
+    @NotBlank(message = "库区编码不能为空")
+    @Size(max = 50, message = "库区编码长度不能超过50")
     @Excel(name = "库区编码", width = 15)
     @Schema(description = "库区编码")
     private String code;
+    @Size(max = 100, message = "库区名称长度不能超过100")
     @Excel(name = "库区名称", width = 20)
     @Schema(description = "库区名称")
     private String name;
@@ -40,6 +47,7 @@ public class MesZone implements Serializable {
     @Excel(name = "状态", width = 10, dicCode = "yn")
     @Schema(description = "状态 1启用 0停用")
     private Integer status;
+    @Size(max = 500, message = "备注长度不能超过500")
     @Excel(name = "备注", width = 30)
     @Schema(description = "备注")
     private String remark;
