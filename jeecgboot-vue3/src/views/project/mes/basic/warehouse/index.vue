@@ -20,7 +20,7 @@
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './warehouse.data';
-  import { queryWarehouseList, deleteWarehouse, deleteBatchWarehouse, getExportUrl, getImportUrl } from './warehouse.api';
+  import { queryWarehouseList, deleteWarehouse, deleteBatchWarehouse, getExportUrl, getImportUrl, deactivateWarehouse, activateWarehouse } from './warehouse.api';
   import WarehouseDrawer from './WarehouseDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -44,13 +44,37 @@
   const [registerTable, { reload }] = tableContext;
 
   function getActions(record: Recordable) {
-    return [
+    const actions: any[] = [
       { label: '编辑', onClick: () => handleEdit(record) },
-      {
-        label: '删除',
-        popConfirm: { title: '确认删除该仓库吗？', confirm: () => handleDelete(record) },
-      },
     ];
+    if (record.status === 1) {
+      actions.push({
+        label: '停用',
+        popConfirm: { title: '确认停用该仓库吗？', confirm: () => handleDeactivate(record) },
+      });
+    } else {
+      actions.push({
+        label: '启用',
+        popConfirm: { title: '确认启用该仓库吗？', confirm: () => handleActivate(record) },
+      });
+    }
+    actions.push({
+      label: '删除',
+      popConfirm: { title: '确认删除该仓库吗？', confirm: () => handleDelete(record) },
+    });
+    return actions;
+  }
+
+  async function handleDeactivate(record: Recordable) {
+    await deactivateWarehouse({ id: record.id });
+    message.success('停用成功');
+    reload();
+  }
+
+  async function handleActivate(record: Recordable) {
+    await activateWarehouse({ id: record.id });
+    message.success('启用成功');
+    reload();
   }
 
   function handleAdd() {

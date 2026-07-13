@@ -29,7 +29,14 @@ public class MesLocation implements Serializable {
     private String id;
     @Excel(name = "仓库ID", width = 20)
     @Schema(description = "所属仓库ID")
+    @Deprecated
     private String warehouseId;
+    @Excel(name = "库区ID", width = 20)
+    @Schema(description = "所属库区ID")
+    private String zoneId;
+    @Excel(name = "货架ID", width = 20)
+    @Schema(description = "所属货架ID")
+    private String shelfId;
     @Excel(name = "库位编码", width = 25)
     @Schema(description = "库位编码")
     private String code;
@@ -42,22 +49,33 @@ public class MesLocation implements Serializable {
     private String type;
     @Excel(name = "区域", width = 10)
     @Schema(description = "区域")
+    @Deprecated
     private String area;
     @Excel(name = "通道行", width = 10)
     @Schema(description = "通道行数")
+    @Deprecated
     private Integer passageRow;
     @Excel(name = "通道列", width = 10)
     @Schema(description = "通道列数")
+    @Deprecated
     private Integer passageCol;
     @Excel(name = "货架行", width = 10)
     @Schema(description = "货架行数")
+    @Deprecated
     private Integer shelfRow;
     @Excel(name = "货架列", width = 10)
     @Schema(description = "货架列数")
+    @Deprecated
     private Integer shelfCol;
     @Excel(name = "最大容量", width = 12)
     @Schema(description = "最大容量")
     private BigDecimal maxCapacity;
+    @Excel(name = "承重(kg)", width = 12)
+    @Schema(description = "承重(kg)")
+    private BigDecimal loadCapacity;
+    @Excel(name = "存放限制", width = 20)
+    @Schema(description = "存放物料限制")
+    private String storageLimit;
     @Excel(name = "长(cm)", width = 10)
     @Schema(description = "长(cm)")
     private BigDecimal length;

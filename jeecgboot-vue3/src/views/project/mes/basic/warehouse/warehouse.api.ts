@@ -7,6 +7,8 @@ enum Api {
   delete = '/mes/basic/warehouse/delete',
   deleteBatch = '/mes/basic/warehouse/deleteBatch',
   queryAll = '/mes/basic/warehouse/queryAll',
+  deactivate = '/mes/basic/warehouse/deactivate',
+  activate = '/mes/basic/warehouse/activate',
   exportXls = '/mes/basic/warehouse/exportXls',
   importExcel = '/mes/basic/warehouse/importExcel',
 }
@@ -20,6 +22,8 @@ export const editWarehouse = (params: Recordable) => defHttp.put({ url: Api.edit
 export const deleteWarehouse = (params: Recordable) => defHttp.delete({ url: Api.delete, params }, { joinParamsToUrl: true });
 export const deleteBatchWarehouse = (params: Recordable) => defHttp.delete({ url: Api.deleteBatch, params }, { joinParamsToUrl: true });
 export const queryAllWarehouse = () => defHttp.get({ url: Api.queryAll });
+export const deactivateWarehouse = (params: Recordable) => defHttp.put({ url: Api.deactivate, params }, { joinParamsToUrl: true });
+export const activateWarehouse = (params: Recordable) => defHttp.put({ url: Api.activate, params }, { joinParamsToUrl: true });
 export const saveOrUpdateWarehouse = (params: Recordable, isUpdate: boolean) => {
   return isUpdate ? editWarehouse(params) : addWarehouse(params);
 };

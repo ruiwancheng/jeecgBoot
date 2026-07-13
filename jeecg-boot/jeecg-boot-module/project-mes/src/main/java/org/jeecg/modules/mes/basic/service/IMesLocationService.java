@@ -8,14 +8,11 @@ import java.util.List;
 public interface IMesLocationService extends IService<MesLocation> {
     /**
      * 批量生成库位编码
-     * @param warehouseId 仓库ID
-     * @param area 区域标识
-     * @param channelRows 通道行数
-     * @param channelCols 通道列数
-     * @param shelfRows 货架行数
-     * @param shelfCols 货架列数
+     * @param shelfId 货架ID
+     * @param rows 行数
+     * @param cols 列数
      * @return 生成的库位编码列表
      */
-    List<String> generateLocations(String warehouseId, String area, int channelRows, int channelCols, int shelfRows, int shelfCols);
+    List<String> generateLocations(String shelfId, int rows, int cols);
 }
 //update-end---author:admin---date:2026-07-06---for: MES基础设置-库位Service接口-----------

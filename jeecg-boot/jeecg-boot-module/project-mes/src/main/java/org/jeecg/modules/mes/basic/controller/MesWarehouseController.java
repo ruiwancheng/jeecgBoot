@@ -38,6 +38,30 @@ public class MesWarehouseController extends JeecgController<MesWarehouse, IMesWa
     @DeleteMapping("/delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
     @DeleteMapping("/deleteBatch") public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
+    //update-begin---author:admin---date:2026-07-13---for: 仓库停用/启用-----------
+    @PutMapping("/deactivate")
+    public Result<String> deactivate(@RequestParam String id) {
+        MesWarehouse wh = service.getById(id);
+        if (wh == null) {
+            return Result.error("仓库不存在");
+        }
+        wh.setStatus(0);
+        service.updateById(wh);
+        return Result.ok("停用成功");
+    }
+
+    @PutMapping("/activate")
+    public Result<String> activate(@RequestParam String id) {
+        MesWarehouse wh = service.getById(id);
+        if (wh == null) {
+            return Result.error("仓库不存在");
+        }
+        wh.setStatus(1);
+        service.updateById(wh);
+        return Result.ok("启用成功");
+    }
+    //update-end---author:admin---date:2026-07-13---for: 仓库停用/启用-----------
+
     @GetMapping("/queryAll")
     public Result<List<MesWarehouse>> queryAll() {
         return Result.ok(service.list());

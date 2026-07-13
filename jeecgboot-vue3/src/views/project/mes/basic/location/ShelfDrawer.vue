@@ -1,14 +1,15 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="700px" destroyOnClose :showFooter="true" @ok="handleSubmit">
+  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="500px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <div style="margin-bottom: 16px">
       <a-form layout="inline">
         <a-form-item label="所属仓库" style="margin-bottom: 8px">
           <a-select
             v-model:value="cascWarehouseId"
             placeholder="选择仓库"
-            style="width: 180px"
+            style="width: 200px"
             :options="warehouseOptions"
             :field-names="{ label: 'name', value: 'id' }"
+            :disabled="!canChangeParent"
             @change="onWhChange"
           />
         </a-form-item>
@@ -16,22 +17,11 @@
           <a-select
             v-model:value="cascZoneId"
             placeholder="选择库区"
-            style="width: 180px"
+            style="width: 200px"
             :options="zoneOptions"
             :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!cascWarehouseId"
-            @change="onZoneChange"
-          />
-        </a-form-item>
-        <a-form-item label="所属货架" style="margin-bottom: 8px">
-          <a-select
-            v-model:value="cascShelfId"
-            placeholder="选择货架"
-            style="width: 180px"
-            :options="shelfOptions"
-            :field-names="{ label: 'name', value: 'id' }"
-            :disabled="!cascZoneId"
-            @change="onShelfChange"
+            :disabled="!canChangeParent || !cascWarehouseId"
+            @change="onZoneSelect"
           />
         </a-form-item>
       </a-form>
@@ -44,89 +34,75 @@
   import { ref, computed, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { formSchema } from './location.data';
-  import { saveOrUpdateLocation, queryZoneTree, queryShelfTree } from './location.api';
+  import { shelfFormSchema } from './location.data';
+  import { saveOrUpdateShelf, queryZoneTree } from './location.api';
   import { queryAllWarehouse } from '../warehouse/warehouse.api';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-
+  const canChangeParent = ref(true);
   const cascWarehouseId = ref('');
   const cascZoneId = ref('');
-  const cascShelfId = ref('');
   const warehouseOptions = ref<any[]>([]);
   const zoneOptions = ref<any[]>([]);
-  const shelfOptions = ref<any[]>([]);
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
-    schemas: formSchema,
+    schemas: shelfFormSchema,
     showActionButtonGroup: false,
     labelWidth: 100,
   });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
-    isUpdate.value = !!data?.isUpdate;
+    setDrawerProps({ confirmLoading: false });
     cascWarehouseId.value = '';
     cascZoneId.value = '';
-    cascShelfId.value = '';
-    warehouseOptions.value = [];
     zoneOptions.value = [];
-    shelfOptions.value = [];
-
-    setDrawerProps({ confirmLoading: false });
 
     const res = await queryAllWarehouse();
     warehouseOptions.value = (res as any)?.result || (res as any)?.records || res || [];
 
+    isUpdate.value = !!data?.isUpdate;
+
     if (unref(isUpdate) && data.record) {
       await setFieldsValue({ ...data.record });
-      if (data.record.shelfId) cascShelfId.value = data.record.shelfId;
-      if (data.record.zoneId) cascZoneId.value = data.record.zoneId;
+      cascZoneId.value = data.record.zoneId || '';
       if (data.record.warehouseId) {
         cascWarehouseId.value = data.record.warehouseId;
         await onWhChange(data.record.warehouseId);
       }
-    } else if (data?.shelfId) {
-      cascShelfId.value = data.shelfId;
-      cascZoneId.value = data.zoneId || '';
+      canChangeParent.value = false;
+    } else if (data?.zoneId) {
+      cascZoneId.value = data.zoneId;
       cascWarehouseId.value = data.warehouseId || '';
-      await setFieldsValue({ shelfId: data.shelfId, zoneId: data.zoneId, warehouseId: data.warehouseId });
-      if (data.warehouseId) await onWhChange(data.warehouseId);
+      canChangeParent.value = true;
+      await setFieldsValue({ zoneId: data.zoneId, warehouseId: data.warehouseId });
+      const res = await queryZoneTree(data.warehouseId || '');
+      zoneOptions.value = (res as any)?.result || (res as any)?.records || res || [];
     }
   });
 
-  const getTitle = computed(() => (unref(isUpdate) ? '编辑库位' : '新增库位'));
+  const getTitle = computed(() => (unref(isUpdate) ? '编辑货架' : '新增货架'));
 
   async function onWhChange(value: string) {
     cascZoneId.value = '';
-    cascShelfId.value = '';
     zoneOptions.value = [];
-    shelfOptions.value = [];
     if (!value) return;
-    await setFieldsValue({ warehouseId: value, zoneId: '', shelfId: '' });
     const res = await queryZoneTree(value);
     zoneOptions.value = (res as any)?.result || (res as any)?.records || res || [];
   }
 
-  async function onZoneChange(value: string) {
-    cascShelfId.value = '';
-    shelfOptions.value = [];
-    if (!value) return;
-    await setFieldsValue({ zoneId: value, shelfId: '' });
-    const res = await queryShelfTree(value);
-    shelfOptions.value = (res as any)?.result || (res as any)?.records || res || [];
-  }
-
-  function onShelfChange(value: string) {
-    setFieldsValue({ shelfId: value });
+  function onZoneSelect(value: string) {
+    setFieldsValue({ zoneId: value });
   }
 
   async function handleSubmit() {
     const values = await validate();
+    values.zoneId = values.zoneId || unref(cascZoneId);
+    values.warehouseId = values.warehouseId || unref(cascWarehouseId);
     setDrawerProps({ confirmLoading: true });
     try {
-      await saveOrUpdateLocation(values, unref(isUpdate));
+      await saveOrUpdateShelf(values, unref(isUpdate));
       closeDrawer();
       emit('success');
     } finally {

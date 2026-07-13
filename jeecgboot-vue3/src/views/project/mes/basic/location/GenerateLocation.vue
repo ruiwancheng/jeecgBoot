@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" width="500px" destroyOnClose @ok="handleSubmit">
+  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" @ok="handleSubmit" width="500px" destroyOnClose>
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
@@ -13,7 +13,6 @@
   import { message } from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
-  const warehouseId = ref('');
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: generateFormSchema,
@@ -23,25 +22,23 @@
 
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
-    warehouseId.value = data?.warehouseId || '';
     setModalProps({ confirmLoading: false });
+    if (data?.shelfId) {
+      await setFieldsValue({ shelfId: data.shelfId });
+    }
   });
 
   async function handleSubmit() {
     const values = await validate();
     setModalProps({ confirmLoading: true });
     try {
-      const codes = await generateLocations({
-        warehouseId: unref(warehouseId),
-        area: values.area,
-        channelRows: values.channelRows,
-        channelCols: values.channelCols,
-        shelfRows: values.shelfRows,
-        shelfCols: values.shelfCols,
-      });
-      message.success(`成功生成 ${(codes as unknown as string[]).length} 条库位`);
+      const res: any = await generateLocations(values);
+      const codes = res?.result || res?.records || res || [];
+      message.success(`成功生成 ${Array.isArray(codes) ? codes.length : 0} 个库位`);
       closeModal();
       emit('success');
+    } catch (e: any) {
+      message.error(e?.message || '生成失败');
     } finally {
       setModalProps({ confirmLoading: false });
     }
