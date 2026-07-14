@@ -68,7 +68,9 @@ export function drawer(page: Page) {
 }
 
 export async function selectDropdownItem(page: Page, text: string) {
-  await page.locator('.ant-select-dropdown').locator('.ant-select-item-option').filter({ hasText: text }).first().click();
+  const option = page.locator('.ant-select-dropdown').locator('.ant-select-item-option').filter({ hasText: text }).first();
+  await option.waitFor({ state: 'visible', timeout: 5000 });
+  await option.click();
 }
 
 export async function fillAddForm(

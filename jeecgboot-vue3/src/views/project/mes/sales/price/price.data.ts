@@ -25,9 +25,9 @@ export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '价格编码', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
   //update-begin---author:ruiwancheng---date:2026-07-14---for: 审计修复-物料+客户用JSearchSelect表字典搜索-----------
-  { field: 'materialId', label: '物料', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dictTable: 'c_mes_material', dictText: 'name', dictCode: 'id' } },
+  { field: 'materialId', label: '物料', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_material,name,id' } },
   { field: 'type', label: '价格类型', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_price_type' }, required: true, defaultValue: '1' },
-  { field: 'customerId', label: '客户', component: 'JSearchSelect', colProps: { span: 8 }, componentProps: { dictTable: 'c_mes_customer', dictText: 'name', dictCode: 'id' } },
+  { field: 'customerId', label: '客户', component: 'JSearchSelect', colProps: { span: 8 }, componentProps: { dict: 'c_mes_customer,name,id' } },
   //update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复-物料+客户用JSearchSelect表字典搜索-----------
   { field: 'price', label: '价格', component: 'InputNumber', required: true, colProps: { span: 8 }, componentProps: { min: 0, precision: 2 } },
   { field: 'beginDate', label: '生效日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
