@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" @ok="handleSubmit" width="400px" destroyOnClose>
+  <BasicModal v-bind="$attrs" @register="registerModal" title="批量生成库位" @ok="handleSubmit" width="500px" destroyOnClose>
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
@@ -30,7 +30,7 @@
     setModalProps({ confirmLoading: true });
     try {
       const res: any = await generateLocations(values);
-      const codes = res?.result || res?.records || res || [];
+      const codes = res?.result || res || [];
       message.success(`成功生成 ${Array.isArray(codes) ? codes.length : 0} 个库位`);
       closeModal();
       emit('success');

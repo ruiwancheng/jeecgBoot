@@ -53,28 +53,39 @@ public class MesLocationServiceImpl extends ServiceImpl<MesLocationMapper, MesLo
 
     @Override
     @Transactional
-    public List<String> generateLocations(String warehouseId, int count) {
-        if (count <= 0 || count > GENERATE_MAX) {
-            throw new JeecgBootException("数量必须在1到" + GENERATE_MAX + "之间");
+    public List<String> generateLocations(String warehouseId, String area, int channelRows, int channelCols, int shelfRows, int shelfCols) {
+        long total = (long) channelRows * channelCols * shelfRows * shelfCols;
+        if (total <= 0 || total > GENERATE_MAX) {
+            throw new JeecgBootException("生成总数必须在1到" + GENERATE_MAX + "之间，当前：" + total);
         }
         MesWarehouse wh = warehouseMapper.selectById(warehouseId);
-        if (wh == null) {
-            throw new JeecgBootException("仓库不存在");
-        }
+        if (wh == null) throw new JeecgBootException("仓库不存在");
+
         List<MesLocation> batch = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            String code = String.format("%s-L%03d", wh.getCode(), i + 1);
-            QueryWrapper<MesLocation> qw = new QueryWrapper<>();
-            qw.eq("warehouse_id", warehouseId).eq("code", code);
-            if (baseMapper.selectCount(qw) > 0) {
-                throw new JeecgBootException("库位编码 " + code + " 已存在");
+        for (int cr = 0; cr < channelRows; cr++) {
+            for (int cc = 0; cc < channelCols; cc++) {
+                for (int sr = 0; sr < shelfRows; sr++) {
+                    for (int sc = 0; sc < shelfCols; sc++) {
+                        String code = String.format("%s-%02d-%02d-%02d-%02d", area, cr + 1, cc + 1, sr + 1, sc + 1);
+                        QueryWrapper<MesLocation> qw = new QueryWrapper<>();
+                        qw.eq("warehouse_id", warehouseId).eq("code", code);
+                        if (baseMapper.selectCount(qw) > 0) {
+                            throw new JeecgBootException("库位编码 " + code + " 已存在");
+                        }
+                        MesLocation loc = new MesLocation();
+                        loc.setWarehouseId(warehouseId);
+                        loc.setCode(code);
+                        loc.setName(code);
+                        loc.setArea(area);
+                        loc.setPassageRow(cr + 1);
+                        loc.setPassageCol(cc + 1);
+                        loc.setShelfRow(sr + 1);
+                        loc.setShelfCol(sc + 1);
+                        loc.setStatus(1);
+                        batch.add(loc);
+                    }
+                }
             }
-            MesLocation loc = new MesLocation();
-            loc.setWarehouseId(warehouseId);
-            loc.setCode(code);
-            loc.setName(code);
-            loc.setStatus(1);
-            batch.add(loc);
         }
         saveBatch(batch);
         List<String> codes = new ArrayList<>();

@@ -31,11 +31,10 @@ public class MesLocationController extends JeecgController<MesLocation, IMesLoca
     @Autowired
     private IMesLocationService service;
 
-    @GetMapping("/list")
-    @RequiresPermissions("mes:location:list")
+    @GetMapping("/list") @RequiresPermissions("mes:location:list")
     public Result<IPage<MesLocation>> queryPageList(MesLocation entity,
-            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+            @RequestParam(name="pageNo",defaultValue="1") Integer pageNo,
+            @RequestParam(name="pageSize",defaultValue="10") Integer pageSize, HttpServletRequest req) {
         return Result.ok(service.page(new Page<>(pageNo, pageSize), QueryGenerator.initQueryWrapper(entity, req.getParameterMap())));
     }
     @PostMapping("/add") @RequiresPermissions("mes:location:add")
@@ -50,8 +49,9 @@ public class MesLocationController extends JeecgController<MesLocation, IMesLoca
     @PostMapping("/generate") @RequiresPermissions("mes:location:add")
     public Result<List<String>> generate(@RequestBody Map<String, Object> p) {
         return Result.ok(service.generateLocations(
-            (String) p.get("warehouseId"),
-            Integer.parseInt(p.get("count").toString())));
+            (String) p.get("warehouseId"), (String) p.get("area"),
+            Integer.parseInt(p.get("channelRows").toString()), Integer.parseInt(p.get("channelCols").toString()),
+            Integer.parseInt(p.get("shelfRows").toString()), Integer.parseInt(p.get("shelfCols").toString())));
     }
 
     @GetMapping("/exportXls") @RequiresPermissions("mes:location:export")

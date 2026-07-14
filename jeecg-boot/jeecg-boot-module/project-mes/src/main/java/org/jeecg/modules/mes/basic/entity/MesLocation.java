@@ -45,6 +45,21 @@ public class MesLocation implements Serializable {
     @Dict(dicCode = "mes_location_type")
     @Schema(description = "库位类型")
     private String type;
+    @Excel(name = "区域", width = 10)
+    @Schema(description = "区域")
+    private String area;
+    @Excel(name = "通道行", width = 10)
+    @Schema(description = "通道行数")
+    private Integer passageRow;
+    @Excel(name = "通道列", width = 10)
+    @Schema(description = "通道列数")
+    private Integer passageCol;
+    @Excel(name = "货架行", width = 10)
+    @Schema(description = "货架行数")
+    private Integer shelfRow;
+    @Excel(name = "货架列", width = 10)
+    @Schema(description = "货架列数")
+    private Integer shelfCol;
     @Excel(name = "最大容量", width = 12)
     @Schema(description = "最大容量")
     private BigDecimal maxCapacity;
@@ -64,11 +79,11 @@ public class MesLocation implements Serializable {
     @Schema(description = "备注")
     private String remark;
     @Schema(description = "创建人") private String createBy;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "创建时间") private Date createTime;
     @Schema(description = "更新人") private String updateBy;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "更新时间") private Date updateTime;
     @TableLogic

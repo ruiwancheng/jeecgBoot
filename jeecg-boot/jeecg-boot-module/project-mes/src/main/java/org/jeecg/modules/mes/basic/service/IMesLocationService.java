@@ -6,6 +6,6 @@ import org.jeecg.modules.mes.basic.entity.MesLocation;
 import java.util.List;
 
 public interface IMesLocationService extends IService<MesLocation> {
-    List<String> generateLocations(String warehouseId, int count);
+    List<String> generateLocations(String warehouseId, String area, int channelRows, int channelCols, int shelfRows, int shelfCols);
 }
 //update-end---author:admin---date:2026-07-06---for: MES基础设置-库位Service接口-----------
