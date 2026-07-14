@@ -26,6 +26,8 @@ version: 1.0
 - 一级菜单 `LAYOUT` + `redirect`
 - 子页面懒加载 `() => import('/@/views/...')`
 - 项目页面加前缀 `/project/{项目名}/`
+- **新增 Vue 组件后必须重启 Vite**（`import.meta.glob` 缓存）
+- **菜单 404 排查：** 先查 `sys_permission.is_route` 是否为 1。`is_route=0` 时前端不生成路由，直接返回 404。其次查 `parent_id` 是否指向正确的父菜单
 
 ## 路由匹配
 - 数据库菜单 url 和前端路由 path 必须一致
