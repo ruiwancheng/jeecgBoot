@@ -19,7 +19,7 @@
       <BasicTable @register="registerTable">
         <template #tableTitle>
           <a-space>
-            <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增库位</a-button>
+            <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd" :disabled="!selectedWarehouseId">新增库位</a-button>
             <a-button type="primary" preIcon="ant-design:thunderbolt-outlined" @click="handleGenerate">批量生成</a-button>
             <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
             <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">导入</j-upload-button>
@@ -104,6 +104,7 @@
   }
 
   function handleAdd() {
+    if (!unref(selectedWarehouseId)) { message.warning('请先在左侧选择仓库'); return; }
     openDrawer(true, { isUpdate: false, warehouseId: unref(selectedWarehouseId) });
   }
   function handleGenerate() {
