@@ -58,10 +58,15 @@ public final class MesMenuRegistry {
                         "project/mes/basic/supplier/index", "MesBasicSupplier")
                 .sortNo(4.0).icon("ant-design:shop-outlined"));
 
-        list.add(MesMenuDefinition.leaf("mes_basic_material", "mes_basic",
+        // 商品
+        list.add(MesMenuDefinition.folder("mes_product", "mes_menu_001",
+                        "商品", "/project/mes/product", "/project/mes/product/material")
+                .sortNo(20.0).icon("ant-design:shopping-outlined"));
+
+        list.add(MesMenuDefinition.leaf("mes_basic_material", "mes_product",
                         "物料管理", "/project/mes/basic/material",
                         "project/mes/basic/material/index", "MesBasicMaterial")
-                .sortNo(5.0).icon("ant-design:gold-outlined"));
+                .sortNo(1.0).icon("ant-design:gold-outlined"));
 
         // 仓库权限
         list.add(MesMenuDefinition.permission("mes:warehouse:list", "mes_basic_wh", "仓库列表"));
