@@ -24,7 +24,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '价格编码', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
-  { field: 'materialId', label: '物料', component: 'JDictSelectTag', required: true, colProps: { span: 8 }, componentProps: { dictCode: 'mes_material_type' } },
+  { field: 'materialId', label: '物料', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 32 } },
   { field: 'type', label: '价格类型', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_price_type' }, required: true, defaultValue: '1' },
   { field: 'customerId', label: '客户', component: 'Input', colProps: { span: 8 } },
   { field: 'price', label: '价格', component: 'InputNumber', required: true, colProps: { span: 8 }, componentProps: { min: 0, precision: 2 } },

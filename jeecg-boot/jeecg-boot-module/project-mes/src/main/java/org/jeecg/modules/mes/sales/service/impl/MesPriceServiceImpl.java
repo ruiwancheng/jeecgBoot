@@ -86,6 +86,7 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
         }
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-14---for: 审计修复-价格业务校验-----------
     private void validateEntity(MesPrice entity) {
         if (!StringUtils.hasText(entity.getCode())) {
             throw new JeecgBootException("价格编码不能为空");
@@ -105,7 +106,46 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
         if (entity.getType() != null && !VALID_TYPES.contains(entity.getType())) {
             throw new JeecgBootException("价格类型值无效");
         }
+        // 日期校验：结束日期不能早于开始日期
+        if (entity.getBeginDate() != null && entity.getEndDate() != null
+                && entity.getEndDate().before(entity.getBeginDate())) {
+            throw new JeecgBootException("失效日期不能早于生效日期");
+        }
+        // 客户协议价必须绑定客户
+        if ("2".equals(entity.getType()) && !StringUtils.hasText(entity.getCustomerId())) {
+            throw new JeecgBootException("客户协议价必须选择客户");
+        }
+        // 价格重叠校验
+        checkPriceOverlap(entity);
     }
+
+    private void checkPriceOverlap(MesPrice entity) {
+        if (entity.getMaterialId() == null || entity.getBeginDate() == null) return;
+        QueryWrapper<MesPrice> qw = new QueryWrapper<>();
+        qw.eq("material_id", entity.getMaterialId());
+        qw.eq("status", "1");
+        // 同样客户ID（都为null也视为同一组）
+        if (entity.getCustomerId() != null) {
+            qw.eq("customer_id", entity.getCustomerId());
+        } else {
+            qw.isNull("customer_id");
+        }
+        // 日期范围重叠：(A.begin <= B.end) AND (A.end >= B.begin)
+        qw.le("begin_date", entity.getEndDate() != null ? entity.getEndDate() : entity.getBeginDate());
+        if (entity.getEndDate() != null) {
+            qw.ge("end_date", entity.getBeginDate());
+        } else {
+            // 无结束日期视为永久有效
+            qw.and(w -> w.isNull("end_date").or().ge("end_date", entity.getBeginDate()));
+        }
+        if (entity.getId() != null) {
+            qw.ne("id", entity.getId()); // 排除自己
+        }
+        if (baseMapper.selectCount(qw) > 0) {
+            throw new JeecgBootException("该物料+客户在相同时间段内已有价格记录，请检查日期范围");
+        }
+    }
+    //update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复-价格业务校验-----------
 
     private String getCurrentUsername() {
         try {
