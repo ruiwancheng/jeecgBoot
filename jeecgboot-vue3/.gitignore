@@ -35,3 +35,4 @@ os_del.cmd
 /.history/
 /svn clear.bat
 .claude
+_app.config.js
