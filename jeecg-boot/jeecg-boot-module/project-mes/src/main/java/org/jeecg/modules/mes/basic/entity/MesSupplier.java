@@ -60,15 +60,15 @@ public class MesSupplier implements Serializable {
     @Excel(name = "发票抬头", width = 20)
     @Schema(description = "发票抬头")
     private String invoiceTitle;
-    @Excel(name = "税号", width = 20)
+    //update-begin---author:ruiwancheng---date:2026-07-14---for: 审计修复#9-敏感字段移除@Excel防导出泄露-----------
     @Schema(description = "税号")
     private String taxNo;
     @Excel(name = "开户银行", width = 20)
     @Schema(description = "开户银行")
     private String bankName;
-    @Excel(name = "银行账号", width = 20)
     @Schema(description = "银行账号")
     private String bankAccount;
+    //update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复#9-敏感字段移除@Excel防导出泄露-----------
     @Excel(name = "备注", width = 30)
     @Schema(description = "备注")
     private String remark;

@@ -1,5 +1,5 @@
 //update-begin---author:ruiwancheng---date:2026-07-14---for: MES基础设置-供应商Service实现-----------
-//update-begin---author:ruiwancheng---date:2026-07-14---for: 审计修复#2#3#5#7#8-JdbcTemplate→Mapper+参数校验+黑名单联动+删除下游校验-----------
+//update-begin---author:ruiwancheng---date:2026-07-14---for: 审计修复2期-name校验+黑名单全状态+批量删除+竞态捕获+导入事务-----------
 package org.jeecg.modules.mes.basic.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,15 +10,13 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesSupplier;
 import org.jeecg.modules.mes.basic.mapper.MesSupplierMapper;
 import org.jeecg.modules.mes.basic.service.IMesSupplierService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSupplier> implements IMesSupplierService {
@@ -46,7 +44,11 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
             baseMapper.resurrect(entity);
             return true;
         }
-        return super.save(entity);
+        try {
+            return super.save(entity);
+        } catch (DuplicateKeyException e) {
+            throw new JeecgBootException("供应商编码已存在，请使用其他编码");
+        }
     }
 
     @Override
@@ -58,7 +60,11 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
         if (baseMapper.selectCount(qw) > 0) {
             throw new JeecgBootException("供应商编码已存在，请使用其他编码");
         }
-        return super.updateById(entity);
+        try {
+            return super.updateById(entity);
+        } catch (DuplicateKeyException e) {
+            throw new JeecgBootException("供应商编码已存在，请使用其他编码");
+        }
     }
 
     @Override
@@ -70,9 +76,17 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
 
     @Override
     @Transactional
-    public boolean removeByIds(java.util.Collection<?> list) {
-        for (Object id : list) this.removeById((Serializable) id);
-        return true;
+    public boolean removeByIds(Collection<?> list) {
+        if (list == null || list.isEmpty()) return false;
+        return super.removeByIds(list);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void importFromExcel(List<MesSupplier> list) {
+        for (MesSupplier entity : list) {
+            save(entity);
+        }
     }
 
     private void validateEntity(MesSupplier entity) {
@@ -83,9 +97,12 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
         if (entity.getCode().length() > 50) {
             throw new JeecgBootException("供应商编码长度不能超过50个字符");
         }
-        // 名称非空
+        // 名称非空+长度
         if (!StringUtils.hasText(entity.getName())) {
             throw new JeecgBootException("供应商名称不能为空");
+        }
+        if (entity.getName().length() > 100) {
+            throw new JeecgBootException("供应商名称长度不能超过100个字符");
         }
         // 类型白名单
         if (entity.getType() != null && !VALID_TYPES.contains(entity.getType())) {
@@ -99,17 +116,9 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
         if (entity.getGrade() != null && !VALID_GRADES.contains(entity.getGrade())) {
             throw new JeecgBootException("供应商等级值无效");
         }
-        // 黑名单与状态联动：黑名单供应商强制置为"暂停"
+        // 黑名单供应商强制置为暂停（全状态覆盖）
         if (entity.getBlacklistFlag() != null && entity.getBlacklistFlag() == 1) {
-            if ("3".equals(entity.getStatus()) || "4".equals(entity.getStatus())) {
-                entity.setStatus("5"); // 强制暂停
-            }
-        }
-        // 黑名单供应商不允许设为合作中/合格
-        if (entity.getBlacklistFlag() != null && entity.getBlacklistFlag() == 0) {
-            if (entity.getStatus() == null) {
-                // 保存时状态默认为潜在
-            }
+            entity.setStatus("5");
         }
     }
 
@@ -122,5 +131,5 @@ public class MesSupplierServiceImpl extends ServiceImpl<MesSupplierMapper, MesSu
         }
     }
 }
-//update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复#2#3#5#7#8-JdbcTemplate→Mapper+参数校验+黑名单联动+删除下游校验-----------
+//update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复2期-name校验+黑名单全状态+批量删除+竞态捕获+导入事务-----------
 //update-end---author:ruiwancheng---date:2026-07-14---for: MES基础设置-供应商Service实现-----------
