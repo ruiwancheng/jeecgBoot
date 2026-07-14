@@ -224,6 +224,14 @@ Frontend dev proxy forwards `/jeecg-boot` requests to `localhost:8080/jeecg-boot
 > - 后端优先 → `backend-first.md`
 > - 安全 → `security.md`
 > - 平台保护 → `no-platform-modify.md`
+> - 工程产物 → `engineering-artifacts.md`
+> - 开发流程 → `workflow.md`
+> - 前端组件 → `frontend.md`
+> - 测试标准 → `testing.md`
+> - 调试规范 → `debugging.md`
+> - 命令技能边界 → `skill-command-boundary.md`
+> - 铁拳团审计留存 → `tiequan-report-retention.md`
+> - 铁拳团审计范围 → `tiequan-report-scope.md`
 
 ### 读操作（不限）
 你可以阅读项目中任意文件。重点参考：

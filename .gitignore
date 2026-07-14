@@ -19,9 +19,24 @@ derby.log
 .claude/worktrees/
 
 ## harness engineering artifacts (disposable)
-harness/
+harness/*
 !harness/docs/
-hermes/
+!harness/INDEX.md
+harness/docs/*
+hermes/*
+!hermes/scans/
+hermes/scans/*
+!hermes/scans/INDEX.md
+!hermes/scans/tests/
+hermes/scans/tests/*
+!hermes/scans/tests/INDEX.md
+!hermes/tiequan/
+hermes/tiequan/*
+!hermes/tiequan/*/
+hermes/tiequan/*/*
+!hermes/tiequan/*/*/
+hermes/tiequan/*/*/*
+!hermes/tiequan/*/*/index.md
 .remember/
 
 ## deploy-server dependencies
