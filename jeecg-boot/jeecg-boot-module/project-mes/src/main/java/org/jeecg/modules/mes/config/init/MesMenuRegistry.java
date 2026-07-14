@@ -53,6 +53,11 @@ public final class MesMenuRegistry {
                         "project/mes/basic/customer/index", "MesBasicCustomer")
                 .sortNo(3.0).icon("ant-design:user-outlined"));
 
+        list.add(MesMenuDefinition.leaf("mes_basic_supplier", "mes_basic",
+                        "供应商管理", "/project/mes/basic/supplier",
+                        "project/mes/basic/supplier/index", "MesBasicSupplier")
+                .sortNo(4.0).icon("ant-design:shop-outlined"));
+
         // 仓库权限
         list.add(MesMenuDefinition.permission("mes:warehouse:list", "mes_basic_wh", "仓库列表"));
         list.add(MesMenuDefinition.permission("mes:warehouse:add", "mes_basic_wh", "仓库新增"));
@@ -70,6 +75,15 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:location:deleteBatch", "mes_basic_loc", "库位批量删除"));
         list.add(MesMenuDefinition.permission("mes:location:export", "mes_basic_loc", "库位导出"));
         list.add(MesMenuDefinition.permission("mes:location:import", "mes_basic_loc", "库位导入"));
+
+        // 供应商权限
+        list.add(MesMenuDefinition.permission("mes:supplier:list", "mes_basic_supplier", "供应商列表"));
+        list.add(MesMenuDefinition.permission("mes:supplier:add", "mes_basic_supplier", "供应商新增"));
+        list.add(MesMenuDefinition.permission("mes:supplier:edit", "mes_basic_supplier", "供应商编辑"));
+        list.add(MesMenuDefinition.permission("mes:supplier:delete", "mes_basic_supplier", "供应商删除"));
+        list.add(MesMenuDefinition.permission("mes:supplier:deleteBatch", "mes_basic_supplier", "供应商批量删除"));
+        list.add(MesMenuDefinition.permission("mes:supplier:export", "mes_basic_supplier", "供应商导出"));
+        list.add(MesMenuDefinition.permission("mes:supplier:import", "mes_basic_supplier", "供应商导入"));
 
         return list;
     }
