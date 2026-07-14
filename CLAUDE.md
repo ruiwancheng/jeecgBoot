@@ -2,11 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> **工作流（强制 V3.0）：** `/brainstorm → /plan → 写代码 → gen-tests(自动) → 铁拳团审计(本地) → 修复 → /verify → commit+push → 部署 → 鹰眼团测试(半自动) → /done`
+> **工作流（强制）：** `/brainstorm → /plan → 写代码 → /verify → 分级测试 → /done`
 > 
-> ⚠️ **防失忆规则：** 写完代码 → 自动 gen-tests + 铁拳团审计；审计修复后 → 部署 → 鹰眼团测试。每次回复末尾检查是否遗漏流程步骤。
+> ⚠️ **防失忆规则：** 写完代码后必须自动跑 `/verify`；不要等用户提醒。每次回复末尾检查是否遗漏了流程步骤。
 > 
-> **新增机制：** ①gen-tests 编码后自动生成测试用例；②铁拳团审计 commit 前 10 人本地审计，共识 P0 必改；③鹰眼团测试部署后半自动提示执行。详见 `workflow.md`。
+> /done 后可选择性调用 铁拳团审计 或 鹰眼团测试 做兜底质量检查。审计和测试的具体规范见 `workflow.md`。
 
 > You should always answer questions in Simplified Chinese first, unless the user explicitly requests another language.
 >
