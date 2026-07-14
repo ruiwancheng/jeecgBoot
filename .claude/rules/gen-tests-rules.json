@@ -79,6 +79,32 @@
       },
       "source": "内置规则",
       "created": "2026-07-05"
+    },
+    {
+      "id": "R007",
+      "bugType": "日期校验缺失（endDate < beginDate）",
+      "trigger": "Entity 含 beginDate / endDate 成对字段",
+      "httpMethod": ["POST", "PUT"],
+      "missingScenario": "没测结束日期早于开始日期的非法输入",
+      "addCase": {
+        "api": "传入 endDate < beginDate → 期望业务校验拦截",
+        "e2e": "结束日期选早于开始日期 → 期望表单校验提示"
+      },
+      "source": "价格模块审计",
+      "created": "2026-07-14"
+    },
+    {
+      "id": "R008",
+      "bugType": "前端表字典绑定错误（dictCode用错）",
+      "trigger": "formSchema 含关联其他表的字段（materialId/customerId等）",
+      "httpMethod": ["VIEW"],
+      "missingScenario": "dictCode指向了类型字典而非数据表",
+      "addCase": {
+        "api": "不适用（前端检查）",
+        "e2e": "新增/编辑时下拉搜索应返回正确数据表记录，而非字典枚举值"
+      },
+      "source": "价格模块审计",
+      "created": "2026-07-14"
     }
   ]
 }
