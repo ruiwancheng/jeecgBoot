@@ -4,6 +4,8 @@
 #
 # 自动检测变更范围 + 增量编译 + 并行构建 + Docker 按需重建
 
+set -o pipefail  # 管道中任意命令失败则整体失败，防止 mysql 错误被 head 吞掉
+
 set -e
 
 MODE=${1:-full}
