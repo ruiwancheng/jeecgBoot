@@ -58,6 +58,11 @@ public final class MesMenuRegistry {
                         "project/mes/basic/supplier/index", "MesBasicSupplier")
                 .sortNo(4.0).icon("ant-design:shop-outlined"));
 
+        list.add(MesMenuDefinition.leaf("mes_basic_material", "mes_basic",
+                        "物料管理", "/project/mes/basic/material",
+                        "project/mes/basic/material/index", "MesBasicMaterial")
+                .sortNo(5.0).icon("ant-design:gold-outlined"));
+
         // 仓库权限
         list.add(MesMenuDefinition.permission("mes:warehouse:list", "mes_basic_wh", "仓库列表"));
         list.add(MesMenuDefinition.permission("mes:warehouse:add", "mes_basic_wh", "仓库新增"));
@@ -84,6 +89,15 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:supplier:deleteBatch", "mes_basic_supplier", "供应商批量删除"));
         list.add(MesMenuDefinition.permission("mes:supplier:export", "mes_basic_supplier", "供应商导出"));
         list.add(MesMenuDefinition.permission("mes:supplier:import", "mes_basic_supplier", "供应商导入"));
+
+        // 物料权限
+        list.add(MesMenuDefinition.permission("mes:material:list", "mes_basic_material", "物料列表"));
+        list.add(MesMenuDefinition.permission("mes:material:add", "mes_basic_material", "物料新增"));
+        list.add(MesMenuDefinition.permission("mes:material:edit", "mes_basic_material", "物料编辑"));
+        list.add(MesMenuDefinition.permission("mes:material:delete", "mes_basic_material", "物料删除"));
+        list.add(MesMenuDefinition.permission("mes:material:deleteBatch", "mes_basic_material", "物料批量删除"));
+        list.add(MesMenuDefinition.permission("mes:material:export", "mes_basic_material", "物料导出"));
+        list.add(MesMenuDefinition.permission("mes:material:import", "mes_basic_material", "物料导入"));
 
         return list;
     }
