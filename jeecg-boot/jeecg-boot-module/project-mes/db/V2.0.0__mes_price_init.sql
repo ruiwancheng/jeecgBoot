@@ -1,7 +1,7 @@
 -- MES 价格管理模块 V2.0.0
 -- CREATE TABLE: c_mes_price
 -- 字典: mes_price_type
--- 菜单: 销售管理 > 价格管理
+-- 注意：菜单和权限码由 MesMenuRegistry Java Runner 注册（SQL 文件不写中文菜单名避免编码问题）
 
 -- ============================================================
 -- 一、建表
@@ -41,27 +41,7 @@ SELECT REPLACE(UUID(),'-',''), d.id, '客户协议价', '2', '特定客户专属
 FROM sys_dict d WHERE d.dict_code = 'mes_price_type';
 
 -- ============================================================
--- 三、菜单注册
--- ============================================================
-INSERT IGNORE INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
-VALUES
-('mes_sales_price', 'mes_sales', '价格管理', '/project/mes/sales/price', 'project/mes/sales/price/index', 1, 'MesSalesPrice', '', 1, '1', 1.00, 0, 'ant-design:dollar-outlined', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0);
-
--- ============================================================
--- 四、权限码注册
--- ============================================================
-INSERT IGNORE INTO sys_permission (id, parent_id, name, url, component, is_route, component_name, redirect, menu_type, perms_type, sort_no, always_show, icon, is_leaf, keep_alive, hidden, hide_tab, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external)
-VALUES
-('mes:price:list',       'mes_sales_price', '价格列表',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:add',        'mes_sales_price', '价格新增',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:edit',       'mes_sales_price', '价格编辑',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:delete',     'mes_sales_price', '价格删除',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:deleteBatch','mes_sales_price', '价格批量删除',   '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:export',     'mes_sales_price', '价格导出',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0),
-('mes:price:import',     'mes_sales_price', '价格导入',       '', '', 0, '', '', 2, '1', 0, 0, '', 1, 0, 0, 0, 'admin', NOW(), 'admin', NOW(), 0, 0, 1, 0);
-
--- ============================================================
--- 五、角色授权
+-- 三、角色授权
 -- ============================================================
 INSERT IGNORE INTO sys_role_permission (id, role_id, permission_id, operate_date, operate_ip)
 SELECT REPLACE(UUID(),'-',''), 'mes_role_001', p.id, NOW(), '127.0.0.1'
