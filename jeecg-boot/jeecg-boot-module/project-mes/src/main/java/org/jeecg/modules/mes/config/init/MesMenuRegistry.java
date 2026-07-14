@@ -104,6 +104,25 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:material:export", "mes_basic_material", "物料导出"));
         list.add(MesMenuDefinition.permission("mes:material:import", "mes_basic_material", "物料导入"));
 
+        // 销售管理
+        list.add(MesMenuDefinition.folder("mes_sales", "mes_menu_001",
+                        "销售管理", "/project/mes/sales", "/project/mes/sales/price")
+                .sortNo(30.0).icon("ant-design:shopping-cart-outlined"));
+
+        list.add(MesMenuDefinition.leaf("mes_sales_price", "mes_sales",
+                        "价格管理", "/project/mes/sales/price",
+                        "project/mes/sales/price/index", "MesSalesPrice")
+                .sortNo(1.0).icon("ant-design:dollar-outlined"));
+
+        // 价格权限
+        list.add(MesMenuDefinition.permission("mes:price:list", "mes_sales_price", "价格列表"));
+        list.add(MesMenuDefinition.permission("mes:price:add", "mes_sales_price", "价格新增"));
+        list.add(MesMenuDefinition.permission("mes:price:edit", "mes_sales_price", "价格编辑"));
+        list.add(MesMenuDefinition.permission("mes:price:delete", "mes_sales_price", "价格删除"));
+        list.add(MesMenuDefinition.permission("mes:price:deleteBatch", "mes_sales_price", "价格批量删除"));
+        list.add(MesMenuDefinition.permission("mes:price:export", "mes_sales_price", "价格导出"));
+        list.add(MesMenuDefinition.permission("mes:price:import", "mes_sales_price", "价格导入"));
+
         return list;
     }
 }
