@@ -31,7 +31,7 @@ MySQL 5.7（Docker 容器 `jeecg-boot-mysql`）。
 | `DROP INDEX IF EXISTS` | MySQL 5.7 不支持 | 直接 `DROP INDEX` |
 | `ADD COLUMN IF NOT EXISTS` | MySQL 5.7 不支持 | 存储过程先判断 |
 | 假设标品表结构 | 不同版本表结构不同 | 先 `DESCRIBE` 确认 |
-| 假设 `del_flag` 存在 | `sys_dict_item` 等无此字段 | 查实际结构 |
+| 假设 `del_flag` 存在 | `sys_dict_item` 等无此字段，INSERT 时不要加 `del_flag` 列 | 先 `DESCRIBE` 确认 |
 | `DEFAULT '中文文本'` | 字典字段存入的是 `item_value`（编码），不是 `item_text`（显示文本） | `DEFAULT '1'` 用编码值 |
 
 ### 幂等要求
