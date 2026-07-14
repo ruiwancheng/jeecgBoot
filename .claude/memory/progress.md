@@ -4,45 +4,52 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | done | MES 客户模块改造完成 |
-| last_verify | 2026-07-10 | 10 个新 API 全部 200 |
-| last_test | 2026-07-10 | 人工验证通过 |
+| phase | done | 仓库/库位模块 PRD 优化+审计修复+简化落地 |
+| last_verify | 2026-07-14 | 7 个 API 全部 200 |
+| last_test | 2026-07-14 | API 16端点全通 + E2E 3/3通过 |
 | pending_step | 产品/物料模块 | PEND-001 折扣率机制待产品模块完成 |
 
 ## 当前状态
-- 最后更新：2026-07-10
+- 最后更新：2026-07-14
 - 活跃项目：MES（mes）
-- MES 基础数据：仓库管理、库位管理、客户管理（已完成改造）
+- 仓库管理：负责人/联系电话/停用启用/权限/校验 ✅
+- 库位管理：网格坐标模型（区域+通道+货架）/权限/校验 ✅
 
 ## 本次完成
 
-### MES 客户模块升级
-- 数据库：c_mes_customer 新增 12 字段（等级/额度/业务员/行业/区域/规模/财务资料），新建 4 子表（联系人/地址/跟进记录/价格表）
-- 后端：18 新文件 + 2 修改（Entity/Mapper/Service/Controller 标准四层）
-- 前端：8 新文件 + 3 修改（CustomerDrawer 改造为 5 个 Tab，4 个子表组件）
-- 字典：新建 7 个（客户等级/行业/区域/规模/地址类型/跟进方式/发票类型）
-- API：10 个新接口（5 个 list + 5 个 add/edit/delete）
+### 仓库/库位 PRD 优化 → 审计修复 → 两级简化
+- 仓库：新增负责人+联系电话字段，停用/启用功能，停用前库位校验
+- 库位：恢复网格坐标模型（area/passageRow/Col/shelfRow/Col），批量生成网格模式
+- 权限：14个权限码注册+角色绑定，@RequiresPermissions 全接口覆盖
+- 入参校验：@NotBlank/@NotNull/@Size + @Valid，编码必填+超长拦截
+- 批量上限：1000条上限，saveBatch 批量插入，@Transactional 事务
+- 复活维度修正：唯一性校验与复活查询维度一致
+- 三级级联删除校验：仓库→库位逐级拦截
+- 批量删除：removeByIds 逐条走 removeById 校验
+- 前端 maxlength+min：编码50/名称100/备注500，数值非负
 
-### Bug 修复
-- MySQL 5.7 不支持 ADD COLUMN IF NOT EXISTS，改为 ADD COLUMN
-- Switch 组件返回值 boolean→integer 转换（checkedValue/unCheckedValue）
-- DatePicker 缺失 valueFormat 导致日期无法序列化
-- TabPane 需显式 import 后使用 Tabs.TabPane 语法
-- 子表 immediate 改为 true 以自动加载已有数据
+### 审计修复（铁拳团+鹰眼团）
+- P0：全部修复（权限/校验/批量上限/复活维度/唯一索引）
+- P1：部分修复（停用校验/批量删除），剩余依赖库存模块
+- 鹰眼团测试：前端 maxlength 缺失→已补，未选仓库新增→已拦截
 
-### 测试数据
-- 10 个客户（4 个等级 × 7 个行业 × 4 个区域 × 4 个规模）
-- 8 个联系人 + 5 个地址 + 6 条跟进记录 + 10 条价格
+### 工程改进
+- 工作流：补充 commit+push 检查点（部署前必须推送）
+- 规则进化：权限 perms 字段/A-form-item 自动导入/SQL 迁移可靠性
+- 经验捕获：3 条新经验写入 learnings/
 
 ## 关键决策
-- 查价逻辑：价格表优先 → 等级折扣率兜底（折扣率机制暂未实现，依赖产品模块）
-- 表变更策略：直接 ALTER TABLE 加字段（不拆扩展表）
-- 前端布局：Tab 页签式（客户信息 + 4 个子表 Tab）
+- 库位退回网格坐标模型（放弃四级层级），保留承重/存放限制等 PRD 优化
+- 权限体系采用 Shiro @RequiresPermissions，perms 字段必须与 id 同值
+- 部署流程不依赖 SQL 迁移自动执行，关键数据用 INSERT IGNORE 备用
 
 ## 待推进
-- PEND-001：客户等级折扣率机制（getPrice 方法，依赖产品/物料模块）
-- 按 PRD 继续下一模块（仓库/物料/销售订单...）
+- PEND-001：客户等级折扣率机制（依赖产品/物料模块）
+- 客户模块补 @RequiresPermissions（当前无权限保护）
+- 库存模块建成后补删除/停用前的库存校验
+- 产品/物料模块
 
 ## 经验记录
-- 2026-07-10: 前端组件常见坑——Switch 整数型、DatePicker valueFormat、TabPane 显式导入、immediate 数据加载
-- 2026-07-10: MySQL 5.7 不支持 ADD COLUMN IF NOT EXISTS，部署后 Docker 重建需重新执行迁移 SQL
+- 2026-07-14: Shiro 权限匹配 perms 列非 id 列，注册权限必须同时设
+- 2026-07-14: a-form-item 不被 unplugin-vue-components 自动导入，静默不渲染
+- 2026-07-14: SQL 迁移不能依赖部署流程自动执行，关键数据用独立 INSERT IGNORE
