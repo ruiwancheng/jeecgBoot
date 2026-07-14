@@ -13,7 +13,9 @@ version: 1.0
 - Service：`I{Entity}Service` / `{Entity}ServiceImpl`
 - Mapper：`{Entity}Mapper extends BaseMapper<Entity>`
 - 所有修改加 `update-begin`/`update-end` 标记
-- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（**用 JdbcTemplate 原生 SQL 绕过 `@TableLogic` 拦截器**，`@Select` 注解不可靠，拦截器会追加 `del_flag=0` 导致查不到），找到则复用旧ID/创建人/创建时间，用 JdbcTemplate 原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联
+- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（用 Mapper `@Select` 注解原生 SQL 绕过 `@TableLogic` 拦截器），找到则复用旧ID/创建人/创建时间，用 Mapper `@Update` 注解原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联
+- **禁止 Service 内部 `this.xxx()` 自调用** — Spring AOP 基于代理，`this` 指向原始对象，绕过事务拦截器。需要调用同类 `@Transactional` 方法时用 `super.xxx()`（调基类）或注入自身代理 Bean。典型反模式：`for (id : ids) this.removeById(id)` → 改为 `super.removeByIds(ids)`
+- **脱敏操作禁止直接修改实体引用** — Controller 对 MyBatis-Plus 分页结果做脱敏时，`page.getRecords()` 返回的是数据库实体的原引用。直接 `setXxx("****")` 会通过前端编辑回写覆盖数据库真实值。必须提供独立的 `queryById` 接口返回完整数据供编辑使用；或在脱敏前创建副本
 - **权限注册必须同时设 `id` 和 `perms`** — Shiro `@RequiresPermissions` 匹配的是 `sys_permission.perms` 列，不是 `id` 列。只设 `id` 不设 `perms` 会导致权限码形同虚设。`permission(id, parentId, name)` 工厂方法自动 `setPerms(id)`，Runner 注册时同步写入 `setPerms(def.getPerms())`
 
 ## SQL 迁移脚本规范
@@ -30,6 +32,7 @@ MySQL 5.7（Docker 容器 `jeecg-boot-mysql`）。
 | `ADD COLUMN IF NOT EXISTS` | MySQL 5.7 不支持 | 存储过程先判断 |
 | 假设标品表结构 | 不同版本表结构不同 | 先 `DESCRIBE` 确认 |
 | 假设 `del_flag` 存在 | `sys_dict_item` 等无此字段 | 查实际结构 |
+| `DEFAULT '中文文本'` | 字典字段存入的是 `item_value`（编码），不是 `item_text`（显示文本） | `DEFAULT '1'` 用编码值 |
 
 ### 幂等要求
 
