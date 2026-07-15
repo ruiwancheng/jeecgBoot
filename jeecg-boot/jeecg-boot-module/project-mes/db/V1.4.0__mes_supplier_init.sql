@@ -40,50 +40,28 @@ VALUES
 (REPLACE(UUID(),'-',''), '供应商状态', 'mes_supplier_status', 'MES供应商生命周期状态', 0, 'admin', NOW(), 'admin', NOW(), 0),
 (REPLACE(UUID(),'-',''), '供应商等级', 'mes_supplier_grade', 'MES供应商综合评级', 0, 'admin', NOW(), 'admin', NOW(), 0);
 
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
-SELECT REPLACE(UUID(),'-,''), d.id, '生产商', '1', '生产制造型企业', 1, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '贸易商', '2', '贸易/代理商', 2, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '服务商', '3', '物流/检测/外协等服务商', 3, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '其他', '4', '其他类型供应商', 4, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_type';
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_type');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_type'), '生产商', '1', '生产制造型企业', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_type'), '贸易商', '2', '贸易/代理商', 2, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_type'), '服务商', '3', '物流/检测/外协等服务商', 3, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_type'), '其他', '4', '其他类型供应商', 4, 1, 'admin', NOW(), 'admin', NOW());
 
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
-SELECT REPLACE(UUID(),'-',''), d.id, '潜在', '1', '初步收集信息，尚未提交审核', 1, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '准入中', '2', '已提交资质，正在评审', 2, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '合格', '3', '评审通过，可正式下单', 3, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '合作中', '4', '已有采购往来，活跃供应商', 4, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '暂停', '5', '重大质量问题或资质过期，暂停新订单', 5, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '退出', '6', '长期不合作或终止，仅保留历史数据', 6, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_status';
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '潜在', '1', '初步收集信息，尚未提交审核', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '准入中', '2', '已提交资质，正在评审', 2, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '合格', '3', '评审通过，可正式下单', 3, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '合作中', '4', '已有采购往来，活跃供应商', 4, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '暂停', '5', '重大质量问题或资质过期，暂停新订单', 5, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_status'), '退出', '6', '长期不合作或终止，仅保留历史数据', 6, 1, 'admin', NOW(), 'admin', NOW());
 
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
-SELECT REPLACE(UUID(),'-',''), d.id, 'A级', 'A', '综合得分≥90分，优先推荐', 1, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_grade'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, 'B级', 'B', '综合得分80-89分', 2, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_grade'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, 'C级', 'C', '综合得分60-79分，需整改观察', 3, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_grade'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, 'D级', 'D', '综合得分<60分，暂停合作', 4, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_supplier_grade';
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_grade');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_grade'), 'A级', 'A', '综合得分>=90分，优先推荐', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_grade'), 'B级', 'B', '综合得分80-89分', 2, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_grade'), 'C级', 'C', '综合得分60-79分，需整改观察', 3, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_supplier_grade'), 'D级', 'D', '综合得分<60分，暂停合作', 4, 1, 'admin', NOW(), 'admin', NOW());
 
 -- ============================================================
 -- 三、菜单注册

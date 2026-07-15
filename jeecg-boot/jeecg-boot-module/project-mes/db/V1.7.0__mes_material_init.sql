@@ -32,43 +32,23 @@ VALUES
 (REPLACE(UUID(),'-',''), '物料类型', 'mes_material_type', 'MES物料类型字典', 0, 'admin', NOW(), 'admin', NOW(), 0),
 (REPLACE(UUID(),'-',''), '物料单位', 'mes_material_unit', 'MES物料单位字典', 0, 'admin', NOW(), 'admin', NOW(), 0);
 
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
-SELECT REPLACE(UUID(),'-',''), d.id, '原材料', '1', '生产所需的原始物料', 1, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '半成品', '2', '中间加工状态的物料', 2, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '成品', '3', '最终可销售的产品', 3, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_type'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '辅料', '4', '辅助性物料', 4, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_type';
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_type');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_type'), '原材料', '1', '生产所需的原始物料', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_type'), '半成品', '2', '中间加工状态的物料', 2, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_type'), '成品', '3', '最终可销售的产品', 3, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_type'), '辅料', '4', '辅助性物料', 4, 1, 'admin', NOW(), 'admin', NOW());
 
-INSERT IGNORE INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time)
-SELECT REPLACE(UUID(),'-',''), d.id, '个', '1', '个/件/只', 1, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '箱', '2', '箱/盒', 2, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '千克', '3', '千克', 3, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '米', '4', '米', 4, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '升', '5', '升', 5, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '卷', '6', '卷/捆', 6, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '套', '7', '套/组', 7, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit'
-UNION ALL
-SELECT REPLACE(UUID(),'-',''), d.id, '台', '8', '台', 8, 1, 'admin', NOW(), 'admin', NOW()
-FROM sys_dict d WHERE d.dict_code = 'mes_material_unit';
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '个', '1', '个/件/只', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '箱', '2', '箱/盒', 2, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '千克', '3', '千克', 3, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '米', '4', '米', 4, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '升', '5', '升', 5, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '卷', '6', '卷/捆', 6, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '套', '7', '套/组', 7, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_material_unit'), '台', '8', '台', 8, 1, 'admin', NOW(), 'admin', NOW());
 
 -- ============================================================
 -- 三、菜单注册
