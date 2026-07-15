@@ -7,8 +7,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
+import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutbound;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutboundItem;
+import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
+import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundMapper;
 import org.jeecg.modules.mes.sales.service.IMesSalesOutboundService;
@@ -26,6 +30,8 @@ import java.util.List;
 public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMapper, MesSalesOutbound> implements IMesSalesOutboundService {
 
     @Autowired private MesSalesOutboundItemMapper itemMapper;
+    @Autowired private MesDeliveryNoteMapper deliveryNoteMapper;
+    @Autowired private MesDeliveryNoteItemMapper deliveryNoteItemMapper;
 
     @Override public MesSalesOutbound queryWithItems(String id) {
         MesSalesOutbound o = baseMapper.selectById(id);
@@ -65,13 +71,50 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     @Override @Transactional(rollbackFor = Exception.class)
     public void cancel(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e == null) throw new JeecgBootException("不存在"); if ("3".equals(e.getStatus())) throw new JeecgBootException("已审核不可取消"); e.setStatus("0"); e.setUpdateBy(getUser()); e.setUpdateTime(new Date()); baseMapper.updateById(e); }
 
+    //update-begin---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
     private void validate(MesSalesOutbound e) {
         if (!StringUtils.hasText(e.getCode())) throw new JeecgBootException("编码不能为空");
         if (e.getCode().length() > 50) throw new JeecgBootException("编码不超过50字符");
         if (!StringUtils.hasText(e.getWarehouseId())) throw new JeecgBootException("仓库不能为空");
-        List<MesSalesOutboundItem> items = e.getItems(); if (items == null || items.isEmpty()) throw new JeecgBootException("至少一个明细");
-        for (int i = 0; i < items.size(); i++) { MesSalesOutboundItem item = items.get(i); if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第"+(i+1)+"行物料不能为空"); if (item.getActualQty() == null || item.getActualQty().compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("第"+(i+1)+"行数量必须大于0"); }
+
+        // P0-03: 来源校验——强制关联发货单并校验存在性
+        if (!StringUtils.hasText(e.getDeliveryNoteId())) throw new JeecgBootException("发货单不能为空");
+        MesDeliveryNote dn = deliveryNoteMapper.selectById(e.getDeliveryNoteId());
+        if (dn == null) throw new JeecgBootException("发货单不存在");
+
+        // P0-03: 如果填了销售订单，校验存在性
+        if (StringUtils.hasText(e.getSalesOrderId()) && !e.getSalesOrderId().equals(dn.getSalesOrderId()))
+            throw new JeecgBootException("销售订单与发货单不匹配");
+
+        List<MesSalesOutboundItem> items = e.getItems();
+        if (items == null || items.isEmpty()) throw new JeecgBootException("至少一个明细");
+
+        // 查发货单明细作为基准
+        LambdaQueryWrapper<MesDeliveryNoteItem> dnQw = new LambdaQueryWrapper<>();
+        dnQw.eq(MesDeliveryNoteItem::getDeliveryId, e.getDeliveryNoteId());
+        List<MesDeliveryNoteItem> dnItems = deliveryNoteItemMapper.selectList(dnQw);
+
+        for (int i = 0; i < items.size(); i++) {
+            MesSalesOutboundItem item = items.get(i);
+            if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第"+(i+1)+"行物料不能为空");
+
+            // P0-10: deliveryQty 从发货单来源强制覆盖，禁止前端任意写入
+            MesDeliveryNoteItem src = null;
+            for (MesDeliveryNoteItem di : dnItems) {
+                if (item.getMaterialId().equals(di.getMaterialId())) { src = di; break; }
+            }
+            if (src == null) throw new JeecgBootException("第"+(i+1)+"行物料不在发货单明细中");
+            item.setDeliveryQty(src.getDeliveryQty() != null ? src.getDeliveryQty() : BigDecimal.ZERO);
+
+            // P0-02: 实出数量 ≤ 发货数量
+            BigDecimal maxQty = item.getDeliveryQty();
+            if (item.getActualQty() == null || item.getActualQty().compareTo(BigDecimal.ZERO) <= 0)
+                throw new JeecgBootException("第"+(i+1)+"行数量必须大于0");
+            if (item.getActualQty().compareTo(maxQty) > 0)
+                throw new JeecgBootException("第"+(i+1)+"行实出数量("+item.getActualQty()+")超过发货数量("+maxQty+")");
+        }
     }
+    //update-end---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
 
     private void checkStatus(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e != null && !"1".equals(e.getStatus())) throw new JeecgBootException("非草稿状态禁止操作"); }
     private void cleanOldItems(String outboundId) { QueryWrapper<MesSalesOutboundItem> qw = new QueryWrapper<>(); qw.eq("outbound_id", outboundId); itemMapper.delete(qw); }
