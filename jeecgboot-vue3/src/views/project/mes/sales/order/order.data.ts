@@ -23,6 +23,6 @@ export const formSchema: FormSchema[] = [
   { field: 'customerId', label: '客户', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_customer,name,id' } },
   { field: 'orderDate', label: '订单日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'deliveryDate', label: '交货日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
-  { field: 'status', label: '订单状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_order_status' }, defaultValue: '1' },
+  { field: 'status', label: '订单状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_order_status' }, defaultValue: '1', show: false },
   { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },
 ];

@@ -51,6 +51,10 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
         if (baseMapper.selectCount(activeQw) > 0) throw new JeecgBootException("订单编码已存在");
         MesSalesOrder old = baseMapper.selectDeletedByCode(entity.getCode());
         if (old != null) {
+            // 清理旧订单行，避免复活时带入脏数据
+            LambdaQueryWrapper<MesSalesOrderItem> delQw = new LambdaQueryWrapper<>();
+            delQw.eq(MesSalesOrderItem::getOrderId, old.getId());
+            itemMapper.delete(delQw);
             entity.setId(old.getId());
             entity.setCreateBy(old.getCreateBy());
             entity.setCreateTime(old.getCreateTime());
@@ -122,8 +126,7 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     private void calcTotal(MesSalesOrder entity) {
         BigDecimal total = BigDecimal.ZERO;
         for (MesSalesOrderItem item : entity.getItems()) {
-            if (item.getQuantity() != null && item.getUnitPrice() != null)
-                total = total.add(item.getQuantity().multiply(item.getUnitPrice()));
+            if (item.getAmount() != null) total = total.add(item.getAmount());
         }
         entity.setTotalAmount(total.setScale(2, java.math.RoundingMode.HALF_UP));
     }
