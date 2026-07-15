@@ -136,6 +136,19 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:salesOrder:deleteBatch", "mes_sales_order", "订单批量删除"));
         list.add(MesMenuDefinition.permission("mes:salesOrder:export", "mes_sales_order", "订单导出"));
 
+        // 发货单
+        list.add(MesMenuDefinition.leaf("mes_sales_delivery", "mes_sales",
+                        "发货单", "/project/mes/sales/delivery",
+                        "project/mes/sales/delivery/index", "MesSalesDelivery")
+                .sortNo(3.0).icon("ant-design:car-outlined"));
+
+        list.add(MesMenuDefinition.permission("mes:delivery:list", "mes_sales_delivery", "发货单列表"));
+        list.add(MesMenuDefinition.permission("mes:delivery:add", "mes_sales_delivery", "发货单新增"));
+        list.add(MesMenuDefinition.permission("mes:delivery:edit", "mes_sales_delivery", "发货单编辑"));
+        list.add(MesMenuDefinition.permission("mes:delivery:delete", "mes_sales_delivery", "发货单删除"));
+        list.add(MesMenuDefinition.permission("mes:delivery:deleteBatch", "mes_sales_delivery", "发货单批量删除"));
+        list.add(MesMenuDefinition.permission("mes:delivery:export", "mes_sales_delivery", "发货单导出"));
+
         return list;
     }
 }
