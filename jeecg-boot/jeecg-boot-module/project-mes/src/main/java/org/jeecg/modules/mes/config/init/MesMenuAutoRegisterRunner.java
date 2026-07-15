@@ -134,8 +134,8 @@ public class MesMenuAutoRegisterRunner implements ApplicationRunner {
             exist.setRoute(true);
             fixed = true;
         }
-        // parentId 为空
-        if (isEmpty(exist.getParentId()) && !isEmpty(def.getParentId())) {
+        // parentId 为空或与定义不一致 → 菜单挂错父级
+        if (!isEmpty(def.getParentId()) && !def.getParentId().equals(exist.getParentId())) {
             exist.setParentId(def.getParentId());
             fixed = true;
         }
