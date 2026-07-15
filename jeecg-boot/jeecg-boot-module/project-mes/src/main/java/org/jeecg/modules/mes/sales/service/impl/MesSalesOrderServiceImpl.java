@@ -67,6 +67,7 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     @Transactional(rollbackFor = Exception.class)
     public void updateWithItems(MesSalesOrder entity) {
         if (entity.getId() == null) throw new JeecgBootException("订单ID不能为空");
+        checkStatus(entity, "edit"); // 非草稿不可编辑
         validateOrder(entity);
         calcTotal(entity);
         QueryWrapper<MesSalesOrder> qw = new QueryWrapper<>();
@@ -83,10 +84,19 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeWithItems(String id) {
+        checkStatus(id, "delete"); // 非草稿不可删除
         LambdaQueryWrapper<MesSalesOrderItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesSalesOrderItem::getOrderId, id);
         itemMapper.delete(delQw);
         super.removeById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(java.util.Collection<?> list) {
+        if (list == null || list.isEmpty()) return false;
+        for (Object id : list) this.removeWithItems((String) id);
+        return true;
     }
 
     private void validateOrder(MesSalesOrder entity) {
@@ -104,6 +114,7 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
                 throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
             item.setLineNo(i + 1);
             item.setOrderId(entity.getId());
+            // 后端强制重算金额，忽略前端传入的 amount
             item.setAmount(item.getQuantity().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
         }
     }
@@ -115,6 +126,22 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
                 total = total.add(item.getQuantity().multiply(item.getUnitPrice()));
         }
         entity.setTotalAmount(total.setScale(2, java.math.RoundingMode.HALF_UP));
+    }
+
+    /** 非草稿状态禁止编辑/删除 */
+    private void checkStatus(MesSalesOrder entity, String action) {
+        if (entity.getId() == null) return;
+        MesSalesOrder exist = baseMapper.selectById(entity.getId());
+        if (exist != null && !"1".equals(exist.getStatus())) {
+            throw new JeecgBootException("非草稿状态订单禁止" + action);
+        }
+    }
+
+    private void checkStatus(String id, String action) {
+        MesSalesOrder exist = baseMapper.selectById(id);
+        if (exist != null && !"1".equals(exist.getStatus())) {
+            throw new JeecgBootException("非草稿状态订单禁止" + action);
+        }
     }
 
     private void saveItems(MesSalesOrder entity) {
