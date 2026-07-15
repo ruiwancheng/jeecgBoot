@@ -38,6 +38,8 @@ MySQL 5.7（Docker 容器 `jeecg-boot-mysql`）。
 
 SQL 脚本可能被多次执行（部署控制台自动扫描 `sql/` 和 `db/` 目录）。所有 DDL 必须可重复运行不报错。
 
+**字典项禁止用 `INSERT IGNORE + SELECT + UUID()`** — `sys_dict_item` 无唯一约束，UUID 每次不同，`INSERT IGNORE` 不会跳过，导致每次部署追加重复。必须用 `DELETE + INSERT VALUES` 保证幂等：
+
 ### 关键数据初始化
 
 权限码注册、角色绑定等关键数据用**独立 `INSERT IGNORE` 语句**，每条幂等可单独重跑。不用 `INSERT ... SELECT ... WHERE LIKE` 模式，避免部分失败无法定位。
