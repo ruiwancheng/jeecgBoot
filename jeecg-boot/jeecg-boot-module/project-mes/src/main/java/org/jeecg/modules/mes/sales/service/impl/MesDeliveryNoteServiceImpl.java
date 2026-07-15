@@ -9,8 +9,11 @@ import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
+import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
 import org.jeecg.modules.mes.sales.service.IMesDeliveryNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,6 +30,10 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
 
     @Autowired
     private MesDeliveryNoteItemMapper itemMapper;
+    @Autowired
+    private MesSalesOrderMapper salesOrderMapper;
+    @Autowired
+    private MesSalesOrderItemMapper salesOrderItemMapper;
 
     @Override
     public MesDeliveryNote queryWithItems(String id) {
@@ -43,7 +50,7 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesDeliveryNote entity) {
         validate(entity);
-        if (entity.getStatus() == null) entity.setStatus("1");
+        entity.setStatus("1"); // 强制草稿，禁止绕过前端直接设状态
         QueryWrapper<MesDeliveryNote> activeQw = new QueryWrapper<>();
         activeQw.eq("code", entity.getCode());
         if (baseMapper.selectCount(activeQw) > 0) throw new JeecgBootException("发货单编码已存在");
@@ -70,6 +77,7 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         if (entity.getId() == null) throw new JeecgBootException("发货单ID不能为空");
         checkStatus(entity, "编辑");
         validate(entity);
+        entity.setStatus("1"); // 编辑时保持草稿
         QueryWrapper<MesDeliveryNote> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("发货单编码已存在");
@@ -103,6 +111,9 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         if (entity.getCode().length() > 50) throw new JeecgBootException("发货单编码长度不能超过50个字符");
         if (!StringUtils.hasText(entity.getSalesOrderId())) throw new JeecgBootException("销售订单不能为空");
         if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("发货仓库不能为空");
+        // 校验销售订单存在
+        if (salesOrderMapper.selectById(entity.getSalesOrderId()) == null)
+            throw new JeecgBootException("销售订单不存在");
         List<MesDeliveryNoteItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个发货明细");
         for (int i = 0; i < items.size(); i++) {
@@ -110,8 +121,46 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getDeliveryQty() == null || item.getDeliveryQty().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行发货数量必须大于0");
+            // P0-01: 校验发货数量不超过订单未发货数量
+            checkDeliveryQty(entity, item, i + 1);
         }
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-15---for: P0-01超量发货校验-----------
+    private void checkDeliveryQty(MesDeliveryNote entity, MesDeliveryNoteItem item, int lineNo) {
+        // 查订单行的订单数量
+        LambdaQueryWrapper<MesSalesOrderItem> oqw = new LambdaQueryWrapper<>();
+        oqw.eq(MesSalesOrderItem::getOrderId, entity.getSalesOrderId())
+          .eq(MesSalesOrderItem::getMaterialId, item.getMaterialId());
+        List<MesSalesOrderItem> orderLines = salesOrderItemMapper.selectList(oqw);
+        BigDecimal orderedQty = BigDecimal.ZERO;
+        for (MesSalesOrderItem ol : orderLines) {
+            if (ol.getQuantity() != null) orderedQty = orderedQty.add(ol.getQuantity());
+        }
+        if (orderedQty.compareTo(BigDecimal.ZERO) == 0)
+            throw new JeecgBootException("第" + lineNo + "行物料在销售订单中未找到或数量为0");
+        // 查已有发货单的累计发货数量（排除当前发货单自身，编辑场景）
+        QueryWrapper<MesDeliveryNote> dnQw = new QueryWrapper<>();
+        dnQw.eq("sales_order_id", entity.getSalesOrderId());
+        String selfId = entity.getId();
+        BigDecimal shippedQty = BigDecimal.ZERO;
+        List<MesDeliveryNote> existingNotes = baseMapper.selectList(dnQw);
+        for (MesDeliveryNote dn : existingNotes) {
+            if (dn.getId().equals(selfId)) continue;
+            QueryWrapper<MesDeliveryNoteItem> iqw = new QueryWrapper<>();
+            iqw.eq("delivery_id", dn.getId())
+               .eq("material_id", item.getMaterialId());
+            List<MesDeliveryNoteItem> shipped = itemMapper.selectList(iqw);
+            for (MesDeliveryNoteItem si : shipped) {
+                if (si.getDeliveryQty() != null) shippedQty = shippedQty.add(si.getDeliveryQty());
+            }
+        }
+        BigDecimal remaining = orderedQty.subtract(shippedQty);
+        if (item.getDeliveryQty().compareTo(remaining) > 0)
+            throw new JeecgBootException("第" + lineNo + "行发货数量(" + item.getDeliveryQty()
+                + ")超过未发货数量(" + remaining + ")，已订" + orderedQty + "，已发" + shippedQty);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-15---for: P0-01超量发货校验-----------
 
     private void checkStatus(MesDeliveryNote entity, String action) {
         if (entity.getId() == null) return;
