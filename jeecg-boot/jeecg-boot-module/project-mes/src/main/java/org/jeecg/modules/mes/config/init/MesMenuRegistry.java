@@ -123,6 +123,19 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:price:export", "mes_sales_price", "价格导出"));
         list.add(MesMenuDefinition.permission("mes:price:import", "mes_sales_price", "价格导入"));
 
+        // 销售订单
+        list.add(MesMenuDefinition.leaf("mes_sales_order", "mes_sales",
+                        "销售订单", "/project/mes/sales/order",
+                        "project/mes/sales/order/index", "MesSalesOrder")
+                .sortNo(2.0).icon("ant-design:file-text-outlined"));
+
+        list.add(MesMenuDefinition.permission("mes:salesOrder:list", "mes_sales_order", "订单列表"));
+        list.add(MesMenuDefinition.permission("mes:salesOrder:add", "mes_sales_order", "订单新增"));
+        list.add(MesMenuDefinition.permission("mes:salesOrder:edit", "mes_sales_order", "订单编辑"));
+        list.add(MesMenuDefinition.permission("mes:salesOrder:delete", "mes_sales_order", "订单删除"));
+        list.add(MesMenuDefinition.permission("mes:salesOrder:deleteBatch", "mes_sales_order", "订单批量删除"));
+        list.add(MesMenuDefinition.permission("mes:salesOrder:export", "mes_sales_order", "订单导出"));
+
         return list;
     }
 }
