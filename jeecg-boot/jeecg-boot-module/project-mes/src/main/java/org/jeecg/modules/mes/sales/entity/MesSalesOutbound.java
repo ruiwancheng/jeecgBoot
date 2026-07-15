@@ -16,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -25,37 +26,27 @@ import java.util.Date;
 public class MesSalesOutbound implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.ASSIGN_ID)
-    @Schema(description = "id")
-    private String id;
+    @Schema(description = "id") private String id;
     @Excel(name = "出库单编码", width = 15)
-    @Schema(description = "出库单编码")
-    private String code;
+    @Schema(description = "出库单编码") private String code;
     @Excel(name = "发货单", width = 20, dictTable = "c_mes_delivery_note", dicText = "code", dicCode = "id")
     @Dict(dictTable = "c_mes_delivery_note", dicText = "code", dicCode = "id")
-    @Schema(description = "关联发货单ID")
-    private String deliveryNoteId;
+    @Schema(description = "发货单ID") private String deliveryNoteId;
     @Excel(name = "销售订单", width = 20, dictTable = "c_mes_sales_order", dicText = "code", dicCode = "id")
     @Dict(dictTable = "c_mes_sales_order", dicText = "code", dicCode = "id")
-    @Schema(description = "关联销售订单ID")
-    private String salesOrderId;
-    @Excel(name = "仓库", width = 15, dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
+    @Schema(description = "销售订单ID") private String salesOrderId;
+    @Excel(name = "出库仓库", width = 15, dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
     @Dict(dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
-    @Schema(description = "出库仓库ID")
-    private String warehouseId;
-    @Schema(description = "客户ID(冗余)")
-    private String customerId;
+    @Schema(description = "仓库ID") private String warehouseId;
+    @Schema(description = "客户ID(冗余)") private String customerId;
     @Excel(name = "出库日期", width = 15, format = "yyyy-MM-dd")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "出库日期")
-    private Date outboundDate;
+    @Schema(description = "出库日期") private Date outboundDate;
     @Excel(name = "状态", width = 10, dicCode = "mes_outbound_status")
     @Dict(dicCode = "mes_outbound_status")
-    @Schema(description = "状态:1草稿 2待审核 3已审核 0已取消")
-    private String status;
-    @Excel(name = "备注", width = 30)
-    @Schema(description = "备注")
-    private String remark;
+    @Schema(description = "状态:1草稿 2待审核 3已审核 0已取消") private String status;
+    @Excel(name = "备注", width = 30) @Schema(description = "备注") private String remark;
     @Schema(description = "创建人") private String createBy;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -64,7 +55,7 @@ public class MesSalesOutbound implements Serializable {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "更新时间") private Date updateTime;
-    @TableLogic
-    @Schema(description = "删除状态") private Integer delFlag;
+    @TableLogic @Schema(description = "删除状态") private Integer delFlag;
+    @Schema(description = "出库明细") private transient List<MesSalesOutboundItem> items;
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-销售出库实体-----------
