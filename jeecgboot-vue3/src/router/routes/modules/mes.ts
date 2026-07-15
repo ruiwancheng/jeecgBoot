@@ -39,6 +39,33 @@ const mes: AppRouteModule = {
           component: () => import('/@/views/project/mes/basic/customer/index.vue'),
           meta: { title: '客户管理' },
         },
+        {
+          path: 'supplier',
+          name: 'MesBasicSupplier',
+          component: () => import('/@/views/project/mes/basic/supplier/index.vue'),
+          meta: { title: '供应商管理' },
+        },
+        {
+          path: 'material',
+          name: 'MesBasicMaterial',
+          component: () => import('/@/views/project/mes/basic/material/index.vue'),
+          meta: { title: '物料管理' },
+        },
+      ],
+    },
+    {
+      path: 'sales',
+      name: 'MesSales',
+      component: LAYOUT,
+      redirect: '/project/mes/sales/price',
+      meta: { title: '销售管理' },
+      children: [
+        {
+          path: 'price',
+          name: 'MesSalesPrice',
+          component: () => import('/@/views/project/mes/sales/price/index.vue'),
+          meta: { title: '价格管理' },
+        },
       ],
     },
   ],
