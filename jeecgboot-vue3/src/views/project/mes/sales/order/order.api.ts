@@ -17,11 +17,11 @@ export function saveOrUpdateOrder(data: any, isUpdate: boolean) {
 }
 
 export function deleteOrder(params: any) {
-  return defHttp.delete({ url: `${BASE}/delete`, params, joinParamsToUrl: true });
+  return defHttp.delete({ url: `${BASE}/delete`, params }, { joinParamsToUrl: true });
 }
 
 export function deleteBatchOrder(params: any) {
-  return defHttp.delete({ url: `${BASE}/deleteBatch`, params, joinParamsToUrl: true });
+  return defHttp.delete({ url: `${BASE}/deleteBatch`, params }, { joinParamsToUrl: true });
 }
 
 export function getExportUrl() {
