@@ -149,6 +149,19 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.permission("mes:delivery:deleteBatch", "mes_sales_delivery", "发货单批量删除"));
         list.add(MesMenuDefinition.permission("mes:delivery:export", "mes_sales_delivery", "发货单导出"));
 
+        // 销售出库
+        list.add(MesMenuDefinition.leaf("mes_sales_outbound", "mes_sales",
+                        "销售出库", "/project/mes/sales/outbound",
+                        "project/mes/sales/outbound/index", "MesSalesOutbound")
+                .sortNo(4.0).icon("ant-design:export-outlined"));
+
+        list.add(MesMenuDefinition.permission("mes:outbound:list", "mes_sales_outbound", "出库列表"));
+        list.add(MesMenuDefinition.permission("mes:outbound:add", "mes_sales_outbound", "出库新增"));
+        list.add(MesMenuDefinition.permission("mes:outbound:edit", "mes_sales_outbound", "出库编辑"));
+        list.add(MesMenuDefinition.permission("mes:outbound:delete", "mes_sales_outbound", "出库删除"));
+        list.add(MesMenuDefinition.permission("mes:outbound:deleteBatch", "mes_sales_outbound", "出库批量删除"));
+        list.add(MesMenuDefinition.permission("mes:outbound:export", "mes_sales_outbound", "出库导出"));
+
         return list;
     }
 }
