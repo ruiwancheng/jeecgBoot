@@ -15,8 +15,6 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { field: 'code', label: '价格编码', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
-  { field: 'materialId', label: '物料', component: 'Input', colProps: { span: 6 } },
-  { field: 'customerId', label: '客户', component: 'Input', colProps: { span: 6 } },
   { field: 'type', label: '价格类型', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_price_type' } },
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'yn' } },
 ];
