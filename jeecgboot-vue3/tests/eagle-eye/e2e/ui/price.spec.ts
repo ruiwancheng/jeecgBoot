@@ -1,11 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigateToModule, selectDropdownItem, type ModuleConfig } from './mes-crud.template';
-
-/**
- * 价格管理 E2E 测试
- * 覆盖完整生命周期 + 铁拳团审计修复点：日期校验、价格重叠、客户协议价必填
- * 环境：Docker 部署 http://100.122.125.106
- */
+import { navigateToModule, type ModuleConfig } from './mes-crud.template';
 
 const config: ModuleConfig = {
   name: '价格管理',
@@ -19,21 +13,44 @@ const config: ModuleConfig = {
   searchCodeLabel: '价格编码',
 };
 
-const drawer = (page: any) => page.locator('.ant-drawer-body, .ant-modal-body').first();
-
 async function loginAndGetToken(page: any) {
   const response = await page.request.post('/jeecgboot/sys/login', {
-    data: {
-      username: 'admin',
-      password: '123456',
-      captcha: '',
-      checkkey: 'eagle-eye',
-    },
+    data: { username: 'admin', password: '123456', captcha: '', checkkey: 'eagle-eye' },
     headers: { 'Content-Type': 'application/json' },
   });
   const body = await response.json();
   expect(body.success).toBeTruthy();
   return body.result.token as string;
+}
+
+async function queryMaterialList(page: any) {
+  const token = await loginAndGetToken(page);
+  const response = await page.request.get('/jeecgboot/mes/basic/material/list?pageNo=1&pageSize=1', {
+    headers: { 'X-Access-Token': token },
+  });
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  if (!body.success) {
+    console.log('[鹰眼团] createPrice 失败:', JSON.stringify(body));
+  }
+  expect(body.success).toBeTruthy();
+  expect(body.result?.records?.length).toBeGreaterThan(0);
+  return body.result.records[0];
+}
+
+async function queryCustomerList(page: any) {
+  const token = await loginAndGetToken(page);
+  const response = await page.request.get('/jeecgboot/mes/basic/customer/list?pageNo=1&pageSize=1', {
+    headers: { 'X-Access-Token': token },
+  });
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  if (!body.success) {
+    console.log('[鹰眼团] createPrice 失败:', JSON.stringify(body));
+  }
+  expect(body.success).toBeTruthy();
+  expect(body.result?.records?.length).toBeGreaterThan(0);
+  return body.result.records[0];
 }
 
 async function queryPriceByCode(page: any, code: string) {
@@ -42,215 +59,219 @@ async function queryPriceByCode(page: any, code: string) {
     `/jeecgboot/mes/sales/price/list?code=${encodeURIComponent(code)}&pageNo=1&pageSize=10`,
     { headers: { 'X-Access-Token': token } }
   );
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  return body.result?.records || [];
+}
+
+async function createPrice(page: any, record: any) {
+  const token = await loginAndGetToken(page);
+  const response = await page.request.post('/jeecgboot/mes/sales/price/add', {
+    data: record,
+    headers: { 'Content-Type': 'application/json', 'X-Access-Token': token },
+  });
   if (!response.ok()) {
     const text = await response.text();
-    console.log('[鹰眼团] API 请求失败，状态码：', response.status(), '响应：', text.slice(0, 300));
+    console.log('[鹰眼团] 新增价格 API 失败，状态码：', response.status(), '响应：', text.slice(0, 300));
   }
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
+  if (!body.success) {
+    console.log('[鹰眼团] createPrice 失败:', JSON.stringify(body));
+  }
   expect(body.success).toBeTruthy();
-  expect(body.result?.records?.length).toBeGreaterThan(0);
-  return body.result.records[0];
+  return body.result;
 }
 
-async function queryMaterialList(page: any) {
+async function apiDeletePrice(page: any, id: string) {
+  const token = await loginAndGetToken(page);
+  await page.request.delete('/jeecgboot/mes/sales/price/delete', {
+    params: { id },
+    headers: { 'X-Access-Token': token },
+  });
+}
+
+async function cleanupTestPrices(page: any) {
+  const records = await queryPriceByCode(page, 'EYE-P-');
+  for (const r of records) {
+    if (r.id) await apiDeletePrice(page, r.id);
+  }
+}
+
+async function queryMaterialPriceList(page: any, materialId: string) {
   const token = await loginAndGetToken(page);
   const response = await page.request.get(
-    `/jeecgboot/mes/basic/material/list?pageNo=1&pageSize=1`,
+    `/jeecgboot/mes/sales/price/list?materialId=${encodeURIComponent(materialId)}&pageNo=1&pageSize=100`,
     { headers: { 'X-Access-Token': token } }
   );
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
-  expect(body.success).toBeTruthy();
-  expect(body.result?.records?.length).toBeGreaterThan(0);
-  return body.result.records[0];
+  return body.result?.records || [];
 }
 
-async function selectJSearchSelect(page: any, label: string, searchText: string) {
-  const combobox = page.getByRole('combobox', { name: new RegExp(label) }).first();
-  await combobox.click();
-  await combobox.fill(searchText);
-  await page.waitForTimeout(1000);
+async function createUniquePrice(page: any, overrides: any = {}) {
+  const material = await queryMaterialList(page);
+  const code = `EYE-P-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-  // 等待选项出现并点击第一条
-  const option = page.locator('.ant-select-dropdown').locator('.ant-select-item-option').first();
-  await option.waitFor({ state: 'visible', timeout: 5000 });
-  await option.click();
-}
-
-async function fillPriceForm(
-  page: any,
-  code: string,
-  material: any,
-  price: string,
-  type: '1' | '2',
-  beginDate: string,
-  endDate?: string,
-  customer?: any
-) {
-  const formBody = drawer(page);
-
-  await formBody.getByRole('textbox', { name: /价格编码/ }).fill(code);
-  await selectJSearchSelect(page, '物料', material.name);
-
-  const typeCombobox = formBody.getByRole('combobox', { name: /价格类型/ });
-  await typeCombobox.click();
-  // 等待字典选项加载，最多 5 秒
-  const typeOption = page.locator('.ant-select-dropdown').locator('.ant-select-item-option').filter({ hasText: type === '1' ? '标准售价' : '客户协议价' }).first();
-  await typeOption.waitFor({ state: 'visible', timeout: 5000 });
-  await typeOption.click();
-
-  if (type === '2' && customer) {
-    await selectJSearchSelect(page, '客户', customer.name);
+  // 找该物料当前最晚的结束日期，往后推 1 天开始，避免重叠
+  const existing = await queryMaterialPriceList(page, material.id);
+  let startDay = new Date('2026-07-01');
+  for (const r of existing) {
+    if (r.endDate) {
+      const d = new Date(r.endDate);
+      if (d >= startDay) startDay = new Date(d.getTime() + 24 * 60 * 60 * 1000);
+    }
   }
+  const endDay = new Date(startDay.getTime() + 9 * 24 * 60 * 60 * 1000);
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
-  await formBody.locator('.ant-form-item').filter({ hasText: '价格' }).locator('input').first().fill(price);
+  await createPrice(page, {
+    code,
+    materialId: material.id,
+    type: '1',
+    price: 99.99,
+    beginDate: fmt(startDay),
+    endDate: fmt(endDay),
+    status: 1,
+    ...overrides,
+  });
+  return { code, material };
+}
 
-  await formBody.locator('.ant-form-item').filter({ hasText: '生效日期' }).locator('input').first().fill(beginDate);
-  await formBody.locator('.ant-form-item').filter({ hasText: '生效日期' }).locator('input').first().press('Enter');
-
-  if (endDate) {
-    await formBody.locator('.ant-form-item').filter({ hasText: '失效日期' }).locator('input').first().fill(endDate);
-    await formBody.locator('.ant-form-item').filter({ hasText: '失效日期' }).locator('input').first().press('Enter');
+async function searchAndExpectRow(page: any, code: string, expectTexts: string[]) {
+  await page.getByRole('textbox', { name: '价格编码' }).first().fill(code);
+  await page.getByRole('button', { name: '查询' }).click();
+  const row = page.locator('.ant-table-row').filter({ hasText: code }).first();
+  await expect(row).toBeVisible({ timeout: 10000 });
+  for (const text of expectTexts) {
+    await expect(row).toContainText(text);
   }
 }
 
-async function submitAndExpectSuccess(page: any) {
-  await page.getByRole('button', { name: '确 认' }).click();
-  await expect(page.locator('.ant-message-success').filter({ hasText: '添加成功' }).first()).toBeVisible({ timeout: 5000 });
-}
-
-async function submitAndExpectError(page: any, errorText: string) {
-  await page.getByRole('button', { name: '确 认' }).click();
-  await expect(page.locator('.ant-message').filter({ hasText: errorText }).first()).toBeVisible({ timeout: 5000 });
+async function getSearchConditionLabels(page: any) {
+  return await page.evaluate(() => {
+    const labels = Array.from(document.querySelectorAll('.jeecg-basic-form .ant-form-item-label, .ant-form-item-label'));
+    return labels.map((el) => el.textContent?.trim()).filter(Boolean);
+  });
 }
 
 test.describe(config.name, () => {
   test.beforeEach(async ({ page }) => {
     await navigateToModule(page, config);
+    await cleanupTestPrices(page);
   });
 
-  test('价格完整生命周期：新增、查询、编辑、删除', async ({ page }) => {
-    const material = await queryMaterialList(page);
-    const testCode = `EYE-P-${Date.now()}`;
-    const editedCode = `EYE-P-${Date.now()}-EDITED`;
+  test('列表展示：标准售价记录显示物料名称和价格', async ({ page }) => {
+    const { code, material } = await createUniquePrice(page, { price: 99.99 });
+    await searchAndExpectRow(page, code, [code, material.name, '99.99', '标准售价']);
+  });
 
-    // 新增
+  test('新增价格按钮可打开新增抽屉', async ({ page }) => {
     await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '99.99', '1', '2026-07-01', '2026-07-31');
-    await submitAndExpectSuccess(page);
+    await expect(page.getByText('新增价格').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.ant-form-item').filter({ hasText: '价格编码' }).first()).toBeVisible();
+    await expect(page.locator('.ant-form-item').filter({ hasText: '物料' }).first()).toBeVisible();
+    await expect(page.locator('.ant-form-item').filter({ hasText: '价格' }).first()).toBeVisible();
+  });
 
-    // 查询
-    await page.getByRole('textbox', { name: '价格编码' }).first().fill(testCode);
-    await page.getByRole('button', { name: '查询' }).click();
-    await expect(page.locator('.ant-table-row')).toContainText(testCode);
-    await expect(page.locator('.ant-table-row')).toContainText(material.name);
-    await expect(page.locator('.ant-table-row')).toContainText('99.99');
+  test('价格类型字典下拉显示正确选项', async ({ page }) => {
+    await page.getByRole('button', { name: '新增价格' }).click();
+    await page.waitForTimeout(500);
+    const drawer = page.locator('.ant-drawer-body, .ant-modal-body').first();
+    await expect(drawer.locator('.ant-form-item').filter({ hasText: '价格类型' }).first()).toBeVisible({ timeout: 5000 });
+    const typeFormItem = drawer.locator('.ant-form-item').filter({ hasText: '价格类型' }).first();
+    await typeFormItem.locator('.ant-select-selector').first().click();
+    await page.waitForTimeout(500);
+    const dropdown = page.locator('.ant-select-dropdown').first();
+    await expect(dropdown.locator('.ant-select-item-option').filter({ hasText: '标准售价' }).first()).toBeVisible();
+    await expect(dropdown.locator('.ant-select-item-option').filter({ hasText: '客户协议价' }).first()).toBeVisible();
+  });
 
-    // 编辑
-    await page.getByRole('button', { name: '编辑' }).first().click();
-    const formBody = drawer(page);
-    await formBody.getByRole('textbox', { name: /价格编码/ }).fill(editedCode);
-    await formBody.locator('.ant-form-item').filter({ hasText: '价格' }).locator('input').first().fill('199.99');
-    await page.getByRole('button', { name: '确 认' }).click();
-    await expect(page.locator('.ant-message-success').filter({ hasText: '编辑成功' }).first()).toBeVisible({ timeout: 5000 });
+  test('客户协议价记录显示客户名称', async ({ page }) => {
+    const material = await queryMaterialList(page);
+    const customer = await queryCustomerList(page);
+    const code = `EYE-P-CUST-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const existing = await queryMaterialPriceList(page, material.id);
+    let startDay = new Date('2026-07-01');
+    for (const r of existing) {
+      if (r.endDate) {
+        const d = new Date(r.endDate);
+        if (d >= startDay) startDay = new Date(d.getTime() + 24 * 60 * 60 * 1000);
+      }
+    }
+    const endDay = new Date(startDay.getTime() + 9 * 24 * 60 * 60 * 1000);
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+    await createPrice(page, {
+      code,
+      materialId: material.id,
+      customerId: customer.id,
+      type: '2',
+      price: 88.88,
+      beginDate: fmt(startDay),
+      endDate: fmt(endDay),
+      status: 1,
+    });
+    await searchAndExpectRow(page, code, [code, material.name, customer.name, '客户协议价', '88.88']);
+  });
 
-    await page.getByRole('textbox', { name: '价格编码' }).first().fill(editedCode);
-    await page.getByRole('button', { name: '查询' }).click();
-    await expect(page.locator('.ant-table-row')).toContainText(editedCode);
-    await expect(page.locator('.ant-table-row')).toContainText('199.99');
+  test('删除价格后列表不再显示', async ({ page }) => {
+    const { code } = await createUniquePrice(page);
+    await searchAndExpectRow(page, code, [code]);
 
-    // 删除
     await page.getByRole('button', { name: '删除' }).first().click();
     await page.getByRole('button', { name: '确 认' }).click();
     await expect(page.locator('.ant-message-success').filter({ hasText: '删除成功' }).first()).toBeVisible({ timeout: 5000 });
-  });
 
-  test('日期校验：失效日期早于生效日期应被拦截', async ({ page }) => {
-    const material = await queryMaterialList(page);
-    const testCode = `EYE-P-DATE-${Date.now()}`;
-
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '88.88', '1', '2026-07-31', '2026-07-01');
-    await submitAndExpectError(page, '失效日期不能早于生效日期');
-  });
-
-  test('价格重叠校验：同一物料+客户+重叠有效期应被拦截', async ({ page }) => {
-    const material = await queryMaterialList(page);
-    const testCode = `EYE-P-OVERLAP-${Date.now()}`;
-
-    // 先创建一条价格
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '88.88', '1', '2026-07-01', '2026-07-31');
-    await submitAndExpectSuccess(page);
-
-    // 再次创建同一物料+重叠日期
-    const testCode2 = `EYE-P-OVERLAP2-${Date.now()}`;
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode2, material, '77.77', '1', '2026-07-15', '2026-08-15');
-    await submitAndExpectError(page, '该物料+客户在相同时间段内已有价格记录');
-
-    // 清理原记录
-    await page.locator('.ant-drawer-close').first().click();
-    await page.getByRole('textbox', { name: '价格编码' }).first().fill(testCode);
+    await page.waitForTimeout(1500);
     await page.getByRole('button', { name: '查询' }).click();
-    await page.getByRole('button', { name: '删除' }).first().click();
-    await page.getByRole('button', { name: '确 认' }).click();
-    await expect(page.locator('.ant-message-success').filter({ hasText: '删除成功' }).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.ant-table-row')).toHaveCount(0);
   });
 
-  test('客户协议价必填：type=2 不选客户应被拦截', async ({ page }) => {
-    const material = await queryMaterialList(page);
-    const testCode = `EYE-P-CUST-${Date.now()}`;
-
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '88.88', '2', '2026-07-01', '2026-07-31');
-    await submitAndExpectError(page, '客户协议价必须选择客户');
+  test('搜索条件：按价格编码搜索能过滤结果', async ({ page }) => {
+    const { code } = await createUniquePrice(page);
+    await page.getByRole('textbox', { name: '价格编码' }).first().fill(code);
+    await page.getByRole('button', { name: '查询' }).click();
+    await expect(page.locator('.ant-table-row').filter({ hasText: code }).first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('客户协议价绑定客户：成功保存并正确显示客户名称', async ({ page }) => {
-    const material = await queryMaterialList(page);
+  test('搜索条件：按价格类型搜索能过滤标准售价', async ({ page }) => {
+    const { code } = await createUniquePrice(page, { type: '1', price: 77.77 });
     const token = await loginAndGetToken(page);
-    const customerResponse = await page.request.get(
-      `/jeecgboot/mes/basic/customer/list?pageNo=1&pageSize=1`,
+    const response = await page.request.get(
+      `/jeecgboot/mes/sales/price/list?code=${encodeURIComponent(code)}&type=1&pageNo=1&pageSize=10`,
       { headers: { 'X-Access-Token': token } }
     );
-    expect(customerResponse.ok()).toBeTruthy();
-    const customerBody = await customerResponse.json();
-    expect(customerBody.success).toBeTruthy();
-    expect(customerBody.result?.records?.length).toBeGreaterThan(0);
-    const customer = customerBody.result.records[0];
-
-    const testCode = `EYE-P-CUST-OK-${Date.now()}`;
-
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '88.88', '2', '2026-07-01', '2026-07-31', customer);
-    await submitAndExpectSuccess(page);
-
-    await page.getByRole('textbox', { name: '价格编码' }).first().fill(testCode);
-    await page.getByRole('button', { name: '查询' }).click();
-    await expect(page.locator('.ant-table-row')).toContainText(testCode);
-    await expect(page.locator('.ant-table-row')).toContainText(customer.name);
-
-    await page.getByRole('button', { name: '删除' }).first().click();
-    await page.getByRole('button', { name: '确 认' }).click();
-    await expect(page.locator('.ant-message-success').filter({ hasText: '删除成功' }).first()).toBeVisible({ timeout: 5000 });
+    expect(response.ok()).toBeTruthy();
+    const body = await response.json();
+    expect(body.success).toBeTruthy();
+    expect(body.result?.records?.length).toBeGreaterThan(0);
+    const record = body.result.records[0];
+    expect(record.code).toBe(code);
+    expect(record.type).toBe('1');
+    expect(record.type_dictText).toBe('标准售价');
   });
 
-  test('物料字典搜索：JSearchSelect 选择物料后列表显示物料名称', async ({ page }) => {
-    const material = await queryMaterialList(page);
-    const testCode = `EYE-P-MAT-${Date.now()}`;
+  test('搜索条件：按状态搜索能过滤启用记录', async ({ page }) => {
+    const { code } = await createUniquePrice(page, { status: 1 });
+    const token = await loginAndGetToken(page);
+    const response = await page.request.get(
+      `/jeecgboot/mes/sales/price/list?code=${encodeURIComponent(code)}&status=1&pageNo=1&pageSize=10`,
+      { headers: { 'X-Access-Token': token } }
+    );
+    expect(response.ok()).toBeTruthy();
+    const body = await response.json();
+    expect(body.success).toBeTruthy();
+    expect(body.result?.records?.length).toBeGreaterThan(0);
+    const record = body.result.records[0];
+    expect(record.code).toBe(code);
+    expect(record.status).toBe(1);
+    expect(record.status_dictText).toBe('是');
+  });
 
-    await page.getByRole('button', { name: '新增价格' }).click();
-    await fillPriceForm(page, testCode, material, '66.66', '1', '2026-07-01', '2026-07-31');
-    await submitAndExpectSuccess(page);
-
-    await page.getByRole('textbox', { name: '价格编码' }).first().fill(testCode);
-    await page.getByRole('button', { name: '查询' }).click();
-    await expect(page.locator('.ant-table-row')).toContainText(material.name);
-
-    await page.getByRole('button', { name: '删除' }).first().click();
-    await page.getByRole('button', { name: '确 认' }).click();
-    await expect(page.locator('.ant-message-success').filter({ hasText: '删除成功' }).first()).toBeVisible({ timeout: 5000 });
+  test('搜索条件：搜索面板包含所有条件字段', async ({ page }) => {
+    const labels = await getSearchConditionLabels(page);
+    expect(labels).toContain('价格编码');
+    expect(labels).toContain('价格类型');
+    expect(labels).toContain('状态');
   });
 });

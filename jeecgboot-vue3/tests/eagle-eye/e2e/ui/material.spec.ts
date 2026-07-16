@@ -24,9 +24,45 @@ const config: ModuleConfig = {
 
 const drawer = (page: any) => page.locator('.ant-drawer-body, .ant-modal-body').first();
 
+async function loginAndGetToken(page: any) {
+  const response = await page.request.post('/jeecgboot/sys/login', {
+    data: { username: 'admin', password: '123456', captcha: '', checkkey: 'eagle-eye' },
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const body = await response.json();
+  expect(body.success).toBeTruthy();
+  return body.result.token as string;
+}
+
 test.describe(config.name, () => {
   test.beforeEach(async ({ page }) => {
     await navigateToModule(page, config);
+  });
+
+  test('字典检查：物料类型下拉有选项且无重复', async ({ page }) => {
+    const token = await loginAndGetToken(page);
+    const response = await page.request.get('/jeecgboot/sys/api/queryDictItemsByCode?code=mes_material_type', {
+      headers: { 'X-Access-Token': token },
+    });
+    expect(response.ok()).toBeTruthy();
+    const items = await response.json();
+    expect(items.length, 'mes_material_type 字典为空').toBeGreaterThan(0);
+    const values = items.map((i: any) => i.value);
+    const uniqueValues = new Set(values);
+    expect(values.length, `mes_material_type 字典存在重复项：${values}`).toBe(uniqueValues.size);
+  });
+
+  test('字典检查：单位下拉有选项且无重复', async ({ page }) => {
+    const token = await loginAndGetToken(page);
+    const response = await page.request.get('/jeecgboot/sys/api/queryDictItemsByCode?code=mes_material_unit', {
+      headers: { 'X-Access-Token': token },
+    });
+    expect(response.ok()).toBeTruthy();
+    const items = await response.json();
+    expect(items.length, 'mes_material_unit 字典为空').toBeGreaterThan(0);
+    const values = items.map((i: any) => i.value);
+    const uniqueValues = new Set(values);
+    expect(values.length, `mes_material_unit 字典存在重复项：${values}`).toBe(uniqueValues.size);
   });
 
   test('物料完整生命周期：新增、编辑、删除、复活、清理', async ({ page }) => {
