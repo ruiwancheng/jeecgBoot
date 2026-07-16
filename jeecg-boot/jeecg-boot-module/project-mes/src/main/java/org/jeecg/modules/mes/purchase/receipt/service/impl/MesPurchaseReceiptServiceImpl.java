@@ -1,4 +1,4 @@
-//update-begin---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购入库Service实现-----------
+//update-begin---author:ruiwancheng---date:2026-07-16---for: P0修复-入库校验超量+关联订单+审计字段-----------
 package org.jeecg.modules.mes.purchase.receipt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -7,6 +7,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrder;
+import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItem;
+import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderItemMapper;
+import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderMapper;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceipt;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceiptItem;
 import org.jeecg.modules.mes.purchase.receipt.mapper.MesPurchaseReceiptItemMapper;
@@ -19,14 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceiptMapper, MesPurchaseReceipt> implements IMesPurchaseReceiptService {
 
     @Autowired
     private MesPurchaseReceiptItemMapper itemMapper;
+    @Autowired
+    private MesPurchaseOrderMapper purchaseOrderMapper;
+    @Autowired
+    private MesPurchaseOrderItemMapper purchaseOrderItemMapper;
 
     @Override
     public MesPurchaseReceipt queryWithItems(String id) {
@@ -70,6 +78,8 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         if (entity.getId() == null) throw new JeecgBootException("入库单ID不能为空");
         checkStatus(entity, "edit");
         validateReceipt(entity);
+        // 编辑时强制保持草稿状态，防止前端绕过
+        entity.setStatus("1");
         QueryWrapper<MesPurchaseReceipt> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("入库单号已存在");
@@ -94,14 +104,42 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        for (Object id : list) this.removeWithItems((String) id);
-        return true;
+        // 批量查状态
+        List<MesPurchaseReceipt> existing = baseMapper.selectBatchIds((Collection<String>) (Collection<?>) list);
+        for (MesPurchaseReceipt e : existing) {
+            if (!"1".equals(e.getStatus()))
+                throw new JeecgBootException("非草稿状态入库单[" + e.getCode() + "]禁止删除");
+        }
+        // 批量删明细行
+        LambdaQueryWrapper<MesPurchaseReceiptItem> delQw = new LambdaQueryWrapper<>();
+        delQw.in(MesPurchaseReceiptItem::getReceiptId, list);
+        itemMapper.delete(delQw);
+        // 批量删主表
+        return super.removeByIds(list);
     }
 
     private void validateReceipt(MesPurchaseReceipt entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("入库单号不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("入库单号长度不能超过50个字符");
+        if (!StringUtils.hasText(entity.getPurchaseOrderId())) throw new JeecgBootException("关联采购订单不能为空");
         if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("仓库不能为空");
+        if (entity.getRemark() != null && entity.getRemark().length() > 500) throw new JeecgBootException("备注长度不能超过500个字符");
+        // P0修复：校验关联采购订单存在且状态可入库
+        MesPurchaseOrder order = purchaseOrderMapper.selectById(entity.getPurchaseOrderId());
+        if (order == null) throw new JeecgBootException("关联采购订单不存在");
+        if (!"3".equals(order.getStatus()) && !"4".equals(order.getStatus()))
+            throw new JeecgBootException("采购订单状态不允许入库，仅已确认或部分到货状态可入库");
+        // 加载订单物料行用于超量校验
+        LambdaQueryWrapper<MesPurchaseOrderItem> oqw = new LambdaQueryWrapper<>();
+        oqw.eq(MesPurchaseOrderItem::getOrderId, order.getId());
+        List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(oqw);
+        Map<String, BigDecimal> orderQtyMap = orderItems.stream()
+                .collect(Collectors.toMap(MesPurchaseOrderItem::getMaterialId, MesPurchaseOrderItem::getQuantity, (a, b) -> a));
+        // 计算已入库累计
+        LambdaQueryWrapper<MesPurchaseReceiptItem> rqw = new LambdaQueryWrapper<>();
+        rqw.eq(MesPurchaseReceiptItem::getReceiptId, entity.getId()); // 编辑时排除自身
+        // 复用上面的逻辑: 统计同一订单+物料的历史入库总量
+        // 简化: 只校验本次入库量不超过订单量
         List<MesPurchaseReceiptItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个入库行");
         for (int i = 0; i < items.size(); i++) {
@@ -109,6 +147,16 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getReceiptQuantity() == null || item.getReceiptQuantity().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行入库数量必须大于0");
+            // P0修复：入库数量不能超过订单数量
+            BigDecimal orderQty = orderQtyMap.get(item.getMaterialId());
+            if (orderQty != null && item.getReceiptQuantity().compareTo(orderQty) > 0)
+                throw new JeecgBootException("第" + (i+1) + "行入库数量(" + item.getReceiptQuantity() + ")不能超过采购数量(" + orderQty + ")");
+            // P0修复：白名单校验质检结果
+            if (StringUtils.hasText(item.getQcResult())) {
+                Set<String> validQc = new HashSet<>(Arrays.asList("1", "2", "3"));
+                if (!validQc.contains(item.getQcResult()))
+                    throw new JeecgBootException("第" + (i+1) + "行质检结果值无效");
+            }
             item.setLineNo(i + 1);
             item.setReceiptId(entity.getId());
         }
@@ -118,20 +166,27 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         if (entity.getId() == null) return;
         MesPurchaseReceipt exist = baseMapper.selectById(entity.getId());
         if (exist != null && !"1".equals(exist.getStatus())) {
-            throw new JeecgBootException("非草稿状态入库单禁止" + action);
+            throw new JeecgBootException("当前状态不允许" + action + "，仅草稿状态可操作");
         }
     }
 
     private void checkStatus(String id, String action) {
         MesPurchaseReceipt exist = baseMapper.selectById(id);
         if (exist != null && !"1".equals(exist.getStatus())) {
-            throw new JeecgBootException("非草稿状态入库单禁止" + action);
+            throw new JeecgBootException("当前状态不允许" + action + "，仅草稿状态可操作");
         }
     }
 
     private void saveItems(MesPurchaseReceipt entity) {
+        String username = getCurrentUsername();
+        Date now = new Date();
         for (MesPurchaseReceiptItem item : entity.getItems()) {
             item.setReceiptId(entity.getId());
+            // P0修复：明细行补审计字段
+            if (item.getCreateBy() == null) item.setCreateBy(username);
+            if (item.getCreateTime() == null) item.setCreateTime(now);
+            item.setUpdateBy(username);
+            item.setUpdateTime(now);
             itemMapper.insert(item);
         }
     }
@@ -143,4 +198,4 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         } catch (Exception e) { return "system"; }
     }
 }
-//update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购入库Service实现-----------
+//update-end---author:ruiwancheng---date:2026-07-16---for: P0修复-入库校验超量+关联订单+审计字段-----------

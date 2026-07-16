@@ -43,6 +43,16 @@ CREATE TABLE IF NOT EXISTS c_mes_purchase_receipt_item (
 -- ============================================================
 -- 二、字典注册
 -- ============================================================
+-- P0修复：入库状态字典（替换yn）
+INSERT IGNORE INTO sys_dict (id, dict_name, dict_code, description, del_flag, create_by, create_time, update_by, update_time, type)
+VALUES
+(REPLACE(UUID(),'-',''), '入库状态', 'mes_purchase_receipt_status', 'MES采购入库状态字典', 0, 'admin', NOW(), 'admin', NOW(), 0);
+
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'mes_purchase_receipt_status');
+INSERT INTO sys_dict_item (id, dict_id, item_text, item_value, description, sort_order, status, create_by, create_time, update_by, update_time) VALUES
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_purchase_receipt_status'), '草稿',   '1', '新建未入库', 1, 1, 'admin', NOW(), 'admin', NOW()),
+(REPLACE(UUID(),'-',''), (SELECT id FROM sys_dict WHERE dict_code = 'mes_purchase_receipt_status'), '已入库', '2', '已入库完成', 2, 1, 'admin', NOW(), 'admin', NOW());
+
 INSERT IGNORE INTO sys_dict (id, dict_name, dict_code, description, del_flag, create_by, create_time, update_by, update_time, type)
 VALUES
 (REPLACE(UUID(),'-',''), '质检结果', 'mes_qc_result', 'MES质检结果字典', 0, 'admin', NOW(), 'admin', NOW(), 0);

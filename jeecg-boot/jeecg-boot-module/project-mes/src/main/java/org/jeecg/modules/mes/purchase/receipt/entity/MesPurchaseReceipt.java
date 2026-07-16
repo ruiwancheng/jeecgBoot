@@ -47,8 +47,8 @@ public class MesPurchaseReceipt implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Schema(description = "入库日期")
     private Date receiptDate;
-    @Excel(name = "状态", width = 12, dicCode = "yn")
-    @Dict(dicCode = "yn")
+    @Excel(name = "状态", width = 12, dicCode = "mes_purchase_receipt_status")
+    @Dict(dicCode = "mes_purchase_receipt_status")
     @Schema(description = "状态")
     private String status;
     @Excel(name = "备注", width = 30)

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -92,13 +93,25 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         super.removeById(id);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-16---for: P0修复-批量删除改为批量SQL避免自调用-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        for (Object id : list) this.removeWithItems((String) id);
-        return true;
+        // 批量查状态
+        List<MesPurchaseApply> existing = baseMapper.selectBatchIds((Collection<String>) (Collection<?>) list);
+        for (MesPurchaseApply e : existing) {
+            if (!"1".equals(e.getStatus()))
+                throw new JeecgBootException("非草稿状态申请[" + e.getCode() + "]禁止删除");
+        }
+        // 批量删明细行
+        LambdaQueryWrapper<MesPurchaseApplyItem> delQw = new LambdaQueryWrapper<>();
+        delQw.in(MesPurchaseApplyItem::getApplyId, list);
+        itemMapper.delete(delQw);
+        // 批量删主表
+        return super.removeByIds(list);
     }
+    //update-end---author:ruiwancheng---date:2026-07-16---for: P0修复-批量删除改为批量SQL避免自调用-----------
 
     private void validateApply(MesPurchaseApply entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("申请单号不能为空");
