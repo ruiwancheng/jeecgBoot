@@ -45,7 +45,7 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesPurchaseOrder entity) {
         validateOrder(entity);
-        if (entity.getStatus() == null) entity.setStatus("1");
+        entity.setStatus("1"); // 强制草稿状态，防止API绕过状态机
         calcTotal(entity);
         QueryWrapper<MesPurchaseOrder> activeQw = new QueryWrapper<>();
         activeQw.eq("code", entity.getCode());
@@ -73,6 +73,7 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
         if (entity.getId() == null) throw new JeecgBootException("订单ID不能为空");
         checkStatus(entity, "edit");
         validateOrder(entity);
+        entity.setStatus("1"); // 编辑时强制保持草稿状态
         calcTotal(entity);
         QueryWrapper<MesPurchaseOrder> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());

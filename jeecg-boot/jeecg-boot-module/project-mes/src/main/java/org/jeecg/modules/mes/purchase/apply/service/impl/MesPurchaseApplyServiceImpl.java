@@ -44,8 +44,8 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesPurchaseApply entity) {
         validateApply(entity);
-        if (entity.getStatus() == null) entity.setStatus("1");
-        calcTotal(entity);
+        entity.setStatus("1"); // 强制草稿状态，防止API绕过状态机
+        // apply items无定价，totalAmount由用户手动填写，不自动计算
         QueryWrapper<MesPurchaseApply> activeQw = new QueryWrapper<>();
         activeQw.eq("code", entity.getCode());
         if (baseMapper.selectCount(activeQw) > 0) throw new JeecgBootException("申请单号已存在");
@@ -72,7 +72,8 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         if (entity.getId() == null) throw new JeecgBootException("申请ID不能为空");
         checkStatus(entity, "edit");
         validateApply(entity);
-        calcTotal(entity);
+        entity.setStatus("1"); // 编辑时强制保持草稿状态
+        // apply items无定价，totalAmount由用户手动填写，不自动计算
         QueryWrapper<MesPurchaseApply> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("申请单号已存在");
