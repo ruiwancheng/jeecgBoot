@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -93,13 +94,25 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
         super.removeById(id);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-16---for: P0修复-批量删除改为批量SQL避免自调用-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        for (Object id : list) this.removeWithItems((String) id);
-        return true;
+        // 批量查状态
+        List<MesPurchaseOrder> existing = baseMapper.selectBatchIds((Collection<String>) (Collection<?>) list);
+        for (MesPurchaseOrder e : existing) {
+            if (!"1".equals(e.getStatus()))
+                throw new JeecgBootException("非草稿状态订单[" + e.getCode() + "]禁止删除");
+        }
+        // 批量删明细行
+        LambdaQueryWrapper<MesPurchaseOrderItem> delQw = new LambdaQueryWrapper<>();
+        delQw.in(MesPurchaseOrderItem::getOrderId, list);
+        itemMapper.delete(delQw);
+        // 批量删主表
+        return super.removeByIds(list);
     }
+    //update-end---author:ruiwancheng---date:2026-07-16---for: P0修复-批量删除改为批量SQL避免自调用-----------
 
     private void validateOrder(MesPurchaseOrder entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("订单编号不能为空");
@@ -127,14 +140,17 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
 
     private void calcTotal(MesPurchaseOrder entity) {
         BigDecimal total = BigDecimal.ZERO;
+        BigDecimal taxTotal = BigDecimal.ZERO;
         for (MesPurchaseOrderItem item : entity.getItems()) {
             if (item.getAmount() != null) total = total.add(item.getAmount());
+            // P0修复：逐行计算税额 = 行金额 × 行税率，支持多税率混在同一订单
+            BigDecimal rowTaxRate = item.getTaxRate() != null ? item.getTaxRate() : new BigDecimal("0.13");
+            if (item.getAmount() != null) {
+                taxTotal = taxTotal.add(item.getAmount().multiply(rowTaxRate));
+            }
         }
         entity.setTotalAmount(total.setScale(2, RoundingMode.HALF_UP));
-        // 税额 = 不含税金额 × 税率（取第一行税率，简化处理）
-        BigDecimal taxRate = entity.getItems().get(0).getTaxRate() != null
-                ? entity.getItems().get(0).getTaxRate() : new BigDecimal("0.13");
-        entity.setTaxAmount(total.multiply(taxRate).setScale(2, RoundingMode.HALF_UP));
+        entity.setTaxAmount(taxTotal.setScale(2, RoundingMode.HALF_UP));
         entity.setTotalWithTax(total.add(entity.getTaxAmount()).setScale(2, RoundingMode.HALF_UP));
     }
 
