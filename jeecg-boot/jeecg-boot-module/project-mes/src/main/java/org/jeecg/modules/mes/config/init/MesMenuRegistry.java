@@ -65,6 +65,17 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_inventory_ledger", "mes_warehouse", "库存台账", "/project/mes/warehouse/ledger", "project/mes/purchase/ledger/index", "MesInventoryLedger").sortNo(4.0).icon("ant-design:table-outlined"));
         addPerms(list, "mes:inventoryLedger:", "mes_inventory_ledger", new String[]{"list","export"});
 
+        // ==================== 生产制造 ====================
+        list.add(MesMenuDefinition.folder("mes_manufacturing", "mes_menu_001", "生产制造", "/project/mes/manufacturing", "/project/mes/manufacturing/bom").sortNo(60.0).icon("ant-design:tool-outlined"));
+        list.add(MesMenuDefinition.leaf("mes_bom", "mes_manufacturing", "BOM管理", "/project/mes/manufacturing/bom", "project/mes/manufacturing/bom/index", "MesBom").sortNo(1.0).icon("ant-design:cluster-outlined"));
+        addPerms(list, "mes:bom:", "mes_bom", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_production_order", "mes_manufacturing", "生产订单", "/project/mes/manufacturing/order", "project/mes/manufacturing/order/index", "MesProductionOrder").sortNo(2.0).icon("ant-design:file-text-outlined"));
+        addPerms(list, "mes:productionOrder:", "mes_production_order", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_production_picking", "mes_manufacturing", "生产领料", "/project/mes/manufacturing/picking", "project/mes/manufacturing/picking/index", "MesProductionPicking").sortNo(3.0).icon("ant-design:export-outlined"));
+        addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
+        addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
+
         return list;
     }
 

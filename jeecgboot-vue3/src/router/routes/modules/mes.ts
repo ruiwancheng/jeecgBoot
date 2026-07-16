@@ -96,6 +96,20 @@ const mes: AppRouteModule = {
       ],
     },
     {
+    {
+      path: 'manufacturing',
+      name: 'MesManufacturing',
+      component: LAYOUT,
+      redirect: '/project/mes/manufacturing/bom',
+      meta: { title: '生产制造' },
+      children: [
+        { path: 'bom', name: 'MesBom', component: () => import('/@/views/project/mes/manufacturing/bom/index.vue'), meta: { title: 'BOM管理' } },
+        { path: 'order', name: 'MesProductionOrder', component: () => import('/@/views/project/mes/manufacturing/order/index.vue'), meta: { title: '生产订单' } },
+        { path: 'picking', name: 'MesProductionPicking', component: () => import('/@/views/project/mes/manufacturing/picking/index.vue'), meta: { title: '生产领料' } },
+        { path: 'completion', name: 'MesCompletionReceipt', component: () => import('/@/views/project/mes/manufacturing/completion/index.vue'), meta: { title: '完工入库' } },
+      ],
+    },
+    {
       path: 'warehouse',
       name: 'MesWarehouse',
       component: LAYOUT,
