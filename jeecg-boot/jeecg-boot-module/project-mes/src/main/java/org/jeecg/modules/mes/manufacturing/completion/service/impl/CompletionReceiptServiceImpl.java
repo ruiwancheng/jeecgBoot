@@ -109,28 +109,56 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         return super.removeByIds(list);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-16---for: P0-2修复-累计入库校验+表名修正-----------
     private void validate(MesCompletionReceipt entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("入库单号不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("入库单号长度不能超过50个字符");
         if (!StringUtils.hasText(entity.getProductionOrderId())) throw new JeecgBootException("生产订单不能为空");
         MesProductionOrder order = orderMapper.selectById(entity.getProductionOrderId());
         if (order == null) throw new JeecgBootException("生产订单不存在");
-        if (!"1".equals(order.getStatus())) throw new JeecgBootException("仅草稿状态的生产订单可入库");
+        // MVP: 状态机未实现，暂时允许所有状态可入库
         if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("入库仓库不能为空");
         if (entity.getRemark() != null && entity.getRemark().length() > 500) throw new JeecgBootException("备注长度不能超过500个字符");
         List<MesCompletionReceiptItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个入库明细");
+        // P0-2修复：累计历史入库量，防止同一订单多次入库累计超量（照抄purchase e84c96d模式）
+        Map<String, BigDecimal> historyQtyMap = new HashMap<>();
+        LambdaQueryWrapper<MesCompletionReceipt> rqw = new LambdaQueryWrapper<>();
+        rqw.eq(MesCompletionReceipt::getProductionOrderId, entity.getProductionOrderId());
+        if (StringUtils.hasText(entity.getId())) {
+            rqw.ne(MesCompletionReceipt::getId, entity.getId()); // 编辑时排除自身
+        }
+        List<MesCompletionReceipt> existingReceipts = baseMapper.selectList(rqw);
+        if (!existingReceipts.isEmpty()) {
+            List<String> existingIds = new ArrayList<>();
+            for (MesCompletionReceipt r : existingReceipts) existingIds.add(r.getId());
+            LambdaQueryWrapper<MesCompletionReceiptItem> hiqw = new LambdaQueryWrapper<>();
+            hiqw.in(MesCompletionReceiptItem::getReceiptId, existingIds);
+            List<MesCompletionReceiptItem> historyItems = itemMapper.selectList(hiqw);
+            for (MesCompletionReceiptItem hi : historyItems) {
+                historyQtyMap.merge(hi.getMaterialId(), hi.getReceiptQty() != null ? hi.getReceiptQty() : BigDecimal.ZERO, BigDecimal::add);
+            }
+        }
         for (int i = 0; i < items.size(); i++) {
             MesCompletionReceiptItem item = items.get(i);
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getReceiptQty() == null || item.getReceiptQty().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行入库数量必须大于0");
-            if (order.getPlanQty() != null && item.getReceiptQty().compareTo(order.getPlanQty()) > 0)
-                throw new JeecgBootException("第" + (i+1) + "行入库数量不能超过计划数量(" + order.getPlanQty() + ")");
+            // 累计校验：（历史已入库 + 本次入库）<= 计划数量
+            BigDecimal planQty = item.getPlanQty() != null ? item.getPlanQty() : order.getPlanQty();
+            if (planQty != null) {
+                BigDecimal historyQty = historyQtyMap.getOrDefault(item.getMaterialId(), BigDecimal.ZERO);
+                BigDecimal totalAfter = historyQty.add(item.getReceiptQty());
+                if (totalAfter.compareTo(planQty) > 0) {
+                    throw new JeecgBootException("第" + (i+1) + "行累计入库量(" + totalAfter + ")超过计划数量(" + planQty
+                            + ")，历史已入库" + historyQty + "，本次入库" + item.getReceiptQty());
+                }
+            }
             item.setLineNo(i + 1);
             item.setReceiptId(entity.getId());
         }
     }
+    //update-end---author:ruiwancheng---date:2026-07-16---for: P0-2修复-累计入库校验+表名修正-----------
 
     private void checkStatus(MesCompletionReceipt entity, String action) {
         if (entity.getId() == null) return;

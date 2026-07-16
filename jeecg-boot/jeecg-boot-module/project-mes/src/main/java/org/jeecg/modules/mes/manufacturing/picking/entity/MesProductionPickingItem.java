@@ -1,73 +1,32 @@
-//update-begin---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产领料明细实体-----------
+//update-begin---author:ruiwancheng---date:2026-07-16---for: P0修复-字段对齐DDL-----------
 package org.jeecg.modules.mes.manufacturing.picking.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.jeecgframework.poi.excel.annotation.Excel;
+import org.jeecg.common.aspect.annotation.Dict;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@TableName("mes_production_picking_item")
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-@Schema(description = "生产领料明细")
+@Accessors(chain = true)
+@TableName("c_mes_production_picking_item")
+@Schema(description = "MES-生产领料行")
 public class MesProductionPickingItem implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @TableId(type = IdType.ASSIGN_ID)
-    @Schema(description = "主键")
-    private String id;
-
-    @Schema(description = "领料单ID")
+    @TableId(type = IdType.ASSIGN_ID) private String id;
     private String pickingId;
-
-    @Excel(name = "物料ID", width = 20)
-    @Schema(description = "物料ID")
-    private String materialId;
-
-    @Excel(name = "物料编码", width = 20)
-    @Schema(description = "物料编码")
-    private String materialCode;
-
-    @Excel(name = "物料名称", width = 20)
-    @Schema(description = "物料名称")
-    private String materialName;
-
-    @Excel(name = "领料数量", width = 15)
-    @Schema(description = "领料数量")
-    private BigDecimal quantity;
-
-    @Excel(name = "单位", width = 15)
-    @Schema(description = "单位ID")
-    private String unitId;
-
-    @Schema(description = "行号")
     private Integer lineNo;
-
-    @Excel(name = "备注", width = 30)
-    @Schema(description = "备注")
-    private String remark;
-
-    @Schema(description = "创建人")
-    private String createBy;
-
-    @Schema(description = "创建时间")
-    private Date createTime;
-
-    @Schema(description = "更新人")
-    private String updateBy;
-
-    @Schema(description = "更新时间")
-    private Date updateTime;
-
-    @TableLogic
-    @Schema(description = "删除标记")
-    private Integer delFlag;
+    @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id") private String materialId;
+    private BigDecimal quantity;
+    private String createBy; private Date createTime;
+    private String updateBy; private Date updateTime;
 }
-//update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产领料明细实体-----------
+//update-end---author:ruiwancheng---date:2026-07-16---for: P0修复-字段对齐DDL-----------
