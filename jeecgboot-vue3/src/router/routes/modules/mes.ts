@@ -96,7 +96,6 @@ const mes: AppRouteModule = {
       ],
     },
     {
-    {
       path: 'manufacturing',
       name: 'MesManufacturing',
       component: LAYOUT,
