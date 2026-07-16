@@ -135,11 +135,24 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(oqw);
         Map<String, BigDecimal> orderQtyMap = orderItems.stream()
                 .collect(Collectors.toMap(MesPurchaseOrderItem::getMaterialId, MesPurchaseOrderItem::getQuantity, (a, b) -> a));
-        // 计算已入库累计
-        LambdaQueryWrapper<MesPurchaseReceiptItem> rqw = new LambdaQueryWrapper<>();
-        rqw.eq(MesPurchaseReceiptItem::getReceiptId, entity.getId()); // 编辑时排除自身
-        // 复用上面的逻辑: 统计同一订单+物料的历史入库总量
-        // 简化: 只校验本次入库量不超过订单量
+        // P0-004修复：累计历史入库量，防止同一订单多次入库累计超量
+        Map<String, BigDecimal> historyQtyMap = new HashMap<>();
+        LambdaQueryWrapper<MesPurchaseReceipt> rqw = new LambdaQueryWrapper<>();
+        rqw.eq(MesPurchaseReceipt::getPurchaseOrderId, entity.getPurchaseOrderId());
+        if (StringUtils.hasText(entity.getId())) {
+            rqw.ne(MesPurchaseReceipt::getId, entity.getId()); // 编辑时排除自身
+        }
+        List<MesPurchaseReceipt> existingReceipts = baseMapper.selectList(rqw);
+        if (!existingReceipts.isEmpty()) {
+            List<String> existingIds = existingReceipts.stream().map(MesPurchaseReceipt::getId).collect(Collectors.toList());
+            LambdaQueryWrapper<MesPurchaseReceiptItem> hiqw = new LambdaQueryWrapper<>();
+            hiqw.in(MesPurchaseReceiptItem::getReceiptId, existingIds);
+            List<MesPurchaseReceiptItem> historyItems = itemMapper.selectList(hiqw);
+            for (MesPurchaseReceiptItem hi : historyItems) {
+                historyQtyMap.merge(hi.getMaterialId(), hi.getReceiptQuantity() != null ? hi.getReceiptQuantity() : BigDecimal.ZERO, BigDecimal::add);
+            }
+        }
+        // 逐行校验
         List<MesPurchaseReceiptItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个入库行");
         for (int i = 0; i < items.size(); i++) {
@@ -147,10 +160,16 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getReceiptQuantity() == null || item.getReceiptQuantity().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行入库数量必须大于0");
-            // P0修复：入库数量不能超过订单数量
+            // P0-004修复：累计校验（历史已入库 + 本次入库）<= 采购数量
             BigDecimal orderQty = orderQtyMap.get(item.getMaterialId());
-            if (orderQty != null && item.getReceiptQuantity().compareTo(orderQty) > 0)
-                throw new JeecgBootException("第" + (i+1) + "行入库数量(" + item.getReceiptQuantity() + ")不能超过采购数量(" + orderQty + ")");
+            if (orderQty != null) {
+                BigDecimal historyQty = historyQtyMap.getOrDefault(item.getMaterialId(), BigDecimal.ZERO);
+                BigDecimal totalAfter = historyQty.add(item.getReceiptQuantity());
+                if (totalAfter.compareTo(orderQty) > 0) {
+                    throw new JeecgBootException("第" + (i+1) + "行累计入库量(" + totalAfter + ")超过采购数量(" + orderQty
+                            + ")，历史已入库" + historyQty + "，本次入库" + item.getReceiptQuantity());
+                }
+            }
             // P0修复：白名单校验质检结果
             if (StringUtils.hasText(item.getQcResult())) {
                 Set<String> validQc = new HashSet<>(Arrays.asList("1", "2", "3"));
