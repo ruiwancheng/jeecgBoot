@@ -52,6 +52,19 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_sales_delivery", "mes_sales", "发货单", "/project/mes/sales/delivery", "project/mes/sales/delivery/index", "MesSalesDelivery").sortNo(3.0).icon("ant-design:car-outlined"));
         addPerms(list, "mes:delivery:", "mes_sales_delivery", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
+        // ==================== 采购管理 ====================
+        list.add(MesMenuDefinition.folder("mes_purchase", "mes_menu_001", "采购管理", "/project/mes/purchase", "/project/mes/purchase/apply").sortNo(50.0).icon("ant-design:shopping-outlined"));
+        list.add(MesMenuDefinition.leaf("mes_purchase_apply", "mes_purchase", "采购申请", "/project/mes/purchase/apply", "project/mes/purchase/apply/index", "MesPurchaseApply").sortNo(1.0).icon("ant-design:form-outlined"));
+        addPerms(list, "mes:purchaseApply:", "mes_purchase_apply", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_purchase_order", "mes_purchase", "采购订单", "/project/mes/purchase/order", "project/mes/purchase/order/index", "MesPurchaseOrder").sortNo(2.0).icon("ant-design:file-text-outlined"));
+        addPerms(list, "mes:purchaseOrder:", "mes_purchase_order", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_purchase_receipt", "mes_purchase", "采购入库", "/project/mes/purchase/receipt", "project/mes/purchase/receipt/index", "MesPurchaseReceipt").sortNo(3.0).icon("ant-design:import-outlined"));
+        addPerms(list, "mes:purchaseReceipt:", "mes_purchase_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
+
+        // 库存台账(仓储管理下)
+        list.add(MesMenuDefinition.leaf("mes_inventory_ledger", "mes_warehouse", "库存台账", "/project/mes/warehouse/ledger", "project/mes/purchase/ledger/index", "MesInventoryLedger").sortNo(4.0).icon("ant-design:table-outlined"));
+        addPerms(list, "mes:inventoryLedger:", "mes_inventory_ledger", new String[]{"list","export"});
+
         return list;
     }
 
