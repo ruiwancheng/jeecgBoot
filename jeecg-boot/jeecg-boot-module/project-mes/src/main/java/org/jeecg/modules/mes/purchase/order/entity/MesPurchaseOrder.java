@@ -1,0 +1,86 @@
+//update-begin---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单实体-----------
+package org.jeecg.modules.mes.purchase.order.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+@TableName("c_mes_purchase_order")
+@Schema(description = "MES-采购订单")
+public class MesPurchaseOrder implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @TableId(type = IdType.ASSIGN_ID)
+    @Schema(description = "id")
+    private String id;
+    @Excel(name = "订单编号", width = 15)
+    @Schema(description = "订单编号")
+    private String code;
+    @Excel(name = "供应商", width = 20, dictTable = "c_mes_supplier", dicText = "name", dicCode = "id")
+    @Dict(dictTable = "c_mes_supplier", dicText = "name", dicCode = "id")
+    @Schema(description = "供应商ID")
+    private String supplierId;
+    @Excel(name = "采购类型", width = 12, dicCode = "mes_purchase_type")
+    @Dict(dicCode = "mes_purchase_type")
+    @Schema(description = "采购类型")
+    private String purchaseType;
+    @Excel(name = "订单日期", width = 15, format = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "订单日期")
+    private Date orderDate;
+    @Excel(name = "交货日期", width = 15, format = "yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "交货日期")
+    private Date deliveryDate;
+    @Excel(name = "付款条款", width = 15)
+    @Schema(description = "付款条款")
+    private String paymentTerms;
+    @Excel(name = "不含税金额", width = 15)
+    @Schema(description = "不含税金额")
+    private BigDecimal totalAmount;
+    @Excel(name = "税额", width = 15)
+    @Schema(description = "税额")
+    private BigDecimal taxAmount;
+    @Excel(name = "含税总额", width = 15)
+    @Schema(description = "含税总额")
+    private BigDecimal totalWithTax;
+    @Excel(name = "状态", width = 12, dicCode = "mes_purchase_order_status")
+    @Dict(dicCode = "mes_purchase_order_status")
+    @Schema(description = "状态")
+    private String status;
+    @Excel(name = "备注", width = 30)
+    @Schema(description = "备注")
+    private String remark;
+    @Schema(description = "创建人") private String createBy;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "创建时间") private Date createTime;
+    @Schema(description = "更新人") private String updateBy;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "更新时间") private Date updateTime;
+    @TableLogic
+    @Schema(description = "删除状态") private Integer delFlag;
+
+    @Schema(description = "订单行列表")
+    private transient List<MesPurchaseOrderItem> items;
+}
+//update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单实体-----------

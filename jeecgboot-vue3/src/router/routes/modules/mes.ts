@@ -68,6 +68,48 @@ const mes: AppRouteModule = {
         },
       ],
     },
+    {
+      path: 'purchase',
+      name: 'MesPurchase',
+      component: LAYOUT,
+      redirect: '/project/mes/purchase/apply',
+      meta: { title: '采购管理' },
+      children: [
+        {
+          path: 'apply',
+          name: 'MesPurchaseApply',
+          component: () => import('/@/views/project/mes/purchase/apply/index.vue'),
+          meta: { title: '采购申请' },
+        },
+        {
+          path: 'order',
+          name: 'MesPurchaseOrder',
+          component: () => import('/@/views/project/mes/purchase/order/index.vue'),
+          meta: { title: '采购订单' },
+        },
+        {
+          path: 'receipt',
+          name: 'MesPurchaseReceipt',
+          component: () => import('/@/views/project/mes/purchase/receipt/index.vue'),
+          meta: { title: '采购入库' },
+        },
+      ],
+    },
+    {
+      path: 'warehouse',
+      name: 'MesWarehouse',
+      component: LAYOUT,
+      redirect: '/project/mes/warehouse/ledger',
+      meta: { title: '仓储管理' },
+      children: [
+        {
+          path: 'ledger',
+          name: 'MesInventoryLedger',
+          component: () => import('/@/views/project/mes/purchase/ledger/index.vue'),
+          meta: { title: '库存台账' },
+        },
+      ],
+    },
   ],
 };
 export default mes;
