@@ -40,6 +40,10 @@ echo -e "${GREEN}[OK] 工具检查通过${NC}"
 # 拉取最新代码
 echo -e "[2/7] 拉取 GitHub 最新代码..."
 CURRENT_HEAD=$(git rev-parse HEAD)
+
+# 清理 harness 自动生成文件，防止 dirty working tree 阻塞 git pull
+git checkout -- .claude/memory/ 2>/dev/null || true
+
 if ! git fetch origin main 2>/dev/null; then
     echo -e "${RED}[错误] Git 拉取失败（网络波动或 DNS 问题），请稍后重试${NC}"
     exit 1
