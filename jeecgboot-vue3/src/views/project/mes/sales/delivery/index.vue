@@ -42,10 +42,14 @@
   const [registerTable, { reload }] = tableContext;
 
   function getActions(record: Recordable) {
-    return [
-      { label: '编辑', onClick: () => handleEdit(record) },
-      { label: '删除', popConfirm: { title: '确认删除该发货单吗？', confirm: () => handleDelete(record) } },
-    ];
+    const acts: any[] = [];
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P1-03 非草稿状态隐藏编辑/删除按钮-----------
+    if (record.status == '1') {
+      acts.push({ label: '编辑', onClick: () => handleEdit(record) });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除该发货单吗？', confirm: () => handleDelete(record) } });
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P1-03 非草稿状态隐藏编辑/删除按钮-----------
+    return acts;
   }
 
   function handleAdd() { openDrawer(true, { isUpdate: false }); }

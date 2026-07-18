@@ -58,7 +58,7 @@ public class MesPrice implements Serializable {
     @Excel(name = "状态", width = 10, dicCode = "yn")
     @Dict(dicCode = "yn")
     @Schema(description = "状态 1启用 0停用")
-    private Integer status;
+    private String status;
     @Excel(name = "备注", width = 30)
     @Schema(description = "备注")
     private String remark;

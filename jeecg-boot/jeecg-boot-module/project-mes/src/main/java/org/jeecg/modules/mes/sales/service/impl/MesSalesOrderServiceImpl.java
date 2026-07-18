@@ -95,18 +95,28 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
         super.removeById(id);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        for (Object id : list) this.removeWithItems((String) id);
-        return true;
+        for (Object id : list) checkStatus((String) id, "delete");
+        // 批量删除明细行
+        LambdaQueryWrapper<MesSalesOrderItem> itemQw = new LambdaQueryWrapper<>();
+        itemQw.in(MesSalesOrderItem::getOrderId, list);
+        itemMapper.delete(itemQw);
+        return super.removeByIds(list);
     }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
 
     private void validateOrder(MesSalesOrder entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("订单编码不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("订单编码长度不能超过50个字符");
         if (!StringUtils.hasText(entity.getCustomerId())) throw new JeecgBootException("客户不能为空");
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: P1-01 订单日期+交货日期必填校验-----------
+        if (entity.getOrderDate() == null) throw new JeecgBootException("订单日期不能为空");
+        if (entity.getDeliveryDate() == null) throw new JeecgBootException("交货日期不能为空");
+        //update-end---author:ruiwancheng---date:2026-07-18---for: P1-01 订单日期+交货日期必填校验-----------
         List<MesSalesOrderItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个订单行");
         for (int i = 0; i < items.size(); i++) {

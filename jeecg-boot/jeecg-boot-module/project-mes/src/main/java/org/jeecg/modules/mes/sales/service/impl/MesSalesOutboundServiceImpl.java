@@ -62,14 +62,35 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     @Override @Transactional(rollbackFor = Exception.class)
     public void removeWithItems(String id) { checkStatus(id); cleanOldItems(id); super.removeById(id); }
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
     @Override @Transactional(rollbackFor = Exception.class)
-    public boolean removeByIds(java.util.Collection<?> list) { if (list == null || list.isEmpty()) return false; for (Object id : list) this.removeWithItems((String) id); return true; }
+    public boolean removeByIds(java.util.Collection<?> list) {
+        if (list == null || list.isEmpty()) return false;
+        for (Object id : list) checkStatus((String) id);
+        QueryWrapper<MesSalesOutboundItem> itemQw = new QueryWrapper<>();
+        itemQw.in("outbound_id", list);
+        itemMapper.delete(itemQw);
+        return super.removeByIds(list);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE+日期校验+salesOrderId继承-----------
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        String username = getUser();
+        Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：出库单不存在或状态已变更，请刷新后重试");
+    }
 
     @Override @Transactional(rollbackFor = Exception.class)
-    public void audit(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e == null) throw new JeecgBootException("不存在"); if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核"); e.setStatus("3"); e.setUpdateBy(getUser()); e.setUpdateTime(new Date()); baseMapper.updateById(e); }
-
-    @Override @Transactional(rollbackFor = Exception.class)
-    public void cancel(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e == null) throw new JeecgBootException("不存在"); if ("3".equals(e.getStatus())) throw new JeecgBootException("已审核不可取消"); e.setStatus("0"); e.setUpdateBy(getUser()); e.setUpdateTime(new Date()); baseMapper.updateById(e); }
+    public void cancel(String id) {
+        String username = getUser();
+        Date now = new Date();
+        int rows = baseMapper.cancelWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("取消失败：出库单不存在或状态已变更（已审核/已取消），请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE+日期校验+salesOrderId继承-----------
 
     //update-begin---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
     private void validate(MesSalesOutbound e) {
@@ -82,9 +103,16 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         MesDeliveryNote dn = deliveryNoteMapper.selectById(e.getDeliveryNoteId());
         if (dn == null) throw new JeecgBootException("发货单不存在");
 
+        // P1-04: 自动从发货单继承销售订单ID和客户ID
+        e.setSalesOrderId(dn.getSalesOrderId());
+        if (dn.getCustomerId() != null) e.setCustomerId(dn.getCustomerId());
+
         // P0-03: 如果填了销售订单，校验存在性
         if (StringUtils.hasText(e.getSalesOrderId()) && !e.getSalesOrderId().equals(dn.getSalesOrderId()))
             throw new JeecgBootException("销售订单与发货单不匹配");
+
+        // P1-01: 出库日期必填校验
+        if (e.getOutboundDate() == null) throw new JeecgBootException("出库日期不能为空");
 
         List<MesSalesOutboundItem> items = e.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少一个明细");

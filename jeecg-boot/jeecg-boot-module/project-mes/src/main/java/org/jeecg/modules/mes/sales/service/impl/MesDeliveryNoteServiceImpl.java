@@ -49,6 +49,11 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesDeliveryNote entity) {
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-03 并发超量校验——SELECT FOR UPDATE锁订单行-----------
+        if (StringUtils.hasText(entity.getSalesOrderId())) {
+            salesOrderMapper.selectByIdForUpdate(entity.getSalesOrderId());
+        }
+        //update-end---author:ruiwancheng---date:2026-07-18---for: P0-03 并发超量校验——SELECT FOR UPDATE锁订单行-----------
         validate(entity);
         entity.setStatus("1"); // 强制草稿，禁止绕过前端直接设状态
         QueryWrapper<MesDeliveryNote> activeQw = new QueryWrapper<>();
@@ -98,19 +103,28 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         super.removeById(id);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        for (Object id : list) this.removeWithItems((String) id);
-        return true;
+        for (Object id : list) checkStatus((String) id, "删除");
+        // 批量删除明细行
+        QueryWrapper<MesDeliveryNoteItem> itemQw = new QueryWrapper<>();
+        itemQw.in("delivery_id", list);
+        itemMapper.delete(itemQw);
+        return super.removeByIds(list);
     }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
 
     private void validate(MesDeliveryNote entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("发货单编码不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("发货单编码长度不能超过50个字符");
         if (!StringUtils.hasText(entity.getSalesOrderId())) throw new JeecgBootException("销售订单不能为空");
         if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("发货仓库不能为空");
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: P1-01 发货日期必填校验-----------
+        if (entity.getDeliveryDate() == null) throw new JeecgBootException("发货日期不能为空");
+        //update-end---author:ruiwancheng---date:2026-07-18---for: P1-01 发货日期必填校验-----------
         // 校验销售订单存在
         if (salesOrderMapper.selectById(entity.getSalesOrderId()) == null)
             throw new JeecgBootException("销售订单不存在");
@@ -126,7 +140,7 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         }
     }
 
-    //update-begin---author:ruiwancheng---date:2026-07-15---for: P0-01超量发货校验-----------
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-05 N+1查询优化——批量聚合替代嵌套循环-----------
     private void checkDeliveryQty(MesDeliveryNote entity, MesDeliveryNoteItem item, int lineNo) {
         // 查订单行的订单数量
         LambdaQueryWrapper<MesSalesOrderItem> oqw = new LambdaQueryWrapper<>();
@@ -139,28 +153,35 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         }
         if (orderedQty.compareTo(BigDecimal.ZERO) == 0)
             throw new JeecgBootException("第" + lineNo + "行物料在销售订单中未找到或数量为0");
-        // 查已有发货单的累计发货数量（排除当前发货单自身，编辑场景）
+
+        // 一次性查所有已有发货单的明细，内存聚合，避免N+1
+        String selfId = entity.getId();
         QueryWrapper<MesDeliveryNote> dnQw = new QueryWrapper<>();
         dnQw.eq("sales_order_id", entity.getSalesOrderId());
-        String selfId = entity.getId();
-        BigDecimal shippedQty = BigDecimal.ZERO;
         List<MesDeliveryNote> existingNotes = baseMapper.selectList(dnQw);
-        for (MesDeliveryNote dn : existingNotes) {
-            if (dn.getId().equals(selfId)) continue;
-            QueryWrapper<MesDeliveryNoteItem> iqw = new QueryWrapper<>();
-            iqw.eq("delivery_id", dn.getId())
-               .eq("material_id", item.getMaterialId());
-            List<MesDeliveryNoteItem> shipped = itemMapper.selectList(iqw);
-            for (MesDeliveryNoteItem si : shipped) {
-                if (si.getDeliveryQty() != null) shippedQty = shippedQty.add(si.getDeliveryQty());
+
+        BigDecimal shippedQty = BigDecimal.ZERO;
+        if (!existingNotes.isEmpty()) {
+            List<String> dnIds = new java.util.ArrayList<>();
+            for (MesDeliveryNote dn : existingNotes) {
+                if (!dn.getId().equals(selfId)) dnIds.add(dn.getId());
+            }
+            if (!dnIds.isEmpty()) {
+                QueryWrapper<MesDeliveryNoteItem> iqw = new QueryWrapper<>();
+                iqw.in("delivery_id", dnIds).eq("material_id", item.getMaterialId());
+                List<MesDeliveryNoteItem> shipped = itemMapper.selectList(iqw);
+                for (MesDeliveryNoteItem si : shipped) {
+                    if (si.getDeliveryQty() != null) shippedQty = shippedQty.add(si.getDeliveryQty());
+                }
             }
         }
+
         BigDecimal remaining = orderedQty.subtract(shippedQty);
         if (item.getDeliveryQty().compareTo(remaining) > 0)
             throw new JeecgBootException("第" + lineNo + "行发货数量(" + item.getDeliveryQty()
                 + ")超过未发货数量(" + remaining + ")，已订" + orderedQty + "，已发" + shippedQty);
     }
-    //update-end---author:ruiwancheng---date:2026-07-15---for: P0-01超量发货校验-----------
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-05 N+1查询优化——批量聚合替代嵌套循环-----------
 
     private void checkStatus(MesDeliveryNote entity, String action) {
         if (entity.getId() == null) return;

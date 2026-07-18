@@ -16,8 +16,8 @@ export const getExportUrl = Api.exportXls;
 export const getImportUrl = Api.importExcel;
 
 export const queryPriceList = (params: Recordable) => defHttp.get({ url: Api.list, params });
-export const addPrice = (params: Recordable) => defHttp.post({ url: Api.add, params });
-export const editPrice = (params: Recordable) => defHttp.put({ url: Api.edit, params });
+export const addPrice = (data: Recordable) => defHttp.post({ url: Api.add, data });
+export const editPrice = (data: Recordable) => defHttp.put({ url: Api.edit, data });
 export const deletePrice = (params: Recordable) => defHttp.delete({ url: Api.delete, params }, { joinParamsToUrl: true });
 export const deleteBatchPrice = (params: Recordable) => defHttp.delete({ url: Api.deleteBatch, params }, { joinParamsToUrl: true });
 export const queryPriceById = (params: Recordable) => defHttp.get({ url: Api.queryById, params });

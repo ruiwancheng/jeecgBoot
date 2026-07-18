@@ -29,13 +29,18 @@
   });
   const [registerTable, { reload }] = tableContext;
 
+  //update-begin---author:ruiwancheng---date:2026-07-18---for: P1-03 按状态条件显示操作按钮-----------
   function getActions(r: Recordable) {
-    const acts: any[] = [{ label: '编辑', onClick: () => openDrawer(true, { record: r, isUpdate: true }) }];
-    if (r.status == '1') { acts.push({ label: '审核', popConfirm: { title: '确认审核？', confirm: () => handleAudit(r) } }); }
-    if (r.status != '3') { acts.push({ label: '取消', popConfirm: { title: '确认取消？', confirm: () => handleCancel(r) } }); }
-    acts.push({ label: '删除', popConfirm: { title: '确认删除？', confirm: () => handleDelete(r) } });
+    const acts: any[] = [];
+    if (r.status == '1') {
+      acts.push({ label: '编辑', onClick: () => openDrawer(true, { record: r, isUpdate: true }) });
+      acts.push({ label: '审核', popConfirm: { title: '确认审核？', confirm: () => handleAudit(r) } });
+      acts.push({ label: '取消', popConfirm: { title: '确认取消？', confirm: () => handleCancel(r) } });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除？', confirm: () => handleDelete(r) } });
+    }
     return acts;
   }
+  //update-end---author:ruiwancheng---date:2026-07-18---for: P1-03 按状态条件显示操作按钮-----------
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   async function handleAudit(r: Recordable) { await auditOutbound({ id: r.id }); message.success('审核成功'); reload(); }
   async function handleCancel(r: Recordable) { await cancelOutbound({ id: r.id }); message.success('已取消'); reload(); }

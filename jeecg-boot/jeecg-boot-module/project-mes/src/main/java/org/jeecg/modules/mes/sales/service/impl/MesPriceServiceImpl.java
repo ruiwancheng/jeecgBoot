@@ -24,7 +24,7 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
     private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("1", "2"));
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(MesPrice entity) {
         validateEntity(entity);
         QueryWrapper<MesPrice> activeQw = new QueryWrapper<>();
@@ -50,7 +50,7 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateById(MesPrice entity) {
         validateEntity(entity);
         QueryWrapper<MesPrice> qw = new QueryWrapper<>();
@@ -66,13 +66,13 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Serializable id) {
         return super.removeById(id);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
         return super.removeByIds(list);

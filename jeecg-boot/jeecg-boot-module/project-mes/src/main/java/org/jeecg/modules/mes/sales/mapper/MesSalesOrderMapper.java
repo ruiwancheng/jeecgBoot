@@ -2,11 +2,17 @@
 package org.jeecg.modules.mes.sales.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrder;
 
 public interface MesSalesOrderMapper extends BaseMapper<MesSalesOrder> {
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-03 发货单并发超量校验——SELECT FOR UPDATE锁订单行-----------
+    @Select("SELECT * FROM c_mes_sales_order WHERE id = #{id} FOR UPDATE")
+    MesSalesOrder selectByIdForUpdate(@Param("id") String id);
+    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-03 发货单并发超量校验——SELECT FOR UPDATE锁订单行-----------
     @Select("SELECT * FROM c_mes_sales_order WHERE code = #{code} AND del_flag = 1 LIMIT 1")
     MesSalesOrder selectDeletedByCode(String code);
 
