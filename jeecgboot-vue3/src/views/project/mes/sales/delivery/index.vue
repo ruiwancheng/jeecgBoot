@@ -1,17 +1,16 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" :rowSelection="rowSelection">
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增发货单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
-        <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
-        <template v-if="selectedRowKeys.length > 0">
+        <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
+        <span v-if="selectedRowKeys.length > 0">
           <a-divider type="vertical" />
-          <span style="color:#999;margin-right:8px">已选{{ selectedRowKeys.length }}项</span>
           <a-button v-if="allStatus == '1'" type="primary" @click="batchSubmit">提交</a-button>
           <a-button v-if="allStatus == '1'" danger @click="batchCancel">取消</a-button>
           <a-button v-if="allStatus == '3'" type="primary" @click="batchSign">签收</a-button>
-        </template>
+        </span>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
       <template #action="{ record }">
@@ -23,9 +22,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed } from 'vue';
-  import { BasicTable, useTable } from '/@/components/Table';
-  import { TableAction } from '/@/components/Table';
+  import { computed, reactive } from 'vue';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './delivery.data';
@@ -37,6 +35,29 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
+  //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
+  const selectedRowKeys = reactive<string[]>([]);
+  const selectedRows = reactive<Recordable[]>([]);
+
+  const rowSelection = {
+    type: 'checkbox' as const,
+    columnWidth: 50,
+    selectedRowKeys,
+    onChange(keys: string[], rows: Recordable[]) {
+      selectedRowKeys.length = 0;
+      selectedRowKeys.push(...keys);
+      selectedRows.length = 0;
+      selectedRows.push(...rows);
+    },
+  };
+
+  const allStatus = computed(() => {
+    if (!selectedRows.length) return '';
+    const s = selectedRows[0].status;
+    return selectedRows.every(r => r.status === s) ? s : '';
+  });
+  //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
+
   const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'mes-delivery',
     tableProps: {
@@ -44,21 +65,12 @@
       api: queryDeliveryList,
       columns: columns,
       rowKey: 'id',
-      rowSelection: null,
       formConfig: { labelWidth: 120, schemas: searchFormSchema },
     },
     exportConfig: { name: '发货单', url: getExportUrl },
   });
 
-  //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
-  const [registerTable, { reload }, { selectedRowKeys, selectedRows }] = tableContext;
-
-  const allStatus = computed(() => {
-    const rows = selectedRows.value as Recordable[];
-    if (!rows || !rows.length) return '';
-    const s = rows[0].status;
-    return rows.every((r: Recordable) => r.status === s) ? s : '';
-  });
+  const [registerTable, { reload }] = tableContext;
 
   function getActions(record: Recordable) {
     const acts: any[] = [];
@@ -72,8 +84,7 @@
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   function handleEdit(record: Recordable) { openDrawer(true, { record, isUpdate: true }); }
   async function handleDelete(record: Recordable) { await deleteDelivery({ id: record.id }); message.success('删除成功'); reload(); }
-  async function batchSubmit() { for (const r of selectedRows.value as Recordable[]) { await submitDelivery({ id: r.id }); } message.success(`已提交${selectedRowKeys.value.length}条`); selectedRowKeys.value = []; reload(); }
-  async function batchSign() { for (const r of selectedRows.value as Recordable[]) { await signDelivery({ id: r.id }); } message.success(`已签收${selectedRowKeys.value.length}条`); selectedRowKeys.value = []; reload(); }
-  async function batchCancel() { for (const r of selectedRows.value as Recordable[]) { await cancelDelivery({ id: r.id }); } message.success(`已取消${selectedRowKeys.value.length}条`); selectedRowKeys.value = []; reload(); }
-  //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
+  async function batchSubmit() { for (const r of selectedRows) { await submitDelivery({ id: r.id }); } message.success(`已提交${selectedRowKeys.length}条`); selectedRowKeys.length = 0; selectedRows.length = 0; reload(); }
+  async function batchSign() { for (const r of selectedRows) { await signDelivery({ id: r.id }); } message.success(`已签收${selectedRowKeys.length}条`); selectedRowKeys.length = 0; selectedRows.length = 0; reload(); }
+  async function batchCancel() { for (const r of selectedRows) { await cancelDelivery({ id: r.id }); } message.success(`已取消${selectedRowKeys.length}条`); selectedRowKeys.length = 0; selectedRows.length = 0; reload(); }
 </script>
