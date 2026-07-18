@@ -27,3 +27,15 @@ export function deleteBatchDelivery(params: any) {
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }
+
+//update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-----------
+export function submitDelivery(params: any) {
+  return defHttp.put({ url: `${BASE}/submit`, params }, { joinParamsToUrl: true });
+}
+export function signDelivery(params: any) {
+  return defHttp.put({ url: `${BASE}/sign`, params }, { joinParamsToUrl: true });
+}
+export function cancelDelivery(params: any) {
+  return defHttp.put({ url: `${BASE}/cancel`, params }, { joinParamsToUrl: true });
+}
+//update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-----------

@@ -19,7 +19,7 @@
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './order.data';
-  import { queryOrderList, deleteOrder, getExportUrl } from './order.api';
+  import { queryOrderList, deleteOrder, auditOrder, releaseOrder, closeOrder, cancelOrder, getExportUrl } from './order.api';
   import OrderDrawer from './OrderDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -41,18 +41,28 @@
 
   const [registerTable, { reload }] = tableContext;
 
+  //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转按钮-----------
   function getActions(record: Recordable) {
     const acts: any[] = [];
-    //update-begin---author:ruiwancheng---date:2026-07-18---for: P1-03 非草稿状态隐藏编辑/删除按钮-----------
     if (record.status == '1') {
       acts.push({ label: '编辑', onClick: () => handleEdit(record) });
-      acts.push({ label: '删除', popConfirm: { title: '确认删除该订单吗？', confirm: () => handleDelete(record) } });
+      acts.push({ label: '审核', popConfirm: { title: '确认审核？', confirm: () => handleAudit(record) } });
+      acts.push({ label: '关闭', popConfirm: { title: '确认关闭？', confirm: () => handleClose(record) } });
+      acts.push({ label: '取消', popConfirm: { title: '确认取消？', confirm: () => handleCancel(record) } });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除？', confirm: () => handleDelete(record) } });
     }
-    //update-end---author:ruiwancheng---date:2026-07-18---for: P1-03 非草稿状态隐藏编辑/删除按钮-----------
+    if (record.status == '2') {
+      acts.push({ label: '下达', popConfirm: { title: '确认下达？', confirm: () => handleRelease(record) } });
+    }
     return acts;
   }
 
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   function handleEdit(record: Recordable) { openDrawer(true, { record, isUpdate: true }); }
   async function handleDelete(record: Recordable) { await deleteOrder({ id: record.id }); message.success('删除成功'); reload(); }
+  async function handleAudit(record: Recordable) { await auditOrder({ id: record.id }); message.success('审核成功'); reload(); }
+  async function handleRelease(record: Recordable) { await releaseOrder({ id: record.id }); message.success('下达成功'); reload(); }
+  async function handleClose(record: Recordable) { await closeOrder({ id: record.id }); message.success('已关闭'); reload(); }
+  async function handleCancel(record: Recordable) { await cancelOrder({ id: record.id }); message.success('已取消'); reload(); }
+  //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转按钮-----------
 </script>

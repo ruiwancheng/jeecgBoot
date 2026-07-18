@@ -27,3 +27,18 @@ export function deleteBatchOrder(params: any) {
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }
+
+//update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-----------
+export function auditOrder(params: any) {
+  return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
+}
+export function releaseOrder(params: any) {
+  return defHttp.put({ url: `${BASE}/release`, params }, { joinParamsToUrl: true });
+}
+export function closeOrder(params: any) {
+  return defHttp.put({ url: `${BASE}/close`, params }, { joinParamsToUrl: true });
+}
+export function cancelOrder(params: any) {
+  return defHttp.put({ url: `${BASE}/cancel`, params }, { joinParamsToUrl: true });
+}
+//update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-----------
