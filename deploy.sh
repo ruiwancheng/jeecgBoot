@@ -51,25 +51,31 @@ if [ -n "$GITHUB_TOKEN" ]; then
     git config --local http.https://github.com/.extraheader "Authorization: Bearer $GITHUB_TOKEN" 2>/dev/null || true
 fi
 
-# 预检连通性（curl 5s 超时，不可达直接退出，不等 git fetch 白等 5 分钟）
-echo -n "  检测 GitHub 连通性..."
-NET_OK=0
-if curl -s --connect-timeout 5 --max-time 10 https://github.com > /dev/null 2>&1; then
-    echo -e " ${GREEN}OK${NC}"
-    NET_OK=1
-else
-    echo -e " ${RED}不可达${NC}"
-fi
+	# 预检连通性：直连 GitHub 不通则走国内代理 ghproxy.net
+	echo -n "  检测 GitHub 连通性..."
+	NET_OK=0
+	USE_PROXY=0
+	if curl -s --connect-timeout 5 --max-time 10 https://github.com > /dev/null 2>&1; then
+	    echo -e " ${GREEN}直连 OK${NC}"
+	    NET_OK=1
+	elif curl -s --connect-timeout 5 --max-time 10 https://ghproxy.net > /dev/null 2>&1; then
+	    echo -e " ${YELLOW}走代理 ghproxy.net${NC}"
+	    NET_OK=1
+	    USE_PROXY=1
+	    git config --local url."https://ghproxy.net/https://github.com/".insteadOf "https://github.com/" 2>/dev/null || true
+	else
+	    echo -e " ${RED}直连和代理均不可达${NC}"
+	fi
 
-# Git 网络超时：30s 无数据即断开
-git config --local http.lowSpeedLimit 1000 2>/dev/null || true
-git config --local http.lowSpeedTime 30 2>/dev/null || true
+	# Git 网络超时：30s 无数据即断开
+	git config --local http.lowSpeedLimit 1000 2>/dev/null || true
+	git config --local http.lowSpeedTime 30 2>/dev/null || true
 
-FETCH_OK=0
-if [ $NET_OK -eq 0 ]; then
-    echo -e "  ${YELLOW}GitHub 不可达，跳过 git fetch 重试${NC}"
-    FETCH_ERR="curl 预检失败：无法连接 github.com:443"
-else
+	FETCH_OK=0
+	if [ $NET_OK -eq 0 ]; then
+	    echo -e "  ${YELLOW}直连和代理均不可达，跳过 git fetch${NC}"
+	    FETCH_ERR="curl 预检失败：github.com 和 ghproxy.net 均无法连接"
+	else
     for i in 1 2 3; do
         FETCH_ERR=$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git fetch origin main 2>&1)
         FETCH_EXIT=$?
