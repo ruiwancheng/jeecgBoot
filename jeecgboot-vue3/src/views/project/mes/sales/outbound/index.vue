@@ -4,13 +4,12 @@
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增出库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
-        <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
-        <template v-if="selectedRowKeys.length > 0">
+        <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
+        <span v-if="selectedRowKeys.length > 0">
           <a-divider type="vertical" />
-          <span style="color:#999;margin-right:8px">已选{{ selectedRowKeys.length }}项</span>
           <a-button v-if="allStatus == '1'" type="primary" @click="batchAudit">审核</a-button>
           <a-button v-if="allStatus == '1'" danger @click="batchCancel">取消</a-button>
-        </template>
+        </span>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
       <template #action="{ record }">
