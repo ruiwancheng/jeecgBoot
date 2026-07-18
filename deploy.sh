@@ -46,8 +46,25 @@ git reset --hard HEAD 2>/dev/null || true
 # 清理未跟踪文件，但保留部署追踪文件（记录上次部署的提交和 SQL 校验码）
 git clean -fd -e .deploy-last-commit -e .deploy-sql-checksums 2>/dev/null || true
 
-if ! git fetch origin main 2>/dev/null; then
-    echo -e "${RED}[错误] Git 拉取失败（网络波动或 DNS 问题），请稍后重试${NC}"
+# Git 网络容错：30s 低速超时 + 3 次重试
+GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git config --local http.lowSpeedLimit 1000 2>/dev/null || true
+GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git config --local http.lowSpeedTime 30 2>/dev/null || true
+
+FETCH_OK=0
+for i in 1 2 3; do
+    FETCH_ERR=$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git fetch origin main 2>&1)
+    FETCH_EXIT=$?
+    if [ $FETCH_EXIT -eq 0 ]; then
+        FETCH_OK=1
+        break
+    fi
+    echo -e "  ${YELLOW}第 ${i} 次拉取失败: $(echo "$FETCH_ERR" | tail -1)${NC}"
+    [ $i -lt 3 ] && sleep 5
+done
+
+if [ $FETCH_OK -eq 0 ]; then
+    echo -e "${RED}[错误] Git 拉取失败（网络波动或 DNS 问题），已重试 3 次${NC}"
+    echo -e "${RED}最后一次错误: $(echo "$FETCH_ERR" | tail -3)${NC}"
     exit 1
 fi
 REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null)
