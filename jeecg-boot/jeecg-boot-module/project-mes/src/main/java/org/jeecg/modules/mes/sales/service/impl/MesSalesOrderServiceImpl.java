@@ -157,8 +157,6 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getQuantity() == null || item.getQuantity().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行数量必须大于0");
-            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0)
-                throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
             //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-从价格表查价-----------
             if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
                 if (StringUtils.hasText(entity.getCustomerId()) && entity.getOrderDate() != null) {
@@ -169,6 +167,8 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
                 }
             }
             //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-从价格表查价-----------
+            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0)
+                throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
             item.setLineNo(i + 1);
             item.setOrderId(entity.getId());
             // 后端强制重算金额，忽略前端传入的 amount
