@@ -53,12 +53,12 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         validate(entity); entity.setStatus("1");
         QueryWrapper<MesSalesOutbound> aqw = new QueryWrapper<>(); aqw.eq("code", entity.getCode());
         if (baseMapper.selectCount(aqw) > 0) throw new JeecgBootException("出库单编码已存在");
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到save之前-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到save之前-----------
         MesSalesOutbound old = baseMapper.selectDeletedByCode(entity.getCode());
         if (old != null) { cleanOldItems(old.getId()); entity.setId(old.getId()); entity.setCreateBy(old.getCreateBy()); entity.setCreateTime(old.getCreateTime()); entity.setUpdateBy(getUser()); entity.setUpdateTime(new Date()); baseMapper.resurrect(entity); }
         else { try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("出库单编码已存在"); } }
-        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
-        calcTotal(entity);
-        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
@@ -68,10 +68,10 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         checkStatus(entity.getId()); validate(entity); entity.setStatus("1");
         QueryWrapper<MesSalesOutbound> qw = new QueryWrapper<>(); qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("出库单编码已存在");
-        super.updateById(entity); cleanOldItems(entity.getId());
-        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到updateById之前-----------
         calcTotal(entity);
-        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        //update-end---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到updateById之前-----------
+        super.updateById(entity); cleanOldItems(entity.getId());
         saveItems(entity);
     }
 
@@ -90,23 +90,25 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     }
     //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
 
-    //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE+日期校验+salesOrderId继承-----------
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-02/P1-01 先改状态再扣库存+联动发货单-----------
     @Override @Transactional(rollbackFor = Exception.class)
     public void audit(String id) {
-        // 加载出库单及明细
         MesSalesOutbound e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("出库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
-        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
-        // 逐行扣库存
-        for (MesSalesOutboundItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库", e.getCode());
-        }
-        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
+        // 1. 先原子改状态（如果失败，后续都不执行）
         String username = getUser();
         Date now = new Date();
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：出库单不存在或状态已变更，请刷新后重试");
+        // 2. 扣库存（状态已确认，事务内回滚安全）
+        for (MesSalesOutboundItem item : e.getItems()) {
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库", e.getCode());
+        }
+        // 3. 联动更新发货单状态 待出库(2)→已出库(3)
+        if (e.getDeliveryNoteId() != null) {
+            deliveryNoteMapper.updateStatus(e.getDeliveryNoteId(), "3", "2", username, now);
+        }
     }
 
     @Override @Transactional(rollbackFor = Exception.class)
@@ -160,8 +162,32 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
             if (src == null) throw new JeecgBootException("第"+(i+1)+"行物料不在发货单明细中");
             item.setDeliveryQty(src.getDeliveryQty() != null ? src.getDeliveryQty() : BigDecimal.ZERO);
 
-            // P0-02: 实出数量 ≤ 发货数量
+            // P0-03: 累计出库量校验——同一发货单+物料不能超过发货数量
             BigDecimal maxQty = item.getDeliveryQty();
+            //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-03 累计出库量校验-----------
+            LambdaQueryWrapper<MesSalesOutboundItem> cumQw = new LambdaQueryWrapper<>();
+            cumQw.eq(MesSalesOutboundItem::getMaterialId, item.getMaterialId());
+            if (StringUtils.hasText(e.getDeliveryNoteId())) {
+                // 查同一发货单下其他出库单的明细
+                QueryWrapper<MesSalesOutbound> obQw = new QueryWrapper<>();
+                obQw.eq("delivery_note_id", e.getDeliveryNoteId());
+                if (StringUtils.hasText(e.getId())) obQw.ne("id", e.getId());
+                java.util.List<MesSalesOutbound> otherObs = baseMapper.selectList(obQw);
+                if (!otherObs.isEmpty()) {
+                    java.util.List<String> obIds = new java.util.ArrayList<>();
+                    for (MesSalesOutbound ob : otherObs) obIds.add(ob.getId());
+                    cumQw.in(MesSalesOutboundItem::getOutboundId, obIds);
+                    java.util.List<MesSalesOutboundItem> cumItems = itemMapper.selectList(cumQw);
+                    BigDecimal cumQty = BigDecimal.ZERO;
+                    for (MesSalesOutboundItem ci : cumItems) {
+                        if (ci.getActualQty() != null) cumQty = cumQty.add(ci.getActualQty());
+                    }
+                    BigDecimal totalAfter = cumQty.add(item.getActualQty() != null ? item.getActualQty() : BigDecimal.ZERO);
+                    if (totalAfter.compareTo(maxQty) > 0)
+                        throw new JeecgBootException("第"+(i+1)+"行累计出库量("+totalAfter+")超过发货数量("+maxQty+")，已有出库"+cumQty);
+                }
+            }
+            //update-end---author:ruiwancheng---date:2026-07-19---for: P0-03 累计出库量校验-----------
             if (item.getActualQty() == null || item.getActualQty().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第"+(i+1)+"行数量必须大于0");
             if (item.getActualQty().compareTo(maxQty) > 0)

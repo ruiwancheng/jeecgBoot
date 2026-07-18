@@ -59,6 +59,9 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         QueryWrapper<MesDeliveryNote> activeQw = new QueryWrapper<>();
         activeQw.eq("code", entity.getCode());
         if (baseMapper.selectCount(activeQw) > 0) throw new JeecgBootException("发货单编码已存在");
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到save之前-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到save之前-----------
         MesDeliveryNote old = baseMapper.selectDeletedByCode(entity.getCode());
         if (old != null) {
             LambdaQueryWrapper<MesDeliveryNoteItem> delQw = new LambdaQueryWrapper<>();
@@ -73,9 +76,6 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         } else {
             try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("发货单编码已存在"); }
         }
-        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
-        calcTotal(entity);
-        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
@@ -89,13 +89,13 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         QueryWrapper<MesDeliveryNote> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("发货单编码已存在");
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到updateById之前-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-19---for: P0-01 calcTotal移到updateById之前-----------
         super.updateById(entity);
         LambdaQueryWrapper<MesDeliveryNoteItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesDeliveryNoteItem::getDeliveryId, entity.getId());
         itemMapper.delete(delQw);
-        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
-        calcTotal(entity);
-        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
