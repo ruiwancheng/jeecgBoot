@@ -51,29 +51,36 @@ if [ -n "$GITHUB_TOKEN" ]; then
     git config --local http.https://github.com/.extraheader "Authorization: Bearer $GITHUB_TOKEN" 2>/dev/null || true
 fi
 
-# Git 网络超时：30s 无数据即断开
-git config --local http.lowSpeedLimit 1000 2>/dev/null || true
-git config --local http.lowSpeedTime 30 2>/dev/null || true
-
-# 预检连通性（curl 5s 超时，比 git 默认 160s 快得多）
+# 预检连通性（curl 5s 超时，不可达直接退出，不等 git fetch 白等 5 分钟）
 echo -n "  检测 GitHub 连通性..."
+NET_OK=0
 if curl -s --connect-timeout 5 --max-time 10 https://github.com > /dev/null 2>&1; then
     echo -e " ${GREEN}OK${NC}"
+    NET_OK=1
 else
     echo -e " ${RED}不可达${NC}"
 fi
 
+# Git 网络超时：30s 无数据即断开
+git config --local http.lowSpeedLimit 1000 2>/dev/null || true
+git config --local http.lowSpeedTime 30 2>/dev/null || true
+
 FETCH_OK=0
-for i in 1 2 3; do
-    FETCH_ERR=$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git fetch origin main 2>&1)
-    FETCH_EXIT=$?
-    if [ $FETCH_EXIT -eq 0 ]; then
-        FETCH_OK=1
-        break
-    fi
-    echo -e "  ${YELLOW}第 ${i} 次拉取失败: $(echo "$FETCH_ERR" | tail -1)${NC}"
-    [ $i -lt 3 ] && sleep 10
-done
+if [ $NET_OK -eq 0 ]; then
+    echo -e "  ${YELLOW}GitHub 不可达，跳过 git fetch 重试${NC}"
+    FETCH_ERR="curl 预检失败：无法连接 github.com:443"
+else
+    for i in 1 2 3; do
+        FETCH_ERR=$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git fetch origin main 2>&1)
+        FETCH_EXIT=$?
+        if [ $FETCH_EXIT -eq 0 ]; then
+            FETCH_OK=1
+            break
+        fi
+        echo -e "  ${YELLOW}第 ${i} 次拉取失败: $(echo "$FETCH_ERR" | tail -1)${NC}"
+        [ $i -lt 3 ] && sleep 10
+    done
+fi
 
 if [ $FETCH_OK -eq 0 ]; then
     echo -e "${RED}[错误] Git 拉取失败（已重试 3 次）${NC}"
