@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+    <BasicTable @register="registerTable">
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增出库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -33,18 +33,18 @@
   const [registerDrawer, { openDrawer }] = useDrawer();
   const { tableContext, onExportXls } = useListPage({
     designScope: 'mes-outbound',
-    tableProps: { title: '销售出库', api: queryOutboundList, columns, rowKey: 'id', rowSelection: { type: 'checkbox' }, formConfig: { labelWidth: 120, schemas: searchFormSchema } },
+    tableProps: { title: '销售出库', api: queryOutboundList, columns, rowKey: 'id', rowSelection: null, formConfig: { labelWidth: 120, schemas: searchFormSchema } },
     exportConfig: { name: '销售出库', url: getExportUrl },
   });
 
   //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys, selectedRows }] = tableContext;
+  const [registerTable, { reload }, { selectedRowKeys, selectedRows }] = tableContext;
 
   const allStatus = computed(() => {
     const rows = selectedRows.value as Recordable[];
     if (!rows || !rows.length) return '';
     const s = rows[0].status;
-    return rows.every(r => r.status === s) ? s : '';
+    return rows.every((r: Recordable) => r.status === s) ? s : '';
   });
 
   function getActions(r: Recordable) {
