@@ -6,8 +6,8 @@
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
         <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
         <a-divider type="vertical" />
-        <a-button v-if="allStatus == '1' || !selectedRowKeys.length" type="primary" :disabled="!selectedRowKeys.length" @click="batchAudit">审核</a-button>
-        <a-button v-if="allStatus == '1' || !selectedRowKeys.length" danger :disabled="!selectedRowKeys.length" @click="batchCancel">取消</a-button>
+        <a-button type="primary" :disabled="allStatus != '1'" @click="batchAudit">审核</a-button>
+        <a-button danger :disabled="allStatus != '1'" @click="batchCancel">取消</a-button>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
       <template #action="{ record }">
