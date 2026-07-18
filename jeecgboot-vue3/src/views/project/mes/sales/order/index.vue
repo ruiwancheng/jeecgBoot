@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+    <BasicTable @register="registerTable">
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增订单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -45,20 +45,20 @@
       api: queryOrderList,
       columns: columns,
       rowKey: 'id',
-      rowSelection: { type: 'checkbox' },
+      rowSelection: null,
       formConfig: { labelWidth: 120, schemas: searchFormSchema },
     },
     exportConfig: { name: '销售订单', url: getExportUrl },
   });
 
   //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys, selectedRows }] = tableContext;
+  const [registerTable, { reload }, { selectedRowKeys, selectedRows }] = tableContext;
 
   const allStatus = computed(() => {
     const rows = selectedRows.value as Recordable[];
     if (!rows || !rows.length) return '';
     const s = rows[0].status;
-    return rows.every(r => r.status === s) ? s : '';
+    return rows.every((r: Recordable) => r.status === s) ? s : '';
   });
 
   function getActions(record: Recordable) {
