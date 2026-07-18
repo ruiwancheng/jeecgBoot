@@ -5,11 +5,9 @@
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增出库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
         <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
-        <span v-if="selectedRowKeys.length > 0">
-          <a-divider type="vertical" />
-          <a-button v-if="allStatus == '1'" type="primary" @click="batchAudit">审核</a-button>
-          <a-button v-if="allStatus == '1'" danger @click="batchCancel">取消</a-button>
-        </span>
+        <a-divider type="vertical" />
+        <a-button v-if="allStatus == '1'" type="primary" :disabled="!selectedRowKeys.length" @click="batchAudit">审核</a-button>
+        <a-button v-if="allStatus == '1'" danger :disabled="!selectedRowKeys.length" @click="batchCancel">取消</a-button>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
       <template #action="{ record }">

@@ -5,12 +5,10 @@
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增发货单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
         <!--update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
-        <span v-if="selectedRowKeys.length > 0">
-          <a-divider type="vertical" />
-          <a-button v-if="allStatus == '1'" type="primary" @click="batchSubmit">提交</a-button>
-          <a-button v-if="allStatus == '1'" danger @click="batchCancel">取消</a-button>
-          <a-button v-if="allStatus == '3'" type="primary" @click="batchSign">签收</a-button>
-        </span>
+        <a-divider type="vertical" />
+        <a-button v-if="allStatus == '1'" type="primary" :disabled="!selectedRowKeys.length" @click="batchSubmit">提交</a-button>
+        <a-button v-if="allStatus == '1'" danger :disabled="!selectedRowKeys.length" @click="batchCancel">取消</a-button>
+        <a-button v-if="allStatus == '3'" type="primary" :disabled="!selectedRowKeys.length" @click="batchSign">签收</a-button>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
       <template #action="{ record }">
