@@ -46,9 +46,22 @@ git reset --hard HEAD 2>/dev/null || true
 # 清理未跟踪文件，但保留部署追踪文件（记录上次部署的提交和 SQL 校验码）
 git clean -fd -e .deploy-last-commit -e .deploy-sql-checksums 2>/dev/null || true
 
-# Git 网络容错：30s 低速超时 + 3 次重试
-GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git config --local http.lowSpeedLimit 1000 2>/dev/null || true
-GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=30 git config --local http.lowSpeedTime 30 2>/dev/null || true
+# Token 注入：如果环境变量设置了 GITHUB_TOKEN，配置 git 认证
+if [ -n "$GITHUB_TOKEN" ]; then
+    git config --local http.https://github.com/.extraheader "Authorization: Bearer $GITHUB_TOKEN" 2>/dev/null || true
+fi
+
+# Git 网络超时：30s 无数据即断开
+git config --local http.lowSpeedLimit 1000 2>/dev/null || true
+git config --local http.lowSpeedTime 30 2>/dev/null || true
+
+# 预检连通性（curl 5s 超时，比 git 默认 160s 快得多）
+echo -n "  检测 GitHub 连通性..."
+if curl -s --connect-timeout 5 --max-time 10 https://github.com > /dev/null 2>&1; then
+    echo -e " ${GREEN}OK${NC}"
+else
+    echo -e " ${RED}不可达${NC}"
+fi
 
 FETCH_OK=0
 for i in 1 2 3; do
@@ -59,12 +72,12 @@ for i in 1 2 3; do
         break
     fi
     echo -e "  ${YELLOW}第 ${i} 次拉取失败: $(echo "$FETCH_ERR" | tail -1)${NC}"
-    [ $i -lt 3 ] && sleep 5
+    [ $i -lt 3 ] && sleep 10
 done
 
 if [ $FETCH_OK -eq 0 ]; then
-    echo -e "${RED}[错误] Git 拉取失败（网络波动或 DNS 问题），已重试 3 次${NC}"
-    echo -e "${RED}最后一次错误: $(echo "$FETCH_ERR" | tail -3)${NC}"
+    echo -e "${RED}[错误] Git 拉取失败（已重试 3 次）${NC}"
+    echo -e "${RED}详情: $(echo "$FETCH_ERR" | tail -5)${NC}"
     exit 1
 fi
 REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null)
