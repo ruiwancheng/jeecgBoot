@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+    <BasicTable @register="registerTable">
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增出库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -33,7 +33,7 @@
   const [registerDrawer, { openDrawer }] = useDrawer();
   const { tableContext, onExportXls } = useListPage({
     designScope: 'mes-outbound',
-    tableProps: { title: '销售出库', api: queryOutboundList, columns, rowKey: 'id', formConfig: { labelWidth: 120, schemas: searchFormSchema } },
+    tableProps: { title: '销售出库', api: queryOutboundList, columns, rowKey: 'id', rowSelection: { type: 'checkbox' }, formConfig: { labelWidth: 120, schemas: searchFormSchema } },
     exportConfig: { name: '销售出库', url: getExportUrl },
   });
 
