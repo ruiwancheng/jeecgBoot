@@ -15,6 +15,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +60,10 @@ public class MesDeliveryNote implements Serializable {
     @Excel(name = "备注", width = 30)
     @Schema(description = "备注")
     private String remark;
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-发货单-----------
+    @Excel(name = "总金额", width = 15)
+    @Schema(description = "总金额") private BigDecimal totalAmount;
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-发货单-----------
     @Schema(description = "创建人") private String createBy;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -9,8 +9,10 @@ import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrder;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
+import org.jeecg.modules.mes.sales.entity.MesPrice;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
+import org.jeecg.modules.mes.sales.service.IMesPriceService;
 import org.jeecg.modules.mes.sales.service.IMesSalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,6 +29,10 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
 
     @Autowired
     private MesSalesOrderItemMapper itemMapper;
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-----------
+    @Autowired
+    private IMesPriceService priceService;
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-----------
 
     @Override
     public MesSalesOrder queryWithItems(String id) {
@@ -109,6 +115,33 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     }
     //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-销售订单-----------
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：订单不存在或状态已变更，请刷新后重试");
+    }
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void release(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.releaseWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("下达失败：订单不存在或状态已变更（需为已审核），请刷新后重试");
+    }
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void close(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.closeWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("关闭失败：订单不存在或状态已变更，请刷新后重试");
+    }
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void cancel(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.cancelWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("取消失败：订单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-销售订单-----------
+
     private void validateOrder(MesSalesOrder entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("订单编码不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("订单编码长度不能超过50个字符");
@@ -126,6 +159,16 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
                 throw new JeecgBootException("第" + (i+1) + "行数量必须大于0");
             if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0)
                 throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
+            //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-从价格表查价-----------
+            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
+                if (StringUtils.hasText(entity.getCustomerId()) && entity.getOrderDate() != null) {
+                    MesPrice price = priceService.findActivePrice(item.getMaterialId(), entity.getCustomerId(), entity.getOrderDate());
+                    if (price != null && price.getPrice() != null && price.getPrice().compareTo(BigDecimal.ZERO) > 0) {
+                        item.setUnitPrice(price.getPrice());
+                    }
+                }
+            }
+            //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-从价格表查价-----------
             item.setLineNo(i + 1);
             item.setOrderId(entity.getId());
             // 后端强制重算金额，忽略前端传入的 amount

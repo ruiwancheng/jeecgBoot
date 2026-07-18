@@ -27,6 +27,10 @@ public class MesSalesOutboundItem implements Serializable {
     private String materialId;
     @Schema(description = "发货数量") private BigDecimal deliveryQty;
     @Schema(description = "实出数量") private BigDecimal actualQty;
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-出库明细-----------
+    @Schema(description = "单价") private BigDecimal unitPrice;
+    @Schema(description = "金额") private BigDecimal amount;
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-出库明细-----------
     @Schema(description = "批次") private String batch;
     @Schema(description = "库位") private String location;
     @Schema(description = "备注") private String remark;

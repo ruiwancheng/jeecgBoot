@@ -94,5 +94,16 @@ public class MesSalesOrderController extends JeecgController<MesSalesOrder, IMes
         if (total > QUERY_ALL_MAX) throw new JeecgBootException("订单超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         return super.exportXls(req, entity, MesSalesOrder.class, "销售订单");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-销售订单-----------
+    @Operation(summary = "审核订单") @PutMapping("/audit") @RequiresPermissions("mes:salesOrder:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
+    @Operation(summary = "下达订单") @PutMapping("/release") @RequiresPermissions("mes:salesOrder:edit")
+    public Result<String> release(@RequestParam String id) { service.release(id); return Result.ok("下达成功"); }
+    @Operation(summary = "关闭订单") @PutMapping("/close") @RequiresPermissions("mes:salesOrder:edit")
+    public Result<String> close(@RequestParam String id) { service.close(id); return Result.ok("关闭成功"); }
+    @Operation(summary = "取消订单") @PutMapping("/cancel") @RequiresPermissions("mes:salesOrder:edit")
+    public Result<String> cancel(@RequestParam String id) { service.cancel(id); return Result.ok("已取消"); }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-销售订单-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-销售订单接口-----------

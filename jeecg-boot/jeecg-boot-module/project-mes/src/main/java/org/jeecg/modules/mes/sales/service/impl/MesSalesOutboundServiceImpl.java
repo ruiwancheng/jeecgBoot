@@ -10,9 +10,11 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutbound;
+import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutboundItem;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundMapper;
 import org.jeecg.modules.mes.sales.service.IMesSalesOutboundService;
@@ -32,6 +34,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     @Autowired private MesSalesOutboundItemMapper itemMapper;
     @Autowired private MesDeliveryNoteMapper deliveryNoteMapper;
     @Autowired private MesDeliveryNoteItemMapper deliveryNoteItemMapper;
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
+    @Autowired private MesSalesOrderItemMapper salesOrderItemMapper;
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
 
     @Override public MesSalesOutbound queryWithItems(String id) {
         MesSalesOutbound o = baseMapper.selectById(id);
@@ -47,6 +52,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         MesSalesOutbound old = baseMapper.selectDeletedByCode(entity.getCode());
         if (old != null) { cleanOldItems(old.getId()); entity.setId(old.getId()); entity.setCreateBy(old.getCreateBy()); entity.setCreateTime(old.getCreateTime()); entity.setUpdateBy(getUser()); entity.setUpdateTime(new Date()); baseMapper.resurrect(entity); }
         else { try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("出库单编码已存在"); } }
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
@@ -56,7 +64,11 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         checkStatus(entity.getId()); validate(entity); entity.setStatus("1");
         QueryWrapper<MesSalesOutbound> qw = new QueryWrapper<>(); qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("出库单编码已存在");
-        super.updateById(entity); cleanOldItems(entity.getId()); saveItems(entity);
+        super.updateById(entity); cleanOldItems(entity.getId());
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        saveItems(entity);
     }
 
     @Override @Transactional(rollbackFor = Exception.class)
@@ -140,9 +152,35 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
                 throw new JeecgBootException("第"+(i+1)+"行数量必须大于0");
             if (item.getActualQty().compareTo(maxQty) > 0)
                 throw new JeecgBootException("第"+(i+1)+"行实出数量("+item.getActualQty()+")超过发货数量("+maxQty+")");
+
+            //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
+            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
+                if (StringUtils.hasText(e.getSalesOrderId())) {
+                    LambdaQueryWrapper<MesSalesOrderItem> oiQw = new LambdaQueryWrapper<>();
+                    oiQw.eq(MesSalesOrderItem::getOrderId, e.getSalesOrderId())
+                       .eq(MesSalesOrderItem::getMaterialId, item.getMaterialId());
+                    java.util.List<MesSalesOrderItem> orderItems = salesOrderItemMapper.selectList(oiQw);
+                    if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
+                        item.setUnitPrice(orderItems.get(0).getUnitPrice());
+                    }
+                }
+            }
+            if (item.getUnitPrice() == null) item.setUnitPrice(BigDecimal.ZERO);
+            item.setAmount(item.getActualQty().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
         }
     }
     //update-end---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计方法-----------
+    private void calcTotal(MesSalesOutbound entity) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (MesSalesOutboundItem item : entity.getItems()) {
+            if (item.getAmount() != null) total = total.add(item.getAmount());
+        }
+        entity.setTotalAmount(total.setScale(2, java.math.RoundingMode.HALF_UP));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计方法-----------
 
     private void checkStatus(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e != null && !"1".equals(e.getStatus())) throw new JeecgBootException("非草稿状态禁止操作"); }
     private void cleanOldItems(String outboundId) { QueryWrapper<MesSalesOutboundItem> qw = new QueryWrapper<>(); qw.eq("outbound_id", outboundId); itemMapper.delete(qw); }

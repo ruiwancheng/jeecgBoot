@@ -73,6 +73,9 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         } else {
             try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("发货单编码已存在"); }
         }
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
@@ -90,6 +93,9 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
         LambdaQueryWrapper<MesDeliveryNoteItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesDeliveryNoteItem::getDeliveryId, entity.getId());
         itemMapper.delete(delQw);
+        //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+        calcTotal(entity);
+        //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
         saveItems(entity);
     }
 
@@ -117,6 +123,27 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
     }
     //update-end---author:ruiwancheng---date:2026-07-18---for: P0-04 批量删除改用super.removeByIds+批量删明细-----------
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-发货单-----------
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void submit(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.submitWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("提交失败：发货单不存在或状态已变更，请刷新后重试");
+    }
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void sign(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.signWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("签收失败：发货单不存在或状态已变更（需为已出库），请刷新后重试");
+    }
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void cancel(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.cancelWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("取消失败：发货单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-发货单-----------
+
     private void validate(MesDeliveryNote entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("发货单编码不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("发货单编码长度不能超过50个字符");
@@ -137,8 +164,31 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
                 throw new JeecgBootException("第" + (i+1) + "行发货数量必须大于0");
             // P0-01: 校验发货数量不超过订单未发货数量
             checkDeliveryQty(entity, item, i + 1);
+            //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
+            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
+                LambdaQueryWrapper<MesSalesOrderItem> piQw = new LambdaQueryWrapper<>();
+                piQw.eq(MesSalesOrderItem::getOrderId, entity.getSalesOrderId())
+                   .eq(MesSalesOrderItem::getMaterialId, item.getMaterialId());
+                java.util.List<MesSalesOrderItem> ol = salesOrderItemMapper.selectList(piQw);
+                if (!ol.isEmpty() && ol.get(0).getUnitPrice() != null) {
+                    item.setUnitPrice(ol.get(0).getUnitPrice());
+                }
+            }
+            if (item.getUnitPrice() == null) item.setUnitPrice(BigDecimal.ZERO);
+            item.setAmount(item.getDeliveryQty().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
         }
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
+    private void calcTotal(MesDeliveryNote entity) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (MesDeliveryNoteItem item : entity.getItems()) {
+            if (item.getAmount() != null) total = total.add(item.getAmount());
+        }
+        entity.setTotalAmount(total.setScale(2, java.math.RoundingMode.HALF_UP));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计-----------
 
     //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-05 N+1查询优化——批量聚合替代嵌套循环-----------
     private void checkDeliveryQty(MesDeliveryNote entity, MesDeliveryNoteItem item, int lineNo) {

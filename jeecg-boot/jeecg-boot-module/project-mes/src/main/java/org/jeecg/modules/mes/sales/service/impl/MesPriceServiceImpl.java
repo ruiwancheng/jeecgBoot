@@ -78,6 +78,14 @@ public class MesPriceServiceImpl extends ServiceImpl<MesPriceMapper, MesPrice> i
         return super.removeByIds(list);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-查有效价格-----------
+    @Override
+    public MesPrice findActivePrice(String materialId, String customerId, Date date) {
+        if (materialId == null || date == null) return null;
+        return baseMapper.findActivePrice(materialId, customerId, date);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-查有效价格-----------
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void importFromExcel(List<MesPrice> list) {

@@ -94,5 +94,14 @@ public class MesDeliveryNoteController extends JeecgController<MesDeliveryNote, 
         if (total > QUERY_ALL_MAX) throw new JeecgBootException("发货单超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         return super.exportXls(req, entity, MesDeliveryNote.class, "发货单");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-发货单-----------
+    @Operation(summary = "提交发货单") @PutMapping("/submit") @RequiresPermissions("mes:delivery:edit")
+    public Result<String> submit(@RequestParam String id) { service.submit(id); return Result.ok("提交成功"); }
+    @Operation(summary = "签收") @PutMapping("/sign") @RequiresPermissions("mes:delivery:edit")
+    public Result<String> sign(@RequestParam String id) { service.sign(id); return Result.ok("签收成功"); }
+    @Operation(summary = "取消发货单") @PutMapping("/cancel") @RequiresPermissions("mes:delivery:edit")
+    public Result<String> cancel(@RequestParam String id) { service.cancel(id); return Result.ok("已取消"); }
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-发货单-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-发货单接口-----------

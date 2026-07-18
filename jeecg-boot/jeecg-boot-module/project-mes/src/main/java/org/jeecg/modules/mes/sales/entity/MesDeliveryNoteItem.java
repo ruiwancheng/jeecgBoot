@@ -34,6 +34,10 @@ public class MesDeliveryNoteItem implements Serializable {
     private BigDecimal orderedQty;
     @Schema(description = "本次发货数量")
     private BigDecimal deliveryQty;
+    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-发货明细-----------
+    @Schema(description = "单价") private BigDecimal unitPrice;
+    @Schema(description = "金额") private BigDecimal amount;
+    //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-发货明细-----------
     @Schema(description = "备注")
     private String remark;
     @Schema(description = "创建人") private String createBy;
