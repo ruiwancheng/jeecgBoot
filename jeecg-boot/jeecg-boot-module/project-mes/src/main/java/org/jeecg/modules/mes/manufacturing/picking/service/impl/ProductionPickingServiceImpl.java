@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.basic.service.IMesInventoryService;
 import org.jeecg.modules.mes.manufacturing.order.entity.MesProductionOrder;
 import org.jeecg.modules.mes.manufacturing.order.mapper.MesProductionOrderMapper;
 import org.jeecg.modules.mes.manufacturing.picking.entity.MesProductionPicking;
@@ -26,11 +27,11 @@ import java.util.*;
 @Service
 public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPickingMapper, MesProductionPicking> implements IProductionPickingService {
 
-    @Autowired
-    private MesProductionPickingItemMapper itemMapper;
-
-    @Autowired
-    private MesProductionOrderMapper orderMapper;
+    @Autowired private MesProductionPickingItemMapper itemMapper;
+    @Autowired private MesProductionOrderMapper orderMapper;
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
+    @Autowired private IMesInventoryService inventoryService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
 
     @Override
     public MesProductionPicking queryWithItems(String id) {
@@ -108,6 +109,23 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         itemMapper.delete(delQw);
         return super.removeByIds(list);
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-扣库存-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        MesProductionPicking e = queryWithItems(id);
+        if (e == null) throw new JeecgBootException("领料单不存在");
+        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        for (MesProductionPickingItem item : e.getItems()) {
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), "生产领料", e.getCode());
+        }
+        String username = getCurrentUsername();
+        Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：领料单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-扣库存-----------
 
     private void validate(MesProductionPicking entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("领料单号不能为空");

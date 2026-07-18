@@ -11,6 +11,7 @@ import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrder;
 import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItem;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderItemMapper;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderMapper;
+import org.jeecg.modules.mes.basic.service.IMesInventoryService;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceipt;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceiptItem;
 import org.jeecg.modules.mes.purchase.receipt.mapper.MesPurchaseReceiptItemMapper;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
 @Service
 public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceiptMapper, MesPurchaseReceipt> implements IMesPurchaseReceiptService {
 
-    @Autowired
-    private MesPurchaseReceiptItemMapper itemMapper;
-    @Autowired
-    private MesPurchaseOrderMapper purchaseOrderMapper;
-    @Autowired
-    private MesPurchaseOrderItemMapper purchaseOrderItemMapper;
+    @Autowired private MesPurchaseReceiptItemMapper itemMapper;
+    @Autowired private MesPurchaseOrderMapper purchaseOrderMapper;
+    @Autowired private MesPurchaseOrderItemMapper purchaseOrderItemMapper;
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
+    @Autowired private IMesInventoryService inventoryService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
 
     @Override
     public MesPurchaseReceipt queryWithItems(String id) {
@@ -99,6 +100,24 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         itemMapper.delete(delQw);
         super.removeById(id);
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        MesPurchaseReceipt e = queryWithItems(id);
+        if (e == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        // 逐行加库存
+        for (MesPurchaseReceiptItem item : e.getItems()) {
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), "采购入库", e.getCode());
+        }
+        String username = getCurrentUsername();
+        Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 
     @Override
     @Transactional(rollbackFor = Exception.class)

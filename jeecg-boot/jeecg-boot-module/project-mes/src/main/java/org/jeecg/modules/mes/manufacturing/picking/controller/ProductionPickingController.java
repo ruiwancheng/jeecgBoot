@@ -68,5 +68,10 @@ public class ProductionPickingController extends JeecgController<MesProductionPi
         if (service.count(new QueryWrapper<>()) > QUERY_ALL_MAX) throw new JeecgBootException("领料单超过" + QUERY_ALL_MAX + "条");
         return super.exportXls(req, entity, MesProductionPicking.class, "生产领料");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-----------
+    @PutMapping("/audit") @RequiresPermissions("mes:productionPicking:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已扣减"); }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产领料接口-----------

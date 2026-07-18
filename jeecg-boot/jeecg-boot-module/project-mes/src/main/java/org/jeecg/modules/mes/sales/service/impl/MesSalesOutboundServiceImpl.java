@@ -10,6 +10,7 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutbound;
+import org.jeecg.modules.mes.basic.service.IMesInventoryService;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutboundItem;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
@@ -37,6 +38,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
     @Autowired private MesSalesOrderItemMapper salesOrderItemMapper;
     //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
+    @Autowired private IMesInventoryService inventoryService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
 
     @Override public MesSalesOutbound queryWithItems(String id) {
         MesSalesOutbound o = baseMapper.selectById(id);
@@ -89,6 +93,16 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     //update-begin---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE+日期校验+salesOrderId继承-----------
     @Override @Transactional(rollbackFor = Exception.class)
     public void audit(String id) {
+        // 加载出库单及明细
+        MesSalesOutbound e = queryWithItems(id);
+        if (e == null) throw new JeecgBootException("出库单不存在");
+        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
+        // 逐行扣库存
+        for (MesSalesOutboundItem item : e.getItems()) {
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库", e.getCode());
+        }
+        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
         String username = getUser();
         Date now = new Date();
         int rows = baseMapper.auditWithGuard(id, username, now);

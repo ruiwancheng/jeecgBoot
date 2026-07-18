@@ -94,5 +94,10 @@ public class MesPurchaseReceiptController extends JeecgController<MesPurchaseRec
         if (total > QUERY_ALL_MAX) throw new JeecgBootException("入库单超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         return super.exportXls(req, entity, MesPurchaseReceipt.class, "采购入库");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
+    @PutMapping("/audit") @RequiresPermissions("mes:purchaseReceipt:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已更新"); }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购入库接口-----------

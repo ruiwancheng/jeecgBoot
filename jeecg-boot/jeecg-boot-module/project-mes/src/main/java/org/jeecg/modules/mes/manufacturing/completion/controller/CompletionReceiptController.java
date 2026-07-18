@@ -68,5 +68,10 @@ public class CompletionReceiptController extends JeecgController<MesCompletionRe
         if (service.count(new QueryWrapper<>()) > QUERY_ALL_MAX) throw new JeecgBootException("入库单超过" + QUERY_ALL_MAX + "条");
         return super.exportXls(req, entity, MesCompletionReceipt.class, "完工入库");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 完工入库审核-----------
+    @PutMapping("/audit") @RequiresPermissions("mes:completionReceipt:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已更新"); }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 完工入库审核-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-完工入库接口-----------

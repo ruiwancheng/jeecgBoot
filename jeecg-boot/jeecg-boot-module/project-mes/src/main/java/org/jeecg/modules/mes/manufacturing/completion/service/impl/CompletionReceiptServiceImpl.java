@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.basic.service.IMesInventoryService;
 import org.jeecg.modules.mes.manufacturing.completion.entity.MesCompletionReceipt;
 import org.jeecg.modules.mes.manufacturing.completion.entity.MesCompletionReceiptItem;
 import org.jeecg.modules.mes.manufacturing.completion.mapper.MesCompletionReceiptItemMapper;
@@ -26,11 +27,11 @@ import java.util.*;
 @Service
 public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionReceiptMapper, MesCompletionReceipt> implements ICompletionReceiptService {
 
-    @Autowired
-    private MesCompletionReceiptItemMapper itemMapper;
-
-    @Autowired
-    private MesProductionOrderMapper orderMapper;
+    @Autowired private MesCompletionReceiptItemMapper itemMapper;
+    @Autowired private MesProductionOrderMapper orderMapper;
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
+    @Autowired private IMesInventoryService inventoryService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
 
     @Override
     public MesCompletionReceipt queryWithItems(String id) {
@@ -108,6 +109,23 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         itemMapper.delete(delQw);
         return super.removeByIds(list);
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 完工入库审核-加库存-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        MesCompletionReceipt e = queryWithItems(id);
+        if (e == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        for (MesCompletionReceiptItem item : e.getItems()) {
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), "完工入库", e.getCode());
+        }
+        String username = getCurrentUsername();
+        Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 完工入库审核-加库存-----------
 
     //update-begin---author:ruiwancheng---date:2026-07-16---for: P0-2修复-累计入库校验+表名修正-----------
     private void validate(MesCompletionReceipt entity) {

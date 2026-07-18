@@ -9,5 +9,8 @@ public interface IMesPurchaseReceiptService extends IService<MesPurchaseReceipt>
     void saveWithItems(MesPurchaseReceipt entity);
     void updateWithItems(MesPurchaseReceipt entity);
     void removeWithItems(String id);
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
+    void audit(String id);
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购入库Service接口-----------

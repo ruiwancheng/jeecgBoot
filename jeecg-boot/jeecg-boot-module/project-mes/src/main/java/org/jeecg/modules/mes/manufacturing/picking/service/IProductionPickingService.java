@@ -15,5 +15,8 @@ public interface IProductionPickingService extends IService<MesProductionPicking
     void removeWithItems(String id);
 
     boolean removeByIds(java.util.Collection<?> list);
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-----------
+    void audit(String id);
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产领料Service接口-----------
