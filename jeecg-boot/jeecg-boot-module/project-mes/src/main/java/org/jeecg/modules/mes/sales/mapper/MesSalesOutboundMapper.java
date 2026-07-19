@@ -20,7 +20,7 @@ public interface MesSalesOutboundMapper extends BaseMapper<MesSalesOutbound> {
     @Update("UPDATE c_mes_sales_outbound SET status = '3', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
     int auditWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
 
-    @Update("UPDATE c_mes_sales_outbound SET status = '0', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status IN ('1', '2')")
+    @Update("UPDATE c_mes_sales_outbound SET status = '0', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status IN ('1', '2', '3')")
     int cancelWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
     //update-end---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE防并发-----------
 }

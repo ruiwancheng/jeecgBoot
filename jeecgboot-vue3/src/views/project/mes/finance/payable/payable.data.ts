@@ -2,6 +2,7 @@ import { BasicColumn, FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
   { title: '应付单号', dataIndex: 'code', width: 180 },
+  { title: '供应商', dataIndex: 'supplierId', width: 150, dictTable: 'c_mes_supplier', dictText: 'name', dictCode: 'id' },
   { title: '来源单据号', dataIndex: 'sourceBillNo', width: 150 },
   { title: '应付金额', dataIndex: 'amount', width: 120 },
   { title: '已付金额', dataIndex: 'paidAmount', width: 120 },

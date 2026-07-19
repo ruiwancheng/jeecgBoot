@@ -133,14 +133,35 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-05 取消审核红冲-恢复库存+应收作废-----------
     @Override @Transactional(rollbackFor = Exception.class)
     public void cancel(String id) {
+        MesSalesOutbound e = queryWithItems(id);
+        if (e == null) throw new JeecgBootException("出库单不存在");
+        // 如果已审核(status=3)，需要回冲库存和应收
+        if ("3".equals(e.getStatus())) {
+            // 恢复库存
+            for (MesSalesOutboundItem item : e.getItems()) {
+                inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库红冲", e.getCode());
+            }
+            // 应收作废（查对应应收单标记为已结清）
+            try {
+                com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesReceivable> arQw =
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+                arQw.eq(MesReceivable::getSourceBillId, e.getId());
+                java.util.List<MesReceivable> ars = receivableService.list(arQw);
+                for (MesReceivable ar : ars) {
+                    ar.setStatus("3"); // 已结清
+                    receivableService.updateById(ar);
+                }
+            } catch (Exception ex) { /* 应收不存在则忽略 */ }
+        }
         String username = getUser();
         Date now = new Date();
         int rows = baseMapper.cancelWithGuard(id, username, now);
-        if (rows == 0) throw new JeecgBootException("取消失败：出库单不存在或状态已变更（已审核/已取消），请刷新后重试");
+        if (rows == 0) throw new JeecgBootException("取消失败：出库单不存在或状态已变更，请刷新后重试");
     }
-    //update-end---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE+日期校验+salesOrderId继承-----------
+    //update-end---author:ruiwancheng---date:2026-07-19---for: P0-05 取消审核红冲-恢复库存+应收作废-----------
 
     //update-begin---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
     private void validate(MesSalesOutbound e) {

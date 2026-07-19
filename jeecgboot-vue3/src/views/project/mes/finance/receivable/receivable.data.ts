@@ -2,6 +2,7 @@ import { BasicColumn, FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
   { title: '应收单号', dataIndex: 'code', width: 180 },
+  { title: '客户', dataIndex: 'customerId', width: 150, dictTable: 'c_mes_customer', dictText: 'name', dictCode: 'id' },
   { title: '来源单据号', dataIndex: 'sourceBillNo', width: 150 },
   { title: '应收金额', dataIndex: 'amount', width: 120 },
   { title: '已收金额', dataIndex: 'receivedAmount', width: 120 },

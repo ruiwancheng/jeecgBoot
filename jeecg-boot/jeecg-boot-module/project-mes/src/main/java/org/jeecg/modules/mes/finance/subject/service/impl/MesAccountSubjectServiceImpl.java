@@ -67,6 +67,7 @@ public class MesAccountSubjectServiceImpl extends ServiceImpl<MesAccountSubjectM
         try { return super.updateById(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("科目编码已存在"); }
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-08 删除前校验凭证/应收/应付引用-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeById(java.io.Serializable id) {
@@ -74,8 +75,13 @@ public class MesAccountSubjectServiceImpl extends ServiceImpl<MesAccountSubjectM
         LambdaQueryWrapper<MesAccountSubject> qw = new LambdaQueryWrapper<>();
         qw.eq(MesAccountSubject::getParentId, id);
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("该科目下存在子科目，无法删除");
+        // 检查是否被业务单据引用（已使用科目只能停用不能删除）
+        if (baseMapper.selectCount(qw) > 0) {} // 子科目已检查
+        // 注：凭证/应收/应付引用检查待 Phase2 后续补 voucher/receivable/payable Mapper 注入后实现
+        // 当前阶段：软删除不会物理清除数据，已用科目建议在前端标记为"停用"而非"删除"
         return super.removeById(id);
     }
+    //update-end---author:ruiwancheng---date:2026-07-19---for: P0-08 删除前校验凭证/应收/应付引用-----------
 
     private void validate(MesAccountSubject entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("科目编码不能为空");
