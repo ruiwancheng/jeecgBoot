@@ -33,6 +33,9 @@ public interface MesSalesOrderMapper extends BaseMapper<MesSalesOrder> {
 
     @Update("UPDATE c_mes_sales_order SET status = '6', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
     int cancelWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
+
+    @Update("UPDATE c_mes_sales_order SET status = '4', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '3'")
+    int shipWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
     //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-销售订单-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-销售订单Mapper-----------

@@ -6,6 +6,7 @@ export const columns: BasicColumn[] = [
   { title: '销售订单', dataIndex: 'salesOrderId_dictText', width: 130 },
   { title: '发货仓库', dataIndex: 'warehouseId_dictText', width: 120 },
   { title: '发货日期', dataIndex: 'deliveryDate', width: 110 },
+  { title: '总金额', dataIndex: 'totalAmount', width: 100 },
   { title: '状态', dataIndex: 'status_dictText', width: 80 },
   { title: '物流公司', dataIndex: 'logisticsCompany', width: 120 },
   { title: '运单号', dataIndex: 'trackingNo', width: 150 },

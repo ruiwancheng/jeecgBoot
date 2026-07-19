@@ -13,11 +13,13 @@ import org.jeecg.modules.mes.sales.entity.MesSalesOutbound;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
 import org.jeecg.modules.mes.finance.receivable.entity.MesReceivable;
 import org.jeecg.modules.mes.finance.receivable.service.IMesReceivableService;
+import org.jeecg.modules.mes.sales.entity.MesSalesOrder;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutboundItem;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundMapper;
 import org.jeecg.modules.mes.sales.service.IMesSalesOutboundService;
@@ -40,6 +42,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
     @Autowired private MesSalesOrderItemMapper salesOrderItemMapper;
     //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-查订单行单价-----------
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态-----------
+    @Autowired private MesSalesOrderMapper salesOrderMapper;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
@@ -136,6 +141,36 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         ar.setStatus("1");
         try { receivableService.save(ar); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ }
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态自动流转-----------
+        // 5. 检查销售订单是否全部出库完成→自动置已发货(4)
+        if (StringUtils.hasText(e.getSalesOrderId())) {
+            MesSalesOrder order = salesOrderMapper.selectById(e.getSalesOrderId());
+            if (order != null && "3".equals(order.getStatus())) {
+                // 汇总该订单所有已审核出库的实出数量
+                java.util.List<MesSalesOutbound> allObs = baseMapper.selectList(
+                    new QueryWrapper<MesSalesOutbound>().eq("sales_order_id", e.getSalesOrderId()).eq("status", "3"));
+                java.util.Map<String, java.math.BigDecimal> shippedMap = new java.util.HashMap<>();
+                for (MesSalesOutbound ob : allObs) {
+                    java.util.List<MesSalesOutboundItem> obItems = itemMapper.selectList(
+                        new LambdaQueryWrapper<MesSalesOutboundItem>().eq(MesSalesOutboundItem::getOutboundId, ob.getId()));
+                    for (MesSalesOutboundItem oi : obItems) {
+                        shippedMap.merge(oi.getMaterialId(), oi.getActualQty() != null ? oi.getActualQty() : java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                    }
+                }
+                // 检查是否所有订单行都已足量出库
+                java.util.List<MesSalesOrderItem> orderItems = salesOrderItemMapper.selectList(
+                    new LambdaQueryWrapper<MesSalesOrderItem>().eq(MesSalesOrderItem::getOrderId, e.getSalesOrderId()));
+                boolean allShipped = !orderItems.isEmpty();
+                for (MesSalesOrderItem oi : orderItems) {
+                    java.math.BigDecimal shipped = shippedMap.getOrDefault(oi.getMaterialId(), java.math.BigDecimal.ZERO);
+                    if (shipped.compareTo(oi.getQuantity() != null ? oi.getQuantity() : java.math.BigDecimal.ZERO) < 0) {
+                        allShipped = false; break;
+                    }
+                }
+                if (allShipped) salesOrderMapper.shipWithGuard(order.getId(), username, now);
+            }
+        }
+        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态自动流转-----------
     }
 
     //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-05 取消审核红冲-恢复库存+应收作废-----------
