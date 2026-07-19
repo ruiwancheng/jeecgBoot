@@ -35,6 +35,10 @@ public class MesPurchaseReceiptItem implements Serializable {
     private BigDecimal orderQuantity;
     @Schema(description = "本次入库数量")
     private BigDecimal receiptQuantity;
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-01 采购入库金额字段-----------
+    @Schema(description = "单价") private BigDecimal unitPrice;
+    @Schema(description = "金额") private BigDecimal amount;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: P0-01 采购入库金额字段-----------
     @Dict(dicCode = "mes_qc_result")
     @Schema(description = "质检结果")
     private String qcResult;

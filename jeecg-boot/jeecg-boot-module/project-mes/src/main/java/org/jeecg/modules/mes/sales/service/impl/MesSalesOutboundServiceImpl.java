@@ -115,23 +115,21 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
             deliveryNoteMapper.updateStatus(e.getDeliveryNoteId(), "3", "2", username, now);
         }
         //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
-        // 4. 自动生成应收单（防重复）
-        if (e.getTotalAmount() != null && e.getTotalAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
-            String arCode = "AR-" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + e.getCode();
-            MesReceivable ar = new MesReceivable();
-            ar.setCode(arCode);
-            ar.setCustomerId(e.getCustomerId());
-            ar.setSourceType("销售出库");
-            ar.setSourceBillId(e.getId());
-            ar.setSourceBillNo(e.getCode());
-            ar.setAmount(e.getTotalAmount());
-            ar.setReceivedAmount(java.math.BigDecimal.ZERO);
-            ar.setUnsettledAmount(e.getTotalAmount());
-            ar.setCreditPeriod(30);
-            ar.setDueDate(new Date(now.getTime() + 30L * 86400000));
-            ar.setStatus("1");
-            receivableService.save(ar);
-        }
+        // 4. 自动生成应收单（唯一索引 uk_rec_source_bill 防重复）
+        BigDecimal arAmount = e.getTotalAmount() != null ? e.getTotalAmount() : java.math.BigDecimal.ZERO;
+        MesReceivable ar = new MesReceivable();
+        ar.setCode("AR-" + e.getCode());
+        ar.setCustomerId(e.getCustomerId());
+        ar.setSourceType("销售出库");
+        ar.setSourceBillId(e.getId());
+        ar.setSourceBillNo(e.getCode());
+        ar.setAmount(arAmount);
+        ar.setReceivedAmount(java.math.BigDecimal.ZERO);
+        ar.setUnsettledAmount(arAmount);
+        ar.setCreditPeriod(30);
+        ar.setDueDate(new Date(now.getTime() + 30L * 86400000));
+        ar.setStatus("1");
+        try { receivableService.save(ar); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ }
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
     }
 

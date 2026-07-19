@@ -113,8 +113,18 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         MesPurchaseReceipt e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
-        // 逐行加库存
+        // 逐行加库存+计算金额（从采购订单行取单价）
+        java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
         for (MesPurchaseReceiptItem item : e.getItems()) {
+            // P0-01: 从采购订单行取单价
+            LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
+            piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
+            java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
+            if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
+                item.setUnitPrice(orderItems.get(0).getUnitPrice());
+                item.setAmount(item.getReceiptQuantity().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
+                totalAmount = totalAmount.add(item.getAmount());
+            }
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), "采购入库", e.getCode());
         }
         String username = getCurrentUsername();
@@ -122,20 +132,19 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
         //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
-        String apCode = "AP-" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + e.getCode();
         MesPayable ap = new MesPayable();
-        ap.setCode(apCode);
+        ap.setCode("AP-" + e.getCode());
         ap.setSupplierId(e.getSupplierId());
         ap.setSourceType("采购入库");
         ap.setSourceBillId(e.getId());
         ap.setSourceBillNo(e.getCode());
-        ap.setAmount(java.math.BigDecimal.ZERO); // MVP: 金额待采购价格模块完善后自动计算
+        ap.setAmount(totalAmount);
         ap.setPaidAmount(java.math.BigDecimal.ZERO);
-        ap.setUnsettledAmount(java.math.BigDecimal.ZERO);
+        ap.setUnsettledAmount(totalAmount);
         ap.setCreditPeriod(30);
         ap.setDueDate(new Date(now.getTime() + 30L * 86400000));
         ap.setStatus("1");
-        payableService.save(ap);
+        try { payableService.save(ap); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ }
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
