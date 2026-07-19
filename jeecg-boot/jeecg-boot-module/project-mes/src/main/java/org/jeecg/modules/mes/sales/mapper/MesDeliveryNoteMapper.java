@@ -31,5 +31,10 @@ public interface MesDeliveryNoteMapper extends BaseMapper<MesDeliveryNote> {
     @Update("UPDATE c_mes_delivery_note SET status = #{newStatus}, update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = #{oldStatus}")
     int updateStatus(@Param("id") String id, @Param("newStatus") String newStatus, @Param("oldStatus") String oldStatus, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
     //update-end---author:ruiwancheng---date:2026-07-19---for: P0-02 出库审核联动更新发货单状态-----------
+
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-14 出库累计校验FOR UPDATE-----------
+    @Select("SELECT * FROM c_mes_delivery_note WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
+    MesDeliveryNote selectByIdForUpdate(@Param("id") String id);
+    //update-end---author:ruiwancheng---date:2026-07-19---for: P0-14 出库累计校验FOR UPDATE-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-发货单Mapper-----------

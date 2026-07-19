@@ -55,6 +55,11 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
 
     @Override @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesSalesOutbound entity) {
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-14 累计出库校验FOR UPDATE-----------
+        if (StringUtils.hasText(entity.getDeliveryNoteId())) {
+            deliveryNoteMapper.selectByIdForUpdate(entity.getDeliveryNoteId());
+        }
+        //update-end---author:ruiwancheng---date:2026-07-19---for: P0-14 累计出库校验FOR UPDATE-----------
         validate(entity); entity.setStatus("1");
         QueryWrapper<MesSalesOutbound> aqw = new QueryWrapper<>(); aqw.eq("code", entity.getCode());
         if (baseMapper.selectCount(aqw) > 0) throw new JeecgBootException("出库单编码已存在");
@@ -236,12 +241,16 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
             if (item.getActualQty().compareTo(maxQty) > 0)
                 throw new JeecgBootException("第"+(i+1)+"行实出数量("+item.getActualQty()+")超过发货数量("+maxQty+")");
 
-            //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
+            //update-begin---author:ruiwancheng---date:2026-07-19---for: P0-02 按行号匹配订单行取单价-----------
             if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
                 if (StringUtils.hasText(e.getSalesOrderId())) {
                     LambdaQueryWrapper<MesSalesOrderItem> oiQw = new LambdaQueryWrapper<>();
                     oiQw.eq(MesSalesOrderItem::getOrderId, e.getSalesOrderId())
                        .eq(MesSalesOrderItem::getMaterialId, item.getMaterialId());
+                    // 有同物料多行时按行号匹配（避免取错价）
+                    if (src != null && src.getSalesOrderItemId() != null) {
+                        oiQw.eq(MesSalesOrderItem::getId, src.getSalesOrderItemId());
+                    }
                     java.util.List<MesSalesOrderItem> orderItems = salesOrderItemMapper.selectList(oiQw);
                     if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
                         item.setUnitPrice(orderItems.get(0).getUnitPrice());
@@ -250,7 +259,7 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
             }
             if (item.getUnitPrice() == null) item.setUnitPrice(BigDecimal.ZERO);
             item.setAmount(item.getActualQty().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
-            //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-从订单行取单价算金额-----------
+            //update-end---author:ruiwancheng---date:2026-07-19---for: P0-02 按行号匹配订单行取单价-----------
         }
     }
     //update-end---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
