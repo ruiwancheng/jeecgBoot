@@ -4,6 +4,7 @@ package org.jeecg.modules.mes.finance.payment.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.modules.mes.finance.payable.entity.MesPayable;
+import org.jeecg.modules.mes.finance.payable.mapper.MesPayableMapper;
 import org.jeecg.modules.mes.finance.payable.service.IMesPayableService;
 import org.jeecg.modules.mes.finance.payment.entity.MesPayment;
 import org.jeecg.modules.mes.finance.payment.mapper.MesPaymentMapper;
@@ -20,6 +21,7 @@ import java.util.Date;
 public class MesPaymentServiceImpl extends ServiceImpl<MesPaymentMapper, MesPayment> implements IMesPaymentService {
 
     @Autowired private IMesPayableService payableService;
+    @Autowired private MesPayableMapper payableMapper;
 
     @Override @Transactional(rollbackFor = Exception.class)
     public boolean save(MesPayment entity) {
@@ -29,7 +31,7 @@ public class MesPaymentServiceImpl extends ServiceImpl<MesPaymentMapper, MesPaym
         entity.setStatus("1");
 
         if (StringUtils.hasText(entity.getPayableId())) {
-            MesPayable ap = payableService.getById(entity.getPayableId());
+            MesPayable ap = payableMapper.selectByIdForUpdate(entity.getPayableId());
             if (ap == null) throw new JeecgBootException("关联应付单不存在");
             BigDecimal unsettled = ap.getUnsettledAmount() != null ? ap.getUnsettledAmount() : ap.getAmount();
             if (entity.getAmount().compareTo(unsettled) > 0) throw new JeecgBootException("付款金额(" + entity.getAmount() + ")超过未付金额(" + unsettled + ")");

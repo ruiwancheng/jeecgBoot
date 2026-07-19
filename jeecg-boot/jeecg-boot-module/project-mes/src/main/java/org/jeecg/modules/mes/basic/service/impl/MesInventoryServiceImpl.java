@@ -29,8 +29,8 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
     public void stockIn(String materialId, String warehouseId, BigDecimal qty, String bizType, String bizId) {
         if (qty == null || qty.compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("入库数量必须大于0");
         String username = getUsername();
-        // 查或建库存快照
-        MesInventory inv = findByMaterialAndWarehouse(materialId, warehouseId);
+        // 行锁查库存快照（与stockOut保持一致）
+        MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
         BigDecimal before = inv != null ? inv.getCurrentQty() : BigDecimal.ZERO;
         BigDecimal after = before.add(qty);
         // upsert

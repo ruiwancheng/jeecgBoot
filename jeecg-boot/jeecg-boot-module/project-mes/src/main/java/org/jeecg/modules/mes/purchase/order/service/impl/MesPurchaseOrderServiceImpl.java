@@ -115,6 +115,15 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     }
     //update-end---author:ruiwancheng---date:2026-07-16---for: P0修复-批量删除改为批量SQL避免自调用-----------
 
+    //update-begin---author:ruiwancheng---date:2026-07-20---for: P0-03 采购订单状态机-审核-----------
+    @Override @Transactional(rollbackFor = Exception.class)
+    public void audit(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：订单不存在或状态已变更，请刷新后重试");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-20---for: P0-03 采购订单状态机-审核-----------
+
     private void validateOrder(MesPurchaseOrder entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("订单编号不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("订单编号长度不能超过50个字符");

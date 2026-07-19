@@ -94,5 +94,8 @@ public class MesPurchaseOrderController extends JeecgController<MesPurchaseOrder
         if (total > QUERY_ALL_MAX) throw new JeecgBootException("订单超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         return super.exportXls(req, entity, MesPurchaseOrder.class, "采购订单");
     }
+
+    @PutMapping("/audit") @RequiresPermissions("mes:purchaseOrder:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单接口-----------

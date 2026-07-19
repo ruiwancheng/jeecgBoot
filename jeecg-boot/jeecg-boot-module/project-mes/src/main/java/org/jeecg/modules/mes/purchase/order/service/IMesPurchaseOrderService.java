@@ -9,5 +9,6 @@ public interface IMesPurchaseOrderService extends IService<MesPurchaseOrder> {
     void saveWithItems(MesPurchaseOrder entity);
     void updateWithItems(MesPurchaseOrder entity);
     void removeWithItems(String id);
+    void audit(String id);
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单Service接口-----------
