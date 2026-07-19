@@ -28,5 +28,7 @@ export const formSchema: FormSchema[] = [
   { field: 'spec', label: '规格型号', component: 'Input', colProps: { span: 8 }, componentProps: { maxlength: 100 } },
   { field: 'unit', label: '单位', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_material_unit' } },
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'yn', stringToNumber: true }, defaultValue: 1 },
+  { field: 'safetyStock', label: '安全库存', component: 'InputNumber', colProps: { span: 12 }, componentProps: { min: 0 } },
+  { field: 'maxStock', label: '最高库存', component: 'InputNumber', colProps: { span: 12 }, componentProps: { min: 0 } },
   { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },
 ];

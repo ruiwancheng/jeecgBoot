@@ -42,6 +42,9 @@ public final class MesMenuRegistry {
         addPerms(list, "mes:location:", "mes_basic_loc", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
         list.add(MesMenuDefinition.leaf("mes_sales_outbound", "mes_warehouse", "销售出库", "/project/mes/sales/outbound", "project/mes/sales/outbound/index", "MesSalesOutbound").sortNo(3.0).icon("ant-design:export-outlined"));
         addPerms(list, "mes:outbound:", "mes_sales_outbound", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        // 库存预警
+        list.add(MesMenuDefinition.leaf("mes_basic_inventoryAlert", "mes_warehouse", "库存预警", "/project/mes/basic/inventoryAlert", "project/mes/basic/inventoryAlert/index", "MesInventoryAlert").sortNo(5.0).icon("ant-design:warning-outlined"));
+        addPerms(list, "mes:inventoryAlert:", "mes_basic_inventoryAlert", new String[]{"list"});
 
         // ==================== 销售管理 ====================
         list.add(MesMenuDefinition.folder("mes_sales", "mes_menu_001", "销售管理", "/project/mes/sales", "/project/mes/sales/price").sortNo(40.0).icon("ant-design:shopping-cart-outlined"));

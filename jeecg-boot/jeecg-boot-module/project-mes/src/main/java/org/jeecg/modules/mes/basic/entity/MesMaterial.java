@@ -43,6 +43,10 @@ public class MesMaterial implements Serializable {
     @Dict(dicCode = "mes_material_unit")
     @Schema(description = "单位")
     private String unit;
+    //update-begin---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
+    @Excel(name = "安全库存", width = 10) @Schema(description = "安全库存") private java.math.BigDecimal safetyStock;
+    @Excel(name = "最高库存", width = 10) @Schema(description = "最高库存") private java.math.BigDecimal maxStock;
+    //update-end---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
     @Excel(name = "状态", width = 10, dicCode = "yn")
     @Dict(dicCode = "yn")
     @Schema(description = "状态 1启用 0停用")
