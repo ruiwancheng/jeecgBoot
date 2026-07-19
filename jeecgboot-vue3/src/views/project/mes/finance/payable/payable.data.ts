@@ -5,6 +5,7 @@ export const columns: BasicColumn[] = [
   { title: '供应商', dataIndex: 'supplierId', width: 150, dictTable: 'c_mes_supplier', dictText: 'name', dictCode: 'id' },
   { title: '来源单据号', dataIndex: 'sourceBillNo', width: 150 },
   { title: '应付金额', dataIndex: 'amount', width: 120 },
+  { title: '税额', dataIndex: 'taxAmount', width: 100 },
   { title: '已付金额', dataIndex: 'paidAmount', width: 120 },
   { title: '未付金额', dataIndex: 'unsettledAmount', width: 120 },
   { title: '到期日', dataIndex: 'dueDate', width: 120 },

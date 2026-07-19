@@ -141,6 +141,7 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         ap.setAmount(totalAmount);
         ap.setPaidAmount(java.math.BigDecimal.ZERO);
         ap.setUnsettledAmount(totalAmount);
+        ap.setTaxAmount(totalAmount.multiply(new java.math.BigDecimal("0.13")).setScale(2, java.math.RoundingMode.HALF_UP));
         ap.setCreditPeriod(30);
         ap.setDueDate(new Date(now.getTime() + 30L * 86400000));
         ap.setStatus("1");

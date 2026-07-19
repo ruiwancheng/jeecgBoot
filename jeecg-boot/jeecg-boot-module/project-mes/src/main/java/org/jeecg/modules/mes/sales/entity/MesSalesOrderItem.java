@@ -37,6 +37,10 @@ public class MesSalesOrderItem implements Serializable {
     private BigDecimal unitPrice;
     @Schema(description = "金额")
     private BigDecimal amount;
+    //update-begin---author:ruiwancheng---date:2026-07-20---for: Phase3 税率字段-----------
+    @Schema(description = "税率") private BigDecimal taxRate;
+    @Schema(description = "税额") private BigDecimal taxAmount;
+    //update-end---author:ruiwancheng---date:2026-07-20---for: Phase3 税率字段-----------
     @Schema(description = "备注")
     private String remark;
     @Schema(description = "创建人") private String createBy;

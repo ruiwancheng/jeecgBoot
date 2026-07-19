@@ -35,6 +35,7 @@ public class MesPayable implements Serializable {
     @Excel(name = "应付金额", width = 15) @Schema(description = "应付金额") private BigDecimal amount;
     @Excel(name = "已付金额", width = 15) @Schema(description = "已付金额") private BigDecimal paidAmount;
     @Excel(name = "未付金额", width = 15) @Schema(description = "未付金额") private BigDecimal unsettledAmount;
+    @Excel(name = "税额", width = 15) @Schema(description = "税额") private BigDecimal taxAmount;
     @Schema(description = "账期(天)") private Integer creditPeriod;
     @Excel(name = "到期日", width = 15) @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") @Schema(description = "到期日") private Date dueDate;
     @Excel(name = "状态", width = 10, dicCode = "mes_payable_status") @Dict(dicCode = "mes_payable_status") @Schema(description = "状态") private String status;

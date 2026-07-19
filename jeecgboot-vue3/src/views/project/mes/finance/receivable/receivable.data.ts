@@ -5,6 +5,7 @@ export const columns: BasicColumn[] = [
   { title: '客户', dataIndex: 'customerId', width: 150, dictTable: 'c_mes_customer', dictText: 'name', dictCode: 'id' },
   { title: '来源单据号', dataIndex: 'sourceBillNo', width: 150 },
   { title: '应收金额', dataIndex: 'amount', width: 120 },
+  { title: '税额', dataIndex: 'taxAmount', width: 100 },
   { title: '已收金额', dataIndex: 'receivedAmount', width: 120 },
   { title: '未结金额', dataIndex: 'unsettledAmount', width: 120 },
   { title: '到期日', dataIndex: 'dueDate', width: 120 },

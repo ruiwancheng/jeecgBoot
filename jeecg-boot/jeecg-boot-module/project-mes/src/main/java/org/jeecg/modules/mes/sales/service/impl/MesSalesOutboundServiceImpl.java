@@ -136,6 +136,7 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         ar.setAmount(arAmount);
         ar.setReceivedAmount(java.math.BigDecimal.ZERO);
         ar.setUnsettledAmount(arAmount);
+        ar.setTaxAmount(arAmount.multiply(new java.math.BigDecimal("0.13")).setScale(2, java.math.RoundingMode.HALF_UP));
         ar.setCreditPeriod(30);
         ar.setDueDate(new Date(now.getTime() + 30L * 86400000));
         ar.setStatus("1");
