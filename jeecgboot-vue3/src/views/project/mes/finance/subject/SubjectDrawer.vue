@@ -1,5 +1,5 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="isUpdate ? '编辑科目' : '新增科目'" width="500px" @ok="handleSubmit">
+  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="isUpdate ? '编辑科目' : '新增科目'" width="500px" :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
   </BasicDrawer>
 </template>
