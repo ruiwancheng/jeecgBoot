@@ -21,7 +21,7 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
-  { field: 'code', label: '发货单编码', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
+  { field: 'code', label: '发货单编码', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50, placeholder: 'DN-YYYYMMDD-001' } },
   { field: 'salesOrderId', label: '销售订单', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_sales_order,code,id' } },
   { field: 'warehouseId', label: '发货仓库', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_warehouse,name,id' } },
   { field: 'deliveryDate', label: '发货日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
