@@ -1,3 +1,10 @@
+---
+name: tiequan-report-retention
+description: 铁拳团审计报告留存规则——按模块只保留最新一份，旧报告直接删除
+globs: "hermes/tiequan/**/*"
+version: 1.0
+---
+
 # 铁拳团审计报告留存规则
 
 ## 规则

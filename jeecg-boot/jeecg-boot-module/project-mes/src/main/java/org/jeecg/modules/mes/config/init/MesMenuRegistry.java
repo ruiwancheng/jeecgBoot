@@ -96,6 +96,12 @@ public final class MesMenuRegistry {
         // 凭证管理
         list.add(MesMenuDefinition.leaf("mes_finance_voucher", "mes_finance", "凭证管理", "/project/mes/finance/voucher", "project/mes/finance/voucher/index", "MesVoucher").sortNo(4.0).icon("ant-design:file-text-outlined"));
         addPerms(list, "mes:voucher:", "mes_finance_voucher", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        // 销项发票
+        list.add(MesMenuDefinition.leaf("mes_finance_salesInvoice", "mes_finance", "销项发票", "/project/mes/finance/invoice", "project/mes/finance/invoice/index", "MesSalesInvoice").sortNo(7.0).icon("ant-design:file-add-outlined"));
+        addPerms(list, "mes:salesInvoice:", "mes_finance_salesInvoice", new String[]{"list","add","edit","delete","export"});
+        // 进项发票
+        list.add(MesMenuDefinition.leaf("mes_finance_purchaseInvoice", "mes_finance", "进项发票", "/project/mes/finance/purchaseInvoice", "project/mes/finance/purchaseInvoice/index", "MesPurchaseInvoice").sortNo(8.0).icon("ant-design:file-exclamation-outlined"));
+        addPerms(list, "mes:purchaseInvoice:", "mes_finance_purchaseInvoice", new String[]{"list","add","edit","delete","export"});
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财管控菜单-----------
 
         return list;

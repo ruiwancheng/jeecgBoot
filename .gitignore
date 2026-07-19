@@ -19,6 +19,7 @@ derby.log
 .claude/worktrees/
 
 ## harness engineering artifacts (disposable)
+docs/
 harness/*
 !harness/docs/
 !harness/INDEX.md

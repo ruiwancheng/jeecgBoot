@@ -22,7 +22,8 @@ version: 1.0
 
 | 审计发现 | 真实 bug？ | 说明 |
 |----------|:--:|------|
-| status字段类型不一致(Integer vs VARCHAR) | ❌ 项目模式 | 仓库/客户/库位都用Integer+yn字典，物料/价格一致 |
+| status字段类型不一致(Integer vs VARCHAR) — 跨模块统一 | ❌ 项目模式 | 仓库/客户/库位都用Integer+yn字典，跨模块一致 |
+| status字段DDL与Entity类型不一致 — 同模块内 | ✅ **真实** | 同模块内其他实体用String，仅一个用Integer→查询条件类型不匹配→QueryGenerator推导不一致 | ← 2026-07-18 sales审计 |
 | 删除未校验下游引用(TODO PEND-003) | ❌ 未来需求 | 下游表未建成，Phase 2补充 |
 | @PermissionData缺失 | ❌ 平台级 | 所有MES模块统一处理 |
 | 审计日志@Log缺失 | ❌ 平台级 | 平台层统一规划 |

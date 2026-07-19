@@ -1,3 +1,10 @@
+---
+name: tiequan-report-scope
+description: 铁拳团审计报告归档范围——统一归档目录、文件命名、禁止行为
+globs: "hermes/tiequan/**/*"
+version: 1.0
+---
+
 # 铁拳团审计报告归档规则
 
 ## 1. 目的
