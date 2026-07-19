@@ -93,9 +93,9 @@ public final class MesMenuRegistry {
         // 付款管理
         list.add(MesMenuDefinition.leaf("mes_finance_payment", "mes_finance", "付款管理", "/project/mes/finance/payment", "project/mes/finance/payment/index", "MesPayment").sortNo(6.0).icon("ant-design:credit-card-outlined"));
         addPerms(list, "mes:payment:", "mes_finance_payment", new String[]{"list","add","export"});
-        // 凭证管理（待Phase2后续补Java代码后再启用菜单）
-        // list.add(MesMenuDefinition.leaf("mes_finance_voucher", "mes_finance", "凭证管理", "/project/mes/finance/voucher", "project/mes/finance/voucher/index", "MesVoucher").sortNo(4.0).icon("ant-design:file-text-outlined"));
-        // addPerms(list, "mes:voucher:", "mes_finance_voucher", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        // 凭证管理
+        list.add(MesMenuDefinition.leaf("mes_finance_voucher", "mes_finance", "凭证管理", "/project/mes/finance/voucher", "project/mes/finance/voucher/index", "MesVoucher").sortNo(4.0).icon("ant-design:file-text-outlined"));
+        addPerms(list, "mes:voucher:", "mes_finance_voucher", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财管控菜单-----------
 
         return list;
