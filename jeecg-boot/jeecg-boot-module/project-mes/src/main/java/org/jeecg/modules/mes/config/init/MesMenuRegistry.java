@@ -76,6 +76,22 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
         addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财管控菜单-----------
+        list.add(MesMenuDefinition.folder("mes_finance", "mes_menu_001", "业财管控", "/project/mes/finance", "/project/mes/finance/receivable").sortNo(70.0).icon("ant-design:bank-outlined"));
+        // 会计科目
+        list.add(MesMenuDefinition.leaf("mes_finance_subject", "mes_finance", "会计科目", "/project/mes/finance/subject", "project/mes/finance/subject/index", "MesAccountSubject").sortNo(1.0).icon("ant-design:book-outlined"));
+        addPerms(list, "mes:subject:", "mes_finance_subject", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        // 应收账款
+        list.add(MesMenuDefinition.leaf("mes_finance_receivable", "mes_finance", "应收账款", "/project/mes/finance/receivable", "project/mes/finance/receivable/index", "MesReceivable").sortNo(2.0).icon("ant-design:dollar-outlined"));
+        addPerms(list, "mes:receivable:", "mes_finance_receivable", new String[]{"list","export"});
+        // 应付账款
+        list.add(MesMenuDefinition.leaf("mes_finance_payable", "mes_finance", "应付账款", "/project/mes/finance/payable", "project/mes/finance/payable/index", "MesPayable").sortNo(3.0).icon("ant-design:account-book-outlined"));
+        addPerms(list, "mes:payable:", "mes_finance_payable", new String[]{"list","export"});
+        // 凭证管理
+        list.add(MesMenuDefinition.leaf("mes_finance_voucher", "mes_finance", "凭证管理", "/project/mes/finance/voucher", "project/mes/finance/voucher/index", "MesVoucher").sortNo(4.0).icon("ant-design:file-text-outlined"));
+        addPerms(list, "mes:voucher:", "mes_finance_voucher", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财管控菜单-----------
+
         return list;
     }
 

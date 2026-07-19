@@ -11,6 +11,8 @@ import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutbound;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
+import org.jeecg.modules.mes.finance.receivable.entity.MesReceivable;
+import org.jeecg.modules.mes.finance.receivable.service.IMesReceivableService;
 import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.entity.MesSalesOutboundItem;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
@@ -41,6 +43,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应收-----------
+    @Autowired private IMesReceivableService receivableService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应收-----------
 
     @Override public MesSalesOutbound queryWithItems(String id) {
         MesSalesOutbound o = baseMapper.selectById(id);
@@ -109,6 +114,25 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         if (e.getDeliveryNoteId() != null) {
             deliveryNoteMapper.updateStatus(e.getDeliveryNoteId(), "3", "2", username, now);
         }
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
+        // 4. 自动生成应收单（防重复）
+        if (e.getTotalAmount() != null && e.getTotalAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
+            String arCode = "AR-" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + e.getCode();
+            MesReceivable ar = new MesReceivable();
+            ar.setCode(arCode);
+            ar.setCustomerId(e.getCustomerId());
+            ar.setSourceType("销售出库");
+            ar.setSourceBillId(e.getId());
+            ar.setSourceBillNo(e.getCode());
+            ar.setAmount(e.getTotalAmount());
+            ar.setReceivedAmount(java.math.BigDecimal.ZERO);
+            ar.setUnsettledAmount(e.getTotalAmount());
+            ar.setCreditPeriod(30);
+            ar.setDueDate(new Date(now.getTime() + 30L * 86400000));
+            ar.setStatus("1");
+            receivableService.save(ar);
+        }
+        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
     }
 
     @Override @Transactional(rollbackFor = Exception.class)

@@ -12,6 +12,8 @@ import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItem;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderItemMapper;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderMapper;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
+import org.jeecg.modules.mes.finance.payable.entity.MesPayable;
+import org.jeecg.modules.mes.finance.payable.service.IMesPayableService;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceipt;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceiptItem;
 import org.jeecg.modules.mes.purchase.receipt.mapper.MesPurchaseReceiptItemMapper;
@@ -36,6 +38,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
+    //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
+    @Autowired private IMesPayableService payableService;
+    //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
 
     @Override
     public MesPurchaseReceipt queryWithItems(String id) {
@@ -116,6 +121,22 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         Date now = new Date();
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
+        String apCode = "AP-" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + e.getCode();
+        MesPayable ap = new MesPayable();
+        ap.setCode(apCode);
+        ap.setSupplierId(e.getSupplierId());
+        ap.setSourceType("采购入库");
+        ap.setSourceBillId(e.getId());
+        ap.setSourceBillNo(e.getCode());
+        ap.setAmount(java.math.BigDecimal.ZERO); // MVP: 金额待采购价格模块完善后自动计算
+        ap.setPaidAmount(java.math.BigDecimal.ZERO);
+        ap.setUnsettledAmount(java.math.BigDecimal.ZERO);
+        ap.setCreditPeriod(30);
+        ap.setDueDate(new Date(now.getTime() + 30L * 86400000));
+        ap.setStatus("1");
+        payableService.save(ap);
+        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 
