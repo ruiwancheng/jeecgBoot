@@ -87,6 +87,12 @@ public final class MesMenuRegistry {
         // 应付账款
         list.add(MesMenuDefinition.leaf("mes_finance_payable", "mes_finance", "应付账款", "/project/mes/finance/payable", "project/mes/finance/payable/index", "MesPayable").sortNo(3.0).icon("ant-design:account-book-outlined"));
         addPerms(list, "mes:payable:", "mes_finance_payable", new String[]{"list","export"});
+        // 收款管理
+        list.add(MesMenuDefinition.leaf("mes_finance_collection", "mes_finance", "收款管理", "/project/mes/finance/collection", "project/mes/finance/collection/index", "MesCollection").sortNo(5.0).icon("ant-design:wallet-outlined"));
+        addPerms(list, "mes:collection:", "mes_finance_collection", new String[]{"list","add","export"});
+        // 付款管理
+        list.add(MesMenuDefinition.leaf("mes_finance_payment", "mes_finance", "付款管理", "/project/mes/finance/payment", "project/mes/finance/payment/index", "MesPayment").sortNo(6.0).icon("ant-design:credit-card-outlined"));
+        addPerms(list, "mes:payment:", "mes_finance_payment", new String[]{"list","add","export"});
         // 凭证管理（待Phase2后续补Java代码后再启用菜单）
         // list.add(MesMenuDefinition.leaf("mes_finance_voucher", "mes_finance", "凭证管理", "/project/mes/finance/voucher", "project/mes/finance/voucher/index", "MesVoucher").sortNo(4.0).icon("ant-design:file-text-outlined"));
         // addPerms(list, "mes:voucher:", "mes_finance_voucher", new String[]{"list","add","edit","delete","deleteBatch","export"});
