@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :visible="visible"
-    :title="mode === 'multiple' ? '批量选择物料' : '选择物料'"
+    :title="currentMode === 'multiple' ? '批量选择物料' : '选择物料'"
     width="900px"
     :footer="null"
     :destroyOnClose="true"
@@ -31,43 +31,27 @@
       :loading="loading"
       size="small"
       rowKey="id"
-      :rowSelection="mode === 'multiple' ? rowSelectionConfig : undefined"
-      :rowClassName="(r: any) => mode === 'single' && selectedRow?.id === r.id ? 'ant-table-row-selected' : ''"
+      :rowSelection="rowSelectionConfig"
       @change="handleTableChange"
-      @rowClick="handleRowClick"
-    >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'action' && mode === 'single'">
-          <a-button
-            :type="selectedRow?.id === record.id ? 'primary' : 'default'"
-            size="small"
-            @click="handleSelect(record)"
-          >
-            {{ selectedRow?.id === record.id ? '已选' : '选择' }}
-          </a-button>
-        </template>
-      </template>
-    </a-table>
+    />
 
     <!-- 底部：已选预览 + 确认 -->
     <div style="margin-top: 12px; padding: 10px; background: #f5f5f5; border-radius: 4px; display: flex; align-items: center; justify-content: space-between">
-      <!-- 多选模式 -->
-      <span v-if="mode === 'multiple'">
+      <span v-if="currentMode === 'multiple'">
         已选：<strong>{{ selectedRows.length }}</strong> 项
         <span v-if="selectedRows.length > 0" style="margin-left: 8px; color: #666">
           {{ selectedRows.slice(0, 3).map(r => r.code).join(', ') }}
           <template v-if="selectedRows.length > 3">等</template>
         </span>
       </span>
-      <!-- 单选模式 -->
       <span v-else>
         <template v-if="selectedRow">
           已选：<strong>{{ selectedRow.code }}</strong> — {{ selectedRow.name }}
           <span v-if="selectedRow.spec" style="color: #888; margin-left: 8px">{{ selectedRow.spec }}</span>
         </template>
-        <span v-else style="color: #999">请点击表格中的"选择"按钮，或点击行选中物料</span>
+        <span v-else style="color: #999">请点选物料</span>
       </span>
-      <a-button type="primary" :disabled="mode === 'single' ? !selectedRow : selectedRows.length === 0" @click="handleConfirm">确认</a-button>
+      <a-button type="primary" :disabled="currentMode === 'multiple' ? selectedRows.length === 0 : !selectedRow" @click="handleConfirm">确认</a-button>
     </div>
   </a-modal>
 </template>
@@ -107,17 +91,29 @@
     { title: '类型', dataIndex: 'type_dictText', width: 100 },
     { title: '规格型号', dataIndex: 'spec', width: 120 },
     { title: '单位', dataIndex: 'unit_dictText', width: 80 },
-    ...(props.mode === 'single' ? [{ title: '操作', dataIndex: 'action', width: 80 }] : []),
   ];
 
-  const rowSelectionConfig = computed<TableRowSelection>(() => ({
-    selectedRowKeys: selectedRowKeys.value,
-    onChange: (keys: any[], rows: any[]) => {
-      selectedRowKeys.value = keys as string[];
-      selectedRows.value = rows;
-    },
-    preserveSelectedRowKeys: true,
-  }));
+  const rowSelectionConfig = computed<TableRowSelection>(() => {
+    if (currentMode.value === 'single') {
+      return {
+        type: 'radio',
+        selectedRowKeys: selectedRowKeys.value,
+        onChange: (keys: any[], rows: any[]) => {
+          selectedRowKeys.value = keys as string[];
+          selectedRow.value = rows[0] || null;
+        },
+      };
+    }
+    return {
+      type: 'checkbox',
+      selectedRowKeys: selectedRowKeys.value,
+      onChange: (keys: any[], rows: any[]) => {
+        selectedRowKeys.value = keys as string[];
+        selectedRows.value = rows;
+      },
+      preserveSelectedRowKeys: true,
+    };
+  });
 
   async function fetchData() {
     loading.value = true;
@@ -137,6 +133,7 @@
   function handleSearch() {
     pagination.current = 1;
     selectedRow.value = null;
+    selectedRows.value = [];
     fetchData();
   }
 
@@ -155,20 +152,6 @@
     fetchData();
   }
 
-  function handleRowClick(record: any) {
-    if (currentMode.value === 'single') {
-      handleSelect(record);
-    }
-  }
-
-  function handleSelect(record: any) {
-    if (selectedRow.value?.id === record.id) {
-      selectedRow.value = null;
-    } else {
-      selectedRow.value = record;
-    }
-  }
-
   function handleConfirm() {
     if (currentMode.value === 'multiple') {
       if (selectedRows.value.length > 0) {
@@ -181,6 +164,7 @@
       if (selectedRow.value) {
         emit('select', selectedRow.value);
         selectedRow.value = null;
+        selectedRowKeys.value = [];
         emit('update:visible', false);
       }
     }
