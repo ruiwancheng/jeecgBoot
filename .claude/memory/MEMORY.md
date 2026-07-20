@@ -13,6 +13,9 @@
 - [Orca 工作树命名规范](orca-worktree-conventions.md) — feature/tiequan/eagleeye/hotfix/review 五大前缀及使用场景
 - [Orca 终端布局标准](orca-terminal-layout.md) — JeecgBoot开发四终端标准布局（后端/前端/构建/测试）
 - [Orca 定时自动化](orca-automations.md) — 每周工程巡检+每日死代码扫描+部署后冒烟测试
+- [GitHub 推送规则](github-push-rules.md) — 标准推送流程+分支收敛+故障处理（固化版）
 - [开源项目分析→Harness增强四步法](learnings/2026-07-20-opensource-harness-pattern-extraction.md) — 结构对标→代码深读→可行性过滤→降级嵌入
 - [Claude Code沙箱Git推送Keychain隔离](learnings/2026-07-20-claude-code-sandbox-git-push.md) — HTTPS推送失败根因+3种解决方案
 - [增量增强+降级策略模式](learnings/2026-07-20-incremental-enhance-with-degradation.md) — Harness安全演进的架构基石
+- [表字典绕过@TableLogic](learnings/2026-07-20-table-dict-bypasses-tablelogic.md) — JSearchSelect原始SQL不自动过滤del_flag→下拉与列表不一致
+- [分支分叉时的rebase收敛](learnings/2026-07-20-deploy-divergent-branches-rebase.md) — 远程有服务端改动时的三步骤合并流程

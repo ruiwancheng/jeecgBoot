@@ -5,7 +5,7 @@
     <div style="margin-bottom:8px"><a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button></div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
       </template>
       <template #deliveryQty="{ record }"><span>{{ record.deliveryQty }}</span></template>
       <template #actualQty="{ record, index }">

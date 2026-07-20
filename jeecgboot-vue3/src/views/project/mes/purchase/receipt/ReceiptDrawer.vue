@@ -7,7 +7,7 @@
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
       </template>
       <template #orderQuantity="{ record, index }">
         <InputNumber :value="record.orderQuantity" :min="0" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'orderQuantity', v)" />

@@ -5,7 +5,7 @@
 
 ## 根因
 macOS 上 git 使用 `osxkeychain` credential helper，凭证存储在系统 Keychain 中。
-Claude Code 的 Bash 沙箱**无法访问 macOS Keychain** → 每次推送认证失败。
+Claude Code 的 Bash 沙箱**可能受 Keychain 访问限制**，但实际验证发现 HTTP 408 主要原因是**服务端代理配置**问题，非沙箱硬限制。
 
 ## 诊断方法
 ```bash
