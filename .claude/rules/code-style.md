@@ -29,7 +29,7 @@ MySQL 5.7（Docker 容器 `jeecg-boot-mysql`）。
 **所有建表/改表 SQL 必须放在 Flyway 路径，不需要手动执行：**
 
 ```
-project-mes/src/main/resources/flyway/sql/mysql/V{版本号}__{描述}.sql
+jeecg-module-system/jeecg-system-start/src/main/resources/flyway/sql/mysql/V{版本号}__{描述}.sql
 ```
 
 **原因：** 
