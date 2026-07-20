@@ -1,4 +1,4 @@
--- MES 编码规则模块
+-- MES 编码规则模块 (retry: 2026-07-21)
 -- 支持前缀+日期+流水号自动编码，普适于所有需要自动编码的页面
 
 CREATE TABLE IF NOT EXISTS c_mes_code_rule (
