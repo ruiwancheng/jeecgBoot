@@ -2,23 +2,17 @@
   <div style="display: flex; gap: 4px; align-items: center">
     <a-input
       :value="displayText"
-      placeholder="点此选择物料"
+      placeholder="点击选择物料"
       readonly
       style="flex: 1; cursor: pointer"
       @click="openModal"
     />
-    <a-tooltip title="选择物料">
-      <a-button size="small" @click="openModal">
-        <template #icon><SearchOutlined /></template>
-        选择
-      </a-button>
-    </a-tooltip>
-    <a-tooltip v-if="modelValue" title="清除已选物料">
-      <a-button size="small" danger @click="handleClear">
-        <template #icon><CloseOutlined /></template>
-        清除
-      </a-button>
-    </a-tooltip>
+    <a-button size="small" @click="openModal">
+      <template #icon><SearchOutlined /></template>
+    </a-button>
+    <a-button v-if="modelValue" size="small" danger @click="handleClear">
+      <template #icon><CloseOutlined /></template>
+    </a-button>
     <MaterialSelectModal
       :visible="modalVisible"
       @update:visible="modalVisible = $event"
@@ -30,7 +24,6 @@
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
   import { SearchOutlined, CloseOutlined } from '@ant-design/icons-vue';
-  import { Tooltip as ATooltip } from 'ant-design-vue';
   import { queryMaterialById } from './material.api';
   import MaterialSelectModal from './MaterialSelectModal.vue';
 
