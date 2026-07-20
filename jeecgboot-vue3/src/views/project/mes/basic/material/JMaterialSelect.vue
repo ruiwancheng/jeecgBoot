@@ -2,17 +2,23 @@
   <div style="display: flex; gap: 4px; align-items: center">
     <a-input
       :value="displayText"
-      placeholder="点击选择物料"
+      placeholder="点此选择物料"
       readonly
       style="flex: 1; cursor: pointer"
       @click="openModal"
     />
-    <a-button size="small" @click="openModal">
-      <template #icon><SearchOutlined /></template>
-    </a-button>
-    <a-button v-if="modelValue" size="small" danger @click="handleClear">
-      <template #icon><CloseOutlined /></template>
-    </a-button>
+    <a-tooltip title="选择物料">
+      <a-button size="small" @click="openModal">
+        <template #icon><SearchOutlined /></template>
+        选择
+      </a-button>
+    </a-tooltip>
+    <a-tooltip v-if="modelValue" title="清除已选物料">
+      <a-button size="small" danger @click="handleClear">
+        <template #icon><CloseOutlined /></template>
+        清除
+      </a-button>
+    </a-tooltip>
     <MaterialSelectModal
       :visible="modalVisible"
       @update:visible="modalVisible = $event"
@@ -24,6 +30,7 @@
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
   import { SearchOutlined, CloseOutlined } from '@ant-design/icons-vue';
+  import { Tooltip as ATooltip } from 'ant-design-vue';
   import { queryMaterialById } from './material.api';
   import MaterialSelectModal from './MaterialSelectModal.vue';
 
@@ -36,19 +43,19 @@
   const modalVisible = ref(false);
   const displayText = ref('');
 
-  // 已选物料的加载展示文本
   async function loadDisplayText() {
-    if (!props.modelValue) {
+    const id = props.modelValue;
+    if (!id || id === '') {
       displayText.value = '';
       return;
     }
     try {
-      const material = await queryMaterialById({ id: props.modelValue });
-      if (material) {
+      const material = await queryMaterialById({ id });
+      if (material && material.code) {
         displayText.value = `${material.code} — ${material.name}`;
       }
     } catch {
-      displayText.value = props.modelValue;
+      displayText.value = id;
     }
   }
 
