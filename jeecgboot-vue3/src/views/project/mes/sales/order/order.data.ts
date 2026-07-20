@@ -13,7 +13,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { field: 'code', label: '订单编码', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
-  { field: 'customerId', label: '客户', component: 'Input', colProps: { span: 6 } },
+  { field: 'customerId', label: '客户', component: 'JSearchSelect', colProps: { span: 6 }, componentProps: { dict: 'c_mes_customer,name,id' } },
   { field: 'status', label: '订单状态', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_order_status' } },
 ];
 

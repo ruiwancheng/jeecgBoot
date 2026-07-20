@@ -7,12 +7,8 @@
       style="flex: 1; cursor: pointer"
       @click="openModal"
     />
-    <a-button size="small" @click="openModal">
-      <template #icon><Icon icon="ant-design:search-outlined" /></template>
-    </a-button>
-    <a-button v-if="modelValue" size="small" danger @click="handleClear">
-      <template #icon><Icon icon="ant-design:close-outlined" /></template>
-    </a-button>
+    <a-button size="small" preIcon="ant-design:search-outlined" @click="openModal" />
+    <a-button v-if="modelValue" size="small" danger preIcon="ant-design:close-outlined" @click="handleClear" />
     <MaterialSelectModal
       :visible="modalVisible"
       @update:visible="modalVisible = $event"
@@ -23,7 +19,6 @@
 
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
-  import { Icon } from '/@/components/Icon';
   import { queryMaterialById } from './material.api';
   import MaterialSelectModal from './MaterialSelectModal.vue';
 
