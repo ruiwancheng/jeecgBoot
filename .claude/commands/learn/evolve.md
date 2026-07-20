@@ -11,6 +11,7 @@ Harness 自主进化。**输入：/learn 累积 + /harness-check 评分。**
 ### 1. 读取输入
 - `memory/learnings/` — /learn 累积的经验
 - `/harness-check` 评分 — 低分项
+- `get_surprising_connections_tool(top_n=10)`（可选增强）— 图谱发现的意外跨社区耦合，作为重构建议输入
 
 ### 2. 分析
 - 经验 → 对应规则有？没有→补。冲突→更新
