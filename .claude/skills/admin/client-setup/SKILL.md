@@ -73,9 +73,26 @@ pnpm dev
 # 访问 http://localhost:3100，登录 admin / 123456
 ```
 
+#### 首次启动报 ERR_PNPM_IGNORED_BUILDS 的绕过方法
+
+```bash
+cd jeecgboot-vue3
+npx vite --host
+# 绕过 pnpm approve-builds 限制，直接启动 Vite
+```
+
 ## 注意事项
 
 - 服务端 Tailscale IP 通过 `tailscale ip -4` 获取，IP 可能变化
 - 新增 Vue 组件后需重启 Vite（`import.meta.glob` 缓存）
 - 菜单、角色、字典统一在服务端 UI 操作，不需要导出 SQL
 - Tailscale 免费版 3 用户
+
+## 日常开发流程
+
+```
+改Vue文件 → 保存 → 浏览器秒级热更新 → 确认OK
+→ git commit + push → 部署控制台部署(一次性)
+```
+
+**铁律：先在本地 `npx vite` 验证，确认无误后再提交部署。** 不走"改→推→部署→验"的慢循环。
