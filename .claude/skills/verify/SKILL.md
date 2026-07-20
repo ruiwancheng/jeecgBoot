@@ -78,10 +78,36 @@ curl -s -X GET "http://localhost:8080/jeecg-boot/xxx/yyy" -H "X-Access-Token: <t
 
 每项的 `✓` 必须附具体证据（状态码 + 响应关键片段），`✗` 必须附完整报错信息。
 
+## 图形预分析（Graph Pre-Analysis）
+
+在 git diff 后、验证方法选择前，使用 code-review-graph MCP 工具增强分析精准度。
+
+### 调用参数
+
+| 步骤 | 工具 | 参数 |
+|------|------|------|
+| 1. 入口检查 | `get_minimal_context_tool` | `task="verify changes"` |
+| 2. 变更分析 | `detect_changes_tool` | `base="HEAD~1"`, `detail_level="minimal"` |
+| 3. 波及范围 | `get_impact_radius_tool` | `max_depth=1` |
+
+### 判定规则
+
+| 条件 | 动作 |
+|------|------|
+| 风险评分 `low` + 变更 ≤2 个文件 + 全为 `.vue` / `.data.ts` | 仅 Playwright 验证，跳过 curl |
+| 风险评分 `high` 或 变更函数在 hub/bridge 节点中 | 追加 curl 验证所有调用者 |
+| 其他情况 | 保持标准验证流程 |
+
+### 降级策略
+
+- MCP 服务不可用 / 超时（>10s）→ 输出 `[graph unavailable, falling back to standard verification]`，走标准 git-diff 逻辑
+- 空结果 → 视为"无额外洞察"，继续标准流程
+
 ## 验证流程
 
 1. 读取 git diff，识别变更文件和变更类型
-2. 按映射表确定每个变更的验证方法
-3. 逐项执行验证
-4. 汇总输出，标注通过/失败及证据
-5. 如有 ✗ 项，分析根因并尝试修复（最多 2 次），修复后重验证
+2. **（可选增强）运行图形预分析**，按判定规则调整验证深度和优先级
+3. 按映射表确定每个变更的验证方法
+4. 逐项执行验证
+5. 汇总输出，标注通过/失败及证据
+6. 如有 ✗ 项，分析根因并尝试修复（最多 2 次），修复后重验证
