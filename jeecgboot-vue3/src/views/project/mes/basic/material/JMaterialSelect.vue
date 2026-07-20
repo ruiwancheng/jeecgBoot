@@ -8,10 +8,10 @@
       @click="openModal"
     />
     <a-button size="small" @click="openModal">
-      <template #icon><SearchOutlined /></template>
+      <template #icon><Icon icon="ant-design:search-outlined" /></template>
     </a-button>
     <a-button v-if="modelValue" size="small" danger @click="handleClear">
-      <template #icon><CloseOutlined /></template>
+      <template #icon><Icon icon="ant-design:close-outlined" /></template>
     </a-button>
     <MaterialSelectModal
       :visible="modalVisible"
@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
   import { ref, watch } from 'vue';
-  import { SearchOutlined, CloseOutlined } from '@ant-design/icons-vue';
+  import { Icon } from '/@/components/Icon';
   import { queryMaterialById } from './material.api';
   import MaterialSelectModal from './MaterialSelectModal.vue';
 
