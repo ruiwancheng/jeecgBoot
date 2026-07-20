@@ -59,7 +59,6 @@ const mes: AppRouteModule = {
           meta: { title: '编码规则' },
         },
         //update-end---author:ruiwancheng---date:2026-07-21  for：编码规则路由注册-----------
-        },
       ],
     },
     {
