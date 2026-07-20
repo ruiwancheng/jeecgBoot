@@ -277,3 +277,168 @@ orca orchestration check --wait --types worker_done --timeout-ms 900000 --json
 **收益：** 每个测试通道独立 Agent、独立 Token 预算、独立失败处理。决策门自动判定通过/需人工/阻断。
 
 > 降级策略：Orca orchestration 不可用 → 回退到 v2.0.0 进程内三路并行（标准行为）。
+
+## 标准格式报告输出（JUnit XML + SARIF）
+
+测试完成后，同时输出三种格式的报告，满足不同消费场景：
+
+### 输出文件
+
+```
+hermes/eagle-eye/reports/YYYY-MM-DD/
+├── {模块名}-test-report.md    # 人类可读（现有）
+├── {模块名}-test-report.xml   # JUnit XML（CI 标准）
+└── {模块名}-test-report.sarif # SARIF JSON（安全扫描标准）
+```
+
+### JUnit XML 模板
+
+```xml
+<testsuites name="JeecgBoot Harness" tests="31" failures="2" time="45.2">
+  <testsuite name="API Tests" tests="25" failures="1" time="30.1">
+    <testcase name="mes-sales-queryAll" classname="harness.tests.mes.sales" time="1.2"/>
+    <testcase name="mes-sales-add" classname="harness.tests.mes.sales" time="2.1">
+      <failure message="Expected 200, got 500">
+        NullPointerException at SalesService.java:42
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="E2E Tests" tests="6" failures="1" time="15.1">
+    <testcase name="smoke-login" classname="harness.e2e.smoke" time="3.5"/>
+    <testcase name="smoke-user-list" classname="harness.e2e.smoke" time="4.2">
+      <failure message="Timeout waiting for table">selector: .ant-table-tbody</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
+```
+
+### SARIF JSON 模板
+
+```json
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [{
+    "tool": {
+      "driver": {
+        "name": "JeecgBoot Harness",
+        "version": "3.9.2",
+        "informationUri": "https://github.com/ruiwancheng/jeecgBoot"
+      }
+    },
+    "versionControlProvenance": [{
+      "repositoryUri": "https://github.com/ruiwancheng/jeecgBoot",
+      "revisionId": "<git rev-parse HEAD>",
+      "branch": "<git branch --show-current>"
+    }],
+    "results": [{
+      "ruleId": "test-failure",
+      "level": "error",
+      "message": { "text": "API测试失败: mes-sales-add" },
+      "locations": [{
+        "physicalLocation": {
+          "artifactLocation": { "uri": "harness/tests/mes/sales.spec.ts" },
+          "region": { "startLine": 42 }
+        }
+      }],
+      "properties": {
+        "module": "mes-sales",
+        "testType": "api",
+        "errorType": "NullPointerException",
+        "statusCode": 500
+      }
+    }]
+  }]
+}
+```
+
+> 降级策略：非 CI 环境 → 仅输出 Markdown。CI 环境（检测到 `CI=true`）→ 同时输出 XML + SARIF。
+
+## 测试失败智能去重
+
+同一根因的多个测试失败合并为一条，减少干扰。
+
+### 去重键规则（确定性，不依赖 LLM）
+
+| 测试类型 | 去重键构成 | 示例 |
+|------|------|------|
+| API 测试 | `{statusCode}:{errorType}:{topStackFrame}` | `500:NullPointerException:SalesService.java:42` |
+| E2E 测试 | `{errorMessage}:{selector}` | `Timeout:button[type=submit]` |
+| 前端构建 | `{errorCode}:{filePath}` | `TS2322:src/views/mes/List.vue` |
+
+### 去重流程
+
+```
+新失败 → 计算去重键 → 查找已有失败列表
+  ├── 键匹配 → 合并（标注 "出现 N 次"，附加首次出现信息）
+  └── 键不匹配 → 新增独立条目
+```
+
+### 报告中展示
+
+```
+失败汇总（去重后）:
+  1. [API] 500:NullPointerException:SalesService.java:42 (出现 3 次)
+     首次: mes-sales-add, 其他: mes-sales-update, mes-sales-delete
+     建议: 检查 SalesService.java:42 行空值处理
+  
+  2. [E2E] Timeout:button[type=submit] (出现 1 次)
+     首次: smoke-login
+     建议: 检查登录按钮渲染条件
+
+  去重统计: 原始 6 条 → 去重后 2 条独特失败
+```
+
+## 原子写入 + 测试状态快照
+
+### 原子写入
+
+所有测试报告使用原子写入防止中断损坏：
+
+```bash
+write_atomic() {
+  local target="$1"
+  local tmp="${target}.tmp.$$"
+  cat > "$tmp"
+  mv "$tmp" "$target"  # 同文件系统内 rename 是原子操作
+}
+
+# 使用示例
+write_atomic "hermes/eagle-eye/reports/2026-07-20/mes-sales-test-report.md" << 'EOF'
+...报告内容...
+EOF
+```
+
+### 测试状态快照
+
+长时间测试中途保存状态，支持跨会话恢复：
+
+```json
+// hermes/eagle-eye/state.json
+{
+  "runId": "2026-07-20-mes-sales",
+  "phase": "test-api",
+  "module": "mes-sales",
+  "completed": ["mes-sales-queryAll", "mes-sales-add"],
+  "pending": ["mes-sales-update", "mes-sales-delete"],
+  "failed": [],
+  "startedAt": "2026-07-20T15:00:00Z",
+  "lastHeartbeat": "2026-07-20T15:05:30Z",
+  "commit": "e005809"
+}
+```
+
+### 恢复机制
+
+session-start 钩子检测未完成的 `state.json`：
+
+```
+⚠️ 检测到未完成的测试运行:
+  Run ID: 2026-07-20-mes-sales
+  阶段: test-api (3/5 完成)
+  最后心跳: 15:05 (12 分钟前)
+  
+  输入 /test-all --resume 恢复，或忽略则重新开始。
+```
+
+> 降级策略：测试 < 30 秒 → 不保存快照。会话意外中断 → session-start 提示恢复。

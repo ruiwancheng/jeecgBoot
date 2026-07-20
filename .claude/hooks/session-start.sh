@@ -49,3 +49,18 @@ if command -v orca &>/dev/null; then
 else
   echo "🔧 Orca: 未安装 (标准模式)"
 fi
+
+# 测试状态恢复检测
+if [ -f "hermes/eagle-eye/state.json" ]; then
+  echo ""
+  echo "⚠️  检测到未完成的测试运行:"
+  python3 -c "
+import json
+with open('hermes/eagle-eye/state.json') as f:
+    s = json.load(f)
+print(f\"  Run ID: {s.get('runId','?')}\")
+print(f\"  阶段: {s.get('phase','?')} ({len(s.get('completed',[]))}/{len(s.get('completed',[]))+len(s.get('pending',[]))} 完成)\")
+print(f\"  最后心跳: {s.get('lastHeartbeat','?')}\")
+print(f\"\\n  输入 /test-all --resume 恢复测试，或忽略则重新开始。\")
+" 2>/dev/null || echo "  (state.json 解析失败)"
+fi
