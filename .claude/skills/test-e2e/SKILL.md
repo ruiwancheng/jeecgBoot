@@ -36,6 +36,48 @@ npx playwright test
 
 3 次
 
+## 冒烟测试集（Smoke Test Suite）
+
+部署后必跑的轻量级冒烟测试，覆盖核心用户流程，秒级出结果。
+
+### 核心用例
+
+| # | 流程 | 验证点 | 通过标准 |
+|---|------|--------|----------|
+| 1 | 登录 | 登录接口返回 Token | HTTP 200, `code=200`, `result.token` 非空 |
+| 2 | 用户列表 | 列表加载 + 数据展示 | HTTP 200, `result.records` 长度 > 0 |
+| 3 | 角色列表 | 权限树渲染 | HTTP 200, 无 JS Error |
+| 4 | 退出 | Token 清除 | HTTP 200, 重定向到登录页 |
+
+### 运行命令
+
+```bash
+npx playwright test harness/e2e/smoke/ --reporter=html
+```
+
+### 部署后自动冒烟（Orca 自动化）
+
+每 5 分钟检查部署状态，部署成功后自动冒烟：
+
+```bash
+orca automations create \
+  --cron "3 * * * *" \
+  --prompt "检查最近一次部署是否成功。如果成功，运行 /test-e2e 冒烟测试集（4 核心用例），结果输出到 hermes/eagle-eye/reports/$(date +%Y-%m-%d)/smoke-test.md。如果冒烟失败率 > 20%，标记为 P0 告警。" \
+  --recurring true \
+  --durable true \
+  --description "每小时检查部署状态，成功后自动冒烟"
+```
+
+### 冒烟失败判定
+
+| 失败率 | 级别 | 动作 |
+|:--:|:--:|------|
+| 0% | ✅ | 部署正常 |
+| ≤20% (1/4) | ⚠️ | 标记 P2，记录到报告 |
+| >20% (≥2/4) | 🔴 | P0 告警，阻止后续部署 |
+
+> 降级策略：Orca 不可用 → 手动运行 `npx playwright test harness/e2e/smoke/`
+
 ## 流程覆盖增强（Flow Coverage Enhancement）
 
 使用 code-review-graph MCP 工具确保 E2E 测试覆盖受影响的用户流程。

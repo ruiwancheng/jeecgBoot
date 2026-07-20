@@ -12,3 +12,4 @@
 - [set -e 重试陷阱](learnings/2026-07-09-bash-set-e-retry-trap.md) — set -e下编译失败直接退出，重试循环被跳过
 - [Orca 工作树命名规范](orca-worktree-conventions.md) — feature/tiequan/eagleeye/hotfix/review 五大前缀及使用场景
 - [Orca 终端布局标准](orca-terminal-layout.md) — JeecgBoot开发四终端标准布局（后端/前端/构建/测试）
+- [Orca 定时自动化](orca-automations.md) — 每周工程巡检+每日死代码扫描+部署后冒烟测试

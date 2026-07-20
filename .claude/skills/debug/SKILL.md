@@ -10,6 +10,19 @@ version: 1.0.0
 
 不猜测，按步骤。同一修复失败 2 次必须停下来。
 
+## Orca 终端集成（推荐）
+
+debug 过程中频繁查看日志、重启服务、测试修复时，利用 Orca 终端布局标准：
+
+| 操作 | Orca 命令 | 降级 (Bash) |
+|------|-----------|-------------|
+| 查看后端日志 | `orca terminal read --terminal term_backend --lines 100` | `tail -100 /tmp/jeecg-backend.log` |
+| 重启后端 | `orca terminal create --worktree active --command "mvn spring-boot:run"` | `kill` + `nohup` 手动 |
+| 查看终端输出 | `orca terminal read --terminal term_backend` | 手动切窗口查看 |
+| 发送构建命令 | `orca terminal send --terminal term_build --text "mvn compile"` | 直接 bash 执行 |
+
+> 降级策略：Orca 不可用时 → 使用标准 Bash 命令。
+
 ## 诊断流程
 
 1. 完整读报错，不只看一行

@@ -106,6 +106,36 @@ curl -s -X GET "http://localhost:8080/jeecg-boot/xxx/yyy" -H "X-Access-Token: <t
 
 ## 验证流程
 
+### 验证环境隔离（Orca 增强，推荐）
+
+对于涉及数据库写入、状态变更或配置修改的验证，建议使用 Orca 工作树隔离：
+
+```bash
+# 创建验证隔离工作树
+orca worktree create --name eagleeye/verify-{模块名}
+
+# 在隔离环境中执行验证，验证完成后清理：
+orca worktree rm --worktree branch:eagleeye/verify-{模块名}
+```
+
+**收益：** 验证时的测试数据不污染开发数据库，临时配置修改不影响主配置。
+
+> 降级策略：Orca 不可用时 → 直接在开发目录验证（标准行为）。
+
+### Orca 终端集成（推荐）
+
+验证过程中如需查看后端日志或重启服务：
+
+| 操作 | Orca 命令 | 降级 (Bash) |
+|------|-----------|-------------|
+| 查看后端日志 | `orca terminal read --terminal term_backend --lines 50` | `tail -50 /tmp/jeecg-backend.log` |
+| 重启后端 | `orca terminal send` + `create` + `wait` | `kill` + `nohup mvn spring-boot:run` |
+| 构建前端 | `orca terminal send --text "pnpm build"` | 直接 bash 执行 |
+
+> 降级策略：Orca 不可用时 → 使用标准 Bash 命令。
+
+## 验证流程
+
 1. 读取 git diff，识别变更文件和变更类型
 2. **（可选增强）运行图形预分析**，按判定规则调整验证深度和优先级
 3. 按映射表确定每个变更的验证方法
