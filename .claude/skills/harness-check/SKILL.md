@@ -90,7 +90,7 @@ version: 1.0.0
 | Rules 有 `name` | 所有 rules/*.md 的 YAML frontmatter | -0.5 |
 | Rules 有 `version` | 同上 | -0.5 |
 | Rules 有 `glob`/`globs` | 同上 | -0.5 |
-| Skills 有 `name` | 所有 skills/**/SKILL.md 的 YAML frontmatter | -0.5 |
+| Skills 有 `name` | 所有 skills/*/SKILL.md 的 YAML frontmatter | -0.5 |
 | Skills 有 `description` | 同上 | -0.5 |
 
 #### 7.3 配置一致性

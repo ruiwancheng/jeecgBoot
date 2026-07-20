@@ -31,7 +31,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|------|------|------|
 | **入口** | `CLAUDE.md` | 全局约束 + 指向 Rules 的索引 | "详见 `file-scope.md`" |
 | **规则** | `.claude/rules/*.md` | 可执行的行为约束，有 glob 匹配 | 写操作边界、覆盖机制 |
-| **技能** | `.claude/skills/**/SKILL.md` (7 类别子目录) | 领域知识、配置值、模板 | Playwright 配置、Maven 路径 |
+| **技能** | `.claude/skills/*/SKILL.md` | 领域知识、配置值、模板 | Playwright 配置、Maven 路径 |
 
 **铁律：** CLAUDE.md 不内联 Rule 的具体内容。如果某条规则需要修改，只改对应的 Rule 文件，CLAUDE.md 不需要同步。反过来，新增 Rule 时只需在 CLAUDE.md 的索引区加一行引用。
 
