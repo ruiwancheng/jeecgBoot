@@ -28,6 +28,10 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_basic_customer", "mes_basic", "客户管理", "/project/mes/basic/customer", "project/mes/basic/customer/index", "MesBasicCustomer").sortNo(1.0).icon("ant-design:user-outlined"));
         list.add(MesMenuDefinition.leaf("mes_basic_supplier", "mes_basic", "供应商管理", "/project/mes/basic/supplier", "project/mes/basic/supplier/index", "MesBasicSupplier").sortNo(2.0).icon("ant-design:shop-outlined"));
         addPerms(list, "mes:supplier:", "mes_basic_supplier", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        //update-begin---author:ruiwancheng---date:2026-07-21  for：编码规则菜单注册-----------
+        list.add(MesMenuDefinition.leaf("mes_basic_codeRule", "mes_basic", "编码规则", "/project/mes/basic/codeRule", "project/mes/basic/codeRule/index", "MesBasicCodeRule").sortNo(3.0).icon("ant-design:number-outlined"));
+        addPerms(list, "mes:codeRule:", "mes_basic_codeRule", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        //update-end---author:ruiwancheng---date:2026-07-21  for：编码规则菜单注册-----------
 
         // ==================== 商品 ====================
         list.add(MesMenuDefinition.folder("mes_product", "mes_menu_001", "商品", "/project/mes/product", "/project/mes/product/material").sortNo(20.0).icon("ant-design:shopping-outlined"));

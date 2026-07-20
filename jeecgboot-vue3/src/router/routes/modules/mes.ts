@@ -51,6 +51,15 @@ const mes: AppRouteModule = {
           component: () => import('/@/views/project/mes/basic/material/index.vue'),
           meta: { title: '物料管理' },
         },
+        //update-begin---author:ruiwancheng---date:2026-07-21  for：编码规则路由注册-----------
+        {
+          path: 'codeRule',
+          name: 'MesBasicCodeRule',
+          component: () => import('/@/views/project/mes/basic/codeRule/index.vue'),
+          meta: { title: '编码规则' },
+        },
+        //update-end---author:ruiwancheng---date:2026-07-21  for：编码规则路由注册-----------
+        },
       ],
     },
     {
