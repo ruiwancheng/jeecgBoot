@@ -22,6 +22,20 @@ if [ -n "$SQL_FILES" ]; then
   fi
 fi
 
+# 前端语法检查: .ts/.vue 文件变更时自动验证语法，拦截低级编译错误
+TS_VUE_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|vue)$')
+if [ -n "$TS_VUE_FILES" ] && command -v npx &>/dev/null; then
+  echo "[Super Harness] 检查前端语法..."
+  TS_ERRORS=$(cd jeecgboot-vue3 2>/dev/null && npx vue-tsc --noEmit 2>&1 | grep -c "error TS\|Unexpected" || echo "0")
+  if [ "$TS_ERRORS" -gt 0 ]; then
+    echo "[Super Harness] ❌ 前端语法错误 $TS_ERRORS 处 — 请修复后重新提交"
+    cd jeecgboot-vue3 && npx vue-tsc --noEmit 2>&1 | grep "error TS\|Unexpected" | head -5
+    echo "  跳过检查: git commit --no-verify"
+    exit 1
+  fi
+  echo "[Super Harness] ✅ 前端语法检查通过"
+fi
+
 # 注解删除风险检测 (移除 @Transactional / @RequiresPermissions)
 REMOVED_TX=$(git diff --cached | grep -E '^\-.*@Transactional' | head -5)
 REMOVED_PERM=$(git diff --cached | grep -E '^\-.*@RequiresPermissions' | head -5)
