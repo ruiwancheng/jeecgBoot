@@ -105,16 +105,40 @@ metadata:
    - 前端：`jeecgboot-vue3/src/views/mes/.../` 下的 List.vue、Modal.vue、api.ts、data.ts
    - 数据库脚本：`jeecg-boot/db/` 或模块内的 SQL 文件
 
-3. **并行派发 10 个智能体**
+3. **架构简报预生成（可选增强）**
+   使用 code-review-graph MCP 工具为目标模块生成一份架构简报，作为 10 个 agent 的共享上下文。
+
+   **调用参数：**
+
+   | 步骤 | 工具 | 参数 | 用途 |
+   |------|------|------|------|
+   | 1. 入口 | `get_minimal_context_tool` | `task="tiequan audit of <module>"` | 获取模块状态 |
+   | 2. 架构 | `get_architecture_overview_tool` | `detail_level="minimal"` | 社区结构 + 耦合警告 |
+   | 3. 热点 | `get_hub_nodes_tool` | `top_n=15` | 高调用量函数（重点审计） |
+   | 4. 瓶颈 | `get_bridge_nodes_tool` | `top_n=10` | 架构瓶颈节点（重点审计） |
+   | 5. 缺口 | `get_knowledge_gaps_tool` | 默认参数 | 未测试热点 + 结构弱点 |
+   | 6. 耦合 | `get_surprising_connections_tool` | `top_n=10` | 跨模块意外耦合 |
+
+   **简报内容（传递给所有 agent）：**
+   1. 模块社区结构和耦合警告
+   2. Top 15 hub 节点（高波及面函数，审计优先级最高）
+   3. Top 10 bridge 节点（架构瓶颈）
+   4. 已知结构弱点（未测试热点、孤立节点）
+   5. 跨模块意外耦合
+
+   **降级策略：** 图谱不可用 → 跳过，agent 独立分析（标准行为）。简报是优化，不影响审计完整性。
+
+4. **并行派发 10 个智能体**
    - 使用 `delegate_task` 同时启动 10 个任务
+   - 每个智能体获取相同的架构简报作为输入上下文
    - 每个智能体只负责一个视角
 
-4. **汇总结果**
+5. **汇总结果**
    - 收集 10 份专项报告
    - 按共识规则判定风险等级
    - 标记共识高危问题
 
-5. **输出报告**
+6. **输出报告**
    - 汇总目录：`hermes/audits/{YYYY-MM-DD}/{module-name}/`
    - 总报告：`01_风控总报告.md`
    - 统计报告：`02_成员产出统计.md`
@@ -189,6 +213,7 @@ hermes/audits/
 
 - [ ] 已确认审计模块名和代码路径
 - [ ] 已收集后端、前端、数据库三类文件
+- [ ] 已生成架构简报（如可用）并传递给 10 个 agent
 - [ ] 10 个智能体已并行派发
 - [ ] 已按共识规则判定风险等级
 - [ ] 报告已归档到 `hermes/audits/{日期}/{模块}/`

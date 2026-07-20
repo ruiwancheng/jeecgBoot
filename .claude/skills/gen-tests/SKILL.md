@@ -56,3 +56,30 @@ npm install @playwright/test
 2. 按 `trigger` + `httpMethod` 匹配当前 Controller 方法
 3. 命中则追加对应 `addCase`（`api` 和 `e2e`）到内置推导结果
 4. 自定义规则优先于内置规则 — 相同的场景描述以自定义规则为准
+
+## 调用链覆盖扩展（Call-Chain Coverage Extension）
+
+在 API 测试生成前，使用 code-review-graph MCP 工具将测试目标从 Controller 表面延伸到 Service 内部调用链。
+
+### 调用参数
+
+| 步骤 | 工具 | 参数 | 用途 |
+|------|------|------|------|
+| 1. 追踪调用链 | `query_graph_tool` | `pattern="callees_of"`, `target="<Controller方法>"`, `detail_level="minimal"` | 从 Controller 向下找到所有被调用的 Service 方法 |
+| 2. 缺口检测 | `get_knowledge_gaps_tool` | 默认参数 | 提取未测试热点（untested hotspots） |
+| 3. Hub 覆盖 | `get_hub_nodes_tool` | `top_n=10` | 对前 10 hub 节点逐个检查 `tests_for` |
+| 4. 死代码排除 | `refactor_tool` | `mode="dead_code"` | 排除死代码，不浪费测试生成 |
+
+### 处理规则
+
+| 发现 | 动作 |
+|------|------|
+| Controller 调用的 Service 方法 | 为每个叶子 Service 方法生成单元级 API 测试 |
+| 未测试热点（untested hotspot） | 优先生成测试，标注 `[GAP]` |
+| Hub 节点零测试覆盖 | 输出 CRITICAL 警告："该 hub 节点（N 个调用者）无任何测试覆盖" |
+| 死代码 | 跳过，不生成测试 |
+
+### 降级策略
+
+- MCP 服务不可用 → 仅覆盖 Controller 端点（标准行为）
+- 部分工具失败 → 可用工具仍参与分析，失败项跳过
