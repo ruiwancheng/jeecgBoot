@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS c_mes_code_rule (
     seq_length      INT           DEFAULT 4    COMMENT '流水号位数',
     reset_cycle     VARCHAR(10)   DEFAULT 'DAILY' COMMENT '重置周期: NONE/DAILY/MONTHLY/YEARLY',
     current_seq     INT           DEFAULT 0    COMMENT '当前流水号',
-    current_date    VARCHAR(10)   DEFAULT NULL COMMENT '当前日期(用于判断重置)',
+    `current_date`  VARCHAR(10)   DEFAULT NULL COMMENT '当前日期(用于判断重置)',
     remark          VARCHAR(200)  DEFAULT NULL COMMENT '备注',
     create_by       VARCHAR(50)   DEFAULT NULL COMMENT '创建人',
     create_time     DATETIME      DEFAULT NULL COMMENT '创建时间',

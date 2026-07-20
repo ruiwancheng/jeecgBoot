@@ -2,6 +2,7 @@
 package org.jeecg.modules.mes.basic.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -50,6 +51,7 @@ public class MesCodeRule implements java.io.Serializable {
     @Schema(description = "当前流水号")
     private Integer currentSeq;
 
+    @TableField("`current_date`")
     @Schema(description = "当前日期")
     private String currentDate;
 
