@@ -34,3 +34,26 @@ npx playwright test
 ## 最大重试次数
 
 3 次
+
+## 流程覆盖增强（Flow Coverage Enhancement）
+
+使用 code-review-graph MCP 工具确保 E2E 测试覆盖受影响的用户流程。
+
+### 调用参数
+
+| 步骤 | 工具 | 参数 | 用途 |
+|------|------|------|------|
+| 1. 受影响流 | `get_affected_flows_tool` | 使用 HEAD~1 变更 | 列出受影响的用户可见功能 |
+| 2. 页面追踪 | `query_graph_tool` | `pattern="importers_of"`, `target="<变更的API>"` | 找到引用了变更 API 的前端页面 |
+
+### 判定规则
+
+| 条件 | 动作 |
+|------|------|
+| 变更影响了 N 条执行流 | 确保 E2E 测试覆盖所有受影响的流 |
+| API 变更影响了前端页面 | 对受影响页面追加 E2E 测试 |
+| 无执行流受影响 | 仅跑已有 E2E 测试 |
+
+### 降级策略
+
+图谱不可用 → 标准 E2E 流程
