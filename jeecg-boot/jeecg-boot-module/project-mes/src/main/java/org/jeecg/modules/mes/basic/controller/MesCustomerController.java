@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,6 +71,22 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
     public Result<List<MesCustomer>> queryAll() {
         return Result.ok(service.list());
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-21  for：【客户选择窗口】新增分页查询接口-----------
+    @Operation(summary = "客户选择分页查询", description = "用于客户选择弹窗，自动过滤已删除客户，支持keyword搜索")
+    @GetMapping("/selectPage")
+    public Result<IPage<MesCustomer>> selectPage(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
+        QueryWrapper<MesCustomer> qw = new QueryWrapper<>();
+        if (StringUtils.hasText(keyword)) {
+            qw.and(w -> w.like("code", keyword).or().like("name", keyword));
+        }
+        qw.orderByAsc("code");
+        return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-21  for：【客户选择窗口】新增分页查询接口-----------
 
     @Operation(summary = "导出Excel", description = "导出客户数据为Excel文件")
     @GetMapping("/exportXls")
