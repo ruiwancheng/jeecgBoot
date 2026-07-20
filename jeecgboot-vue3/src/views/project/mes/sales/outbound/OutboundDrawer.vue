@@ -5,7 +5,7 @@
     <div style="margin-bottom:8px"><a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button></div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JSearchSelect :value="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" :dict="'c_mes_material,name,id'" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" style="width:100%" />
       </template>
       <template #deliveryQty="{ record }"><span>{{ record.deliveryQty }}</span></template>
       <template #actualQty="{ record, index }">
@@ -25,7 +25,7 @@
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
   import { Input, InputNumber, Divider } from 'ant-design-vue';
-  import { JSearchSelect } from '/@/components/Form';
+  import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './outbound.data';

@@ -21,7 +21,7 @@ export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '入库单号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
   { field: 'productionOrderId', label: '生产订单', component: 'Input', required: true, colProps: { span: 8 } },
-  { field: 'productId', label: '产品', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_material,name,id' } },
+  { field: 'productId', label: '产品', component: 'JMaterialSelect', required: true, colProps: { span: 8 }, componentProps: {} },
   { field: 'warehouseId', label: '仓库', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_warehouse,name,id' } },
   { field: 'receiptDate', label: '入库日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_completion_status' }, defaultValue: '1', show: false },

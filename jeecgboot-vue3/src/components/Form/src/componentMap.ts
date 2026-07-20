@@ -83,6 +83,7 @@ componentMap.set('JSelectUserByDept', createAsyncComponent(() => import('./jeecg
 componentMap.set('JSelectUserByDepartment', createAsyncComponent(() => import('./jeecg/components/JSelectUserByDepartment.vue')));
 componentMap.set('JUpload', createAsyncComponent(() => import('./jeecg/components/JUpload/JUpload.vue')));
 componentMap.set('JSearchSelect', createAsyncComponent(() => import('./jeecg/components/JSearchSelect.vue')));
+componentMap.set('JMaterialSelect', createAsyncComponent(() => import('/@/views/project/mes/basic/material/JMaterialSelect.vue')));
 componentMap.set('JAddInput', createAsyncComponent(() => import('./jeecg/components/JAddInput.vue')));
 componentMap.set('JRangeNumber', createAsyncComponent(() => import('./jeecg/components/JRangeNumber.vue')));
 componentMap.set('CascaderPcaInFilter', createAsyncComponent(() => import('@/components/InFilter/CascaderPcaInFilter.vue')));

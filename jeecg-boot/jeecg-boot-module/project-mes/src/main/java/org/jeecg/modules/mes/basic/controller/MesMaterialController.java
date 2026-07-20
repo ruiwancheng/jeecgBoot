@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,6 +93,24 @@ public class MesMaterialController extends JeecgController<MesMaterial, IMesMate
         }
         return Result.ok(service.list());
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-20  for：【物料选择窗口】新增分页查询接口，过滤del_flag+status-----------
+    @Operation(summary = "物料选择分页查询", description = "用于物料选择弹窗，自动过滤已删除和已停用物料，支持keyword搜索")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:material:list")
+    public Result<IPage<MesMaterial>> selectPage(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
+        QueryWrapper<MesMaterial> qw = new QueryWrapper<>();
+        qw.eq("status", 1); // 仅启用的物料
+        if (StringUtils.hasText(keyword)) {
+            qw.and(w -> w.like("code", keyword).or().like("name", keyword).or().like("spec", keyword));
+        }
+        qw.orderByAsc("code");
+        return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-20  for：【物料选择窗口】新增分页查询接口，过滤del_flag+status-----------
 
     @Operation(summary = "导出Excel")
     @GetMapping("/exportXls")

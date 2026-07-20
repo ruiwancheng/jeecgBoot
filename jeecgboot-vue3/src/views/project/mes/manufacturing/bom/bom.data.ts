@@ -20,7 +20,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: 'BOM编号', component: 'Input', required: true, colProps: { span: 6 }, componentProps: { maxlength: 50 } },
-  { field: 'productId', label: '父项物料', component: 'JSearchSelect', required: true, colProps: { span: 6 }, componentProps: { dict: 'c_mes_material,name,id' } },
+  { field: 'productId', label: '父项物料', component: 'JMaterialSelect', required: true, colProps: { span: 6 }, componentProps: {} },
   { field: 'version', label: '版本号', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 20 } },
   { field: 'effectiveDate', label: '生效日期', component: 'DatePicker', colProps: { span: 6 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'expiryDate', label: '失效日期', component: 'DatePicker', colProps: { span: 6 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },

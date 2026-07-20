@@ -10,6 +10,7 @@ enum Api {
   queryAll = '/mes/basic/material/queryAll',
   exportXls = '/mes/basic/material/exportXls',
   importExcel = '/mes/basic/material/importExcel',
+  selectPage = '/mes/basic/material/selectPage',
 }
 
 export const getExportUrl = Api.exportXls;
@@ -22,5 +23,7 @@ export const deleteMaterial = (params: Recordable) => defHttp.delete({ url: Api.
 export const deleteBatchMaterial = (params: Recordable) => defHttp.delete({ url: Api.deleteBatch, params }, { joinParamsToUrl: true });
 export const queryMaterialById = (params: Recordable) => defHttp.get({ url: Api.queryById, params });
 export const queryAllMaterial = () => defHttp.get({ url: Api.queryAll });
+export const selectMaterialPage = (params: { keyword?: string; pageNo?: number; pageSize?: number }) =>
+  defHttp.get({ url: Api.selectPage, params });
 export const saveOrUpdateMaterial = (params: Recordable, isUpdate: boolean) =>
   isUpdate ? editMaterial(params) : addMaterial(params);

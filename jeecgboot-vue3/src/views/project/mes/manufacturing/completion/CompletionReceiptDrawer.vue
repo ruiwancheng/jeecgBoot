@@ -7,7 +7,7 @@
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JSearchSelect :value="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" :dict="'c_mes_material,name,id'" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value || v)" style="width:100%" />
       </template>
       <template #planQty="{ record, index }">
         <InputNumber :value="record.planQty" :min="0" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'planQty', v)" />
@@ -25,7 +25,7 @@
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
   import { InputNumber, Divider } from 'ant-design-vue';
-  import { JSearchSelect } from '/@/components/Form';
+  import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './completion.data';
