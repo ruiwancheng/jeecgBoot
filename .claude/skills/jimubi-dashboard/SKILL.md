@@ -1,6 +1,7 @@
 ---
 name: jimubi-dashboard
 description: Use when user asks to create/design a dashboard (仪表盘/看板), data kanban, or says "创建仪表盘", "生成仪表盘", "做一个仪表盘", "数据看板", "做一个看板", "创建看板", "数据面板", "统计看板", "运营看板", "create dashboard", "generate dashboard", "design dashboard", "data kanban", "KPI dashboard". Also triggers for QQY/敲敲云 mode dashboards: "敲敲云仪表盘", "低代码应用仪表盘", "应用内仪表盘", "给应用添加图表", mentions appId+tenantId in dashboard context. Also triggers when user describes dashboard/kanban requirements like "做一个运营数据看板" or mentions grid-layout data display like "统计系统数据". Make sure to use this skill for dashboards (仪表盘/看板) — NOT big screens (大屏), which use completely different positioning, styling, and component configurations.
+version: 1.0.0
 ---
 
 # JeecgBoot 仪表盘 AI 自动生成器

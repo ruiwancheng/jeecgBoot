@@ -1,6 +1,7 @@
 ---
 name: plan
 description: 制定实施计划，区分纯新增/覆盖标品/加字段三种策略 — Create implementation plan, distinguishing three strategies: new feature, override standard product, add fields
+version: 1.0.0
 ---
 
 # 实施计划 (Plan)

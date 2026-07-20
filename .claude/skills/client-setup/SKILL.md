@@ -1,6 +1,7 @@
 ---
 name: client-setup
 description: 客户端开发环境接入指南 — Tailscale VPN + Vite 代理直连服务端。当用户问"怎么接入""新电脑怎么配置开发环境""客户端连接"时自动触发。
+version: 1.0.0
 ---
 
 # 客户端开发环境接入指南

@@ -1,6 +1,7 @@
 ---
 name: list-projects
 description: 列出所有KA客户项目并显示当前活跃项目 — List all KA customer projects and show the current active project
+version: 1.0.0
 ---
 
 # 列出项目 (List Projects)

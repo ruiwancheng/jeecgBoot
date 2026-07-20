@@ -33,3 +33,19 @@ esac
 if [ -n "$PENDING" ] && [ "$PENDING" != "—" ]; then
   echo "📋 待办: $PENDING"
 fi
+
+# Orca 上下文感知 (非阻塞)
+if command -v orca &>/dev/null; then
+  ORCA_JSON=$(orca status --json 2>/dev/null || echo '{"available":false}')
+  ORCA_AVAILABLE=$(echo "$ORCA_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('appRunning') else 'false')" 2>/dev/null || echo "false")
+  if [ "$ORCA_AVAILABLE" = "true" ]; then
+    WORKTREE_COUNT=$(orca worktree ps --limit 10 2>/dev/null | grep -c "refs/heads" || echo "0")
+    echo "🔧 Orca: 可用 (工作树: ${WORKTREE_COUNT:-0} 个)"
+    # 显示工作树概况
+    orca worktree ps --limit 5 2>/dev/null | head -6
+  else
+    echo "🔧 Orca: 不可用 (降级模式)"
+  fi
+else
+  echo "🔧 Orca: 未安装 (标准模式)"
+fi

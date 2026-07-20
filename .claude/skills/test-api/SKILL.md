@@ -1,6 +1,7 @@
 ---
 name: test-api
 description: 后端 API 接口测试，支持模块级和全量测试，自动诊断报错、查询日志并修复。Backend API testing with auto-diagnosis, log inspection, and fix.
+version: 1.0.0
 ---
 
 # 后端 API 接口测试

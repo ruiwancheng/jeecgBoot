@@ -1,6 +1,7 @@
 ---
 name: jeecg-onlreport
 description: Use when user asks to create/edit/query Online reports, SQL reports, data reports, or says "创建报表", "生成报表", "新建报表", "查询报表", "online报表", "SQL报表", "数据报表", "统计报表", "create report", "generate report", "data report". Also triggers when user describes report requirements like "做一个销售统计报表", mentions JeecgBoot cgreport/online report, or says "查看现有报表" / "列出所有报表". This skill handles Online 报表 (SQL-driven data display/reports), not Online forms (cgform) or designer forms (desform).
+version: 1.0.0
 ---
 
 # JeecgBoot Online 报表 AI 自动生成器

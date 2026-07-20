@@ -1,6 +1,7 @@
 ---
 name: jeecg-onlform
 description: >-
+version: 1.0.0
   JeecgBoot Online表单（cgform）全生命周期管理——通过API自动创建/编辑数据库表和表单配置，
   支持单表、主子表、树表，26种控件类型，以及JS/Java/SQL增强、权限配置、数据CRUD、积木报表集成。
   只要用户意图涉及「Online表单」就必须使用本技能，包括但不限于：

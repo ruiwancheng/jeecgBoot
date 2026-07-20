@@ -1,6 +1,7 @@
 ---
 name: verify
 description: 变更自验证，按变更类型匹配验证方法并逐项输出证据 — Change self-verification: match verification method by change type, output evidence item by item
+version: 1.0.0
 ---
 
 # 变更自验证 (Verify)

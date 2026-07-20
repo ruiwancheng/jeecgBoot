@@ -1,6 +1,7 @@
 ---
 name: test-frontend
 description: 前端静态检查，验证组件完整性、路由正确性、TypeScript 类型和构建是否通过。Frontend static check: component integrity, routes, TypeScript types, and build.
+version: 1.0.0
 ---
 
 # 前端静态检查

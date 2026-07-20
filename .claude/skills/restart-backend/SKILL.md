@@ -1,6 +1,7 @@
 ---
 name: restart-backend
 description: 重启后端 Java 应用。当用户说"重启后端"、"重启服务"、"重启应用"时自动触发。Restart the backend Java application when user says "restart backend", "restart server", "restart service".
+version: 1.0.0
 ---
 
 # 重启后端应用

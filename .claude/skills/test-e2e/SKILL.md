@@ -1,6 +1,7 @@
 ---
 name: test-e2e
 description: 端到端浏览器测试，模拟真实用户操作（登录、导航、表单填写），使用 Playwright。E2e browser testing with Playwright simulating real user flows.
+version: 1.0.0
 ---
 
 # 端到端浏览器测试

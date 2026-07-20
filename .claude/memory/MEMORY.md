@@ -10,3 +10,5 @@
 - [部署架构](deployment-architecture.md) — 客户端-服务端分离：网络拓扑、部署模式、控制台操作、故障处理
 - [Vite worker 死锁](learnings/2026-07-09-vite-worker-deadlock.md) — Atomics.wait 5s超时→Less timed-out，patch到60s+重试
 - [set -e 重试陷阱](learnings/2026-07-09-bash-set-e-retry-trap.md) — set -e下编译失败直接退出，重试循环被跳过
+- [Orca 工作树命名规范](orca-worktree-conventions.md) — feature/tiequan/eagleeye/hotfix/review 五大前缀及使用场景
+- [Orca 终端布局标准](orca-terminal-layout.md) — JeecgBoot开发四终端标准布局（后端/前端/构建/测试）

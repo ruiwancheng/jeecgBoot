@@ -1,6 +1,7 @@
 ---
 name: review
 description: 代码审查，检查正确性/类型安全/模式合规/安全性/性能/完整性/可维护性 — Code review across 7 dimensions: correctness, type safety, pattern compliance, security, performance, completeness, maintainability
+version: 1.0.0
 ---
 
 # 代码审查 (Review)

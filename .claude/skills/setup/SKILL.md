@@ -1,6 +1,7 @@
 ---
 name: setup
 description: 初始化客户项目（建库、执行 SQL、编译模块）。当用户说"初始化项目"、"执行建表"、"部署项目"、"运行 SQL"时自动触发。Initialize a customer project (create DB, execute SQL, compile module). Trigger when user says "init project", "run SQL", "deploy project", "setup project".
+version: 1.0.0
 ---
 
 # 项目初始化

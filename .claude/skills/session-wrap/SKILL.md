@@ -1,6 +1,7 @@
 ---
 name: session-wrap
 description: 会话收尾，检查重复信号并提示后续操作 — Session wrap-up: check repetition signals and suggest follow-up actions
+version: 1.0.0
 ---
 
 # 会话收尾 (Session Wrap)

@@ -1,6 +1,7 @@
 ---
 name: debug
 description: 报错诊断与修复 — 根据错误日志定位问题、分析根因、最小化修复。Error diagnosis and minimal fix from error logs.
+version: 1.0.0
 ---
 
 # debug — 报错诊断与修复

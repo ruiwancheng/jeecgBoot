@@ -1,6 +1,7 @@
 ---
 name: jeecg-bpmn
 description: Use when user asks to create/generate/edit/modify a BPM workflow, design a Flowable BPMN process, or says "创建流程", "生成流程", "新建流程", "设计流程", "画流程", "审批流程", "工作流", "BPM", "BPMN", "create flow", "create process", "new workflow", "generate workflow". Also triggers when user describes an approval chain like "先经理审批再HR审批" or mentions process nodes like "开始→审批→网关→结束". Also triggers for OA application creation: "创建OA应用", "创建审批单", "创建报销单", "创建请假单", "做一个OA表单带流程", "一键创建表单和流程", "create OA app", "create approval form with workflow". Also triggers for ANY operation on existing processes: "编辑流程", "修改流程", "删除监听器", "添加监听器", "删除节点", "添加节点", "修改节点", "配置节点", "流程中的", "edit process", "modify process", "delete listener", "add listener", "remove listener", "add node", "delete node", "configure node". Key rule: whenever user mentions a specific process name (like "网关测试") with any modification intent, this skill MUST be invoked FIRST before any manual API exploration.
+version: 1.0.0
 ---
 
 # JeecgBoot BPM 流程自动生成器

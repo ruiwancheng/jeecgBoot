@@ -1,6 +1,7 @@
 ---
 name: dead-code-check
 description: 死代码检测 — 扫描前后端未引用代码，按置信度分级输出清理建议。Dead code detection with confidence scoring.
+version: 1.0.0
 ---
 
 # dead-code-check — 死代码检测

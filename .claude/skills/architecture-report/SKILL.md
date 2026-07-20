@@ -1,6 +1,7 @@
 ---
 name: architecture-report
 description: 架构健康报告 — 基于知识图谱生成数据驱动的架构健康报告，含社区地图、热点风险、耦合违规、结构债务。Data-driven architecture health report powered by code knowledge graph.
+version: 1.0.0
 ---
 
 # architecture-report — 架构健康报告

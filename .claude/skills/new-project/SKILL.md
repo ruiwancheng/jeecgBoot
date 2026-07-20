@@ -1,6 +1,7 @@
 ---
 name: new-project
 description: 创建新的 KA 客户项目。当用户说"创建新的客户项目"、"新建一个项目"、"初始化客户模块"时自动触发。Create a new KA customer project when user says "create a new customer project", "new project", "init customer module".
+version: 1.0.0
 ---
 
 # 新建 KA 客户项目

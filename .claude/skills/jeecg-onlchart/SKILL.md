@@ -1,6 +1,7 @@
 ---
 name: jeecg-onlchart
 description: Use when user asks to create/edit Online graph charts, data visualization, or says "创建图表", "生成图表", "新建图表", "做一个图表", "online图表", "数据图表", "柱状图", "折线图", "饼图", "统计图", "可视化", "chart", "graph", "create chart", "generate chart", "bar chart", "line chart", "pie chart". Also triggers when user describes chart requirements like "做一个销售柱状图" or mentions data visualization like "用图表展示男女比例".
+version: 1.0.0
 ---
 
 # JeecgBoot Online 图表 AI 自动生成器

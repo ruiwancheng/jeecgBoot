@@ -1,6 +1,7 @@
 ---
 name: jeecg-system
 description: JeecgBoot 系统主数据查询与管理。Use when user asks to query/create/manage system master data, or says "查询角色", "查询用户", "查询部门", "查询字典", "创建字典", "创建角色", "查岗位", "查职务", "查租户", "查数据源", "查定时任务", "系统主数据", "query roles", "query users", "query depts", "create dict", "create role", "master data". Also triggers when other skills (desform, bpmn, codegen) need to look up or create roles, users, departments, dictionaries, or positions as dependencies — follows "先查后建" (query-first-create-later) principle.
+version: 1.0.0
 ---
 
 # JeecgBoot 系统主数据查询与管理

@@ -1,6 +1,7 @@
 ---
 name: harness-check
 description: Harness 巡检 — 检查 CLAUDE.md、Commands、Rules、Hooks 完整性，七轴评分（含交叉验证）并输出改进建议。Audit harness integrity with seven-axis scoring (including cross-validation) and improvement suggestions.
+version: 1.0.0
 ---
 
 # harness-check — Harness 工程巡检

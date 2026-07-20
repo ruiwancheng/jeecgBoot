@@ -1,6 +1,7 @@
 ---
 name: done
 description: 开发完成检查，验证代码提交和文档完整性 — Development completion checklist: verify commits and documentation
+version: 1.0.0
 ---
 
 # 开发完成检查 (Done)

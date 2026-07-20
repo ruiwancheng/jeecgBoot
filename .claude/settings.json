@@ -23,6 +23,15 @@
         ]
       },
       {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/pre-plan-check.sh\""
+          }
+        ]
+      },
+      {
         "matcher": "Bash(git commit)",
         "hooks": [
           {
