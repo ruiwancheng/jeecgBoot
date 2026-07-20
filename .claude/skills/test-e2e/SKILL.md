@@ -100,3 +100,31 @@ orca automations create \
 ### 降级策略
 
 图谱不可用 → 标准 E2E 流程
+
+## Orca Browser 可视化调试（推荐）
+
+当 E2E 测试失败需要可视化调试时，使用 Orca Browser 替代 headless Playwright：
+
+```bash
+# 在 Orca Browser 中打开测试页面
+orca goto --url http://localhost:3100
+
+# 执行登录流程（可视化验证）
+orca fill --element e5 --value "admin"
+orca fill --element e7 --value "123456"
+orca click --element e10
+
+# 截图保存为测试证据
+orca snapshot --format png
+```
+
+### Playwright vs Orca Browser 分工
+
+| 场景 | 推荐工具 | 原因 |
+|------|---------|------|
+| CI/自动化批量回归 | Playwright headless | 快速、可并行、可脚本化 |
+| 本地调试失败用例 | Orca Browser | 可视可交互、即时截图 |
+| 生成测试证据 | Orca Browser snapshot | 真实浏览器渲染截图 |
+| 全量 E2E 运行 | Playwright headless | 批量执行、报告自动化 |
+
+> 降级策略：Orca 不可用时 → `npx playwright test --headed` 进行可视化调试。

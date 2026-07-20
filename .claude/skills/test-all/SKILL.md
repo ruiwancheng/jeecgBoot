@@ -194,6 +194,40 @@ hermes/eagle-eye/reports/
 5. 建议是否可以进行 /done
 6. 如果使用了工作树隔离 → 提示 `orca worktree rm --worktree branch:eagleeye/{模块名}` 清理
 
+### 步骤 4.5：趋势聚合（每周自动）
+
+每周自动聚合 `hermes/eagle-eye/reports/` 下的单次报告为趋势数据：
+
+**聚合维度：**
+| 维度 | 数据源 | 告警阈值 |
+|------|------|:--:|
+| API 测试通过率 | 各次报告 API 通过/总数 | < 90% 标记 P2 |
+| E2E 测试通过率 | 各次报告 E2E 通过/总数 | < 80% 标记 P1 |
+| 前端构建成功率 | 各次报告构建结果 | 任何失败标记 P0 |
+| 自动修复次数 | 各次报告修复计数 | 连续增长标记 P2 |
+| 需人工排查项 | 各次报告 pending 计数 | 连续不下降标记 P2 |
+
+**趋势报告模板：**
+```markdown
+# 测试趋势 — 2026-W30
+
+## 通过率趋势
+| 日期 | API | E2E | 前端 | 总计 | 趋势 |
+|------|:--:|:--:|:--:|:--:|:--:|
+| 07-20 | 100% | 100% | ✅ | 100% | → |
+| 07-21 | 100% | 83% | ✅ | 95% | ↓ |
+
+## 告警
+- 07-21 E2E 通过率降至 83%，需排查
+
+## 建议
+- E2E 失败用例集中在 XX 页面，建议优先修复
+```
+
+**连续下降告警：** 如果任一维度连续 2 周下降 → 标记 P0，阻止新功能开发，优先修测试。
+
+> 降级策略：Orca 不可用 → 手动运行 `/test-all --trend` 生成趋势报告。
+
 ## 铁律
 
 > 自动修复只修测试代码，不修被测业务代码。
@@ -201,3 +235,45 @@ hermes/eagle-eye/reports/
 > 重试上限 3 次，超过则停止，不再修复。
 > 三路并行执行，彼此失败不阻断对方——一个模块的 E2E 挂了不影响 API 测试继续。
 > 报告必须留存到 hermes/eagle-eye/reports/，否则下次无法趋势对比。
+
+## Orca 编排 DAG（v3 升级，可选）
+
+当 Orca orchestration 可用时，test-all 可升级为真正的多 Agent 编排 DAG：
+
+```yaml
+# Orca orchestration DAG: test-all pipeline
+dag:
+  - id: gen_tests
+    dispatch: "使用 gen-tests 技能为变更模块生成测试用例"
+    
+  - id: test_api
+    dispatch: "使用 test-api 技能运行 API 测试"
+    depends_on: [gen_tests]
+    
+  - id: test_e2e
+    dispatch: "使用 test-e2e 技能运行端到端测试"
+    depends_on: [gen_tests]
+    
+  - id: test_frontend
+    dispatch: "使用 test-frontend 技能运行类型检查和构建"
+    # 不依赖 gen_tests，前端检查独立执行
+    
+  - id: aggregate
+    dispatch: "汇总三个测试通道结果，生成趋势对比"
+    depends_on: [test_api, test_e2e, test_frontend]
+    decision_gate:
+      - condition: "all_pass" → mark_ready_for_done
+      - condition: "partial_failure" → flag_for_manual_review
+      - condition: "critical_failure" → block_deploy
+```
+
+**编排命令：**
+```bash
+orca orchestration task-create --spec "test-all {模块名}" --json
+# 对三个测试通道分别 dispatch --inject
+orca orchestration check --wait --types worker_done --timeout-ms 900000 --json
+```
+
+**收益：** 每个测试通道独立 Agent、独立 Token 预算、独立失败处理。决策门自动判定通过/需人工/阻断。
+
+> 降级策略：Orca orchestration 不可用 → 回退到 v2.0.0 进程内三路并行（标准行为）。

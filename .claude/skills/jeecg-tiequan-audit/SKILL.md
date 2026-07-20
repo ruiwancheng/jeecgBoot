@@ -250,16 +250,95 @@ hermes/tiequan/
 
 ## Verification Checklist
 
+## Orca 编排 DAG（v3 升级，可选）
+
+当 Orca orchestration 可用时，步骤 4 可升级为真正的多 Agent 编排 DAG：
+
+```yaml
+# Orca orchestration DAG: tiequan-audit
+dag:
+  - id: arch_brief
+    dispatch: "使用 MCP graph tools 生成架构简报"
+    
+  - id: agent_pm1
+    dispatch: "产品大佬1号 — 客户真实视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_pm2
+    dispatch: "产品大佬2号 — 边界异常视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_pm3
+    dispatch: "产品大佬3号 — 资损合规视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_dev1
+    dispatch: "研发大牛1号 — 架构全局视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_dev2
+    dispatch: "研发大牛2号 — 代码细节视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_dev3
+    dispatch: "研发大牛3号 — 并发安全视角审计"
+    depends_on: [arch_brief]
+    
+  - id: agent_qa1
+    dispatch: "测试牛马1号 — 基础功能测试"
+    depends_on: [arch_brief]
+    
+  - id: agent_qa2
+    dispatch: "测试牛马2号 — 边界异常测试"
+    depends_on: [arch_brief]
+    
+  - id: agent_qa3
+    dispatch: "测试牛马3号 — 性能压测"
+    depends_on: [arch_brief]
+    
+  - id: agent_qa4
+    dispatch: "测试牛马4号 — 资损对账专项"
+    depends_on: [arch_brief]
+    
+  - id: consensus
+    dispatch: "汇总 10 份报告，按共识规则判定风险等级"
+    depends_on: [agent_pm1, agent_pm2, agent_pm3, agent_dev1, agent_dev2, agent_dev3, agent_qa1, agent_qa2, agent_qa3, agent_qa4]
+    decision_gate:
+      - condition: "consensus_p0 >= 1" → block_deploy + "发现共识 P0，阻断发布"
+      - condition: "consensus_p0 == 0" → mark_audit_complete + "审计通过"
+```
+
+**编排命令：**
+```bash
+# 创建编排任务
+orca orchestration task-create --spec "tiequan audit {模块名}" --json
+
+# 逐 agent dispatch（10 个并行）
+for agent in agent_pm1 agent_pm2 ... agent_qa4; do
+  orca orchestration dispatch --task <task_id> --to <agent_handle> --inject --json
+done
+
+# 阻塞等待全部完成（30分钟超时）
+orca orchestration check --wait --types worker_done --timeout-ms 1800000 --json
+```
+
+**收益：** 真正的并行隔离（每个 Agent 独立上下文），决策门自动阻断发布，实时心跳监控。
+
+> 降级策略：Orca orchestration 不可用 → 回退到 v2.0.0 Workflow 工具并行派发（标准行为）。
+
+## Verification Checklist
+
 - [ ] 已确认审计模块名和代码路径
 - [ ] 已创建隔离工作树（如果 Orca 可用）：`orca worktree create --name tiequan/{模块名}`
 - [ ] 已收集后端、前端、数据库三类文件
 - [ ] 已生成架构简报（如可用）并传递给 10 个 agent
-- [ ] 10 个智能体已并行派发
+- [ ] 10 个智能体已并行派发（v2: Workflow工具 / v3: Orca编排DAG）
 - [ ] 已按共识规则判定风险等级
 - [ ] 报告已归档到 `hermes/tiequan/{日期}/{模块}/`
 - [ ] 已生成总报告、统计报告、索引
 - [ ] 未修改任何代码或文档
 - [ ] 审计工作树已清理（如果使用）：`orca worktree rm --worktree branch:tiequan/{模块名}`
+- [ ] 如使用编排DAG：决策门已执行（P0阻断 or 通过）
 
 ## Example Trigger
 
@@ -276,4 +355,4 @@ hermes/tiequan/
 
 ---
 
-*本地化版本：JeecgBoot 项目专用，基于通用 ai-quality-control-team skill 适配。v2 新增 Orca 工作树隔离支持。*
+*本地化版本：JeecgBoot 项目专用。v2 新增 Orca 工作树隔离；v3 新增 Orca 编排 DAG 支持。*
