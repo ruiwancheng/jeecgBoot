@@ -4,6 +4,7 @@
     <a-divider>订单行</a-divider>
     <div style="margin-bottom:8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
+      <a-button type="dashed" preIcon="ant-design:unordered-list-outlined" @click="handleOpenBatchModal" style="margin-left: 8px">添加物料</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
@@ -22,6 +23,7 @@
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
       </template>
     </a-table>
+    <MaterialSelectModal :visible="batchModalVisible" mode="multiple" @update:visible="batchModalVisible = $event" @select="handleBatchAddMaterials" />
   </BasicDrawer>
 </template>
 
@@ -29,6 +31,7 @@
   import { ref, computed, unref, nextTick } from 'vue';
   import { InputNumber, Divider } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
+  import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './order.data';
@@ -74,6 +77,20 @@
   function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0 }); }
   function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
   function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+
+  const batchModalVisible = ref(false);
+  function handleOpenBatchModal() { batchModalVisible.value = true; }
+  function handleBatchAddMaterials(materials: any[]) {
+    const startLineNo = items.value.length + 1;
+    materials.forEach((m, i) => {
+      items.value.push({
+        lineNo: startLineNo + i,
+        materialId: m.id,
+        quantity: 1,
+        unitPrice: 0,
+      });
+    });
+  }
 
   async function handleSubmit() {
     const values = await validate();

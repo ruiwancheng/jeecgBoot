@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :visible="visible"
-    title="选择物料"
+    :title="mode === 'multiple' ? '批量选择物料' : '选择物料'"
     width="900px"
     :footer="null"
     :destroyOnClose="true"
@@ -31,11 +31,13 @@
       :loading="loading"
       size="small"
       rowKey="id"
-      :rowClassName="(r: any) => selectedRow?.id === r.id ? 'ant-table-row-selected' : ''"
+      :rowSelection="mode === 'multiple' ? rowSelectionConfig : undefined"
+      :rowClassName="(r: any) => mode === 'single' && selectedRow?.id === r.id ? 'ant-table-row-selected' : ''"
       @change="handleTableChange"
+      @rowClick="handleRowClick"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'action'">
+        <template v-if="column.dataIndex === 'action' && mode === 'single'">
           <a-button
             :type="selectedRow?.id === record.id ? 'primary' : 'default'"
             size="small"
@@ -47,29 +49,49 @@
       </template>
     </a-table>
 
-    <!-- 已选预览 + 确认 -->
+    <!-- 底部：已选预览 + 确认 -->
     <div style="margin-top: 12px; padding: 10px; background: #f5f5f5; border-radius: 4px; display: flex; align-items: center; justify-content: space-between">
-      <span v-if="selectedRow">
-        已选：<strong>{{ selectedRow.code }}</strong> — {{ selectedRow.name }}
-        <span v-if="selectedRow.spec" style="color: #888; margin-left: 8px">{{ selectedRow.spec }}</span>
+      <!-- 多选模式 -->
+      <span v-if="mode === 'multiple'">
+        已选：<strong>{{ selectedRows.length }}</strong> 项
+        <span v-if="selectedRows.length > 0" style="margin-left: 8px; color: #666">
+          {{ selectedRows.slice(0, 3).map(r => r.code).join(', ') }}
+          <template v-if="selectedRows.length > 3">等</template>
+        </span>
       </span>
-      <span v-else style="color: #999">请点击表格中的"选择"按钮，或点击行选中物料</span>
-      <a-button type="primary" :disabled="!selectedRow" @click="handleConfirm">确认</a-button>
+      <!-- 单选模式 -->
+      <span v-else>
+        <template v-if="selectedRow">
+          已选：<strong>{{ selectedRow.code }}</strong> — {{ selectedRow.name }}
+          <span v-if="selectedRow.spec" style="color: #888; margin-left: 8px">{{ selectedRow.spec }}</span>
+        </template>
+        <span v-else style="color: #999">请点击表格中的"选择"按钮，或点击行选中物料</span>
+      </span>
+      <a-button type="primary" :disabled="mode === 'single' ? !selectedRow : selectedRows.length === 0" @click="handleConfirm">确认</a-button>
     </div>
   </a-modal>
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, watch } from 'vue';
+  import { ref, reactive, watch, computed } from 'vue';
+  import type { TableRowSelection } from 'ant-design-vue/es/table';
   import { selectMaterialPage } from './material.api';
 
-  const props = defineProps<{ visible: boolean }>();
+  const props = defineProps<{
+    visible: boolean;
+    mode?: 'single' | 'multiple';
+  }>();
+
   const emit = defineEmits(['update:visible', 'select']);
 
   const searchKeyword = ref('');
   const selectedRow = ref<any>(null);
+  const selectedRows = ref<any[]>([]);
+  const selectedRowKeys = ref<string[]>([]);
   const dataSource = ref<any[]>([]);
   const loading = ref(false);
+
+  const currentMode = computed(() => props.mode || 'single');
 
   const pagination = reactive({
     current: 1,
@@ -85,8 +107,17 @@
     { title: '类型', dataIndex: 'type_dictText', width: 100 },
     { title: '规格型号', dataIndex: 'spec', width: 120 },
     { title: '单位', dataIndex: 'unit_dictText', width: 80 },
-    { title: '操作', dataIndex: 'action', width: 80 },
+    ...(props.mode === 'single' ? [{ title: '操作', dataIndex: 'action', width: 80 }] : []),
   ];
+
+  const rowSelectionConfig = computed<TableRowSelection>(() => ({
+    selectedRowKeys: selectedRowKeys.value,
+    onChange: (keys: any[], rows: any[]) => {
+      selectedRowKeys.value = keys as string[];
+      selectedRows.value = rows;
+    },
+    preserveSelectedRowKeys: true,
+  }));
 
   async function fetchData() {
     loading.value = true;
@@ -113,6 +144,8 @@
     searchKeyword.value = '';
     pagination.current = 1;
     selectedRow.value = null;
+    selectedRows.value = [];
+    selectedRowKeys.value = [];
     fetchData();
   }
 
@@ -120,6 +153,12 @@
     pagination.current = pag.current;
     pagination.pageSize = pag.pageSize;
     fetchData();
+  }
+
+  function handleRowClick(record: any) {
+    if (currentMode.value === 'single') {
+      handleSelect(record);
+    }
   }
 
   function handleSelect(record: any) {
@@ -131,15 +170,26 @@
   }
 
   function handleConfirm() {
-    if (selectedRow.value) {
-      emit('select', selectedRow.value);
-      selectedRow.value = null;
-      emit('update:visible', false);
+    if (currentMode.value === 'multiple') {
+      if (selectedRows.value.length > 0) {
+        emit('select', selectedRows.value);
+        selectedRows.value = [];
+        selectedRowKeys.value = [];
+        emit('update:visible', false);
+      }
+    } else {
+      if (selectedRow.value) {
+        emit('select', selectedRow.value);
+        selectedRow.value = null;
+        emit('update:visible', false);
+      }
     }
   }
 
   function handleCancel() {
     selectedRow.value = null;
+    selectedRows.value = [];
+    selectedRowKeys.value = [];
     emit('update:visible', false);
   }
 
@@ -147,6 +197,8 @@
     if (val) {
       searchKeyword.value = '';
       selectedRow.value = null;
+      selectedRows.value = [];
+      selectedRowKeys.value = [];
       pagination.current = 1;
       fetchData();
     }
