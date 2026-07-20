@@ -46,11 +46,15 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
         QueryWrapper<MesCustomer> qw = QueryGenerator.initQueryWrapper(entity, req.getParameterMap());
-        // 非admin角色按业务员隔离数据
+        //update-begin---author:ruiwancheng---date:2026-07-21  for：修复mes_admin数据隔离—用角色判断替代硬编码用户名-----------
+        // 管理员角色(author: ruiwancheng)可查看全部客户，普通业务员只能看自己的客户
         LoginUser loginUser = getLoginUser();
-        if (loginUser != null && !"admin".equals(loginUser.getUsername())) {
+        boolean isAdmin = loginUser != null && (SecurityUtils.getSubject().hasRole("mes_admin")
+                || "admin".equals(loginUser.getUsername()));
+        if (loginUser != null && !isAdmin) {
             qw.eq("salesman_id", loginUser.getUsername());
         }
+        //update-end---author:ruiwancheng---date:2026-07-21  for：修复mes_admin数据隔离—用角色判断替代硬编码用户名-----------
         return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
     }
 
