@@ -13,14 +13,14 @@ version: 1.0.0
 - `.claude/settings.json` — 项目级设置
 - `.claude/features.json` — 功能模块清单
 
-### 命令 Commands（29 个）
-`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `review/review`, `review/harness-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`
+### 命令 Commands（31 个）
+`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`
 
 ### 规则 Rules（16 个）
 `file-scope`, `backend-first`, `code-style`, `no-platform-modify`, `frontend`, `security`, `testing`, `workflow`, `debugging`, `skill-command-boundary`, `data-scope`, `override-mechanism`, `audit-classification`, `engineering-artifacts`, `tiequan-report-retention`, `tiequan-report-scope`
 
-### 钩子 Hooks（6 个）
-`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-tool-failure`, `session-end`
+### 钩子 Hooks（9 个）
+`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-tool-failure`, `session-end`, `pre-plan-check`, `orca-setup`, `pre-deploy-check`
 
 ### 其他
 - `.claude/memory/progress.md` — 项目进度记录
@@ -90,7 +90,7 @@ version: 1.0.0
 | Rules 有 `name` | 所有 rules/*.md 的 YAML frontmatter | -0.5 |
 | Rules 有 `version` | 同上 | -0.5 |
 | Rules 有 `glob`/`globs` | 同上 | -0.5 |
-| Skills 有 `name` | 所有 skills/*/SKILL.md 的 YAML frontmatter | -0.5 |
+| Skills 有 `name` | 所有 skills/**/SKILL.md 的 YAML frontmatter | -0.5 |
 | Skills 有 `description` | 同上 | -0.5 |
 
 #### 7.3 配置一致性
