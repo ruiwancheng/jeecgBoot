@@ -198,9 +198,6 @@ build_backend() {
     echo -e "[4/7] 编译后端项目..."
     cd "$PROJECT_ROOT/jeecg-boot"
 
-    # 预清理 target 目录：WSL2 访问 /mnt/d/ 时，Windows 文件锁会导致 mvn clean 删除失败
-    find . -name target -type d -exec rm -rf {} + 2>/dev/null || true
-
     # 增量编译：检测变更的 Maven 模块（扫描所有变更路径中的 pom.xml）
     if [ "$BASELINE" != "$NEW_HEAD" ]; then
         MODULE_LIST=""
@@ -222,12 +219,15 @@ build_backend() {
 
     if [ -n "$MODULE_LIST" ]; then
         echo -e "  ${YELLOW}[增量编译] 变更模块: ${MODULE_LIST//,/, }${NC}"
+        # 预清理：WSL2 访问 /mnt/d/ 时 Windows 文件锁可能导致 mvn clean 删除失败
+        find . -name target -type d -exec rm -rf {} + 2>/dev/null || true
         mvn clean package -Pdocker -DskipTests -T 1C -pl "$MODULE_LIST" -am || \
         mvn package -Pdocker -DskipTests -T 1C -pl "$MODULE_LIST" -am
     elif [ -z "$CHANGED_FILES" ] || [ "$HAS_BACKEND" = "0" ] 2>/dev/null; then
         echo -e "  ${YELLOW}[跳过] 后端代码无变更${NC}"
     else
         echo "  全量编译所有模块..."
+        find . -name target -type d -exec rm -rf {} + 2>/dev/null || true
         mvn clean package -Pdocker -DskipTests -T 1C || \
         mvn package -Pdocker -DskipTests -T 1C
     fi
