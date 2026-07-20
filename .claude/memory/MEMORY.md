@@ -19,3 +19,6 @@
 - [增量增强+降级策略模式](learnings/2026-07-20-incremental-enhance-with-degradation.md) — Harness安全演进的架构基石
 - [表字典绕过@TableLogic](learnings/2026-07-20-table-dict-bypasses-tablelogic.md) — JSearchSelect原始SQL不自动过滤del_flag→下拉与列表不一致
 - [分支分叉时的rebase收敛](learnings/2026-07-20-deploy-divergent-branches-rebase.md) — 远程有服务端改动时的三步骤合并流程
+- [MySQL保留字列名DDL报错](learnings/2026-07-21-mysql-reserved-word-ddl.md) — ERROR 1064→部署静默失败+反引号+@TableField修复
+- [数据隔离硬编码admin](learnings/2026-07-21-data-isolation-hardcoded-admin.md) — 多项目用户名不同→用角色判断替代
+- [新模块三步注册必做](learnings/2026-07-21-new-module-menu-route-auto-register.md) — 菜单+路由+权限码，最易漏的项
