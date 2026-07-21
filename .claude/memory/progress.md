@@ -4,7 +4,7 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | testing | 编码规则绑定：部署完成，API测试20/20通过 |
+| phase | done-candidate | 编码规则绑定+审计+2个P1修复全部验证通过 |
 | last_verify | 2026-07-19 | 编译通过，P0修复验证通过 |
 | last_test | 2026-07-19 | totalAmount=150.0 持久化确认 |
 | pending_step | 业财联动 | Step 3: 会计科目+应收应付+凭证 |
