@@ -90,6 +90,7 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
         //update-end P1-8
         validateOrder(entity);
         // 编辑时保持草稿状态（status不从entity写入，由exist持有=1）
+        entity.setStatus(null); // 防止客户端注入覆盖status
         calcTotal(entity);
         QueryWrapper<MesPurchaseOrder> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());

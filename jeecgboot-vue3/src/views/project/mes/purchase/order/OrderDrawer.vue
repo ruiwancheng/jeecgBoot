@@ -80,7 +80,7 @@
         const order = await queryOrderById({ id: data.record.id });
         if (order) {
           await setFieldsValue(order);
-          items.value = order.items?.length ? order.items : [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
+          items.value = order.items?.length ? order.items.map((i:any) => ({ ...i, taxRate: i.taxRate ?? 0.13 })) : [{ lineNo: 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }];
         }
       } catch (e) { /* fallback */ }
     }
