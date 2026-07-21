@@ -15,6 +15,12 @@
       <template #unitPrice="{ record, index }">
         <InputNumber :value="record.unitPrice" :min="0" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'unitPrice', v)" />
       </template>
+      <template #taxRate="{ record, index }">
+        <InputNumber :value="record.taxRate" :min="0" :max="1" :step="0.01" style="width:100%" @change="(v:number) => updateItem(index, 'taxRate', v)" />
+      </template>
+      <template #taxAmount="{ record }">
+        <span>{{ ((record.quantity || 0) * (record.unitPrice || 0) * (record.taxRate || 0)).toFixed(2) }}</span>
+      </template>
       <template #amount="{ record }">
         <span>{{ ((record.quantity || 0) * (record.unitPrice || 0)).toFixed(2) }}</span>
       </template>
@@ -41,11 +47,13 @@
   const items = ref<any[]>([]);
 
   const itemColumns = [
-    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 200 },
-    { title: '数量', dataIndex: 'quantity', slots: { customRender: 'quantity' }, width: 120 },
-    { title: '单价', dataIndex: 'unitPrice', slots: { customRender: 'unitPrice' }, width: 120 },
+    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
+    { title: '数量', dataIndex: 'quantity', slots: { customRender: 'quantity' }, width: 100 },
+    { title: '单价', dataIndex: 'unitPrice', slots: { customRender: 'unitPrice' }, width: 110 },
+    { title: '税率', dataIndex: 'taxRate', slots: { customRender: 'taxRate' }, width: 90 },
     { title: '金额', slots: { customRender: 'amount' }, width: 100 },
-    { title: '操作', slots: { customRender: 'action' }, width: 80 },
+    { title: '税额', slots: { customRender: 'taxAmount' }, width: 100 },
+    { title: '操作', slots: { customRender: 'action' }, width: 70 },
   ];
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
@@ -57,7 +65,7 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
-    items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
+    items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
     // 新增时自动获取编码
@@ -80,7 +88,7 @@
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑采购订单' : '新增采购订单'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0 }); }
+  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }); }
   function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
   function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
 

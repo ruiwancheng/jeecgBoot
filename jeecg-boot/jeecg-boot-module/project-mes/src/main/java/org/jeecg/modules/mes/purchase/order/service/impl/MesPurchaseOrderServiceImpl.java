@@ -44,6 +44,11 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesPurchaseOrder entity) {
+        //update-begin P1-8 敏感字段置null防客户端注入
+        entity.setDelFlag(null);
+        entity.setCreateBy(null);
+        entity.setCreateTime(null);
+        //update-end
         validateOrder(entity);
         entity.setStatus("1"); // 强制草稿状态，防止API绕过状态机
         calcTotal(entity);
@@ -60,7 +65,9 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
             entity.setCreateTime(old.getCreateTime());
             entity.setUpdateBy(getCurrentUsername());
             entity.setUpdateTime(new Date());
-            baseMapper.resurrect(entity);
+            //update-begin P1-2 resurrect影响行数校验
+            if (baseMapper.resurrect(entity) == 0) throw new JeecgBootException("订单编号已存在");
+            //update-end P1-2
         } else {
             try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("订单编号已存在"); }
         }
@@ -71,9 +78,18 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     @Transactional(rollbackFor = Exception.class)
     public void updateWithItems(MesPurchaseOrder entity) {
         if (entity.getId() == null) throw new JeecgBootException("订单ID不能为空");
-        checkStatus(entity, "edit");
+        //update-begin P0-3 编辑改FOR UPDATE行锁防并发击穿
+        MesPurchaseOrder exist = baseMapper.selectByIdForUpdate(entity.getId());
+        if (exist == null) throw new JeecgBootException("订单不存在");
+        if (!"1".equals(exist.getStatus())) throw new JeecgBootException("非草稿状态订单禁止编辑");
+        //update-end P0-3
+        //update-begin P1-8 敏感字段置null
+        entity.setDelFlag(null);
+        entity.setCreateBy(null);
+        entity.setCreateTime(null);
+        //update-end P1-8
         validateOrder(entity);
-        entity.setStatus("1"); // 编辑时强制保持草稿状态
+        // 编辑时保持草稿状态（status不从entity写入，由exist持有=1）
         calcTotal(entity);
         QueryWrapper<MesPurchaseOrder> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
@@ -88,7 +104,11 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeWithItems(String id) {
-        checkStatus(id, "delete");
+        //update-begin P0-3 删除改FOR UPDATE行锁防并发击穿
+        MesPurchaseOrder exist = baseMapper.selectByIdForUpdate(id);
+        if (exist == null) throw new JeecgBootException("订单不存在");
+        if (!"1".equals(exist.getStatus())) throw new JeecgBootException("非草稿状态订单禁止删除");
+        //update-end P0-3
         LambdaQueryWrapper<MesPurchaseOrderItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesPurchaseOrderItem::getOrderId, id);
         itemMapper.delete(delQw);
@@ -141,6 +161,10 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
             if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0)
                 throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
             if (item.getTaxRate() == null) item.setTaxRate(new BigDecimal("0.13"));
+            //update-begin P0-B 税率范围校验
+            if (item.getTaxRate().compareTo(BigDecimal.ZERO) < 0 || item.getTaxRate().compareTo(BigDecimal.ONE) > 0)
+                throw new JeecgBootException("第" + (i+1) + "行税率需在 0~100% 之间");
+            //update-end P0-B
             item.setLineNo(i + 1);
             item.setOrderId(entity.getId());
             // 后端强制重算金额: 不含税金额 = 数量 × 单价
@@ -167,9 +191,11 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
     private void checkStatus(MesPurchaseOrder entity, String action) {
         if (entity.getId() == null) return;
         MesPurchaseOrder exist = baseMapper.selectById(entity.getId());
-        if (exist != null && !"1".equals(exist.getStatus())) {
+        //update-begin P1-6 编辑不存在订单抛异常
+        if (exist == null) throw new JeecgBootException("订单不存在");
+        //update-end P1-6
+        if (!"1".equals(exist.getStatus()))
             throw new JeecgBootException("非草稿状态订单禁止" + action);
-        }
     }
 
     private void checkStatus(String id, String action) {
