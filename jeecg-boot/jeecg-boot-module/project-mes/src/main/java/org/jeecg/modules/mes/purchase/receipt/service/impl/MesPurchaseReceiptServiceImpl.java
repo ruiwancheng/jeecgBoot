@@ -82,10 +82,16 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Transactional(rollbackFor = Exception.class)
     public void updateWithItems(MesPurchaseReceipt entity) {
         if (entity.getId() == null) throw new JeecgBootException("入库单ID不能为空");
-        checkStatus(entity, "edit");
+        //update-begin P0-3 编辑改FOR UPDATE行锁防并发击穿
+        MesPurchaseReceipt exist = baseMapper.selectByIdForUpdate(entity.getId());
+        if (exist == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(exist.getStatus())) throw new JeecgBootException("当前状态不允许编辑，仅草稿状态可操作");
+        //update-end P0-3
+        //update-begin P1-8 敏感字段置null
+        entity.setDelFlag(null); entity.setCreateBy(null); entity.setCreateTime(null);
+        entity.setStatus(null); // 防止客户端注入覆盖status
+        //update-end P1-8
         validateReceipt(entity);
-        // 编辑时强制保持草稿状态，防止前端绕过
-        entity.setStatus("1");
         QueryWrapper<MesPurchaseReceipt> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("入库单号已存在");
@@ -113,10 +119,24 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         MesPurchaseReceipt e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
-        // 逐行加库存+计算金额（从采购订单行取单价）
+
+        // ← 【P0修复-顺序调换】先改状态（原子守卫），确认成功后再执行副作用（oracle-review①）
+        String username = getCurrentUsername();
+        Date now = new Date();
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+
+        // 审核成功后：原子扣减 → 加库存 → 取单价 → 算应付税额
         java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalTax = java.math.BigDecimal.ZERO;
         for (MesPurchaseReceiptItem item : e.getItems()) {
-            // P0-01: 从采购订单行取单价
+            // 【P0修复-原子扣减】单SQL防超收（oracle-review④自然消解，替代旧的历史汇总校验）
+            int ar = purchaseOrderItemMapper.atomicReceive(e.getPurchaseOrderId(), item.getMaterialId(), item.getReceiptQuantity());
+            if (ar == 0) throw new JeecgBootException("物料[" + item.getMaterialId() + "]累计入库量超采购数量，请检查");
+
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), "采购入库", e.getCode());
+
+            // 从采购订单行取单价（同物料多行取第一行——后续 order_item_id 关联后再优化）
             LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
             piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
             java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
@@ -124,14 +144,17 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
                 item.setUnitPrice(orderItems.get(0).getUnitPrice());
                 item.setAmount(item.getReceiptQuantity().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
                 totalAmount = totalAmount.add(item.getAmount());
+                // 【P0修复-应付税率取订单行】不再硬编码0.13（oracle-review②）
+                java.math.BigDecimal taxRate = orderItems.get(0).getTaxRate() != null ? orderItems.get(0).getTaxRate() : new java.math.BigDecimal("0.13");
+                totalTax = totalTax.add(item.getAmount().multiply(taxRate));
             }
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), "采购入库", e.getCode());
         }
-        String username = getCurrentUsername();
-        Date now = new Date();
-        int rows = baseMapper.auditWithGuard(id, username, now);
-        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
-        //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
+
+        // 【P1修复-订单状态回写】按累计入库量推进状态（oracle-review P1-1）
+        purchaseOrderMapper.markPartiallyReceived(e.getPurchaseOrderId(), username, now);
+        purchaseOrderMapper.markFullyReceived(e.getPurchaseOrderId(), username, now);
+
+        // 应付（税额取订单行税率，不再硬编码）
         MesPayable ap = new MesPayable();
         ap.setCode("AP-" + e.getCode());
         ap.setSupplierId(e.getSupplierId());
@@ -141,12 +164,11 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         ap.setAmount(totalAmount);
         ap.setPaidAmount(java.math.BigDecimal.ZERO);
         ap.setUnsettledAmount(totalAmount);
-        ap.setTaxAmount(totalAmount.multiply(new java.math.BigDecimal("0.13")).setScale(2, java.math.RoundingMode.HALF_UP));
+        ap.setTaxAmount(totalTax.setScale(2, java.math.RoundingMode.HALF_UP));
         ap.setCreditPeriod(30);
         ap.setDueDate(new Date(now.getTime() + 30L * 86400000));
         ap.setStatus("1");
         try { payableService.save(ap); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ }
-        //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应付-----------
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 
@@ -210,16 +232,17 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i+1) + "行物料不能为空");
             if (item.getReceiptQuantity() == null || item.getReceiptQuantity().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i+1) + "行入库数量必须大于0");
-            // P0-004修复：累计校验（历史已入库 + 本次入库）<= 采购数量
+            // P0-b 修复：订单外物料拦截（orderQtyMap中不存在的物料报错，不再静默跳过）
             BigDecimal orderQty = orderQtyMap.get(item.getMaterialId());
-            if (orderQty != null) {
-                BigDecimal historyQty = historyQtyMap.getOrDefault(item.getMaterialId(), BigDecimal.ZERO);
-                BigDecimal totalAfter = historyQty.add(item.getReceiptQuantity());
-                if (totalAfter.compareTo(orderQty) > 0) {
+            if (orderQty == null)
+                throw new JeecgBootException("第" + (i+1) + "行物料不在采购订单中");
+            // 累计校验（历史已入库 + 本次入库）<= 采购数量
+            BigDecimal historyQty = historyQtyMap.getOrDefault(item.getMaterialId(), BigDecimal.ZERO);
+            BigDecimal totalAfter = historyQty.add(item.getReceiptQuantity());
+            if (totalAfter.compareTo(orderQty) > 0) {
                     throw new JeecgBootException("第" + (i+1) + "行累计入库量(" + totalAfter + ")超过采购数量(" + orderQty
                             + ")，历史已入库" + historyQty + "，本次入库" + item.getReceiptQuantity());
                 }
-            }
             // P0修复：白名单校验质检结果
             if (StringUtils.hasText(item.getQcResult())) {
                 Set<String> validQc = new HashSet<>(Arrays.asList("1", "2", "3"));

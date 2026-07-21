@@ -21,5 +21,13 @@ public interface MesPurchaseOrderMapper extends BaseMapper<MesPurchaseOrder> {
 
     @Select("SELECT * FROM c_mes_purchase_order WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
     MesPurchaseOrder selectByIdForUpdate(@Param("id") String id);
+
+    //update-begin P0-4 入库审核后回写订单状态（部分到货4→已到货5）
+    @Update("UPDATE c_mes_purchase_order SET status = '4', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status IN ('3','4')")
+    int markPartiallyReceived(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") java.util.Date updateTime);
+
+    @Update("UPDATE c_mes_purchase_order SET status = '5', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status IN ('3','4') AND NOT EXISTS (SELECT 1 FROM c_mes_purchase_order_item WHERE order_id = #{id} AND received_qty < quantity)")
+    int markFullyReceived(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") java.util.Date updateTime);
+    //update-end P0-4
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单Mapper-----------

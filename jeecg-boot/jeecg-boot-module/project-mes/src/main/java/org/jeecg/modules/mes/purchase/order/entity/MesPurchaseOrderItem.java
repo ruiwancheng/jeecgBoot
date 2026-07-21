@@ -33,6 +33,8 @@ public class MesPurchaseOrderItem implements Serializable {
     private String materialId;
     @Schema(description = "数量")
     private BigDecimal quantity;
+    @Schema(description = "累计入库量(原子扣减防超收)")
+    private BigDecimal receivedQty;
     @Schema(description = "单价")
     private BigDecimal unitPrice;
     @Schema(description = "税率")
