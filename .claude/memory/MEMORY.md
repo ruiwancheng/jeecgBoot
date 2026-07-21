@@ -27,3 +27,4 @@
 - [单据自动编码接线模式](learnings/2026-07-21-drawer-autocode-wiring-pattern.md) — Drawer 新增分支 getNextCode + try/catch 回退 + bizCodeMap 统一映射
 - [权限注解先评估调用方范围](learnings/2026-07-21-permission-annotation-scope-check.md) — 缺权限≠必须加，误伤业务用户改注释说明放行
 - [pi协调者禁止check-wait](learnings/2026-07-21-orca-coordinator-no-check-wait.md) — TUI截胡编排邮件，等待靠界面投递+dispatch-show轮询
+- [自动生成关联单据检查NOT NULL字段](learnings/2026-07-22-auto-generate-check-not-null.md) — warehouse_id缺失导致静默失败，release反复部署4次
