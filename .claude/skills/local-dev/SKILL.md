@@ -62,8 +62,14 @@ if [ "$TABLE_COUNT" = "0" ] || [ -z "$TABLE_COUNT" ]; then
   # 导入 JeecgBoot 平台基础表
   mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
 
-  # 导入所有 MES 业务模块表（按文件名字母序）
-  for f in $(find jeecg-boot/jeecg-boot-module/project-mes/db -name "*.sql" | sort); do
+  # 导入 JeecgBoot 平台基础表
+  mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
+
+  # 导入所有 MES 业务模块表（部署控制台扫描路径：**/sql/*.sql + **/db/*.sql）
+  # 注意：必须同时扫描 db/ 和 src/main/resources/sql/ 两个目录，
+  # 因为部分建表 SQL（如客户/供应商的基础 CREATE TABLE）在 resources/sql/ 中，
+  # 后续 ALTER TABLE 的增量迁移在 db/ 中，按文件名字母序执行保证顺序正确
+  find jeecg-boot/jeecg-boot-module/project-mes -path "*/target/*" -prune -o \( -path "*/sql/*.sql" -o -path "*/db/*.sql" \) -type f -print | sort | while read f; do
     mysql -uroot -proot --force jeecg-boot < "$f" 2>/dev/null
   done
 fi
