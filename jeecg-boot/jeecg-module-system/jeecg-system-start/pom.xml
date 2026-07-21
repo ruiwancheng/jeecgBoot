@@ -12,6 +12,13 @@
     <artifactId>jeecg-system-start</artifactId>
     
     <dependencies>
+        <!-- DevTools: 本地开发热重载，保存即生效（生产环境不打包） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
         <!-- SYSTEM 系统管理模块 -->
         <dependency>
             <groupId>org.jeecgframework.boot3</groupId>
