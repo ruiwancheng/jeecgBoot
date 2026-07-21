@@ -17,6 +17,18 @@ current_date VARCHAR(10) DEFAULT NULL
 `current_date` VARCHAR(10) DEFAULT NULL COMMENT '当前日期'
 ```
 
+**INSERT 列清单同样要加反引号（2026-07-21 补充）：**
+
+```sql
+-- 错误（部署时 ERROR 1064，INSERT 静默失败，种子数据从未落库）
+INSERT INTO t (id, ..., current_seq, current_date, ...) VALUES ...
+
+-- 正确
+INSERT INTO t (id, ..., current_seq, `current_date`, ...) VALUES ...
+```
+
+**种子数据脚本不要用 DELETE+INSERT 保幂等（同日补充）：** 会重置流水号等运行数据（本次 PO 流水被重置回 0001）。改用 `INSERT IGNORE` + 固定 id。
+
 同时 Java Entity 加注解：
 ```java
 @TableField("`current_date`")
