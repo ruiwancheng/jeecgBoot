@@ -20,8 +20,9 @@ public class MesCodeRuleServiceImpl extends ServiceImpl<MesCodeRuleMapper, MesCo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized String nextCode(String ruleCode) {
-        MesCodeRule rule = getOne(new LambdaQueryWrapper<MesCodeRule>().eq(MesCodeRule::getRuleCode, ruleCode));
+    public String nextCode(String ruleCode) {
+        // 行锁（FOR UPDATE）在事务提交时才释放，避免 synchronized 锁释放早于事务提交导致的并发重号；同时对集群部署有效
+        MesCodeRule rule = getOne(new LambdaQueryWrapper<MesCodeRule>().eq(MesCodeRule::getRuleCode, ruleCode).last("FOR UPDATE"));
         if (rule == null) {
             // 取号无规则时明确报错，不再静默自动创建（2026-07-21 编码规则绑定改造）
             throw new JeecgBootException("编码规则 " + ruleCode + " 不存在，请先在【基础数据-编码规则】中配置");

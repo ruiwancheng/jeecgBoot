@@ -53,31 +53,24 @@ FROM sys_dict WHERE dict_code = 'mes_code_biz_type';
 -- 3) 回填已有规则的适用单据
 UPDATE c_mes_code_rule SET biz_type = rule_code WHERE rule_code IN ('SO', 'PO', 'MO') AND (biz_type IS NULL OR biz_type = '');
 
--- 4) 补建缺失规则（DELETE+INSERT 幂等，参数与 SO 一致：yyyyMMdd + 4位流水 + 每日重置）
-DELETE FROM c_mes_code_rule WHERE rule_code = 'DN';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'DN', '发货单编码', 'DN', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'DN', 'admin', NOW(), 'admin', NOW(), 0);
+-- 4) 补建缺失规则（INSERT IGNORE 幂等：已存在则跳过，不重置流水号；参数与 SO 一致：yyyyMMdd + 4位流水 + 每日重置）
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_DN', 'DN', '发货单编码', 'DN', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'DN', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'OB';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'OB', '销售出库单编码', 'OB', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'OB', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_OB', 'OB', '销售出库单编码', 'OB', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'OB', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'PR';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'PR', '采购收货单编码', 'PR', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PR', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_PR', 'PR', '采购收货单编码', 'PR', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PR', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'PP';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'PP', '生产领料单编码', 'PP', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PP', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_PP', 'PP', '生产领料单编码', 'PP', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PP', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'MC';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'MC', '完工入库单编码', 'MC', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'MC', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_MC', 'MC', '完工入库单编码', 'MC', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'MC', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'SI';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'SI', '销售发票单号', 'SI', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'SI', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_SI', 'SI', '销售发票单号', 'SI', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'SI', 'admin', NOW(), 'admin', NOW(), 0);
 
-DELETE FROM c_mes_code_rule WHERE rule_code = 'PI';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
-VALUES (REPLACE(UUID(),'-',''), 'PI', '采购发票单号', 'PI', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PI', 'admin', NOW(), 'admin', NOW(), 0);
+INSERT IGNORE INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, biz_type, create_by, create_time, update_by, update_time, del_flag)
+VALUES ('mes_code_rule_PI', 'PI', '采购发票单号', 'PI', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'PI', 'admin', NOW(), 'admin', NOW(), 0);
