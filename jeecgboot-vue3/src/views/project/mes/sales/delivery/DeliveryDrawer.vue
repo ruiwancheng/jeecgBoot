@@ -30,6 +30,8 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './delivery.data';
   import { saveOrUpdateDelivery, queryDeliveryById } from './delivery.api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
