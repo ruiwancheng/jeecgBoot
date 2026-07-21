@@ -22,3 +22,6 @@
 - [MySQL保留字列名DDL报错](learnings/2026-07-21-mysql-reserved-word-ddl.md) — ERROR 1064→部署静默失败+反引号+@TableField修复
 - [数据隔离硬编码admin](learnings/2026-07-21-data-isolation-hardcoded-admin.md) — 多项目用户名不同→用角色判断替代
 - [新模块三步注册必做](learnings/2026-07-21-new-module-menu-route-auto-register.md) — 菜单+路由+权限码，最易漏的项
+- [synchronized+@Transactional窗口期](learnings/2026-07-21-synchronized-transactional-window.md) — 发号必用 FOR UPDATE 行锁，synchronized 锁释放早于事务提交
+- [软删唯一索引二次删除冲突](learnings/2026-07-21-softdelete-unique-index-double-delete.md) — (code,del_flag) 撞索引，测试用独立编码，彻底解法 del_flag 写 id
+- [单据自动编码接线模式](learnings/2026-07-21-drawer-autocode-wiring-pattern.md) — Drawer 新增分支 getNextCode + try/catch 回退 + bizCodeMap 统一映射
