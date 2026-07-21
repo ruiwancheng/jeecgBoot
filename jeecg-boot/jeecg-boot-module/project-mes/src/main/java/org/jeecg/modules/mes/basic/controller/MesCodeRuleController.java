@@ -80,6 +80,8 @@ public class MesCodeRuleController extends JeecgController<MesCodeRule, IMesCode
 
     @Operation(summary = "获取下一个编码", description = "根据规则编码生成下一个业务编码")
     @GetMapping("/nextCode")
+    // 权限说明：本接口故意不加 @RequiresPermissions——所有开单用户（销售/采购/生产/财务）都需取号，
+    // 若限定 mes:codeRule:list 会导致无规则管理权限的业务人员自动编号静默失效。平台已强制登录即可，刷号风险可接受（2026-07-21 审计 P2 决议）
     public Result<String> nextCode(@RequestParam String ruleCode) {
         return Result.ok(service.nextCode(ruleCode));
     }
