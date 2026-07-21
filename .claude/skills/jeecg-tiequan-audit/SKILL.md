@@ -252,7 +252,22 @@ hermes/tiequan/
 
 ## Orca 编排 DAG（v3 升级，可选）
 
-当 Orca orchestration 可用时，步骤 4 可升级为真正的多 Agent 编排 DAG：
+当 Orca orchestration 可用时，步骤 4 可升级为真正的多 Agent 编排 DAG。
+
+### 编排标准流程（2026-07-21 实战修正版）
+
+```
+① 环境声明：隔离工作树 or 同目录（同目录仅限只读任务，改代码必须隔离）
+② 建工人终端 → 等就绪（1 次失败即换 Agent，不重试不纠缠）
+③ task-create → dispatch --inject（必须用完整终端 handle，不用缩写）
+④ 等待 = 终端界面自动投递 worker_done + 每 2 分钟查工单状态兜底
+⑤ 单工人超时即标记失败并继续（不阻塞整体）；全部完成后汇总共识
+```
+
+**关键禁令：**
+- **pi 协调者禁止 `check --wait` 等消息** — pi 终端界面会自动投递编排邮件并标记已读，CLI 再查未读必然为空（表现为“卡住”）。等待只靠界面投递 + `dispatch-show` 轮询工单状态（不消耗消息）。
+- **迷你团 vs 满编**：演示/小模块可用 3 人迷你团（每梯队 1 人）；正式审计用满编 10 人，机制相同，仅终端和任务数量差异。
+- **Agent 选择**：pi、Claude Code 链路稳定；Hermes 链路暂不稳定（2026-07-21 验证），不作为工人。
 
 ```yaml
 # Orca orchestration DAG: tiequan-audit
