@@ -17,6 +17,7 @@
         <module>jeecg-boot-module-airag</module>
         <module>customer-demo</module>
         <module>project-mes</module>
+        <!-- project-template 是 /new-project 的脚手架模板，故意不在此声明：不参与编译，复制为新客户模块后由新模块名注册 -->
     </modules>
 
 

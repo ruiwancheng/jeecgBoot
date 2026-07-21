@@ -39,6 +39,15 @@
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/pre-commit-check.sh\""
           }
         ]
+      },
+      {
+        "matcher": "Bash(docker compose up|start-docker-compose)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/pre-deploy-check.sh\""
+          }
+        ]
       }
     ],
     "SessionStart": [
