@@ -136,6 +136,8 @@ version: 1.0.0
 
 通过 code-review-graph MCP 工具评估代码库结构质量。每项违规扣 0.5 分，起评 5 分，最低 0 分。
 
+**评分口径（2026-07-21 固化）：只统计当前项目自有代码**（后端 `jeecg-boot-module/project-{项目}/`、前端 `src/views/project/{项目}/` 与 `src/views/customer/{客户}/`）。标品平台代码（jeecg-boot-base-core、jeecg-module-system、jeecg-module-demo、src/views/super、src/components 等）的违规单独列示为“平台背景项”，**不扣分、不修复**（no-platform-modify 规则禁止修改标品）。
+
 | 检查项 | 工具 | 参数 | 扣分规则 |
 |--------|------|------|---------|
 | 知识缺口 | `get_knowledge_gaps_tool` | 默认参数 | 每个未测试热点（untested hotspot）-0.5 |
