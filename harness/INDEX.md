@@ -15,6 +15,7 @@
 
 | 日期 | 文件 | 说明 |
 |------|------|------|
+| 2026-07-21 | [tests/mes/sales-order.test.mjs](tests/mes/sales-order.test.mjs) | 销售订单 API 测试（/gen-tests 生成，30 用例含状态机守卫） |
 | 2026-07-21 | [tests/mes/codeRule.test.mjs](tests/mes/codeRule.test.mjs) | 编码规则模块 API 测试（规则绑定+取号+CRUD） |
 | 2026-07-18 | [tests/mes/sales-api.test.mjs](tests/mes/sales-api.test.mjs) | 销售模块 API 测试 |
 | 2026-07-16 | [tests/mes/purchase.test.js](tests/mes/purchase.test.js) | 采购模块 API 测试 |
@@ -23,4 +24,4 @@
 | - | [e2e/mes/basic.spec.ts](e2e/mes/basic.spec.ts) | 基础数据 E2E 测试 |
 | 2026-07-16 | [e2e/mes/purchase.spec.ts](e2e/mes/purchase.spec.ts) | 采购模块 E2E 测试 |
 
-*最后更新: 2026-07-21*
+*最后更新: 2026-07-21（sales-api 过时用例修复：价格随机日期段/关闭守卫预期/非草稿禁删预期）*
