@@ -14,6 +14,7 @@ import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
+import org.jeecg.modules.mes.basic.mapper.MesWarehouseMapper;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.basic.service.IMesCodeRuleService;
@@ -38,6 +39,8 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     private MesDeliveryNoteMapper deliveryNoteMapper;
     @Autowired
     private MesDeliveryNoteItemMapper deliveryNoteItemMapper;
+    @Autowired
+    private MesWarehouseMapper warehouseMapper;
     //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-----------
     @Autowired
     private IMesPriceService priceService;
@@ -183,6 +186,9 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
         dn.setCode("DN" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + String.format("%04d", (int)(Math.random()*9000+1000)));
         dn.setSalesOrderId(orderId);
         dn.setCustomerId(baseMapper.selectById(orderId).getCustomerId());
+        // 自动生成取系统第一个仓库为默认（草稿态可改）
+        java.util.List<org.jeecg.modules.mes.basic.entity.MesWarehouse> whs = warehouseMapper.selectList(new QueryWrapper<>());
+        dn.setWarehouseId(whs.isEmpty() ? "" : whs.get(0).getId());
         dn.setStatus("1");
         java.math.BigDecimal total = java.math.BigDecimal.ZERO;
         for (MesDeliveryNoteItem dni : items) {
