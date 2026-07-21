@@ -42,3 +42,4 @@ hermes/tiequan/*/*/*
 
 ## deploy-server dependencies
 deploy-server/node_modules/
+.last-deploy-commit
