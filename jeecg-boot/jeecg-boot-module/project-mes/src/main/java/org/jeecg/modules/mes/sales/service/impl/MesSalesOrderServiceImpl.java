@@ -173,6 +173,11 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
             item.setOrderId(entity.getId());
             // 后端强制重算金额，忽略前端传入的 amount
             item.setAmount(item.getQuantity().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-begin---author:ruiwancheng---date:2026-07-21---for: 明细税额计算（税率默认13%）-----------
+            java.math.BigDecimal taxRate = item.getTaxRate() != null ? item.getTaxRate() : new java.math.BigDecimal("0.13");
+            item.setTaxRate(taxRate);
+            item.setTaxAmount(item.getAmount().multiply(taxRate).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-end---author:ruiwancheng---date:2026-07-21---for: 明细税额计算（税率默认13%）-----------
         }
     }
 

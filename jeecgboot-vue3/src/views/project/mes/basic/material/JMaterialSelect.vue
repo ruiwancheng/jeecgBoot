@@ -54,7 +54,7 @@
   function handleSelect(record: any) {
     displayText.value = `${record.code} — ${record.name}`;
     emit('update:modelValue', record.id);
-    emit('change', { value: record.id, label: record.name });
+    emit('change', { value: record.id, label: record.name, record });
   }
 
   function handleClear() {
