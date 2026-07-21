@@ -23,15 +23,15 @@ CREATE TABLE IF NOT EXISTS c_mes_code_rule (
 
 -- 初始化销售订单编码规则
 DELETE FROM c_mes_code_rule WHERE rule_code = 'SO';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, current_date, create_by, create_time, update_by, update_time, del_flag)
+INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, create_by, create_time, update_by, update_time, del_flag)
 VALUES (REPLACE(UUID(),'-',''), 'SO', '销售订单编码', 'SO', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'admin', NOW(), 'admin', NOW(), 0);
 
 -- 初始化采购订单编码规则
 DELETE FROM c_mes_code_rule WHERE rule_code = 'PO';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, current_date, create_by, create_time, update_by, update_time, del_flag)
+INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, create_by, create_time, update_by, update_time, del_flag)
 VALUES (REPLACE(UUID(),'-',''), 'PO', '采购订单编码', 'PO', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'admin', NOW(), 'admin', NOW(), 0);
 
 -- 初始化生产订单编码规则
 DELETE FROM c_mes_code_rule WHERE rule_code = 'MO';
-INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, current_date, create_by, create_time, update_by, update_time, del_flag)
+INSERT INTO c_mes_code_rule (id, rule_code, rule_name, prefix, date_format, seq_length, reset_cycle, current_seq, `current_date`, create_by, create_time, update_by, update_time, del_flag)
 VALUES (REPLACE(UUID(),'-',''), 'MO', '生产订单编码', 'MO', 'yyyyMMdd', 4, 'DAILY', 0, NULL, 'admin', NOW(), 'admin', NOW(), 0);
