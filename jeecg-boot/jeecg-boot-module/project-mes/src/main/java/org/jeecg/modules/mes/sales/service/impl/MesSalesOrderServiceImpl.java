@@ -12,6 +12,11 @@ import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
 import org.jeecg.modules.mes.sales.entity.MesPrice;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
+import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
+import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
+import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
+import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
+import org.jeecg.modules.mes.basic.service.IMesCodeRuleService;
 import org.jeecg.modules.mes.sales.service.IMesPriceService;
 import org.jeecg.modules.mes.sales.service.IMesSalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +34,10 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
 
     @Autowired
     private MesSalesOrderItemMapper itemMapper;
+    @Autowired
+    private MesDeliveryNoteMapper deliveryNoteMapper;
+    @Autowired
+    private MesDeliveryNoteItemMapper deliveryNoteItemMapper;
     //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-----------
     @Autowired
     private IMesPriceService priceService;
@@ -123,10 +132,71 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
         if (rows == 0) throw new JeecgBootException("审核失败：订单不存在或状态已变更，请刷新后重试");
     }
     @Override @Transactional(rollbackFor = Exception.class)
+    //update-begin O2D2O 订单下达自动生成发货单
     public void release(String id) {
         String username = getCurrentUsername(); Date now = new Date();
         int rows = baseMapper.releaseWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("下达失败：订单不存在或状态已变更（需为已审核），请刷新后重试");
+        generateDraftDelivery(id, username, now);
+    }
+    //update-end O2D2O
+
+    // O2D2O: 自动生成草稿发货单（幂等：已有草稿则跳过，全部已发完则跳过）
+    private void generateDraftDelivery(String orderId, String username, Date now) {
+        // 已有草稿发货单则跳过
+        LambdaQueryWrapper<MesDeliveryNote> dnQw = new LambdaQueryWrapper<>();
+        dnQw.eq(MesDeliveryNote::getSalesOrderId, orderId).eq(MesDeliveryNote::getStatus, "1");
+        if (deliveryNoteMapper.selectCount(dnQw) > 0) return;
+        // 查未完成的订单行
+        LambdaQueryWrapper<MesSalesOrderItem> itemQw = new LambdaQueryWrapper<>();
+        itemQw.eq(MesSalesOrderItem::getOrderId, orderId).orderByAsc(MesSalesOrderItem::getLineNo);
+        List<MesSalesOrderItem> orderItems = itemMapper.selectList(itemQw);
+        // 汇总已发货量
+        java.util.Map<String, java.math.BigDecimal> shippedMap = new java.util.HashMap<>();
+        LambdaQueryWrapper<MesDeliveryNote> allDnQw = new LambdaQueryWrapper<>();
+        allDnQw.eq(MesDeliveryNote::getSalesOrderId, orderId).ne(MesDeliveryNote::getStatus, "0");
+        for (MesDeliveryNote dn : deliveryNoteMapper.selectList(allDnQw)) {
+            LambdaQueryWrapper<MesDeliveryNoteItem> dniQw = new LambdaQueryWrapper<>();
+            dniQw.eq(MesDeliveryNoteItem::getDeliveryId, dn.getId());
+            for (MesDeliveryNoteItem dni : deliveryNoteItemMapper.selectList(dniQw)) {
+                shippedMap.merge(dni.getMaterialId(), dni.getDeliveryQty() != null ? dni.getDeliveryQty() : java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+            }
+        }
+        // 构建发货明细（未完成的物料行）
+        java.util.List<MesDeliveryNoteItem> items = new java.util.ArrayList<>();
+        for (MesSalesOrderItem oi : orderItems) {
+            java.math.BigDecimal ordered = oi.getQuantity() != null ? oi.getQuantity() : java.math.BigDecimal.ZERO;
+            java.math.BigDecimal shipped = shippedMap.getOrDefault(oi.getMaterialId(), java.math.BigDecimal.ZERO);
+            java.math.BigDecimal remaining = ordered.subtract(shipped);
+            if (remaining.compareTo(java.math.BigDecimal.ZERO) <= 0) continue;
+            MesDeliveryNoteItem dni = new MesDeliveryNoteItem();
+            dni.setSalesOrderItemId(oi.getId());
+            dni.setMaterialId(oi.getMaterialId());
+            dni.setOrderedQty(ordered);
+            dni.setDeliveryQty(remaining);
+            dni.setUnitPrice(oi.getUnitPrice());
+            items.add(dni);
+        }
+        if (items.isEmpty()) return; // 全部已发完
+        // 创建发货单
+        MesDeliveryNote dn = new MesDeliveryNote();
+        dn.setCode("DN" + new java.text.SimpleDateFormat("yyyyMMdd").format(now) + "-" + String.format("%04d", (int)(Math.random()*9000+1000)));
+        dn.setSalesOrderId(orderId);
+        dn.setCustomerId(baseMapper.selectById(orderId).getCustomerId());
+        dn.setStatus("1");
+        java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+        for (MesDeliveryNoteItem dni : items) {
+            if (dni.getDeliveryQty() != null && dni.getUnitPrice() != null)
+                total = total.add(dni.getDeliveryQty().multiply(dni.getUnitPrice()));
+        }
+        dn.setTotalAmount(total.setScale(2, java.math.RoundingMode.HALF_UP));
+        dn.setCreateBy(username); dn.setCreateTime(now); dn.setUpdateBy(username); dn.setUpdateTime(now);
+        try { deliveryNoteMapper.insert(dn); } catch (DuplicateKeyException ex) { return; }
+        for (MesDeliveryNoteItem dni : items) {
+            dni.setDeliveryId(dn.getId()); dni.setCreateBy(username); dni.setCreateTime(now);
+            dni.setUpdateBy(username); dni.setUpdateTime(now);
+            deliveryNoteItemMapper.insert(dni);
+        }
     }
     @Override @Transactional(rollbackFor = Exception.class)
     public void close(String id) {

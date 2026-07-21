@@ -120,9 +120,12 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         for (MesSalesOutboundItem item : e.getItems()) {
             inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库", e.getCode());
         }
-        // 3. 联动更新发货单状态 待出库(2)→已出库(3)
+        // 3. 联动更新发货单状态：全部物料足量出库才置已出库(3)，部分出库保持2（oracle-review 前置缺陷修复）
         if (e.getDeliveryNoteId() != null) {
-            deliveryNoteMapper.updateStatus(e.getDeliveryNoteId(), "3", "2", username, now);
+            boolean allOutbounded = checkDeliveryAllOutbounded(e.getDeliveryNoteId());
+            if (allOutbounded) {
+                deliveryNoteMapper.updateStatus(e.getDeliveryNoteId(), "3", "2", username, now);
+            }
         }
         //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
         // 4. 自动生成应收单（唯一索引 uk_rec_source_bill 防重复）
@@ -313,6 +316,33 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     private void checkStatus(String id) { MesSalesOutbound e = baseMapper.selectById(id); if (e != null && !"1".equals(e.getStatus())) throw new JeecgBootException("非草稿状态禁止操作"); }
     private void cleanOldItems(String outboundId) { QueryWrapper<MesSalesOutboundItem> qw = new QueryWrapper<>(); qw.eq("outbound_id", outboundId); itemMapper.delete(qw); }
     private void saveItems(MesSalesOutbound e) { for (MesSalesOutboundItem i : e.getItems()) { i.setOutboundId(e.getId()); itemMapper.insert(i); } }
+
+    // P0修复: 检查发货单是否全部出库完成（汇总所有关联出库的实出量 vs 发货量，防部分出库就置3）
+    private boolean checkDeliveryAllOutbounded(String deliveryNoteId) {
+        // 查发货单明细
+        LambdaQueryWrapper<MesDeliveryNoteItem> dqw = new LambdaQueryWrapper<>();
+        dqw.eq(MesDeliveryNoteItem::getDeliveryId, deliveryNoteId);
+        java.util.List<MesDeliveryNoteItem> dnItems = deliveryNoteItemMapper.selectList(dqw);
+        // 查该发货单下所有已审核出库
+        QueryWrapper<MesSalesOutbound> oqw = new QueryWrapper<>();
+        oqw.eq("delivery_note_id", deliveryNoteId).eq("status", "3");
+        java.util.List<MesSalesOutbound> obs = baseMapper.selectList(oqw);
+        // 汇总实际出库量
+        java.util.Map<String, java.math.BigDecimal> outQtyMap = new java.util.HashMap<>();
+        for (MesSalesOutbound ob : obs) {
+            LambdaQueryWrapper<MesSalesOutboundItem> iqw = new LambdaQueryWrapper<>();
+            iqw.eq(MesSalesOutboundItem::getOutboundId, ob.getId());
+            for (MesSalesOutboundItem oi : itemMapper.selectList(iqw)) {
+                outQtyMap.merge(oi.getMaterialId(), oi.getActualQty() != null ? oi.getActualQty() : java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+            }
+        }
+        // 逐行比对
+        for (MesDeliveryNoteItem dnItem : dnItems) {
+            java.math.BigDecimal outQty = outQtyMap.getOrDefault(dnItem.getMaterialId(), java.math.BigDecimal.ZERO);
+            if (outQty.compareTo(dnItem.getDeliveryQty()) < 0) return false;
+        }
+        return !dnItems.isEmpty();
+    }
     private String getUser() { try { LoginUser u = (LoginUser) SecurityUtils.getSubject().getPrincipal(); return u != null ? u.getUsername() : "system"; } catch (Exception ex) { return "system"; } }
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-销售出库Service实现-----------

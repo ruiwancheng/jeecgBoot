@@ -23,5 +23,10 @@ public interface MesSalesOutboundMapper extends BaseMapper<MesSalesOutbound> {
     @Update("UPDATE c_mes_sales_outbound SET status = '0', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status IN ('1', '2', '3')")
     int cancelWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
     //update-end---author:ruiwancheng---date:2026-07-18---for: P0-08 audit/cancel原子UPDATE防并发-----------
+
+    //update-begin O2D2O sign联动应收: 按发货单ID查已审核出库
+    @Select("SELECT * FROM c_mes_sales_outbound WHERE delivery_note_id = #{deliveryNoteId} AND status = '3' AND del_flag = 0")
+    java.util.List<MesSalesOutbound> selectByDeliveryNoteId(@Param("deliveryNoteId") String deliveryNoteId);
+    //update-end O2D2O
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-销售出库Mapper-----------

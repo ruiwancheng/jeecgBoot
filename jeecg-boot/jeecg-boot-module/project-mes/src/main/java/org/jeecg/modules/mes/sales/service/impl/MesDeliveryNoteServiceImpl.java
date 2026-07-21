@@ -14,6 +14,9 @@ import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundMapper;
+import org.jeecg.modules.mes.finance.receivable.mapper.MesReceivableMapper;
+import org.jeecg.modules.mes.finance.receivable.entity.MesReceivable;
 import org.jeecg.modules.mes.sales.service.IMesDeliveryNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -34,6 +37,10 @@ public class MesDeliveryNoteServiceImpl extends ServiceImpl<MesDeliveryNoteMappe
     private MesSalesOrderMapper salesOrderMapper;
     @Autowired
     private MesSalesOrderItemMapper salesOrderItemMapper;
+    @Autowired
+    private MesSalesOutboundMapper outboundMapper;
+    @Autowired
+    private MesReceivableMapper receivableMapper;
 
     @Override
     public MesDeliveryNote queryWithItems(String id) {

@@ -16,5 +16,13 @@ public interface MesReceivableMapper extends BaseMapper<MesReceivable> {
 
     @Select("SELECT * FROM c_mes_receivable WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
     MesReceivable selectByIdForUpdate(@Param("id") String id);
+
+    //update-begin O2D2O sign联动应收: 原子确认+按来源单号查
+    @Update("UPDATE c_mes_receivable SET status = '2', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
+    int confirmWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") java.util.Date updateTime);
+
+    @Select("SELECT * FROM c_mes_receivable WHERE source_bill_id = #{sourceBillId} AND del_flag = 0 LIMIT 1")
+    MesReceivable selectBySourceBillId(@Param("sourceBillId") String sourceBillId);
+    //update-end O2D2O
 }
 //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 应收单Mapper-----------
