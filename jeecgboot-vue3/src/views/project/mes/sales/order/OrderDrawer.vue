@@ -37,6 +37,7 @@
   import { formSchema } from './order.data';
   import { saveOrUpdateOrder, queryOrderById } from './order.api';
   import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -65,7 +66,7 @@
     // 新增时自动获取编码
     if (!unref(isUpdate)) {
       try {
-        const nextCode = await getNextCode('SO');
+        const nextCode = await getNextCode(MES_BIZ_CODE.SALES_ORDER);
         if (nextCode) await setFieldsValue({ code: nextCode });
       } catch (e) { /* fallback: 手动输入 */ }
     }

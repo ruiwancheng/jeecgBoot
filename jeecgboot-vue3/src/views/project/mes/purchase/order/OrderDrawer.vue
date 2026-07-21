@@ -58,6 +58,13 @@
     items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_ORDER);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) { /* fallback: 手动输入 */ }
+    }
     if (unref(isUpdate) && data.record) {
       try {
         const order = await queryOrderById({ id: data.record.id });

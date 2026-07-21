@@ -23,17 +23,8 @@ public class MesCodeRuleServiceImpl extends ServiceImpl<MesCodeRuleMapper, MesCo
     public synchronized String nextCode(String ruleCode) {
         MesCodeRule rule = getOne(new LambdaQueryWrapper<MesCodeRule>().eq(MesCodeRule::getRuleCode, ruleCode));
         if (rule == null) {
-            // 自动创建默认规则
-            rule = new MesCodeRule();
-            rule.setRuleCode(ruleCode);
-            rule.setRuleName("自动创建-" + ruleCode);
-            rule.setPrefix(ruleCode);
-            rule.setDateFormat("yyyyMMdd");
-            rule.setSeqLength(4);
-            rule.setResetCycle("DAILY");
-            rule.setCurrentSeq(0);
-            save(rule);
-            log.info("自动创建编码规则: {}", ruleCode);
+            // 取号无规则时明确报错，不再静默自动创建（2026-07-21 编码规则绑定改造）
+            throw new JeecgBootException("编码规则 " + ruleCode + " 不存在，请先在【基础数据-编码规则】中配置");
         }
 
         String today = formatDate(rule.getDateFormat());

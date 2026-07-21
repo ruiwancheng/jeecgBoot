@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.jeecg.common.aspect.annotation.Dict;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -31,6 +32,11 @@ public class MesCodeRule implements java.io.Serializable {
     @Excel(name = "规则名称", width = 20)
     @Schema(description = "规则名称")
     private String ruleName;
+
+    @Excel(name = "适用单据", width = 12)
+    @Schema(description = "适用单据(字典 mes_code_biz_type)")
+    @Dict(dicCode = "mes_code_biz_type")
+    private String bizType;
 
     @Excel(name = "前缀", width = 10)
     @Schema(description = "前缀")

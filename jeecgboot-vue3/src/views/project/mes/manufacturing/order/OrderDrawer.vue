@@ -25,6 +25,13 @@
     await resetFields();
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.PRODUCTION_ORDER);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) { /* fallback: 手动输入 */ }
+    }
     if (unref(isUpdate) && data.record) {
       await setFieldsValue({ ...data.record });
     }

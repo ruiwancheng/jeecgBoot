@@ -21,7 +21,7 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
-  { field: 'code', label: '订单编号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
+  { field: 'code', label: '订单编号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50, placeholder: 'MO-YYYYMMDD-001' } },
   { field: 'productId', label: '生产产品', component: 'JMaterialSelect', required: true, colProps: { span: 8 }, componentProps: {} },
   { field: 'bomId', label: 'BOM版本', component: 'Input', colProps: { span: 8 } },
   { field: 'planQty', label: '计划数量', component: 'InputNumber', required: true, colProps: { span: 8 }, componentProps: { min: 0.01, step: 1 } },

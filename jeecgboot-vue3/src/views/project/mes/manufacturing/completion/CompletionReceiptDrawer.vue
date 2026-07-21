@@ -30,6 +30,8 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './completion.data';
   import { saveOrUpdateCompletion, queryCompletionById } from './completion.api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -54,6 +56,13 @@
     items.value = [{ lineNo: 1, planQty: 0, receiptQty: 1 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.COMPLETION_RECEIPT);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) { /* fallback: 手动输入 */ }
+    }
     if (unref(isUpdate) && data.record) {
       try {
         const completion = await queryCompletionById({ id: data.record.id });

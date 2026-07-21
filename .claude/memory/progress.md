@@ -4,7 +4,7 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | mes-phase2-step2-done | Phase 2 两步完成，Step 3待推进 |
+| phase | verify | 编码规则绑定：编译+静态检查通过，待提交部署 |
 | last_verify | 2026-07-19 | 编译通过，P0修复验证通过 |
 | last_test | 2026-07-19 | totalAmount=150.0 持久化确认 |
 | pending_step | 业财联动 | Step 3: 会计科目+应收应付+凭证 |

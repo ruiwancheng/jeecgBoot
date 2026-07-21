@@ -30,6 +30,8 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './outbound.data';
   import { saveOrUpdateOutbound, queryOutboundById } from './outbound.api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -46,6 +48,8 @@
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({ schemas: formSchema, showActionButtonGroup: false, labelWidth: 100 });
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields(); items.value = [{ actualQty: 1 }]; isUpdate.value = !!data?.isUpdate; setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) { try { const nextCode = await getNextCode(MES_BIZ_CODE.SALES_OUTBOUND); if (nextCode) await setFieldsValue({ code: nextCode }); } catch (e) { /* fallback: 手动输入 */ } }
     if (unref(isUpdate) && data.record) { try { const o = await queryOutboundById({ id: data.record.id }); if (o) { await setFieldsValue(o); items.value = o.items?.length ? o.items : [{ actualQty: 1 }]; } } catch (e) {} }
   });
   const getTitle = computed(() => (unref(isUpdate) ? '编辑出库单' : '新增出库单'));

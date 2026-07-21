@@ -54,6 +54,13 @@
     items.value = [{ deliveryQty: 1 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.DELIVERY_NOTE);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) { /* fallback: 手动输入 */ }
+    }
     if (unref(isUpdate) && data.record) {
       try {
         const delivery = await queryDeliveryById({ id: data.record.id });
