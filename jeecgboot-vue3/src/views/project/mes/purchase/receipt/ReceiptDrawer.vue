@@ -1,6 +1,10 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+    <BasicForm @register="registerForm">
+      <template #purchaseOrderIdSlot="{ model, field }">
+        <JPurchaseOrderSelect v-model:modelValue="model[field]" status="3" />
+      </template>
+    </BasicForm>
     <a-divider>入库行</a-divider>
     <div style="margin-bottom:8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
@@ -29,6 +33,7 @@
   import { ref, computed, unref } from 'vue';
   import { InputNumber, Divider } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
+  import JPurchaseOrderSelect from '/@/views/project/mes/purchase/order/JPurchaseOrderSelect.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './receipt.data';

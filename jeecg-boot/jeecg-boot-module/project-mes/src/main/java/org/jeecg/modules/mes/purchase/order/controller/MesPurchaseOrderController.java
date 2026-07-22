@@ -95,6 +95,27 @@ public class MesPurchaseOrderController extends JeecgController<MesPurchaseOrder
         return super.exportXls(req, entity, MesPurchaseOrder.class, "采购订单");
     }
 
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 采购入库单弹窗选择已确认采购单--------
+    @Operation(summary = "采购订单选择分页查询", description = "用于采购订单选择弹窗，支持status过滤，支持keyword搜索编号/供应商")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:purchaseOrder:list")
+    public Result<IPage<MesPurchaseOrder>> selectPage(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
+        QueryWrapper<MesPurchaseOrder> qw = new QueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(status)) {
+            qw.eq("status", status);
+        }
+        if (org.springframework.util.StringUtils.hasText(keyword)) {
+            qw.and(w -> w.like("code", keyword).or().like("supplier_id", keyword));
+        }
+        qw.orderByDesc("create_time");
+        return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 采购入库单弹窗选择已确认采购单--------
+
     @PutMapping("/audit") @RequiresPermissions("mes:purchaseOrder:edit")
     public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
 }
