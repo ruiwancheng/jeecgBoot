@@ -32,3 +32,6 @@ export function loadOrderItemsForReceipt(orderId: string) {
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }
+export function auditReceipt(params: any) {
+  return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
+}

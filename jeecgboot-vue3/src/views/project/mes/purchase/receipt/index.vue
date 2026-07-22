@@ -19,7 +19,7 @@
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './receipt.data';
-  import { queryReceiptList, deleteReceipt, getExportUrl } from './receipt.api';
+  import { queryReceiptList, deleteReceipt, getExportUrl, auditReceipt } from './receipt.api';
   import ReceiptDrawer from './ReceiptDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -42,13 +42,17 @@
   const [registerTable, { reload }] = tableContext;
 
   function getActions(record: Recordable) {
-    return [
-      { label: '编辑', onClick: () => handleEdit(record) },
-      { label: '删除', popConfirm: { title: '确认删除该入库单吗？', confirm: () => handleDelete(record) } },
-    ];
+    const acts: any[] = [];
+    if (record.status == '1') {
+      acts.push({ label: '编辑', onClick: () => handleEdit(record) });
+      acts.push({ label: '审核', popConfirm: { title: '确认审核该入库单吗？', confirm: () => handleAudit(record) } });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除该入库单吗？', confirm: () => handleDelete(record) } });
+    }
+    return acts;
   }
 
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   function handleEdit(record: Recordable) { openDrawer(true, { record, isUpdate: true }); }
   async function handleDelete(record: Recordable) { await deleteReceipt({ id: record.id }); message.success('删除成功'); reload(); }
+  async function handleAudit(record: Recordable) { await auditReceipt({ id: record.id }); message.success('审核成功，库存已更新'); reload(); }
 </script>
