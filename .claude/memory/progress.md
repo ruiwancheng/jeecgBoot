@@ -11,7 +11,7 @@
 
 ## 会话收尾（2026-07-22 session-wrap）
 - /delegate 工作流三轮迭代修复：orca-review强制触发+verify不卡死+worker_done必发
-- /new 命令修复：记忆卡片加入会话上下文 + terminal send→--inject注入
+- /new-terminal 命令修复：记忆卡片加入会话上下文 + terminal send→--inject注入
 - /cleanup-context 模板重构
 - 采购模块增强：明细子表展开(3模块) + 入库单明细自动加载 + 审核按钮 + 仓库URL修复 + 关联采购订单编号查询
 - 部署事故修复：MesCustomerController方法冲突
