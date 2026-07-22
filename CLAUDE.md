@@ -5,6 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > **工作流（强制）：** `/brainstorm → /plan → 写代码 → /verify → 分级测试 → /done`
 > 
 > ⚠️ **防失忆规则：** 写完代码后必须自动跑 `/verify`；不要等用户提醒。每次回复末尾检查是否遗漏了流程步骤。
+>
+> 🛑 **本地验证铁律：** 本地后端在跑时（8080端口），改代码后必须 `curl localhost:8080` 实测核心逻辑——`mvn compile` 只证明语法正确，不证明逻辑正确。这是 /verify 的硬要求。
 > 
 > /done 后可选择性调用 铁拳团审计 或 鹰眼团测试 做兜底质量检查。审计和测试的具体规范见 `workflow.md`。
 

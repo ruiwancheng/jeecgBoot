@@ -183,4 +183,23 @@ if [ -n "$MES_DICT_PATTERN" ]; then
   echo ""
 fi
 
+
+# ============================================
+# 本地验证提醒：后端运行时必须 curl 实测
+# ============================================
+STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E ".(java|vue|ts)$" | head -20)
+if [ -n "$STAGED_JAVA_VUE" ] && lsof -i :8080 | grep -q LISTEN 2>/dev/null; then
+  echo ""
+  echo "[Super Harness] ╔══════════════════════════════════════╗"
+  echo "[Super Harness] ║  本地后端在运行 (8080) — /verify 完成了吗？ ║"
+  echo "[Super Harness] ╠══════════════════════════════════════╣"
+  echo "[Super Harness] ║  本次变更涉及以下文件：                ║"
+  echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-36s ║n" "$f"; done
+  echo "[Super Harness] ╠══════════════════════════════════════╣"
+  echo "[Super Harness] ║  请在提交前 curl 实测改动点核心逻辑     ║"
+  echo "[Super Harness] ║  mvn compile ≠ 验证通过              ║"
+  echo "[Super Harness] ╚══════════════════════════════════════╝"
+  echo ""
+fi
+
 exit 0
