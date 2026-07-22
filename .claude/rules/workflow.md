@@ -25,6 +25,7 @@ version: 2.1
 | 实施计划（跨模块/新链路·新增） | **必须调用 orca-review 让 Claude 外部评审方案** | plan 涉及 ≥3 个文件 + 跨模块联动（如 A→B→C 链路） |
 | 写代码完成（最后一批文件写入后） | **自动进入 /verify**（不要等用户说） | git diff 有变更 + 本次写入过文件 |
 | /verify 通过 | **自动 commit + push，然后提示部署** | git diff 有变更 |
+| /verify 通过（新增-07-22②） | **提示运行 /quality-gate 做安全扫描+综合判定** | git diff 有变更 + verify 已跑（/quality-gate 检查 verify 结果，不重复收集证据） |
 | **/verify 通过（本地后端可用时·新增-2026-07-22）** | **必须 curl 验证本次改动点的核心逻辑，禁止仅 mvn compile 就 push** | 本地 8080 端口在侦听（/start 启动）→ /verify = compile + curl 新功能 + curl 已有回归测试 |
 | **部署完成** | **自动 git diff 差集 → 影响模块 → 精准回归 → 更新 .last-deploy-commit** | git log .last-deploy-commit..HEAD |
 | 部署完成 | 提示进入分级测试 | — |

@@ -15,17 +15,26 @@ version: 1.0.0
 - **零发现即失败**：扫描结果为零个问题 = 扫描未生效，自动降级为 WARN
 - **证据驱动**：所有判定基于实际输出（curl 响应、git diff、测试结果），不做推断
 
-## 证据要求矩阵
+## 证据要求
 
-| 变更类型 | 最低证据要求 | 证据来源 |
-|----------|------------|---------|
-| Java Controller 新增/修改 | curl 返回 HTTP 200 + `result.code == 200` | 终端输出 |
-| Service 方法修改 | 通过 Controller 间接 curl 验证 | 终端输出 |
-| Vue 组件修改 | 页面元素可见 / 交互功能正常 | Playwright / 手动截图 |
-| Vue data.ts Schema 修改 | 表单/表格/搜索区对应字段渲染正确 | Playwright |
-| SQL 迁移脚本 | 确认表/字段存在（DESCRIBE 或查询） | MySQL 客户端 |
-| Mapper/XML 修改 | 对应 API 端点 curl 验证 | 终端输出 |
-| 配置文件修改 | 目标功能点 curl 验证 | 终端输出 |
+**/quality-gate 不重复收集证据**——它检查 /verify 是否已通过并追加安全扫描。
+分工：
+
+| 步骤 | 负责命令 | 说明 |
+|------|---------|------|
+| 逐项收集证据（curl/编译/页面） | `/verify` | 开发中快速自检 |
+| 检查 verify 结果 + 安全扫描 + 综合判定 | `/quality-gate` | 提交前最终判定 |
+
+### 现实核查判定（基于 /verify 结果）
+
+| verify 结果 | quality-gate 判定 |
+|:--|:--|
+| 全部 ✓ | PASS |
+| 部分 ✗（非核心端点） | NEEDS WORK |
+| 核心端点 ✗ | BLOCKED |
+| 未跑 verify | NEEDS WORK（强制要求先跑 /verify） |
+
+**注意：** quality-gate 自身只追加安全扫描（见 `security-gate-checklist.md`）。curl 验证和编译检查由 `/verify` 负责，不在 quality-gate 中重复执行。
 
 ## 自动失败触发器
 

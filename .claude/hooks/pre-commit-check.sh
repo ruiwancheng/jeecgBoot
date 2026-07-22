@@ -44,8 +44,10 @@ if [ -n "$REMOVED_TX" ]; then
   echo "$REMOVED_TX"
 fi
 if [ -n "$REMOVED_PERM" ]; then
-  echo "[Super Harness] ⚠️  检测到移除 @RequiresPermissions 注解 — 可能导致未授权访问:"
+  echo "[Super Harness] 🔴 检测到移除 @RequiresPermissions 注解 — 可能导致未授权访问:"
   echo "$REMOVED_PERM"
+  echo ""
+  QUALITY_GATE_BLOCK=1
 fi
 
 # 测试门控: 检查变更模块是否有匹配测试，有则运行快速验证
@@ -111,8 +113,8 @@ if [ -n "$JAVA_FILES" ]; then
     QUALITY_GATE_BLOCK=1
   fi
 
-  # 检测 SQL 字符串拼接（Java 文件中）
-  SQL_CONCAT=$(git diff --cached | grep -E '^\+.*\+.*"SELECT|^\+.*\+.*"INSERT.*VALUES' | head -5)
+  # 检测 SQL 字符串拼接（Java 文件中，排除注释行和 log 调用行避免误判）
+  SQL_CONCAT=$(git diff --cached | grep -E '^\+.*\+.*"SELECT|^\+.*\+.*"INSERT.*VALUES' | grep -v -E '^\+\s*//|^\+\s*\*|log\.|logger\.' | head -5)
   if [ -n "$SQL_CONCAT" ]; then
     echo "[Quality Gate] 🚫 检测到 SQL 字符串拼接（应使用 MyBatis-Plus 参数化）："
     echo "$SQL_CONCAT"
