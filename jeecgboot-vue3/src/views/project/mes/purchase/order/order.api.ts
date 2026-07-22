@@ -25,7 +25,7 @@ export function deleteBatchOrder(params: any) {
 }
 
 export function auditOrder(params: any) {
-  return defHttp.put({ url: `${BASE}/audit`, params });
+  return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
 }
 
 export function getExportUrl() {
