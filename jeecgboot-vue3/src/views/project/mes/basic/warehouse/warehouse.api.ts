@@ -30,6 +30,6 @@ export const saveOrUpdateWarehouse = (params: Recordable, isUpdate: boolean) => 
 
 /** 下拉选择（ApiSelect专用，替代平台字典 c_mes_warehouse） */
 export async function queryWarehouseSelect(params?: any) {
-  const res = await defHttp.get({ url: '/mes/warehouse/selectPage', params });
+  const res = await defHttp.get({ url: '/mes/basic/warehouse/selectPage', params });
   return res || [];
 }
