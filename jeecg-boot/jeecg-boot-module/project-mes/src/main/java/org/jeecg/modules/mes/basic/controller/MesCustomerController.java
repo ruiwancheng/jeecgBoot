@@ -146,9 +146,9 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
 
     //update-begin selectPage 客户下拉
     @Operation(summary = "客户下拉选择")
-    @GetMapping("/selectPage")
+    @GetMapping("/selectDropdown")
     @RequiresPermissions("mes:basic:list")
-    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword) {
+    public Result<java.util.List<java.util.Map<String,String>>> selectDropdown(@RequestParam(required = false) String keyword) {
         com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesCustomer> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
         if (org.springframework.util.StringUtils.hasText(keyword)) { qw.like(MesCustomer::getName, keyword).or().like(MesCustomer::getCode, keyword); }
         qw.orderByAsc(MesCustomer::getCode).last("LIMIT 100");
