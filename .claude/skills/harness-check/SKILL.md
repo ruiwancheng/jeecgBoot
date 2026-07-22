@@ -13,8 +13,8 @@ version: 1.0.0
 - `.claude/settings.json` — 项目级设置
 - `.claude/features.json` — 功能模块清单
 
-### 命令 Commands（33 个）
-`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`
+### 命令 Commands（37 个）
+`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `orca/delegate`, `quality/gate`, `quality/deep-inspect`, `quality/dashboard`
 
 ### 规则 Rules（16 个）
 `file-scope`, `backend-first`, `code-style`, `no-platform-modify`, `frontend`, `security`, `testing`, `workflow`, `debugging`, `skill-command-boundary`, `data-scope`, `override-mechanism`, `audit-classification`, `engineering-artifacts`, `tiequan-report-retention`, `tiequan-report-scope`
