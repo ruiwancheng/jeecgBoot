@@ -167,20 +167,4 @@ if [ -n "$BLOCKED" ]; then
   exit 1
 fi
 
-
-# ============================================
-# 反模式检测：MES表字典（JSearchSelect dict="c_mes_*"）
-# 平台SysDictMapper的原始SQL不经MyBatis-Plus → 下拉与列表数据必不一致
-# 应使用 ApiSelect + /selectPage 端点
-# ============================================
-MES_DICT_PATTERN=$(git diff --cached | grep -E '^\+.*dict.*c_mes_' | head -5)
-if [ -n "$MES_DICT_PATTERN" ]; then
-  echo "[Super Harness] ⚠️  检测到 c_mes_ 表字典模式（JSearchSelect + dict=\"c_mes_xxx\"）："
-  echo "$MES_DICT_PATTERN"
-  echo "  → 平台字典查询不经过MyBatis-Plus，下拉数据与列表数据必然不一致"
-  echo "  → 请改用 ApiSelect + 目标Controller的 /selectPage 端点"
-  echo "  → 详见: .claude/rules/frontend.md 禁止模式"
-  echo ""
-fi
-
 exit 0
