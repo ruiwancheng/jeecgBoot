@@ -95,6 +95,15 @@ public class MesPurchaseReceiptController extends JeecgController<MesPurchaseRec
         return super.exportXls(req, entity, MesPurchaseReceipt.class, "采购入库");
     }
 
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 采购入库单-选择采购单后从明细中选入库明细-----------
+    @Operation(summary = "根据采购订单ID加载可入库明细行")
+    @GetMapping("/loadOrderItemsForReceipt")
+    @RequiresPermissions("mes:purchaseReceipt:list")
+    public Result<java.util.List<org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItemForReceipt>> loadOrderItemsForReceipt(@RequestParam String orderId) {
+        return Result.ok(service.loadOrderItemsForReceipt(orderId));
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 采购入库单-选择采购单后从明细中选入库明细-----------
+
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
     @PutMapping("/audit") @RequiresPermissions("mes:purchaseReceipt:edit")
     public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已更新"); }

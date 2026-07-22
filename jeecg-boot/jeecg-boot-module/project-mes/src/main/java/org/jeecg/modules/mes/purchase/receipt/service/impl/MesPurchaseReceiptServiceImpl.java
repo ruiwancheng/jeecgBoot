@@ -283,6 +283,29 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         }
     }
 
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 采购入库单-选择采购单后从明细中选入库明细-----------
+    @Override
+    public java.util.List<org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItemForReceipt> loadOrderItemsForReceipt(String orderId) {
+        LambdaQueryWrapper<MesPurchaseOrderItem> qw = new LambdaQueryWrapper<>();
+        qw.eq(MesPurchaseOrderItem::getOrderId, orderId).orderByAsc(MesPurchaseOrderItem::getLineNo);
+        java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(qw);
+        java.util.List<org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItemForReceipt> result = new java.util.ArrayList<>();
+        for (MesPurchaseOrderItem item : orderItems) {
+            org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItemForReceipt dto =
+                new org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItemForReceipt()
+                    .setItemId(item.getId())
+                    .setMaterialId(item.getMaterialId())
+                    .setOrderQty(item.getQuantity())
+                    .setReceivedQty(item.getReceivedQty() != null ? item.getReceivedQty() : java.math.BigDecimal.ZERO)
+                    .setRemainQty(item.getQuantity().subtract(item.getReceivedQty() != null ? item.getReceivedQty() : java.math.BigDecimal.ZERO))
+                    .setUnitPrice(item.getUnitPrice())
+                    .setTaxRate(item.getTaxRate());
+            result.add(dto);
+        }
+        return result;
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 采购入库单-选择采购单后从明细中选入库明细-----------
+
     private String getCurrentUsername() {
         try {
             LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
