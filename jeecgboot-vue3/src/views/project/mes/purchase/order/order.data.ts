@@ -1,5 +1,6 @@
 import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
+import { querySupplierSelect } from './order.api';
 
 export const columns: BasicColumn[] = [
   { title: '订单编号', dataIndex: 'code', width: 130 },
@@ -22,7 +23,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '订单编号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50, placeholder: 'PO-YYYYMMDD-001' } },
-  { field: 'supplierId', label: '供应商', component: 'JSearchSelect', required: true, colProps: { span: 8 }, componentProps: { dict: 'c_mes_supplier,name,id' } },
+  { field: 'supplierId', label: '供应商', component: 'ApiSelect', required: true, colProps: { span: 8 }, componentProps: { api: querySupplierSelect } },
   { field: 'purchaseType', label: '采购类型', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_purchase_type' } },
   { field: 'orderDate', label: '订单日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'deliveryDate', label: '交货日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },

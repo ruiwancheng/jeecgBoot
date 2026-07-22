@@ -150,6 +150,28 @@ public class MesSupplierController extends JeecgController<MesSupplier, IMesSupp
             s.setTaxNo(s.getTaxNo().substring(0, 4) + "****");
         }
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-22---for: 供应商下拉选择页(替代JSearchSelect字典，走MyBatis-Plus标准查询)-----------
+    @Operation(summary = "供应商下拉选择")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:supplier:list")
+    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesSupplier> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(keyword)) {
+            qw.like(MesSupplier::getName, keyword).or().like(MesSupplier::getCode, keyword);
+        }
+        qw.orderByAsc(MesSupplier::getCode).last("LIMIT 100");
+        java.util.List<java.util.Map<String,String>> list = service.list(qw).stream()
+            .map(s -> {
+                java.util.Map<String,String> m = new java.util.HashMap<>();
+                m.put("label", s.getCode() + " — " + s.getName());
+                m.put("value", s.getId());
+                return m;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        return Result.ok(list);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-22---for: 供应商下拉选择页-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-14---for: 审计修复2期-queryById+脱敏副本+导入事务+导出限制-----------
 //update-end---author:ruiwancheng---date:2026-07-14---for: MES基础设置-供应商管理接口-----------

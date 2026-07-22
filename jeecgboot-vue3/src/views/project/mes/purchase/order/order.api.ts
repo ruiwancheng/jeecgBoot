@@ -31,3 +31,9 @@ export function auditOrder(params: any) {
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }
+
+/** 供应商下拉（ApiSelect专用，调用MES供应商selectPage替代平台字典） */
+export async function querySupplierSelect(params?: any) {
+  const res = await defHttp.get({ url: '/mes/basic/supplier/selectPage', params });
+  return res || [];
+}
