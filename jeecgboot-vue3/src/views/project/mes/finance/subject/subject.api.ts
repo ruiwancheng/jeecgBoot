@@ -10,3 +10,9 @@ export function saveOrUpdateSubject(data: any, isUpdate: boolean) {
 }
 export function deleteSubject(params: any) { return defHttp.delete({ url: `${BASE}/delete`, params }, { joinParamsToUrl: true }); }
 export function getExportUrl() { return `${BASE}/exportXls`; }
+
+/** 下拉选择（ApiSelect专用，替代平台字典 c_mes_finance/subject） */
+export async function querySubjectSelect(params?: any) {
+  const res = await defHttp.get({ url: '/mes/finance/subject/selectPage', params });
+  return res || [];
+}

@@ -42,3 +42,9 @@ export function cancelOrder(params: any) {
   return defHttp.put({ url: `${BASE}/cancel`, params }, { joinParamsToUrl: true });
 }
 //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-----------
+
+/** 下拉选择（ApiSelect专用，替代平台字典 c_mes_sales/order） */
+export async function querySalesOrderSelect(params?: any) {
+  const res = await defHttp.get({ url: '/mes/sales/order/selectPage', params });
+  return res || [];
+}

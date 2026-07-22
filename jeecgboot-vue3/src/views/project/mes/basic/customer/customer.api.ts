@@ -68,3 +68,9 @@ export const queryPriceList = (params: Recordable) => defHttp.get({ url: Api.pri
 export const addPrice = (params: Recordable) => defHttp.post({ url: Api.priceAdd, params });
 export const editPrice = (params: Recordable) => defHttp.put({ url: Api.priceEdit, params });
 export const deletePrice = (params: Recordable) => defHttp.delete({ url: Api.priceDelete, params }, { joinParamsToUrl: true });
+
+/** 下拉选择（ApiSelect专用，替代平台字典 c_mes_customer） */
+export async function queryCustomerSelect(params?: any) {
+  const res = await defHttp.get({ url: '/mes/customer/selectPage', params });
+  return res || [];
+}

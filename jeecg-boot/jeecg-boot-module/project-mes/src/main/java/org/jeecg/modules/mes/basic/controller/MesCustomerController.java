@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -142,6 +143,22 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
             return null;
         }
     }
+
+    //update-begin selectPage 客户下拉
+    @Operation(summary = "客户下拉选择")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:basic:list")
+    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesCustomer> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(keyword)) { qw.like(MesCustomer::getName, keyword).or().like(MesCustomer::getCode, keyword); }
+        qw.orderByAsc(MesCustomer::getCode).last("LIMIT 100");
+        java.util.List<java.util.Map<String,String>> list = service.list(qw).stream().map(s -> {
+            java.util.Map<String,String> m = new java.util.HashMap<>();
+            m.put("label", s.getCode() + " — " + s.getName()); m.put("value", s.getId()); return m;
+        }).collect(java.util.stream.Collectors.toList());
+        return Result.ok(list);
+    }
+    //update-end selectPage
 }
 //update-end---author:ruiwancheng---date:2026-07-11---for: 审计修复#8#9#10-导入编码校验+业务员数据隔离+接口文档注解-----------
 //update-end---author:ruiwancheng---date:2026-07-08---for: MES基础设置-客户管理接口-----------

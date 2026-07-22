@@ -86,5 +86,21 @@ public class MesWarehouseController extends JeecgController<MesWarehouse, IMesWa
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesWarehouse.class);
     }
+
+    //update-begin selectPage 仓库下拉
+    @Operation(summary = "仓库下拉选择")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:warehouse:list")
+    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesWarehouse> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(keyword)) { qw.like(MesWarehouse::getName, keyword).or().like(MesWarehouse::getCode, keyword); }
+        qw.orderByAsc(MesWarehouse::getCode).last("LIMIT 100");
+        java.util.List<java.util.Map<String,String>> list = service.list(qw).stream().map(s -> {
+            java.util.Map<String,String> m = new java.util.HashMap<>();
+            m.put("label", s.getCode() + " — " + s.getName()); m.put("value", s.getId()); return m;
+        }).collect(java.util.stream.Collectors.toList());
+        return Result.ok(list);
+    }
+    //update-end selectPage
 }
 //update-end---author:admin---date:2026-07-06---for: MES基础设置-仓库管理接口-----------

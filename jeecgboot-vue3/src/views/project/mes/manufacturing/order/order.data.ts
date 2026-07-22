@@ -1,5 +1,6 @@
 import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
+import { queryWarehouseSelect } from '/@/views/project/mes/basic/warehouse/warehouse.api';
 
 export const columns: BasicColumn[] = [
   { title: '订单编号', dataIndex: 'code', width: 130 },
@@ -27,7 +28,7 @@ export const formSchema: FormSchema[] = [
   { field: 'planQty', label: '计划数量', component: 'InputNumber', required: true, colProps: { span: 8 }, componentProps: { min: 0.01, step: 1 } },
   { field: 'startDate', label: '开工日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'endDate', label: '完工日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
-  { field: 'warehouseId', label: '完工仓库', component: 'JSearchSelect', colProps: { span: 8 }, componentProps: { dict: 'c_mes_warehouse,name,id' } },
+  { field: 'warehouseId', label: '完工仓库', component: 'ApiSelect', colProps: { span: 8 }, componentProps: { api: queryWarehouseSelect } },
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_production_order_status' }, defaultValue: '1', show: false },
   { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },
 ];

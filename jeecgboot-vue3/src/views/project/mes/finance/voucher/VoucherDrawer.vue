@@ -6,7 +6,7 @@
     <a-table :dataSource="items" :columns="itemColumns" rowKey="id" size="small" bordered :pagination="false">
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'subjectId'">
-          <JSearchSelect v-model:value="record.subjectId" :dict="'c_mes_account_subject,name,id'" style="width:100%" />
+          <ApiSelect v-model:value="record.subjectId" :api="querySubjectSelect" style="width:100%" />
         </template>
         <template v-else-if="column.dataIndex === 'summary'">
           <a-input v-model:value="record.summary" size="small" />
@@ -31,6 +31,7 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { JSearchSelect } from '/@/components/Form';
+  import { querySubjectSelect } from './subject.api';
   import { formSchema } from './voucher.data';
   import { saveOrUpdateVoucher, queryVoucherById } from './voucher.api';
   import { message } from 'ant-design-vue';

@@ -103,5 +103,21 @@ public class MesDeliveryNoteController extends JeecgController<MesDeliveryNote, 
     @Operation(summary = "取消发货单") @PutMapping("/cancel") @RequiresPermissions("mes:delivery:edit")
     public Result<String> cancel(@RequestParam String id) { service.cancel(id); return Result.ok("已取消"); }
     //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 状态流转API-发货单-----------
+
+    //update-begin selectPage 发货单下拉
+    @Operation(summary = "发货单下拉选择")
+    @GetMapping("/selectPage")
+    @RequiresPermissions("mes:delivery:list")
+    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesDeliveryNote> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(keyword)) { qw.like(MesDeliveryNote::getCode, keyword); }
+        qw.orderByDesc(MesDeliveryNote::getCreateTime).last("LIMIT 100");
+        java.util.List<java.util.Map<String,String>> list = service.list(qw).stream().map(s -> {
+            java.util.Map<String,String> m = new java.util.HashMap<>();
+            m.put("label", s.getCode()); m.put("value", s.getId()); return m;
+        }).collect(java.util.stream.Collectors.toList());
+        return Result.ok(list);
+    }
+    //update-end selectPage
 }
 //update-end---author:ruiwancheng---date:2026-07-15---for: MES销售管理-发货单接口-----------

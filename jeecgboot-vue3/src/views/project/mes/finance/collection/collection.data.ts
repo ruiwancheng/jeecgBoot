@@ -1,4 +1,5 @@
 import { BasicColumn, FormSchema } from '/@/components/Table';
+import { queryCustomerSelect } from '/@/views/project/mes/basic/customer/customer.api';
 export const columns: BasicColumn[] = [
   { title: '收款单号', dataIndex: 'code', width: 150 },
   { title: '客户', dataIndex: 'customerId', width: 150, dictTable: 'c_mes_customer', dictText: 'name', dictCode: 'id' },
@@ -9,5 +10,5 @@ export const columns: BasicColumn[] = [
 ];
 export const searchFormSchema: FormSchema[] = [
   { field: 'code', label: '收款单号', component: 'Input', colProps: { span: 6 } },
-  { field: 'customerId', label: '客户', component: 'JSearchSelect', componentProps: { dict: 'c_mes_customer,name,id' }, colProps: { span: 6 } },
+  { field: 'customerId', label: '客户', component: 'ApiSelect', componentProps: { api: queryCustomerSelect }, colProps: { span: 6 } },
 ];
