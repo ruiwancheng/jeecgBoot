@@ -24,12 +24,6 @@ public class MesPurchaseOrderItemForReceipt implements Serializable {
     @Schema(description = "物料ID")
     private String materialId;
 
-    @Schema(description = "物料编码")
-    private String materialCode;
-
-    @Schema(description = "物料名称")
-    private String materialName;
-
     @Schema(description = "订单数量")
     private BigDecimal orderQty;
 

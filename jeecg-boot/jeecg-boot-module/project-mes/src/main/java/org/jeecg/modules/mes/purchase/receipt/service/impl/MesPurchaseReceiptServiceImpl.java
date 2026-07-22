@@ -56,6 +56,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveWithItems(MesPurchaseReceipt entity) {
+        //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-saveWithItems补充delFlag防护(与updateWithItems对齐)-----------
+        entity.setDelFlag(null);
+        //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-saveWithItems补充delFlag防护-----------
         validateReceipt(entity);
         if (entity.getStatus() == null) entity.setStatus("1");
         QueryWrapper<MesPurchaseReceipt> activeQw = new QueryWrapper<>();
@@ -105,7 +108,11 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeWithItems(String id) {
-        checkStatus(id, "delete");
+        //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-删除改用FOR UPDATE行锁防并发击穿(与编辑路径对齐，照抄采购订单P0-3修复)-----------
+        MesPurchaseReceipt exist = baseMapper.selectByIdForUpdate(id);
+        if (exist == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(exist.getStatus())) throw new JeecgBootException("非草稿状态入库单禁止删除");
+        //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-删除FOR UPDATE行锁-----------
         LambdaQueryWrapper<MesPurchaseReceiptItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesPurchaseReceiptItem::getReceiptId, id);
         itemMapper.delete(delQw);
@@ -172,16 +179,28 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核(已审核→草稿)-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void unaudit(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.unauditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("反审核失败：入库单不存在或状态不是已审核，请刷新后重试");
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核-----------
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        // 批量查状态
-        List<MesPurchaseReceipt> existing = baseMapper.selectBatchIds((Collection<String>) (Collection<?>) list);
-        for (MesPurchaseReceipt e : existing) {
-            if (!"1".equals(e.getStatus()))
-                throw new JeecgBootException("非草稿状态入库单[" + e.getCode() + "]禁止删除");
+        //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-批量删除改用逐行FOR UPDATE锁防并发击穿(与removeWithItems对齐)-----------
+        for (Object id : list) {
+            MesPurchaseReceipt exist = baseMapper.selectByIdForUpdate((String) id);
+            if (exist == null) throw new JeecgBootException("入库单[" + id + "]不存在");
+            if (!"1".equals(exist.getStatus()))
+                throw new JeecgBootException("非草稿状态入库单[" + exist.getCode() + "]禁止删除");
         }
+        //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-批量删除FOR UPDATE行锁-----------
         // 批量删明细行
         LambdaQueryWrapper<MesPurchaseReceiptItem> delQw = new LambdaQueryWrapper<>();
         delQw.in(MesPurchaseReceiptItem::getReceiptId, list);
@@ -254,20 +273,10 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         }
     }
 
-    private void checkStatus(MesPurchaseReceipt entity, String action) {
-        if (entity.getId() == null) return;
-        MesPurchaseReceipt exist = baseMapper.selectById(entity.getId());
-        if (exist != null && !"1".equals(exist.getStatus())) {
-            throw new JeecgBootException("当前状态不允许" + action + "，仅草稿状态可操作");
-        }
-    }
-
-    private void checkStatus(String id, String action) {
-        MesPurchaseReceipt exist = baseMapper.selectById(id);
-        if (exist != null && !"1".equals(exist.getStatus())) {
-            throw new JeecgBootException("当前状态不允许" + action + "，仅草稿状态可操作");
-        }
-    }
+    //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-checkStatus已删除-所有调用点已改为内联FOR UPDATE(与采购订单模式对齐)-----------
+    // checkStatus 辅助方法已删除——普通SELECT无锁容易让人误以为"状态校验已经安全"
+    // 编辑(L.86)、删除单(L.108)、批量删除(L.178) 均直接使用 selectByIdForUpdate + 内联状态判断
+    //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-checkStatus已删除-----------
 
     private void saveItems(MesPurchaseReceipt entity) {
         String username = getCurrentUsername();

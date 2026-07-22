@@ -234,6 +234,9 @@ Frontend dev proxy forwards `/jeecg-boot` requests to `localhost:8080/jeecg-boot
 > - 命令技能边界 → `skill-command-boundary.md`
 > - 铁拳团审计留存 → `tiequan-report-retention.md`
 > - 铁拳团审计范围 → `tiequan-report-scope.md`
+> - 部署质量门控 → `deploy-quality-gate.md`
+> - 业务链路注册表 → `hermes/business-chains.json`
+> - 链路审计（铁拳团第11视角） → `.claude/skills/jeecg-chain-audit/SKILL.md`
 
 ### 读操作（不限）
 你可以阅读项目中任意文件。重点参考：

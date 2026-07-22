@@ -2,16 +2,16 @@
 name: workflow
 description: 开发流程——需求→计划→实现→自验证→分级测试→提交
 glob: "**/*"
-version: 2.1
+version: 3.0
 ---
 
 # 开发流程
 
 ```
-/brainstorm → /plan → 用户确认 → 写代码 → /verify → git commit + push → 部署 → 分级测试 → /done → 人工验收
+/brainstorm → /plan → 用户确认 → 写代码 → /verify → git commit + push → 部署 → 部署质量门控(自动) → /done
 ```
 
-> /done 完成后，AI 提示用户可选择性调用铁拳团审计和鹰眼团测试做兜底检查，详见文末。
+> 部署后自动执行质量门控（变更分级 + 链路回归 + 审计），详见 `deploy-quality-gate.md`。开发中的快速自检仍用分级测试。
 
 ## 防失忆触发条件（强制）
 
@@ -29,8 +29,7 @@ version: 2.1
 | /quality-gate PASS | **提示可以 commit + push** | quality-gate 判定 PASS |
 | **每次 git commit 之前（新增-07-22③）** | **必须先 /verify，不依赖"最后一批文件写入后"的自动触发——中途中断后切回来容易忘** | staged 有 Java/Vue 变更 |
 | **/verify 通过（本地后端可用时·新增-2026-07-22）** | **必须 curl 验证本次改动点的核心逻辑，禁止仅 mvn compile 就 push** | 本地 8080 端口在侦听（/start 启动）→ /verify = compile + curl 新功能 + curl 已有回归测试 |
-| **部署完成** | **自动 git diff 差集 → 影响模块 → 精准回归 → 更新 .last-deploy-commit** | git log .last-deploy-commit..HEAD |
-| 部署完成 | 提示进入分级测试 | — |
+| **部署完成** | **自动执行部署质量门控（`deploy-quality-gate.md`）：git diff 差集 → 变更分级 → 查链路注册表 → 自动回归+模块审计+链路审计 → 输出质量报告 → 更新 .last-deploy-commit** | 部署控制台显示完成 |
 | 测试全部通过 | 提示进入 /done | — |
 | 测试有失败 | 进入 /debug，修复后重测 | 报错信息 |
 | **多轮改动累积（新增-2026-07-22）** | **暂缓部署，一次性集中部署** | 本地后端可用时（/start 启动），多轮修复在本地逐轮 mvn compile+curl 验证；全部就绪后 push + 一次部署 |
@@ -135,30 +134,45 @@ version: 2.1
 | system-start 有对应依赖声明 | 是 | 缺依赖 → 运行时找不到类 |
 | 模块代码已 git 跟踪 | 是 | 漏提交 → CI 编译失败 |
 
-## 可选兜底检查（/done 后提示）
+## 部署质量门控（部署后自动执行，替代手工验收）
 
-/done 完成后，AI 提示用户可选择性执行以下兜底检查：
+> **详细规则见 `deploy-quality-gate.md`。** 此处仅列工作流集成要点。
 
-```
-日常开发流程已完成。如需深度质量检查，可选择：
-1. 铁拳团审计 — 本地10人AI代码审计，发现隐藏风险
-2. 鹰眼团测试 — gen-tests + test-api + test-e2e 全面回归
-```
+部署完成后 AI 必须自动执行（不是提示、不是可选）：
 
-### 铁拳团审计说明
+1. `git diff .last-deploy-commit..HEAD` 获取变更文件
+2. 按 `hermes/business-chains.json` 的 changeClassification 判定等级 (skip/light/standard/full)
+3. 查链路注册表匹配业务链路，加载对应测试
+4. 执行验证：API 回归 / E2E 回归 / 铁拳团审计（按等级）
+5. 输出质量报告 + 更新 `.last-deploy-commit`
 
-10 人 AI 并行审计（3 产品 + 3 研发 + 4 测试），共识 P0 必改。适用于新增模块、重大重构场景。
+**影子模式（当前）**：审计 P0 不阻塞部署，仅记录。正式模式开启条件见 `deploy-quality-gate.md`。
 
-| 场景 | 建议 |
+**紧急旁路**：生产 P0 hotfix 使用 `--skip-audit` 跳过验证，记录到 `hermes/logs/skip-audit.log`。
+
+### 与分级测试的关系
+
+| 场景 | 用哪个 |
+|------|--------|
+| 本地开发中改完代码 | 分级测试（workflow.md 内） |
+| 集中部署完成后 | 部署质量门控（本规则） |
+| 二者冲突？ | 不冲突——分级测试是开发中快速自检，质量门控是部署后系统验证 |
+
+### 手动触发审计/测试（开发中需要时）
+
+部署质量门控是自动的。如果需要在开发中就深度检查，可以手动触发：
+
+| 命令 | 说明 |
+|------|------|
+| 铁拳团审计 | 10 人 AI 并行审计（3 产品 + 3 研发 + 4 测试），共识 P0 必改 |
+| 鹰眼团测试 | gen-tests + test-api + test-e2e 全面回归 |
+
+| 手动触发场景 | 建议 |
 |------|------|
 | 新增模块（新 Entity + Controller） | 强烈建议审计 |
 | 新增/修改 Entity 字段 | 建议审计 |
 | 修改 Service 核心逻辑 | 可选审计 |
 | Bug 修复或样式调整 | 不需要 |
-
-### 鹰眼团测试说明
-
-gen-tests 从 Controller 自动推导测试用例 + 自定义规则（NPE/Auth/SQL注入/唯一/溢出/并发），test-api + test-e2e 回归验证。
 
 ## 质量门控编排管道（Orca 增强，可选）
 

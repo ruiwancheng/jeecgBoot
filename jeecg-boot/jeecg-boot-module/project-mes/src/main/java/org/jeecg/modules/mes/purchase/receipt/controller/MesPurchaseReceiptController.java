@@ -107,6 +107,13 @@ public class MesPurchaseReceiptController extends JeecgController<MesPurchaseRec
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
     @PutMapping("/audit") @RequiresPermissions("mes:purchaseReceipt:edit")
     public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已更新"); }
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核-----------
+    @Operation(summary = "反审核入库单")
+    @PutMapping("/unaudit")
+    @RequiresPermissions("mes:purchaseReceipt:edit")
+    public Result<String> unaudit(@RequestParam String id) { service.unaudit(id); return Result.ok("反审核成功"); }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购入库接口-----------

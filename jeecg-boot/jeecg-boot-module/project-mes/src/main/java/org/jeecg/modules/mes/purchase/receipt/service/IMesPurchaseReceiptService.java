@@ -11,6 +11,9 @@ public interface IMesPurchaseReceiptService extends IService<MesPurchaseReceipt>
     void removeWithItems(String id);
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
     void audit(String id);
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核-----------
+    void unaudit(String id);
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P1-入库反审核-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
 
     //update-begin---author:ruisuyun---date:2026-07-22---for: 采购入库单-选择采购单后从明细中选入库明细-----------

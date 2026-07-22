@@ -9,9 +9,14 @@ import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrder;
 import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItem;
+import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseApplyItemForOrder;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderItemMapper;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderMapper;
 import org.jeecg.modules.mes.purchase.order.service.IMesPurchaseOrderService;
+import org.jeecg.modules.mes.purchase.apply.entity.MesPurchaseApply;
+import org.jeecg.modules.mes.purchase.apply.entity.MesPurchaseApplyItem;
+import org.jeecg.modules.mes.purchase.apply.mapper.MesPurchaseApplyItemMapper;
+import org.jeecg.modules.mes.purchase.apply.mapper.MesPurchaseApplyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,12 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
 
     @Autowired
     private MesPurchaseOrderItemMapper itemMapper;
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-加载已审核申请明细用于生成订单-----------
+    @Autowired
+    private MesPurchaseApplyMapper applyMapper;
+    @Autowired
+    private MesPurchaseApplyItemMapper applyItemMapper;
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-加载已审核申请明细-----------
 
     @Override
     public MesPurchaseOrder queryWithItems(String id) {
@@ -143,7 +154,37 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：订单不存在或状态已变更，请刷新后重试");
     }
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P1-订单反审核(已确认→草稿)-----------
+    @Override
+    public void unaudit(String id) {
+        String username = getCurrentUsername(); Date now = new Date();
+        int rows = baseMapper.unauditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("反审核失败：订单不存在或状态不是已确认，请刷新后重试");
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P1-订单反审核-----------
     //update-end---author:ruiwancheng---date:2026-07-20---for: P0-03 采购订单状态机-审核-----------
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-从已审核申请加载明细用于生成订单-----------
+    @Override
+    public java.util.List<MesPurchaseApplyItemForOrder> loadApplyItemsForOrder(String applyId) {
+        if (!StringUtils.hasText(applyId)) throw new JeecgBootException("申请ID不能为空");
+        MesPurchaseApply apply = applyMapper.selectById(applyId);
+        if (apply == null) throw new JeecgBootException("采购申请不存在");
+        if (!"2".equals(apply.getStatus())) throw new JeecgBootException("仅已审核的申请可生成订单");
+        LambdaQueryWrapper<MesPurchaseApplyItem> qw = new LambdaQueryWrapper<>();
+        qw.eq(MesPurchaseApplyItem::getApplyId, applyId).orderByAsc(MesPurchaseApplyItem::getLineNo);
+        java.util.List<MesPurchaseApplyItem> applyItems = applyItemMapper.selectList(qw);
+        java.util.List<MesPurchaseApplyItemForOrder> result = new java.util.ArrayList<>();
+        for (MesPurchaseApplyItem item : applyItems) {
+            result.add(new MesPurchaseApplyItemForOrder()
+                .setItemId(item.getId())
+                .setMaterialId(item.getMaterialId())
+                .setApplyQty(item.getQuantity()));
+        }
+        return result;
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-从已审核申请加载明细-----------
 
     private void validateOrder(MesPurchaseOrder entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("订单编号不能为空");

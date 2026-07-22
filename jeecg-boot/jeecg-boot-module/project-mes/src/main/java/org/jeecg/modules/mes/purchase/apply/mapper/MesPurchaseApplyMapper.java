@@ -2,8 +2,11 @@
 package org.jeecg.modules.mes.purchase.apply.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.Date;
 import org.jeecg.modules.mes.purchase.apply.entity.MesPurchaseApply;
 
 public interface MesPurchaseApplyMapper extends BaseMapper<MesPurchaseApply> {
@@ -11,6 +14,16 @@ public interface MesPurchaseApplyMapper extends BaseMapper<MesPurchaseApply> {
     MesPurchaseApply selectDeletedByCode(String code);
 
     @Update("UPDATE c_mes_purchase_apply SET code=#{code}, dept_id=#{deptId}, applicant_id=#{applicantId}, apply_date=#{applyDate}, required_date=#{requiredDate}, budget_subject=#{budgetSubject}, total_amount=#{totalAmount}, status=#{status}, remark=#{remark}, update_by=#{updateBy}, update_time=#{updateTime}, del_flag=0 WHERE id=#{id} AND del_flag=1")
-    void resurrect(MesPurchaseApply entity);
+    int resurrect(MesPurchaseApply entity);
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-编辑/删除用FOR UPDATE行锁防并发击穿(照抄采购订单+入库修复)-----------
+    @Select("SELECT * FROM c_mes_purchase_apply WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
+    MesPurchaseApply selectByIdForUpdate(@Param("id") String id);
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-原子状态机守卫-----------
+    @Update("UPDATE c_mes_purchase_apply SET status = '2', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
+    int auditWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
+    //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-编辑/删除用FOR UPDATE行锁防并发击穿-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购申请Mapper-----------

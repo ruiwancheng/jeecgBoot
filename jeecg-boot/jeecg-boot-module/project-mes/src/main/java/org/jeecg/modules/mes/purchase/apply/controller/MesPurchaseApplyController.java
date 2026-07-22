@@ -94,5 +94,12 @@ public class MesPurchaseApplyController extends JeecgController<MesPurchaseApply
         if (total > QUERY_ALL_MAX) throw new JeecgBootException("申请超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         return super.exportXls(req, entity, MesPurchaseApply.class, "采购申请");
     }
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点(照抄订单+入库audit模式)-----------
+    @Operation(summary = "审核申请")
+    @PutMapping("/audit")
+    @RequiresPermissions("mes:purchaseApply:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购申请接口-----------

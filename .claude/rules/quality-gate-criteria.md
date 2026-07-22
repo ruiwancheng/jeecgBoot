@@ -58,9 +58,9 @@ version: 1.0.0
 |:--:|------|:--:|
 | PASS | 所有变更类型有对应证据 + 安全扫描 0 个 P0 + API 验证通过 | 提交 + 部署 |
 | NEEDS WORK | 部分变更缺证据 / 安全扫描有 P1 / API 验证非关键失败 | 可提交，部署需谨慎 |
-| BLOCKED | 编译失败 / 核心端点不可用 / 安全扫描有 P0 | 禁止提交，必须先修复 |
+| BLOCKED | 编译失败 / 核心端点不可用 / 安全扫描有 P0 / 审计 P0（正式模式） | 禁止提交，必须先修复 |
 
 ## 关联规则
 
 - `security-gate-checklist.md` — 安全专项检查清单
-- `workflow.md` — 开发流程中的 /verify 和分级测试
+- `deploy-quality-gate.md` — 部署后自动质量门控（审计 P0 在正式模式下映射到 BLOCKED）

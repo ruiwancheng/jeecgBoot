@@ -118,5 +118,21 @@ public class MesPurchaseOrderController extends JeecgController<MesPurchaseOrder
 
     @PutMapping("/audit") @RequiresPermissions("mes:purchaseOrder:edit")
     public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P1-订单反审核-----------
+    @Operation(summary = "反审核订单")
+    @PutMapping("/unaudit")
+    @RequiresPermissions("mes:purchaseOrder:edit")
+    public Result<String> unaudit(@RequestParam String id) { service.unaudit(id); return Result.ok("反审核成功"); }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P1-订单反审核-----------
+
+    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-从已审核申请加载明细用于生成订单-----------
+    @Operation(summary = "根据已审核申请ID加载明细行用于生成订单")
+    @GetMapping("/loadApplyItemsForOrder")
+    @RequiresPermissions("mes:purchaseOrder:list")
+    public Result<java.util.List<org.jeecg.modules.mes.purchase.order.entity.MesPurchaseApplyItemForOrder>> loadApplyItemsForOrder(@RequestParam String applyId) {
+        return Result.ok(service.loadApplyItemsForOrder(applyId));
+    }
+    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-从已审核申请加载明细-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购订单接口-----------
