@@ -40,6 +40,7 @@ version: 1.0.0
   ├─ Step 4: 执行验证
   │   ├─ 鹰眼团 API 回归: node harness/tests/mes/<chain>.test.js
   │   ├─ 鹰眼团 E2E 回归: npx playwright test harness/e2e/mes/<chain>.spec.ts
+  │   ├─ 鹰眼团 链路测试: node harness/tests/mes/<chain>-*.chain.test.js (full级)
   │   ├─ 铁拳团模块审计: 10 Agent 并行审计 (仅 full 级, 约10min)
   │   └─ 链路审计: 变更涉及 ≥2 模块时自动触发 (链路人1号, 约5min)
   │       详见 .claude/skills/jeecg-chain-audit/SKILL.md
@@ -82,6 +83,19 @@ AI 分析 `git diff .last-deploy-commit..HEAD` 时按以下优先级判定（取
 | 多条链路同时命中 | 串行执行各链路 | 各自测试 |
 
 > **未命中任何链路** → 跑通用 smoke test（登录 + 基础接口可用性）。
+
+## 链路测试（鹰眼团第3维度）
+
+full 级变更时，自动运行 `business-chains.json` 中对应链路的 `chainTests.segments[].file` 测试文件。
+
+- 触发条件: full 级变更 + 链路有 chainTests 配置
+- 测试类型: 2-3步微链路端到端测试（不重复单端点已有的输入校验）
+- 配置位置: `hermes/business-chains.json` → `chains.<name>.chainTests`
+- 命名规范: `harness/tests/mes/<模块A>-<模块B>.chain.test.js`
+
+链路测试与模块测试互补：
+- 模块测试：单端点输入校验、边界值、权限
+- 链路测试：跨步骤状态流转、数据传递、副作用验证
 
 ## 铁拳团审计触发规则
 
