@@ -51,6 +51,24 @@ else
 fi
 
 # 测试状态恢复检测
+
+# 深度巡检逾期检查（Phase 2：提醒用户运行 /deep-inspect）
+LAST_DEEP=$(cat hermes/eagle-eye/.last-deep-inspect 2>/dev/null || echo "")
+if [ -n "$LAST_DEEP" ]; then
+  DEEP_DATE=$(date -j -f "%Y-%m-%d" "$LAST_DEEP" +%s 2>/dev/null || echo 0)
+  NOW=$(date +%s)
+  DAYS_SINCE=$(( ($NOW - $DEEP_DATE) / 86400 ))
+  if [ "$DAYS_SINCE" -gt 14 ]; then
+    echo ""
+    echo "⚠️  深度巡检已超过 14 天未执行（上次: $LAST_DEEP），强烈建议运行 /deep-inspect"
+  elif [ "$DAYS_SINCE" -gt 7 ]; then
+    echo ""
+    echo "🕐 深度巡检已超过 7 天未执行（上次: $LAST_DEEP），建议运行 /deep-inspect"
+  fi
+else
+  echo ""
+  echo "📊 尚未建立性能/视觉基线，建议运行 /deep-inspect <模块> 初始化"
+fi
 if [ -f "hermes/eagle-eye/state.json" ]; then
   echo ""
   echo "⚠️  检测到未完成的测试运行:"

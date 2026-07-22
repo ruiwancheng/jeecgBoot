@@ -74,6 +74,77 @@ if [ -n "$CODE_FILES" ] && [ -d "harness/tests" ]; then
   done
 fi
 
+# ===== 质量门控（Phase 1：轻量静态检查，秒级完成）=====
+# 完整代理分析通过 /quality-gate 命令执行
+QUALITY_GATE_WARN=0
+QUALITY_GATE_BLOCK=0
+
+# 1. Java 变更：检查 @RequiresPermissions 完整性
+JAVA_FILES=$(echo "$STAGED_FILES" | grep '\.java$')
+if [ -n "$JAVA_FILES" ]; then
+  # 检测新增 Controller 方法缺少权限注解
+  NEW_PUBLIC_METHODS=$(git diff --cached | grep -E '^\+.*public.*Result' | head -20)
+  if [ -n "$NEW_PUBLIC_METHODS" ]; then
+    # 检查这些新增方法所在文件的 diff 中是否有 @RequiresPermissions
+    MISSING_PERM=""
+    while IFS= read -r file; do
+      if echo "$file" | grep -qi "Controller"; then
+        HAS_NEW_METHOD=$(git diff --cached "$file" | grep -E '^\+.*public.*Result')
+        HAS_PERM=$(git diff --cached "$file" | grep -E '^\+.*@RequiresPermissions')
+        if [ -n "$HAS_NEW_METHOD" ] && [ -z "$HAS_PERM" ]; then
+          MISSING_PERM="$MISSING_PERM  $file\n"
+        fi
+      fi
+    done <<< "$(echo "$JAVA_FILES")"
+    if [ -n "$MISSING_PERM" ]; then
+      echo "[Quality Gate] ⚠️  新增 Controller 方法缺少 @RequiresPermissions："
+      echo -e "$MISSING_PERM"
+      QUALITY_GATE_WARN=1
+    fi
+  fi
+
+  # 检测硬编码密钥/密码
+  HARDCODED_SECRET=$(git diff --cached | grep -iE '^\+.*(password|secret|token|apikey|api_key)\s*=\s*"[^"]{3,}"' | head -5)
+  if [ -n "$HARDCODED_SECRET" ]; then
+    echo "[Quality Gate] 🚫 检测到硬编码密钥/密码："
+    echo "$HARDCODED_SECRET"
+    QUALITY_GATE_BLOCK=1
+  fi
+
+  # 检测 SQL 字符串拼接（Java 文件中）
+  SQL_CONCAT=$(git diff --cached | grep -E '^\+.*\+.*"SELECT|^\+.*\+.*"INSERT.*VALUES' | head -5)
+  if [ -n "$SQL_CONCAT" ]; then
+    echo "[Quality Gate] 🚫 检测到 SQL 字符串拼接（应使用 MyBatis-Plus 参数化）："
+    echo "$SQL_CONCAT"
+    QUALITY_GATE_BLOCK=1
+  fi
+fi
+
+# 2. Mapper XML 变更：检测 ${} 非参数化
+XML_FILES=$(echo "$STAGED_FILES" | grep '\.xml$')
+if [ -n "$XML_FILES" ]; then
+  UNSAFE_PARAM=$(git diff --cached -- $XML_FILES | grep -E '^\+.*\$\{' | head -5)
+  if [ -n "$UNSAFE_PARAM" ]; then
+    echo "[Quality Gate] 🚫 Mapper XML 使用了 \${} 非参数化（应使用 #{}）："
+    echo "$UNSAFE_PARAM"
+    QUALITY_GATE_BLOCK=1
+  fi
+fi
+
+# 3. 输出质量门控判定
+if [ "$QUALITY_GATE_BLOCK" -eq 1 ]; then
+  echo ""
+  echo "[Quality Gate] 🔴 判定：BLOCKED — 安全问题必须修复"
+  echo "  运行 /quality-gate 查看完整诊断报告"
+  echo "  跳过检查: git commit --no-verify"
+  exit 1
+elif [ "$QUALITY_GATE_WARN" -eq 1 ]; then
+  echo ""
+  echo "[Quality Gate] 🟡 判定：WARN — 建议运行 /quality-gate 检查"
+else
+  echo "[Quality Gate] 🟢 轻量检查通过"
+fi
+
 if [ -z "$STAGED_FILES" ]; then
   exit 0
 fi
