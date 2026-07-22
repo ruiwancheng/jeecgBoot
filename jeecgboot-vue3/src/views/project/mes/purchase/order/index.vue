@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
+      <template #expandedRowRender="{ record }">
+        <OrderItemsSubTable :orderId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增订单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -21,6 +24,7 @@
   import { columns, searchFormSchema } from './order.data';
   import { queryOrderList, deleteOrder, auditOrder, getExportUrl } from './order.api';
   import OrderDrawer from './OrderDrawer.vue';
+  import OrderItemsSubTable from './OrderItemsSubTable.vue';
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesPurchaseOrder' });

@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
+      <template #expandedRowRender="{ record }">
+        <ReceiptItemsSubTable :receiptId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增入库</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -21,6 +24,7 @@
   import { columns, searchFormSchema } from './receipt.data';
   import { queryReceiptList, deleteReceipt, getExportUrl, auditReceipt } from './receipt.api';
   import ReceiptDrawer from './ReceiptDrawer.vue';
+  import ReceiptItemsSubTable from './ReceiptItemsSubTable.vue';
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesPurchaseReceipt' });

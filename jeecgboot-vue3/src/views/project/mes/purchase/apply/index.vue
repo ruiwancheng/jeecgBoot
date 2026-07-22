@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
+      <template #expandedRowRender="{ record }">
+        <ApplyItemsSubTable :applyId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增申请</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -21,6 +24,7 @@
   import { columns, searchFormSchema } from './apply.data';
   import { queryApplyList, deleteApply, getExportUrl } from './apply.api';
   import ApplyDrawer from './ApplyDrawer.vue';
+  import ApplyItemsSubTable from './ApplyItemsSubTable.vue';
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesPurchaseApply' });
