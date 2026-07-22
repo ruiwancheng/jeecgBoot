@@ -9,6 +9,7 @@ export const columns: BasicColumn[] = [
   { title: '订单日期', dataIndex: 'orderDate', width: 110 },
   { title: '交货日期', dataIndex: 'deliveryDate', width: 110 },
   { title: '不含税金额', dataIndex: 'totalAmount', width: 100 },
+  { title: '税额', dataIndex: 'taxAmount', width: 100 },
   { title: '含税总额', dataIndex: 'totalWithTax', width: 100 },
   { title: '状态', dataIndex: 'status_dictText', width: 80 },
   { title: '备注', dataIndex: 'remark', width: 150 },
