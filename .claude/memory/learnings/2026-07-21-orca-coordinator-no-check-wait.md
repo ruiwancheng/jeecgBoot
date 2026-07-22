@@ -21,3 +21,5 @@ pi 终端界面（TUI）会**自动把编排邮件投递进会话并标记已读
 - 同目录多工人仅限只读任务；改代码必须隔离工作树
 
 **关联：** hermes/tiequan/2026-07-21/sales-order-items（首个真并行审计）
+## 关联
+- ✅ 已覆盖: delegate.md orca-review轮询check指令

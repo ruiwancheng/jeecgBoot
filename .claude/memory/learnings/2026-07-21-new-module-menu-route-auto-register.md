@@ -31,3 +31,5 @@ addPerms(list, "mes:xxx:", "menu_id", new String[]{"list","add","edit","delete",
 - `pre-commit-check.sh` 已加入前端语法检查（`vue-tsc`），防止路由文件语法错误
 - `code-style.md` checklist 首条已改为"菜单与路由"
 - 以后新模块写完代码后，AI 必须自动执行此三步注册
+## 关联
+- ✅ 已覆盖: code-style.md 新模块菜单与路由checklist

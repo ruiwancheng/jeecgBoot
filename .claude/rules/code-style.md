@@ -17,6 +17,7 @@ version: 1.0
 - **禁止 Service 内部 `this.xxx()` 自调用** — Spring AOP 基于代理，`this` 指向原始对象，绕过事务拦截器。需要调用同类 `@Transactional` 方法时用 `super.xxx()`（调基类）或注入自身代理 Bean。典型反模式：`for (id : ids) this.removeById(id)` → 改为 `super.removeByIds(ids)`
 - **脱敏操作禁止直接修改实体引用** — Controller 对 MyBatis-Plus 分页结果做脱敏时，`page.getRecords()` 返回的是数据库实体的原引用。直接 `setXxx("****")` 会通过前端编辑回写覆盖数据库真实值。必须提供独立的 `queryById` 接口返回完整数据供编辑使用；或在脱敏前创建副本
 - **权限注册必须同时设 `id` 和 `perms`** — Shiro `@RequiresPermissions` 匹配的是 `sys_permission.perms` 列，不是 `id` 列。只设 `id` 不设 `perms` 会导致权限码形同虚设。`permission(id, parentId, name)` 工厂方法自动 `setPerms(id)`，Runner 注册时同步写入 `setPerms(def.getPerms())`
+- **禁止同一 Controller 内两个方法映射同一 URL** — 方法名/参数不同但 `@GetMapping` 路径相同时，Spring 启动抛 `Ambiguous mapping` 异常导致整个后端无法启动。编译通过不代表运行时正常——`mvn compile` 无法检测此冲突，只有启动后才能发现。不同用途的方法必须使用不同 URL 路径（如 `/selectPage` vs `/selectDropdown`）（来源：2026-07-22 MesCustomerController 部署事故）
 
 ## SQL 迁移脚本规范
 

@@ -22,3 +22,5 @@ MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
 
 ## 预防
 审计检查项：对照每个"读写"操作对（入/出、收/付、增/减），确认两端的锁机制一致。
+## 关联
+- ✅ 已覆盖: code-style.md ServiceImpl 对称操作并发保护一致

@@ -27,3 +27,5 @@ receivableService.updateById(ar);
 
 ## 预防
 所有涉及金额读-校验-写的操作（收款/付款/库存扣减），必须在 Mapper 层提供 `selectByIdForUpdate` 方法，Service 层使用行锁读取。
+## 关联
+- ✅ 已覆盖: code-style.md ServiceImpl FOR UPDATE行锁

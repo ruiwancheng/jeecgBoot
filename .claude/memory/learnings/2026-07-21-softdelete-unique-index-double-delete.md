@@ -17,3 +17,5 @@
 删除接口报 `Duplicate entry 'XX-1'` 且表有 (code, del_flag) 唯一索引 → 是历史软删行残留，不是并发问题。
 
 **关联：** hermes/tiequan/2026-07-21/codeRule（修复验证中顺带发现）
+## 关联
+- ✅ 已覆盖: code-style.md 软删除+唯一索引借尸还魂

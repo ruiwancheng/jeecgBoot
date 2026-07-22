@@ -30,3 +30,5 @@ if (!isAdmin) {
 所有带数据隔离逻辑的 Controller，如果涉及用户名硬编码 `"admin"`，
 在新项目（如 MES 用 `mes_admin`）都会出问题。
 优先用 `hasRole()` 或查询 `sys_user_role` 表判断管理员身份。
+## 关联
+- ✅ 已覆盖: code-style.md Controller 数据隔离用角色判断

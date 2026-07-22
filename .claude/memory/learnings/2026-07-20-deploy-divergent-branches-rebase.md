@@ -27,3 +27,5 @@ git push origin main
 - 部署 404 先检查 `git status -sb` 看本地是否领先远程
 - 服务端 `git pull` 只能拉到已推送的代码
 - `ahead N` = 还有 N 个提交没推送 = 服务端看不到
+## 关联
+- ✅ 已覆盖: CLAUDE.md 部署流程

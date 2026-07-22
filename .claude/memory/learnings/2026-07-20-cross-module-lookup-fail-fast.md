@@ -23,3 +23,5 @@ if (orderItems.get(0).getUnitPrice() == null) throw new JeecgBootException(
 
 ## 预防
 审计检查项：搜索 `if (!xxx.isEmpty() && xxx.get(0))` 模式，确认 `else` 分支是否有明确的错误处理。
+## 关联
+- ✅ 已覆盖: code-style.md ServiceImpl 跨模块查不到抛异常

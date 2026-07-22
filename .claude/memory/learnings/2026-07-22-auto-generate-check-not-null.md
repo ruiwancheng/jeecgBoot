@@ -22,3 +22,5 @@
 - [ ] 生成的编码是否可读（DN+日期+流水，而非随机 4 位数字）？
 
 **关联：** 2026-07-22 O2D2O release→delivery 联动（warehouse_id 缺失导致反复部署 4 次）
+## 关联
+- ✅ 已覆盖: code-style.md ServiceImpl 自动生成关联单据必须补齐NOT NULL字段

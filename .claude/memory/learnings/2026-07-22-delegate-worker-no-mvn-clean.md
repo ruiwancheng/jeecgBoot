@@ -22,3 +22,4 @@
 ```
 
 **关联：** /delegate 流程、workflow.md /verify 铁律
+- ✅ 已覆盖: delegate.md preamble 模板

@@ -23,3 +23,5 @@
 - 不要照搬代码，要提取**模式**而非**实现**（Strix 是 Python asyncio，JeecgBoot 是 Bash/Markdown）
 - 优先提取"确定性"模式（去重键规则）而非"LLM依赖"模式（LLM去重）
 - `find /repo -name "*.py" | sort` → 先看文件清单建立心智模型 → 再深读核心文件
+## 关联
+- ✅ 已覆盖: methodology-index.md

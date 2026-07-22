@@ -44,3 +44,5 @@ git push origin main
 - 不要反复重试 git push — 换认证方式才是正解
 - `gh` CLI 同样受 Keychain 限制 (`gh auth status` → keyring timeout)
 - Token 方式推送成功一次不代表永久有效（Token 可能过期）
+## 关联
+- ✅ 已覆盖: CLAUDE.md 部署架构章节

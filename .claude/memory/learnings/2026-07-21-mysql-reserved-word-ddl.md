@@ -43,3 +43,5 @@ private String currentDate;
 ## MySQL 5.7 常见保留字陷阱
 `current_date`, `current_time`, `current_timestamp`, `order`, `group`, `key`,
 `status`, `type`, `name`, `desc`, `range`, `match`, `level`, `offset`, `rank`
+## 关联
+- ✅ 已覆盖: code-style.md SQL迁移禁止MySQL保留字

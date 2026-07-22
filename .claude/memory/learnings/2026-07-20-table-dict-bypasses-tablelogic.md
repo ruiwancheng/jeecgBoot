@@ -35,3 +35,5 @@ public Result<IPage<MesMaterial>> selectPage(...) {
 
 ## 适用范围
 所有用到 `@TableLogic` 的实体，如果同时被 JSearchSelect 作为表字典引用（`dict="表名,text,value"`），都有相同问题。包括但不限于：物料、仓库、客户、供应商、库位等。
+## 关联
+- ✅ 已覆盖: code-style.md JSearchSelect 表字典

@@ -27,3 +27,5 @@ public String nextCode(String ruleCode) {
 代码评审时见到 `synchronized` 与 `@Transactional` 同方法共存 → 必提 P1。
 
 **关联：** hermes/tiequan/2026-07-21/codeRule（铁拳团 P1-A）
+## 关联
+- ✅ 已覆盖: code-style.md ServiceImpl 发号禁止synchronized+@Transactional

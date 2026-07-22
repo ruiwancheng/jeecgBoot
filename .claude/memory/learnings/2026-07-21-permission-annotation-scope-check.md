@@ -17,3 +17,5 @@
 "缺权限注解"的审计项 ≠ 必须加注解。先问：谁在调？他们有这个权限吗？加了会不会误伤？
 
 **关联：** hermes/tiequan/2026-07-21/codeRule（审计 P2 决议）
+## 关联
+- ✅ 已覆盖: code-style.md Controller @RequiresPermissions
