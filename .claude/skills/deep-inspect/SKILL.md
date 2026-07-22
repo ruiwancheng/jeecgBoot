@@ -157,3 +157,8 @@ version: 1.0.0
 - `test-e2e` — Playwright 配置和测试模式
 - `test-api` — API 端点发现
 - `gen-tests` — 端点列表推导
+
+## 相关规则
+
+- `deep-inspect-schedule.md` — 巡检调度规则（频率、模块优先级）
+- `quality-escalation.md` — 缺陷升级规则（巡检发现→P 级→修复时限）

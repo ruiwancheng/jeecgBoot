@@ -145,3 +145,9 @@ P0 发现：N 个 | P1 发现：N 个
 - `review` — 7 维代码审查（安全维度增强）
 - `test-api` — API 测试执行
 - `harness-check` — Harness 健康评分（本技能注册后需更新文件清单）
+
+## 相关规则
+
+- `quality-gate-criteria.md` — 门控通过标准（证据要求、自动失败触发器、质量评级）
+- `security-gate-checklist.md` — 安全专项检查清单（P0/P1 规则+STRIDE 映射）
+- `workflow.md` — 开发流程中的 /verify 和分级测试

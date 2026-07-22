@@ -84,8 +84,10 @@ version: 2.1
 | 实施计划 | /plan | ✓ | ✓ | ✓ |
 | 编码实现 | - | ✓ | ✓ | ✓ |
 | 自验证 | /verify | ✓ | ✓ | ✓ |
+| /quality-gate | — | ✓ | ✓ |
 | 提交推送 | git commit + push | ✓ | ✓ | ✓ |
 | 部署 | 部署控制台 | ✓ | ✓ | ✓ |
+| /deep-inspect | — | — | ✓ |
 | 前端静态 | /test-frontend | ✓ | ✓ | ✓ |
 | 模块测试 | /test-api | - | ✓ | ✓ |
 | E2E 测试 | /test-e2e | - | - | ✓ |

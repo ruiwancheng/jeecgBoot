@@ -118,3 +118,8 @@ E2E 通过率 = 通过的 E2E 测试 / 总 E2E 测试 × 100%
 - `quality-gate` — 门控报告格式
 - `deep-inspect` — 巡检报告格式
 - `harness-check` — Harness 健康评分
+
+## 相关规则
+
+- `quality-escalation.md` — 缺陷升级规则（仪表盘趋势下降→自动升级 P 级）
+- `workflow.md` — 开发流程中的分级测试触发条件
