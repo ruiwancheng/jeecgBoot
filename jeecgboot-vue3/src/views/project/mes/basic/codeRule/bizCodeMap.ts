@@ -24,4 +24,6 @@ export const MES_BIZ_CODE = {
   SALES_INVOICE: 'SI',
   /** 采购发票 — views/project/mes/finance/purchaseInvoice */
   PURCHASE_INVOICE: 'PI',
+  /** 采购申请 — views/project/mes/purchase/apply */
+  PURCHASE_APPLY: 'PA',
 } as const;

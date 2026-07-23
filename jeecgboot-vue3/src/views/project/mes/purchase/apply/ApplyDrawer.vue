@@ -41,6 +41,8 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './apply.data';
   import { saveOrUpdateApply, queryApplyById } from './apply.api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -70,6 +72,13 @@
     items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    // 新增时自动获取编码
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_APPLY);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) { /* fallback: 手动输入 */ }
+    }
     if (unref(isUpdate) && data.record) {
       try {
         const apply = await queryApplyById({ id: data.record.id });

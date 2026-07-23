@@ -1,5 +1,26 @@
 # CLAUDE.md
 
+> 🚦 **门控协议（每次代码改动前强制执行，不可跳过）：**
+>
+> ```
+> 收到任务 → 判定模式 → 输出分析 → 等确认 → 再改代码 → /verify
+>              │                              ↑
+>              │  delegate模式: 等Claude评审    │ 直接模式: 等用户确认
+>              │______________________________↑
+>              跳过分析或未等确认就改 = 违规，必须回退
+> ```
+>
+> | 步骤 | 门控 | 豁免 |
+> |:--:|------|------|
+> | ① | **判定模式：** ≥3文件/跨模块 → delegate；否则直接做 | — |
+> | ② | **输出分析：** 改代码前先输出 根因+方案+影响面（必须可见） | — |
+> | ③ | **等确认：** delegate模式=等Claude评审回复；直接模式=等用户确认方案 | 纯文本/注释/样式免评 |
+> | ④ | **验证门：** 改完后编译+curl | — |
+>
+> **违规判定：** 未输出分析就改=违规。未等确认就改=违规。违规后回退重来。
+>
+> 详细规则见 `.claude/rules/workflow.md` 和 `.claude/commands/orca/delegate.md`。
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 > **工作流（强制）：** `/brainstorm → /plan → 写代码 → /verify → 分级测试 → /done`
