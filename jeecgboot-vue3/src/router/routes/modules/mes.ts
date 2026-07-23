@@ -65,9 +65,15 @@ const mes: AppRouteModule = {
       path: 'sales',
       name: 'MesSales',
       component: LAYOUT,
-      redirect: '/project/mes/sales/price',
+      redirect: '/project/mes/sales/order',
       meta: { title: '销售管理' },
       children: [
+        {
+          path: 'order',
+          name: 'MesSalesOrder',
+          component: () => import('/@/views/project/mes/sales/order/index.vue'),
+          meta: { title: '销售订单' },
+        },
         {
           path: 'price',
           name: 'MesSalesPrice',
