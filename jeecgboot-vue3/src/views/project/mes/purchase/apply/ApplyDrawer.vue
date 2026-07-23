@@ -77,7 +77,8 @@
     // 新增时自动填入当前用户为申请人 + 自动获取编码
       if (!unref(isUpdate)) {
         const applicant = userStore.getUserInfo?.realname || '';
-        await setFieldsValue({ applicantId: applicant });
+        const today = new Date().toISOString().split('T')[0];
+        await setFieldsValue({ applicantId: applicant, applyDate: today });
         try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_APPLY);
         if (nextCode) await setFieldsValue({ code: nextCode });
