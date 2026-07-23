@@ -42,7 +42,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 改动类型 | 验证方式 |
 |----------|---------|
 | 后端 Java | `mvn compile` + `curl` 实测新接口 |
-| 前端 Vue | dev server 200 + **打开页面实测功能** |
+| 前端 Vue | dev server 200 + `orca computer` 自动点击/读取页面元素验证 |
 | 配置 .md | 内容一致性检查 |
 
 ### 分级测试（自动判定）
