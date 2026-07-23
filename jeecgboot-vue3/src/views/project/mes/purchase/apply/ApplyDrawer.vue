@@ -74,7 +74,7 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
-    items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
+    items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0, materialId: undefined }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
     // 新增时自动填入当前用户为申请人 + 自动获取编码
