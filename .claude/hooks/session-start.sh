@@ -37,7 +37,7 @@ fi
 # Orca 上下文感知 (非阻塞)
 if command -v orca &>/dev/null; then
   ORCA_JSON=$(orca status --json 2>/dev/null || echo '{"available":false}')
-  ORCA_AVAILABLE=$(echo "$ORCA_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('appRunning') else 'false')" 2>/dev/null || echo "false")
+  ORCA_AVAILABLE=$(echo "$ORCA_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('result',{}).get('app',{}).get('running') else 'false')" 2>/dev/null || echo "false")
   if [ "$ORCA_AVAILABLE" = "true" ]; then
     WORKTREE_COUNT=$(orca worktree ps --limit 10 2>/dev/null | grep -c "refs/heads" || echo "0")
     echo "🔧 Orca: 可用 (工作树: ${WORKTREE_COUNT:-0} 个)"
