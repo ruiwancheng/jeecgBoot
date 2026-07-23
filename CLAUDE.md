@@ -3,8 +3,10 @@
 ## 基础工作流（核心）
 
 ```
-/brainstorm → /plan → orca-review → 写代码 → /verify → 分级测试 → /done
+/brainstorm → /plan → [orca-review] → 写代码 → /verify → 分级测试 → /done
   需求澄清     实施方案    交互验证      编码实现    自验证     提交部署     完成检查
+                                          ↑
+                                    /debug 修复方案也触发
 ```
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -16,6 +18,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 1 | **先分析再改** | 收到任务 → 输出根因+方案+影响面 → 等用户确认 → 再改代码 |
 | 2 | **改完必验证** | 写完代码自动跑 /verify，不要等用户提醒。每次回复末尾检查是否遗漏了流程步骤 |
 | 3 | **验证必实测** | 本地后端在线（8080端口）→ /verify 必须 curl 实测，禁止只跑 `mvn compile` |
+
+### orca-review 触发规则
+
+| 触发场景 | 触发方式 | 评审类型 |
+|----------|:--:|------|
+| /plan 后 — full 级（Entity/Mapper/SQL/≥5文件） | **自动触发** | 方案评审 |
+| /plan 后 — 标准级（Controller/Service/Vue/≤3文件） | **提示用户确认** | 方案评审 |
+| /plan 后 — 轻量级（文案/样式/注释） | 跳过 | — |
+| /debug 诊断后 — 修复方案 ready | **自动提示** | 修复方案评审 |
+| 用户说"帮我审查下这个方案" | 手动 | 任意 |
 
 ### 自动 delegate 判定
 

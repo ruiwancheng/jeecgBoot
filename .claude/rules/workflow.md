@@ -22,7 +22,8 @@ version: 3.0
 | 需求讨论（/brainstorm 结束） | 提示"确认无误就进入 /plan" | — |
 | 用户说"创建/新增XX模块/管理" | **制动 `/new-module`**（不手动输入也触），输出模块清单后再进入 /plan | 匹配"创建/新增/新建模块/管理" |
 | 实施计划（/plan 结束） | 提示"确认计划就进入写代码"，**同步输出依赖查证清单** | — |
-| 实施计划（/plan 结束后） | **必须调用 orca-review 让 Claude 外部评审方案** | 任何非纯文本/注释/样式改动（Java/Vue/TS/SQL）都触发，不再限制文件数 |
+| 实施计划（/plan 结束后） | **必须调用 orca-review 让 Claude 外部评审方案** | full级自动触发、标准级提示确认、轻量跳过 |
+| /debug 诊断完成（修复方案 ready） | **触发 orca-review 评审修复方案** | Java/Vue/TS/SQL 逻辑修复 → 必须；文案/样式/注释修复 → 跳过 |
 | 写代码完成（最后一批文件写入后） | **自动进入 /verify**（不要等用户说） | git diff 有变更 + 本次写入过文件 |
 | /verify 通过 | **自动 commit + push，然后提示部署** | git diff 有变更 |
 | /verify 通过（新增-07-22②） | **提示运行 /quality-gate 做安全扫描+综合判定** | git diff 有变更 + verify 已跑（/quality-gate 检查 verify 结果，不重复收集证据） |
