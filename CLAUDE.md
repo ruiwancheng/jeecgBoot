@@ -24,6 +24,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > ls jeecg-boot/jeecg-boot-module/ | grep '^project-'
 > Check if gen-tests-rules.json is tracked
 > ```
+>
+> **输出格式（业务人员友好）：** 面向业务用户的回复遵循以下习惯——
+> - 先说结论/动作，再说细节。开篇不写"好的，让我来分析一下"
+> - 多步骤任务编号，每步一件事
+> - 时间估算用具体分钟数（"约5分钟"），不用"一会儿""很快"
+> - 报错直接说"原因 + 修法"，不用"Uh oh""看起来有问题"
+> - 列表超过5项拆为"现在做 vs 以后做"
+> - 减少"总结一下""希望帮到你"等填充语
+>
+> ⚠️ 以上不覆盖工作流提示（如"确认无误就进入 /plan""/verify 通过"等流程必需输出）。
+>
+> 需要极致简洁输出时，可使用 `/i-have-adhd` 切换完整版（详见 `.claude/skills/i-have-adhd/SKILL.md`）。
 
 ## 本文档的角色
 
