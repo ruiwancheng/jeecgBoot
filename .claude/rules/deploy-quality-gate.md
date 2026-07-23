@@ -54,7 +54,8 @@ AI 分析 `git diff .last-deploy-commit..HEAD` 时按以下优先级判定（取
 
 | 判定依据 | 等级 | 动作 |
 |----------|:--:|------|
-| 仅 `.md` / 注释 / 格式化 / import 排序 | skip | 无 |
+| `.md` 在 `hermes/`/`harness/` 目录 / 注释 / 格式化 | skip | 无 |
+| `.claude/` 目录 `.md` 非纯文案改动（规则/命令/技能） | **standard** | API + E2E |
 | `.vue` 仅 `<template>` 文字或样式，script 无变更 | skip | 无 |
 | `.vue` `<script>` 逻辑变更 | light | E2E |
 | `.data.ts` 列配置变更 | light | E2E |

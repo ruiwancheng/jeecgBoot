@@ -43,6 +43,7 @@ version: 1.1
 | **字典项幂等性(重复部署)** | ⚠️ 部分 | DELETE+INSERT保证幂等，但需确认每次部署SQL被正确扫描(排除target/目录) | ← 2026-07-16 procurement审计 |
 | **synchronized+@Transactional 取号发重号** | ✅ **真实** | 锁释放早于事务提交→并发读旧流水号；取号/计数器必用 FOR UPDATE 行锁 | ← 2026-07-21 codeRule审计 |
 | **种子SQL DELETE+INSERT 重置流水号** | ✅ **真实** | 脚本重跑运行数据归零；种子数据必用 INSERT IGNORE+固定id | ← 2026-07-21 codeRule审计 |
+| **工作流规则依赖AI自觉(如"提示用户确认")** | ✅ **真实** | AI在直接模式下追求效率，永远不会主动暂停问用户；依赖自觉的规则在设计上等于没规则，必须用强制机制(delegate preamble)替代 | ← 2026-07-24 harness巡检 |
 
 ## 判定流程
 
