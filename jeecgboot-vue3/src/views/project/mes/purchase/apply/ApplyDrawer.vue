@@ -45,6 +45,7 @@
   import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
   import { useUserStore } from '/@/store/modules/user';
 
+  const userStore = useUserStore();
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
@@ -75,7 +76,7 @@
     setDrawerProps({ confirmLoading: false });
     // 新增时自动填入当前用户为申请人 + 自动获取编码
       if (!unref(isUpdate)) {
-        const applicant = useUserStore().getUserInfo()?.realname || '';
+        const applicant = userStore.getUserInfo?.realname || '';
         await setFieldsValue({ applicantId: applicant });
         try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_APPLY);
