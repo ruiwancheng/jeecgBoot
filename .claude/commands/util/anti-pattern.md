@@ -11,7 +11,7 @@
 - 空值未判直接调用
 - Maven 新增模块未注册三处
 - Vue 用 any 类型
-- BasicDrawer/useModal Hook 混用
+- Drawer/Modal Hook 混用（见 @rules/frontend.md）
 - DELETE 缺 joinParamsToUrl
 
 引用: @rules/code-style.md, @rules/backend-first.md, @rules/security.md

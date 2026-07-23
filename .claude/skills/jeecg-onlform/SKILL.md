@@ -1,7 +1,6 @@
 ---
 name: jeecg-onlform
-description: >-
-version: 1.0.0
+description: >
   JeecgBoot Online表单（cgform）全生命周期管理——通过API自动创建/编辑数据库表和表单配置，
   支持单表、主子表、树表，26种控件类型，以及JS/Java/SQL增强、权限配置、数据CRUD、积木报表集成。
   只要用户意图涉及「Online表单」就必须使用本技能，包括但不限于：
@@ -15,6 +14,7 @@ version: 1.0.0
   只要涉及元数据驱动的表单配置，也应触发本技能。
   注意：不要与「设计器表单」(desform)混淆——desform是拖拽式表单设计器，用skill jeecg-desform处理；
   也不要与「Online报表」(cgreport)或「Online图表」(onlchart)混淆——它们是SQL驱动的只读展示。
+version: 1.0.0
 ---
 
 # JeecgBoot Online 表单 AI 自动生成器

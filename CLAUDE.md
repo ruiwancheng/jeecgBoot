@@ -269,8 +269,13 @@ Frontend dev proxy forwards `/jeecg-boot` requests to `localhost:8080/jeecg-boot
 > - 测试标准 → `testing.md`
 > - 调试规范 → `debugging.md`
 > - 命令技能边界 → `skill-command-boundary.md`
+> - 审计分类 → `audit-classification.md`
 > - 铁拳团审计留存 → `tiequan-report-retention.md`
 > - 铁拳团审计范围 → `tiequan-report-scope.md`
+> - 深度巡检调度 → `deep-inspect-schedule.md`
+> - 质量升级 → `quality-escalation.md`
+> - 质量门控标准 → `quality-gate-criteria.md`
+> - 安全门控清单 → `security-gate-checklist.md`
 > - 部署质量门控 → `deploy-quality-gate.md`
 > - 业务链路注册表 → `hermes/business-chains.json`
 > - 链路审计（铁拳团第11视角） → `.claude/skills/jeecg-chain-audit/SKILL.md`
