@@ -3,8 +3,8 @@
 ## 基础工作流（核心）
 
 ```
-/brainstorm → /plan → 写代码 → /verify → 分级测试 → /done
-  需求澄清     实施方案    编码实现    自验证     提交部署     完成检查
+/brainstorm → /plan → orca-review → 写代码 → /verify → 分级测试 → /done
+  需求澄清     实施方案    交互验证      编码实现    自验证     提交部署     完成检查
 ```
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -48,6 +48,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|------|:---:|:---:|:---:|
 | 需求澄清 | /brainstorm | ✓ | ✓ | ✓ |
 | 实施计划 | /plan | ✓ | ✓ | ✓ |
+| 交互验证 | orca-review（非文本改动） | ✓ | ✓ | ✓ |
 | 编码实现 | — | ✓ | ✓ | ✓ |
 | 自验证 | /verify | ✓ | ✓ | ✓ |
 | 质量门控 | /quality-gate | — | ✓ | ✓ |
