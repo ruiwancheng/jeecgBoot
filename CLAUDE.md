@@ -23,13 +23,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### orca-review 触发规则
 
-| 触发场景 | 触发方式 |
-|----------|:--:|
-| /plan 后 — full 级（Entity/Mapper/SQL/≥5文件） | **自动触发** |
-| /plan 后 — 标准级（Controller/Service/Vue/≤3文件） | **提示用户确认** |
-| /plan 后 — 轻量级（文案/样式/注释） | 跳过 |
-| /debug 诊断后 — 修复方案 ready | **自动提示** |
-| 用户说"帮我审查下这个方案" | 手动 |
+**delegate 模式下工人 preamble 强制执行，直接模式仅限以下豁免场景：**
+
+| 直接模式场景 | orca-review？ |
+|-------------|:--:|
+| 文案/注释/样式 | 免 |
+| 用户说"直接改" | 按用户意思 |
 
 ### 自动 delegate 判定
 
