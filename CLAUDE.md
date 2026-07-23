@@ -33,8 +33,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 自动 delegate 判定
 
-- 单文件 → **直接做**（先输出分析，等确认后动手）
-- ≥3文件且跨模块 / 新功能开发 → **/delegate 派工人**
+**默认走 delegate**，仅以下豁免直接做：
+- 纯文案/注释/样式改动
+- 用户明确说"直接改"
+- 查看/搜索类（不涉及代码改动）
 
 ### /verify 标准
 
@@ -71,7 +73,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | 步骤 | 门控 | 豁免 |
 |:--:|------|------|
-| ① | **判定模式：** ≥3文件/跨模块 → delegate；否则直接做 | — |
+| ① | **判定模式：** 默认 delegate（仅文案/注释/样式免） | 文案/注释/样式 |
 | ② | **输出分析：** 根因+方案+影响面（必须可见） | — |
 | ②.5 | **orca-review：** 非纯文本改动 → Claude 外部评审 | 文案/注释/样式免评 |
 | ③ | **等确认：** delegate=等Claude评审回复；直接=等用户确认 | — |
