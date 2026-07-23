@@ -73,6 +73,8 @@
   });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    // 优先清空明细行，避免 resetFields 触发副作用导致旧数据残留
+    items.value = [];
     await resetFields();
     items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0, materialId: undefined }];
     isUpdate.value = !!data?.isUpdate;
@@ -92,7 +94,7 @@
         const apply = await queryApplyById({ id: data.record.id });
         if (apply) {
           await setFieldsValue(apply);
-          items.value = apply.items?.length ? apply.items : [{ lineNo: 1, quantity: 1 }];
+          items.value = apply.items?.length ? apply.items : [{ lineNo: 1, quantity: 1, unitPrice: 0, materialId: undefined }];
         }
       } catch (e) { /* fallback */ }
     }
@@ -100,7 +102,7 @@
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑采购申请' : '新增采购申请'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0 }); }
+  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, materialId: undefined }); }
   function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
   function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
 
