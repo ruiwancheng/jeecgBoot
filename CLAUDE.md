@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 1 | **先分析再改** | 收到任务 → 输出根因+方案+影响面 → 等用户确认 → 再改代码 |
 | 2 | **改完必验证** | 写完代码自动跑 /verify，不要等用户提醒 |
 | 3 | **验证必实测** | 本地后端在线 → /verify 必须 curl 实测，禁止只跑 `mvn compile` |
+| 4 | **简单精准** | 只写必要代码、不顺手改邻居、困惑就问。详见 `karpathy-guidelines.md` |
 
 ### orca-review 触发规则
 
@@ -100,7 +101,7 @@ Default credentials: `admin` / `123456`
 > 完整可执行规则见 `.claude/rules/` 目录：
 > `file-scope` `data-scope` `override-mechanism` `code-style` `backend-first` `security`
 > `no-platform-modify` `engineering-artifacts` `workflow` `frontend` `testing` `debugging`
-> `skill-command-boundary` `audit-classification` `tiequan-report-retention` `tiequan-report-scope`
+> `karpathy-guidelines` `skill-command-boundary` `audit-classification` `tiequan-report-retention` `tiequan-report-scope`
 > `deep-inspect-schedule` `quality-escalation` `quality-gate-criteria` `security-gate-checklist` `deploy-quality-gate`
 > 链路注册表 → `hermes/business-chains.json`
 > 链路审计 → `.claude/skills/jeecg-chain-audit/SKILL.md`
