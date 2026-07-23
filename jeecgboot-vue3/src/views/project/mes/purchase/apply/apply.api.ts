@@ -24,6 +24,10 @@ export function deleteBatchApply(params: any) {
   return defHttp.delete({ url: `${BASE}/deleteBatch`, params }, { joinParamsToUrl: true });
 }
 
+export function auditApply(params: any) {
+  return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
+}
+
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }

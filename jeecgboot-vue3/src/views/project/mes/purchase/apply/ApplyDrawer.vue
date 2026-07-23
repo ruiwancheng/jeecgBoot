@@ -12,6 +12,14 @@
       <template #quantity="{ record, index }">
         <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
       </template>
+      <!--update-begin---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列---------->
+      <template #unitPrice="{ record, index }">
+        <InputNumber :value="record.unitPrice" :min="0" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'unitPrice', v)" />
+      </template>
+      <template #amount="{ record }">
+        <span>{{ ((record.quantity || 0) * (record.unitPrice || 0)).toFixed(2) }}</span>
+      </template>
+      <!--update-end---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列---------->
       <template #unit="{ record, index }">
         <a-input :value="record.unit" style="width:100%" @change="(e:any) => updateItem(index, 'unit', e.target.value)" />
       </template>
@@ -39,8 +47,12 @@
   const items = ref<any[]>([]);
 
   const itemColumns = [
-    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 200 },
-    { title: '数量', dataIndex: 'quantity', slots: { customRender: 'quantity' }, width: 120 },
+    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
+    { title: '数量', dataIndex: 'quantity', slots: { customRender: 'quantity' }, width: 100 },
+    //update-begin---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列-----------
+    { title: '单价', dataIndex: 'unitPrice', slots: { customRender: 'unitPrice' }, width: 110 },
+    { title: '金额', slots: { customRender: 'amount' }, width: 100 },
+    //update-end---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列-----------
     { title: '单位', dataIndex: 'unit', slots: { customRender: 'unit' }, width: 80 },
     { title: '用途说明', dataIndex: 'purpose', slots: { customRender: 'purpose' }, width: 200 },
     { title: '操作', slots: { customRender: 'action' }, width: 80 },
@@ -55,7 +67,7 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
-    items.value = [{ lineNo: 1, quantity: 1 }];
+    items.value = [{ lineNo: 1, quantity: 1, unitPrice: 0 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
     if (unref(isUpdate) && data.record) {
@@ -71,7 +83,7 @@
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑采购申请' : '新增采购申请'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1 }); }
+  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0 }); }
   function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
   function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
 

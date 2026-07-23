@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 > 
 > ⚠️ **防失忆规则：** 写完代码后必须自动跑 `/verify`；不要等用户提醒。每次回复末尾检查是否遗漏了流程步骤。
 >
+> 🤖 **自动 delegate 判定：** 用户给任务时，自动判断复杂度——单文件直接做，≥3文件且跨模块走 `/delegate` 派工人。新功能开发自动走 `/delegate`。**工人完成后强制校验：** 检查工作流阶段是否完整、git diff 是否合理、/verify 是否通过，任何异常立即报告。
+>
+> 用户不需要每次说 `/orca:delegate`。
+>
 > 🛑 **本地验证铁律：** 本地后端在跑时（8080端口），改代码后必须 `curl localhost:8080` 实测核心逻辑——`mvn compile` 只证明语法正确，不证明逻辑正确。这是 /verify 的硬要求。
 > 
 > /done 后可选择性调用 铁拳团审计 或 鹰眼团测试 做兜底质量检查。审计和测试的具体规范见 `workflow.md`。

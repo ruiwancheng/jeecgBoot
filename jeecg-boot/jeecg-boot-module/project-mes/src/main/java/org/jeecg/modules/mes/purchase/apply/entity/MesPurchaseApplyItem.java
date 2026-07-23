@@ -33,6 +33,12 @@ public class MesPurchaseApplyItem implements Serializable {
     private String materialId;
     @Schema(description = "申请数量")
     private BigDecimal quantity;
+    //update-begin---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额字段-----------
+    @Schema(description = "单价")
+    private BigDecimal unitPrice;
+    @Schema(description = "金额")
+    private BigDecimal amount;
+    //update-end---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额字段-----------
     @Schema(description = "单位")
     private String unit;
     @Schema(description = "用途说明")

@@ -50,7 +50,6 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-敏感字段置null防客户端注入-----------
         validateApply(entity);
         entity.setStatus("1"); // 强制草稿状态，防止API绕过状态机
-        // apply items无定价，totalAmount由用户手动填写，不自动计算
         QueryWrapper<MesPurchaseApply> activeQw = new QueryWrapper<>();
         activeQw.eq("code", entity.getCode());
         if (baseMapper.selectCount(activeQw) > 0) throw new JeecgBootException("申请单号已存在");
@@ -71,6 +70,9 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
             try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("申请单号已存在"); }
         }
         saveItems(entity);
+        //update-begin---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount=sum(quantity×unitPrice)-----------
+        calcTotal(entity);
+        //update-end---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount-----------
     }
 
     @Override
@@ -89,7 +91,6 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         entity.setStatus(null); // 防止客户端注入覆盖status
         //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-敏感字段置null-----------
         validateApply(entity);
-        // apply items无定价，totalAmount由用户手动填写，不自动计算
         QueryWrapper<MesPurchaseApply> qw = new QueryWrapper<>();
         qw.eq("code", entity.getCode()).ne("id", entity.getId());
         if (baseMapper.selectCount(qw) > 0) throw new JeecgBootException("申请单号已存在");
@@ -98,6 +99,9 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         delQw.eq(MesPurchaseApplyItem::getApplyId, entity.getId());
         itemMapper.delete(delQw);
         saveItems(entity);
+        //update-begin---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount=sum(quantity×unitPrice)-----------
+        calcTotal(entity);
+        //update-end---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount-----------
     }
 
     @Override
@@ -165,9 +169,24 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         }
     }
 
-    //update-begin---author:ruisuyun---date:2026-07-22---for: P1修复-删除死代码calcTotal(如果有定价需求再实现)-----------
-    // calcTotal 已删除——方法体为 setTotalAmount(BigDecimal.ZERO)，与注释"用户手动填写"矛盾，且从未被调用
-    //update-end---author:ruisuyun---date:2026-07-22---for: P1修复-删除死代码-----------
+    //update-begin---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount=sum(quantity×unitPrice)-----------
+    private void calcTotal(MesPurchaseApply entity) {
+        BigDecimal total = BigDecimal.ZERO;
+        List<MesPurchaseApplyItem> items = entity.getItems();
+        if (items != null) {
+            for (MesPurchaseApplyItem item : items) {
+                BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : BigDecimal.ZERO;
+                BigDecimal price = item.getUnitPrice() != null ? item.getUnitPrice() : BigDecimal.ZERO;
+                item.setAmount(qty.multiply(price));
+                total = total.add(item.getAmount());
+                // 回写明细行的金额到数据库
+                itemMapper.updateById(item);
+            }
+        }
+        entity.setTotalAmount(total);
+        super.updateById(entity);
+    }
+    //update-end---author:ruisuyun---date:2026-07-23---for: 自动计算totalAmount-----------
 
     private void saveItems(MesPurchaseApply entity) {
         for (MesPurchaseApplyItem item : entity.getItems()) {
