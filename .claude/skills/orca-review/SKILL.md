@@ -120,6 +120,9 @@ hermes/reviews/
 | Orca 不可用 | **不做手工替代**。标记"外部评审未完成"，直接展示草案给用户，让用户决定是否继续。禁止自己扮演评审角色——自己审自己永远"通过"，等于没审 |
 | Claude 终端不可用 | 同 Orca 不可用 |
 | 超时 5 分钟 | 标记"外部评审未完成" |
+| **小改动（≤3 文件，无新 Entity/Service）** | **跳过 orca-review**，直接进入写代码。评审方加载全量上下文（~800KB rules+skills+CLAUDE.md）成本 ~150K tokens，投入产出比不高 |
+
+> ⚠️ orca-review 每次 dispatch 启动独立 Claude 会话，加载全部 22 rules + 3 CLAUDE.md + 70 skills 上下文，单次消耗 ~150K tokens。审小改动的投入产出比低。
 
 ## 与铁拳团的关系
 
