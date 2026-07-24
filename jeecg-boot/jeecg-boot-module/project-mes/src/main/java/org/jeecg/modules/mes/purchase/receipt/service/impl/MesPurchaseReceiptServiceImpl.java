@@ -157,8 +157,8 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
                 if (orderItems.get(0).getTaxRate() != null) taxRate = orderItems.get(0).getTaxRate();
             }
 
-            // V9.7.0: 计算不含税成本单价
-            java.math.BigDecimal unitCost = unitPriceWithTax.divide(java.math.BigDecimal.ONE.add(taxRate), 4, java.math.RoundingMode.HALF_UP);
+            // V9.7.1 修复: 采购订单 unitPrice 即不含税成本单价，不再除以(1+taxRate)
+            java.math.BigDecimal unitCost = unitPriceWithTax;  // unitPrice 本身就是不含税价
             java.math.BigDecimal costAmount = unitCost.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
 
             // 【关键顺序】先更新物料移动平均成本（读入库前库存量），再入库
@@ -167,11 +167,12 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             // 入库（带成本参数）
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
 
-            // 应付取含税金额
+            // 应付: 不含税金额 + 税额
             item.setUnitPrice(unitPriceWithTax);
-            item.setAmount(unitPriceWithTax.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP));
-            totalAmount = totalAmount.add(item.getAmount());
-            totalTax = totalTax.add(item.getAmount().multiply(taxRate));
+            java.math.BigDecimal lineAmount = unitPriceWithTax.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
+            item.setAmount(lineAmount);
+            totalAmount = totalAmount.add(lineAmount);
+            totalTax = totalTax.add(lineAmount.multiply(taxRate).setScale(2, java.math.RoundingMode.HALF_UP));
         }
 
         // 【P1修复-订单状态回写】按累计入库量推进状态（oracle-review P1-1）
