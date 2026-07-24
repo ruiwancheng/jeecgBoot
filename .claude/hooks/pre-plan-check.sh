@@ -52,6 +52,30 @@ RESULTS="$RESULTS\n  ❓ 4. 字典存在: 确认所需 sys_dict + sys_dict_item 
 RESULTS="$RESULTS\n  ❓ 5. 父菜单存在: 确认 parentId 指向的菜单已在 MesMenuRegistry 注册"
 MANUAL=3
 
+# ============================================
+# 6. Delegate 强制判定（硬约束）
+#   任何非 .md 代码改动 → 必须走 delegate
+# ============================================
+UNSTAGED_CODE=$(git diff --name-only 2>/dev/null | grep -v '\.md$' | grep -E '\.(java|vue|ts|tsx|sql)$' | head -20)
+UNSTAGED_COUNT=$(echo "$UNSTAGED_CODE" | grep -c '.' 2>/dev/null || echo 0)
+if [ "$UNSTAGED_COUNT" -gt 0 ]; then
+  RESULTS="$RESULTS"
+  RESULTS="$RESULTS\n"
+  RESULTS="$RESULTS\n  ╔══════════════════════════════════════════╗"
+  RESULTS="$RESULTS\n  ║  ⚠️  DELEGATE 强制判定                  ║"
+  RESULTS="$RESULTS\n  ╠══════════════════════════════════════════╣"
+  RESULTS="$RESULTS\n  ║  检测到 $UNSTAGED_COUNT 个代码文件未提交      ║"
+  RESULTS="$RESULTS\n  ║  按规则：默认走 /delegate 派工人执行    ║"
+  RESULTS="$RESULTS\n  ║  除非属于豁免：纯文案/注释/样式          ║"
+  while IFS= read -r f; do
+    [ -n "$f" ] && RESULTS="$RESULTS\n  ║    → $f"
+  done <<< "$UNSTAGED_CODE"
+  RESULTS="$RESULTS\n  ║                                        ║"
+  RESULTS="$RESULTS\n  ║  如已走 delegate：忽略此提醒           ║"
+  RESULTS="$RESULTS\n  ║  如已直接修改：请确认是否在豁免范围     ║"
+  RESULTS="$RESULTS\n  ╚══════════════════════════════════════════╝"
+fi
+
 echo ""
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Super Harness — 开发前依赖查证              ║"

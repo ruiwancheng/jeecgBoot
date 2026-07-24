@@ -76,6 +76,33 @@ if [ -n "$CODE_FILES" ] && [ -d "harness/tests" ]; then
   done
 fi
 
+# ============================================
+# /verify 阶段验证（硬约束）
+# 本地后端在线 + 代码变更 → 必须已跑 /verify
+# ============================================
+STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E "\.(java|vue|ts)$" | head -20)
+if [ -n "$STAGED_JAVA_VUE" ] && lsof -i :8080 | grep -q LISTEN 2>/dev/null; then
+  # 检查 /verify 证据：.last-verify 时间戳文件
+  if [ -f ".last-verify" ]; then
+    LAST_VERIFY=$(cat .last-verify 2>/dev/null)
+    echo "[Super Harness] ✅ /verify 证据: $LAST_VERIFY"
+  else
+    echo ""
+    echo "[Super Harness] ╔══════════════════════════════════════════╗"
+    echo "[Super Harness] ║  🚫 未找到 /verify 证据！              ║"
+    echo "[Super Harness] ╠══════════════════════════════════════════╣"
+    echo "[Super Harness] ║  本地后端在运行 (8080) + 代码变更       ║"
+    echo "[Super Harness] ║  按铁律：必须先 /verify（curl实测）     ║"
+    echo "[Super Harness] ║  mvn compile ≠ 验证通过               ║"
+    echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-40s ║\n" "$f"; done
+    echo "[Super Harness] ╠══════════════════════════════════════════╣"
+    echo "[Super Harness] ║  如已实测验证：touch .last-verify         ║"
+    echo "[Super Harness] ║  跳过检查: git commit --no-verify         ║"
+    echo "[Super Harness] ╚══════════════════════════════════════════╝"
+    echo ""
+  fi
+fi
+
 # ===== 质量门控（Phase 1：轻量静态检查，秒级完成）=====
 # 完整代理分析通过 /quality-gate 命令执行
 QUALITY_GATE_WARN=0
