@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
-  import { InputNumber, Divider } from 'ant-design-vue';
+  import { InputNumber, Divider, message } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
   import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
@@ -128,6 +128,7 @@
     setDrawerProps({ confirmLoading: true });
     try {
       await saveOrUpdateApply({ ...values, items: items.value }, unref(isUpdate));
+      message.success('采购申请已保存');
       closeDrawer();
       emit('success');
     } finally {

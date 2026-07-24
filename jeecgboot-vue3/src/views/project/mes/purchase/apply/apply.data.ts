@@ -14,6 +14,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { field: 'code', label: '申请单号', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
+  { field: 'applicantId', label: '申请人', component: 'Input', colProps: { span: 6 } },
   { field: 'status', label: '申请状态', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_purchase_apply_status' } },
 ];
 
