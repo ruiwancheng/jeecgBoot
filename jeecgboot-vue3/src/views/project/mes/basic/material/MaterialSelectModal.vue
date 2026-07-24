@@ -91,6 +91,7 @@
     { title: '类型', dataIndex: 'type_dictText', width: 100 },
     { title: '规格型号', dataIndex: 'spec', width: 120 },
     { title: '单位', dataIndex: 'unit_dictText', width: 80 },
+    { title: '标准售价', dataIndex: 'standardPrice', width: 90 },
   ];
 
   const rowSelectionConfig = computed<TableRowSelection>(() => {

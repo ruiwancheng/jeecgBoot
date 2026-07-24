@@ -7,6 +7,7 @@ export const columns: BasicColumn[] = [
   { title: '物料类型', dataIndex: 'type_dictText', width: 100 },
   { title: '规格型号', dataIndex: 'spec', width: 150 },
   { title: '单位', dataIndex: 'unit_dictText', width: 80 },
+  { title: '标准售价', dataIndex: 'standardPrice', width: 100 },
   { title: '状态', dataIndex: 'status_dictText', width: 80 },
   { title: '备注', dataIndex: 'remark', width: 150 },
 ];
@@ -30,5 +31,6 @@ export const formSchema: FormSchema[] = [
   { field: 'status', label: '状态', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'yn', stringToNumber: true }, defaultValue: 1 },
   { field: 'safetyStock', label: '安全库存', component: 'InputNumber', colProps: { span: 12 }, componentProps: { min: 0 } },
   { field: 'maxStock', label: '最高库存', component: 'InputNumber', colProps: { span: 12 }, componentProps: { min: 0 } },
+  { field: 'standardPrice', label: '标准售价', component: 'InputNumber', colProps: { span: 8 }, componentProps: { min: 0, precision: 2 } },
   { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },
 ];

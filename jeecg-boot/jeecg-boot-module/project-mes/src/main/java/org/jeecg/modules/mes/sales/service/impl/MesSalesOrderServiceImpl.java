@@ -15,6 +15,8 @@ import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteMapper;
 import org.jeecg.modules.mes.sales.mapper.MesDeliveryNoteItemMapper;
 import org.jeecg.modules.mes.basic.mapper.MesWarehouseMapper;
+import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNote;
 import org.jeecg.modules.mes.sales.entity.MesDeliveryNoteItem;
 import org.jeecg.modules.mes.basic.service.IMesCodeRuleService;
@@ -45,6 +47,10 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
     @Autowired
     private IMesPriceService priceService;
     //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.6.0 价格兜底-直接从物料取标准售价-----------
+    @Autowired
+    private MesMaterialMapper materialMapper;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.6.0 价格兜底-直接从物料取标准售价-----------
 
     @Override
     public MesSalesOrder queryWithItems(String id) {
@@ -243,6 +249,15 @@ public class MesSalesOrderServiceImpl extends ServiceImpl<MesSalesOrderMapper, M
                 }
             }
             //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 价格自动带出-从价格表查价-----------
+            //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.6.0 价格兜底-物料标准售价-----------
+            if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) == 0) {
+                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+                if (mat != null && mat.getStandardPrice() != null
+                        && mat.getStandardPrice().compareTo(BigDecimal.ZERO) > 0) {
+                    item.setUnitPrice(mat.getStandardPrice());
+                }
+            }
+            //update-end---author:ruiwancheng---date:2026-07-24---for: V9.6.0 价格兜底-物料标准售价-----------
             if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) < 0)
                 throw new JeecgBootException("第" + (i+1) + "行单价不能为负数");
             item.setLineNo(i + 1);

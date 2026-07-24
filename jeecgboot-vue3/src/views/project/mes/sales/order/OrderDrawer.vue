@@ -112,10 +112,17 @@
   function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
   function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
 
-  // 选择物料时同步带出规格/单位
+  // 选择物料时同步带出规格/单位/标准售价
   function onMaterialChange(index: number, v: any) {
     const m = v?.record;
-    items.value[index] = { ...items.value[index], materialId: v?.value ?? v, spec: m?.spec || '', unitText: m?.unit_dictText || '' };
+    const cur = items.value[index];
+    items.value[index] = {
+      ...cur,
+      materialId: v?.value ?? v,
+      spec: m?.spec || '',
+      unitText: m?.unit_dictText || '',
+      unitPrice: (!cur.unitPrice || cur.unitPrice === 0) && m?.standardPrice ? m.standardPrice : cur.unitPrice,
+    };
   }
 
   // 编辑时补齐明细行的规格/单位（订单行不冗余存储，按物料ID批量查）
@@ -138,7 +145,7 @@
         spec: m.spec || '',
         unitText: m.unit_dictText || '',
         quantity: 1,
-        unitPrice: 0,
+        unitPrice: m.standardPrice || 0,
         taxRate: 0.13,
       });
     });
