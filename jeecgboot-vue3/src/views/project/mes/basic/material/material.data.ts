@@ -7,7 +7,7 @@ export const columns: BasicColumn[] = [
   { title: '物料类型', dataIndex: 'type_dictText', width: 100 },
   { title: '规格型号', dataIndex: 'spec', width: 150 },
   { title: '单位', dataIndex: 'unit_dictText', width: 80 },
-  { title: '标准售价', dataIndex: 'standardPrice', width: 100, editable: true, editComponent: 'InputNumber', editComponentProps: { min: 0, precision: 2 } },
+  { title: '标准售价', dataIndex: 'standardPrice', width: 100, edit: true, editComponent: 'InputNumber', editComponentProps: { min: 0, precision: 2 } },
   { title: '移动平均成本', dataIndex: 'movingAvgCost', width: 110 },
   { title: '最近采购价', dataIndex: 'lastPurchasePrice', width: 100 },
   { title: '状态', dataIndex: 'status_dictText', width: 80 },
