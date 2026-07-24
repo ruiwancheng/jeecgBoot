@@ -20,7 +20,7 @@
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './material.data';
-  import { queryMaterialList, deleteMaterial, deleteBatchMaterial, getExportUrl, getImportUrl } from './material.api';
+  import { queryMaterialList, deleteMaterial, deleteBatchMaterial, getExportUrl, getImportUrl, editMaterial } from './material.api';
   import MaterialDrawer from './MaterialDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -36,6 +36,13 @@
       columns: columns,
       rowKey: 'id',
       formConfig: { labelWidth: 120, schemas: searchFormSchema },
+      beforeEditSubmit: async ({ record, key, value }: any) => {
+        const params = { ...record, [key]: value };
+        delete params.type_dictText;
+        delete params.unit_dictText;
+        delete params.status_dictText;
+        return await editMaterial(params).then(() => message.success(`标准售价已更新`));
+      },
     },
     exportConfig: { name: '物料管理', url: getExportUrl },
     importConfig: { url: getImportUrl },
