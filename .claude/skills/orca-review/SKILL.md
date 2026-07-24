@@ -8,16 +8,18 @@ version: 1.0.0
 
 ## 用途
 
-在 brainstorm 和 plan 阶段，pi 产出一份草案后，派给 Claude Code 做"第二意见"——从一个不同的视角审视草案，发现遗漏、矛盾或更优方案。**只评审不修改**（Claude 只写意见，pi 决定是否采纳）。
+在 brainstorm 和 plan 阶段，开发 AI 产出一份草案后，派给 **Claude（固定评审方）** 做"第二意见"——从一个不同的视角审视草案，发现遗漏、矛盾或更优方案。**只评审不修改**（评审方只写意见，开发方决定是否采纳）。
+
+**评审方固定为 Claude**——Claude 的审查细致度最高，能发现其他 AI 容易忽略的字段名、时序、边界问题。
 
 ```
-pi 编写草案（需求分析 or 实施计划）
+开发 AI (pi/claude/hermes/kimi/codex) 编写草案
      ↓
-pi 派 Claude 做外部评审（dispatch --inject，附带草案全文 + 阶段视角）
+协调者派 Claude 做外部评审（orca orchestration dispatch --inject）
      ↓
 Claude 读相关代码 + 审草案 → 输出结构化评审报告
      ↓
-pi 收到回报（TUI 自动投递）→ 吸收改进 → 展示最终版给用户确认
+开发 AI 收到回报 → 吸收改进 → 展示最终版给用户确认
 ```
 
 ## 适用阶段
