@@ -20,12 +20,12 @@ public interface MesMaterialMapper extends BaseMapper<MesMaterial> {
     void resurrect(MesMaterial entity);
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 resurrect补齐字段-----------
 
-    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 物料成本更新-FOR UPDATE行锁-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 成本更新-FOR UPDATE行锁+按仓库查库存-----------
     @Select("SELECT * FROM c_mes_material WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
     MesMaterial selectByIdForUpdate(@Param("id") String id);
 
-    @Select("SELECT COALESCE(SUM(current_qty), 0) FROM c_mes_inventory WHERE material_id = #{materialId}")
-    java.math.BigDecimal selectTotalStockQty(@Param("materialId") String materialId);
-    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 物料成本更新-FOR UPDATE行锁-----------
+    @Select("SELECT COALESCE(SUM(current_qty), 0) FROM c_mes_inventory WHERE material_id = #{materialId} AND warehouse_id = #{warehouseId}")
+    java.math.BigDecimal selectStockQtyByWarehouse(@Param("materialId") String materialId, @Param("warehouseId") String warehouseId);
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 成本更新-FOR UPDATE行锁+按仓库查库存-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-14---for: MES基础设置-物料Mapper-----------

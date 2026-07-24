@@ -102,8 +102,8 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
         MesMaterial mat = baseMapper.selectByIdForUpdate(materialId);
         if (mat == null) throw new JeecgBootException("物料不存在");
 
-        // 入库前库存总数量（全仓库汇总）
-        java.math.BigDecimal preQty = baseMapper.selectTotalStockQty(materialId);
+        // 入库前本仓库库存数量（V9.7.1修复：不跨仓库混算成本）
+        java.math.BigDecimal preQty = baseMapper.selectStockQtyByWarehouse(materialId, warehouseId);
         java.math.BigDecimal oldCost = mat.getMovingAvgCost() != null ? mat.getMovingAvgCost() : java.math.BigDecimal.ZERO;
 
         // 移动加权平均：新成本 = (原库存金额 + 本次入库金额) / (原数量 + 本次入库数量)
