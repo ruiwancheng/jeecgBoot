@@ -118,7 +118,7 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         if (e == null) throw new JeecgBootException("领料单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
         for (MesProductionPickingItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), "生产领料", e.getCode());
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), null, null, "生产领料", e.getCode());
         }
         String username = getCurrentUsername();
         Date now = new Date();

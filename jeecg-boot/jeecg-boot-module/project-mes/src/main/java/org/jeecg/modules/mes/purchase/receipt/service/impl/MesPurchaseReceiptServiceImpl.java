@@ -12,6 +12,7 @@ import org.jeecg.modules.mes.purchase.order.entity.MesPurchaseOrderItem;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderItemMapper;
 import org.jeecg.modules.mes.purchase.order.mapper.MesPurchaseOrderMapper;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
+import org.jeecg.modules.mes.basic.service.IMesMaterialService;
 import org.jeecg.modules.mes.finance.payable.entity.MesPayable;
 import org.jeecg.modules.mes.finance.payable.service.IMesPayableService;
 import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceipt;
@@ -41,6 +42,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
     @Autowired private IMesPayableService payableService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 成本价体系-物料成本更新-----------
+    @Autowired private IMesMaterialService materialService;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 成本价体系-物料成本更新-----------
 
     @Override
     public MesPurchaseReceipt queryWithItems(String id) {
@@ -133,7 +137,7 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
 
-        // 审核成功后：原子扣减 → 加库存 → 取单价 → 算应付税额
+        // 审核成功后：原子扣减 → 计算成本 → 更新物料成本 → 加库存 → 算应付税额
         java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
         java.math.BigDecimal totalTax = java.math.BigDecimal.ZERO;
         for (MesPurchaseReceiptItem item : e.getItems()) {
@@ -141,20 +145,33 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             int ar = purchaseOrderItemMapper.atomicReceive(e.getPurchaseOrderId(), item.getMaterialId(), item.getReceiptQuantity());
             if (ar == 0) throw new JeecgBootException("物料[" + item.getMaterialId() + "]累计入库量超采购数量，请检查");
 
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), "采购入库", e.getCode());
-
-            // 从采购订单行取单价（同物料多行取第一行——后续 order_item_id 关联后再优化）
+            // 从采购订单行取含税单价+税率（同物料多行取第一行——后续 order_item_id 关联后再优化）
             LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
             piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
             java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
+
+            java.math.BigDecimal unitPriceWithTax = java.math.BigDecimal.ZERO;
+            java.math.BigDecimal taxRate = new java.math.BigDecimal("0.13");
             if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
-                item.setUnitPrice(orderItems.get(0).getUnitPrice());
-                item.setAmount(item.getReceiptQuantity().multiply(item.getUnitPrice()).setScale(2, java.math.RoundingMode.HALF_UP));
-                totalAmount = totalAmount.add(item.getAmount());
-                // 【P0修复-应付税率取订单行】不再硬编码0.13（oracle-review②）
-                java.math.BigDecimal taxRate = orderItems.get(0).getTaxRate() != null ? orderItems.get(0).getTaxRate() : new java.math.BigDecimal("0.13");
-                totalTax = totalTax.add(item.getAmount().multiply(taxRate));
+                unitPriceWithTax = orderItems.get(0).getUnitPrice();
+                if (orderItems.get(0).getTaxRate() != null) taxRate = orderItems.get(0).getTaxRate();
             }
+
+            // V9.7.0: 计算不含税成本单价
+            java.math.BigDecimal unitCost = unitPriceWithTax.divide(java.math.BigDecimal.ONE.add(taxRate), 4, java.math.RoundingMode.HALF_UP);
+            java.math.BigDecimal costAmount = unitCost.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
+
+            // 【关键顺序】先更新物料移动平均成本（读入库前库存量），再入库
+            materialService.updateMovingAvgCostOnStockIn(item.getMaterialId(), item.getReceiptQuantity(), unitCost, e.getWarehouseId(), "采购入库", e.getCode());
+
+            // 入库（带成本参数）
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
+
+            // 应付取含税金额
+            item.setUnitPrice(unitPriceWithTax);
+            item.setAmount(unitPriceWithTax.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP));
+            totalAmount = totalAmount.add(item.getAmount());
+            totalTax = totalTax.add(item.getAmount().multiply(taxRate));
         }
 
         // 【P1修复-订单状态回写】按累计入库量推进状态（oracle-review P1-1）

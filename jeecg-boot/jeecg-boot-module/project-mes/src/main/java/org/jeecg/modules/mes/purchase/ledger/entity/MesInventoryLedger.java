@@ -47,6 +47,27 @@ public class MesInventoryLedger implements Serializable {
     @Excel(name = "期末数量", width = 15)
     @Schema(description = "期末数量")
     private BigDecimal endingQty;
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存台账金额字段-----------
+    @Excel(name = "单位成本", width = 12)
+    @Schema(description = "单位成本")
+    private BigDecimal unitCost;
+
+    @Excel(name = "入库金额", width = 12)
+    @Schema(description = "入库金额")
+    private BigDecimal inAmount;
+
+    @Excel(name = "出库金额", width = 12)
+    @Schema(description = "出库金额")
+    private BigDecimal outAmount;
+
+    @Excel(name = "期初金额", width = 12)
+    @Schema(description = "期初金额")
+    private BigDecimal beginningAmount;
+
+    @Excel(name = "期末金额", width = 12)
+    @Schema(description = "期末金额")
+    private BigDecimal endingAmount;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存台账金额字段-----------
     @Excel(name = "记录日期", width = 15, format = "yyyy-MM-dd")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

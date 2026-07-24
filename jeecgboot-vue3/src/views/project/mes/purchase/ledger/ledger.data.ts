@@ -8,6 +8,9 @@ export const columns: BasicColumn[] = [
   { title: '本期入库', dataIndex: 'inQty', width: 100 },
   { title: '本期出库', dataIndex: 'outQty', width: 100 },
   { title: '期末数量', dataIndex: 'endingQty', width: 100 },
+  { title: '单位成本', dataIndex: 'unitCost', width: 100 },
+  { title: '入库金额', dataIndex: 'inAmount', width: 100 },
+  { title: '出库金额', dataIndex: 'outAmount', width: 100 },
   { title: '记录日期', dataIndex: 'recordDate', width: 110 },
   { title: '业务类型', dataIndex: 'bizType', width: 100 },
 ];

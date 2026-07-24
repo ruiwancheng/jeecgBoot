@@ -48,6 +48,21 @@ public class MesMaterial implements Serializable {
     @Schema(description = "标准售价")
     private java.math.BigDecimal standardPrice;
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.6.0 轻量化价格体系-物料标准售价-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 物料成本价体系-移动平均成本+最近采购价-----------
+    @Excel(name = "移动平均成本", width = 12)
+    @Schema(description = "移动平均成本")
+    private java.math.BigDecimal movingAvgCost;
+
+    @Excel(name = "最近采购价", width = 12)
+    @Schema(description = "最近采购价(含税)")
+    private java.math.BigDecimal lastPurchasePrice;
+
+    @Excel(name = "最近采购日期", width = 15, format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "最近采购日期")
+    private java.util.Date lastPurchaseDate;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 物料成本价体系-移动平均成本+最近采购价-----------
     //update-begin---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
     @Excel(name = "安全库存", width = 10) @Schema(description = "安全库存") private java.math.BigDecimal safetyStock;
     @Excel(name = "最高库存", width = 10) @Schema(description = "最高库存") private java.math.BigDecimal maxStock;

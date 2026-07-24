@@ -118,7 +118,7 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         if (rows == 0) throw new JeecgBootException("审核失败：出库单不存在或状态已变更，请刷新后重试");
         // 2. 扣库存（状态已确认，事务内回滚安全）
         for (MesSalesOutboundItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库", e.getCode());
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), null, null, "销售出库", e.getCode());
         }
         // 3. 联动更新发货单状态：全部物料足量出库才置已出库(3)，部分出库保持2（oracle-review 前置缺陷修复）
         if (e.getDeliveryNoteId() != null) {
@@ -186,7 +186,7 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         if ("3".equals(e.getStatus())) {
             // 恢复库存
             for (MesSalesOutboundItem item : e.getItems()) {
-                inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), "销售出库红冲", e.getCode());
+                inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), null, null, "销售出库红冲", e.getCode());
             }
             // 应收作废（查对应应收单标记为已结清）
             try {

@@ -118,7 +118,7 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
         for (MesCompletionReceiptItem item : e.getItems()) {
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), "完工入库", e.getCode());
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), null, null, "完工入库", e.getCode());
         }
         String username = getCurrentUsername();
         Date now = new Date();

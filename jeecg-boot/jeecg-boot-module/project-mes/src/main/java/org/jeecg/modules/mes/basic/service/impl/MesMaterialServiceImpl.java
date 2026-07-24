@@ -9,6 +9,8 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesMaterial;
 import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;
 import org.jeecg.modules.mes.basic.service.IMesMaterialService;
+import org.jeecg.modules.mes.purchase.ledger.service.IMesCostLogService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,10 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
 
     private static final Set<String> VALID_TYPES = new HashSet<>(Arrays.asList("1", "2", "3", "4"));
     private static final Set<String> VALID_UNITS = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8"));
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 成本日志Service注入-----------
+    @Autowired
+    private IMesCostLogService costLogService;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 成本日志Service注入-----------
 
     @Override
     @Transactional
@@ -85,6 +91,65 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
             save(entity);
         }
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 移动加权平均算法-内聚成本日志写入-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public java.math.BigDecimal updateMovingAvgCostOnStockIn(
+            String materialId, java.math.BigDecimal inQty, java.math.BigDecimal unitCost,
+            String warehouseId, String bizType, String bizId) {
+        // FOR UPDATE 行锁 — 读物料成本快照（入库前）
+        MesMaterial mat = baseMapper.selectByIdForUpdate(materialId);
+        if (mat == null) throw new JeecgBootException("物料不存在");
+
+        // 入库前库存总数量（全仓库汇总）
+        java.math.BigDecimal preQty = baseMapper.selectTotalStockQty(materialId);
+        java.math.BigDecimal oldCost = mat.getMovingAvgCost() != null ? mat.getMovingAvgCost() : java.math.BigDecimal.ZERO;
+
+        // 移动加权平均：新成本 = (原库存金额 + 本次入库金额) / (原数量 + 本次入库数量)
+        java.math.BigDecimal newCost;
+        if (preQty.compareTo(java.math.BigDecimal.ZERO) == 0) {
+            newCost = unitCost;
+        } else {
+            java.math.BigDecimal oldAmount = preQty.multiply(oldCost);
+            java.math.BigDecimal newAmount = inQty.multiply(unitCost);
+            java.math.BigDecimal totalAmount = oldAmount.add(newAmount);
+            java.math.BigDecimal totalQtyAfter = preQty.add(inQty);
+            newCost = totalAmount.divide(totalQtyAfter, 4, java.math.RoundingMode.HALF_UP);
+        }
+
+        // 更新物料成本
+        mat.setMovingAvgCost(newCost);
+        mat.setLastPurchasePrice(unitCost);
+        mat.setLastPurchaseDate(new Date());
+        baseMapper.updateById(mat);
+
+        // 写成本变动日志（在方法内部完成，避免调用方管顺序细节）
+        writeCostLog(materialId, warehouseId, inQty, unitCost, oldCost, newCost, preQty, preQty.add(inQty), bizType, bizId);
+
+        return newCost;
+    }
+
+    private void writeCostLog(String materialId, String warehouseId, java.math.BigDecimal qty,
+            java.math.BigDecimal unitCost, java.math.BigDecimal costBefore, java.math.BigDecimal costAfter,
+            java.math.BigDecimal qtyBefore, java.math.BigDecimal qtyAfter,
+            String bizType, String bizId) {
+        org.jeecg.modules.mes.purchase.ledger.entity.MesCostLog log =
+            new org.jeecg.modules.mes.purchase.ledger.entity.MesCostLog();
+        log.setMaterialId(materialId);
+        log.setWarehouseId(warehouseId);
+        log.setQty(qty);
+        log.setUnitCost(unitCost);
+        log.setAmount(unitCost.multiply(qty).setScale(2, java.math.RoundingMode.HALF_UP));
+        log.setCostBefore(costBefore);
+        log.setCostAfter(costAfter);
+        log.setQtyBefore(qtyBefore);
+        log.setQtyAfter(qtyAfter);
+        log.setBizType(bizType);
+        log.setBizId(bizId);
+        costLogService.save(log);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 移动加权平均算法-内聚成本日志写入-----------
 
     private void validateEntity(MesMaterial entity) {
         if (!StringUtils.hasText(entity.getCode())) {

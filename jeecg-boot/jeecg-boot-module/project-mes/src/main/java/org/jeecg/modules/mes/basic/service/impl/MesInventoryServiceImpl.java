@@ -24,46 +24,38 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
     @Autowired private MesInventoryMapper inventoryMapper;
     @Autowired private IMesInventoryLedgerService ledgerService;
 
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存接口升级-增加单价金额参数-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void stockIn(String materialId, String warehouseId, BigDecimal qty, String bizType, String bizId) {
+    public void stockIn(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId) {
         if (qty == null || qty.compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("入库数量必须大于0");
         String username = getUsername();
-        // 行锁查库存快照（与stockOut保持一致）
         MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
         BigDecimal before = inv != null ? inv.getCurrentQty() : BigDecimal.ZERO;
         BigDecimal after = before.add(qty);
-        // upsert
         String id = inv != null ? inv.getId() : UUID.randomUUID().toString().replace("-", "");
         inventoryMapper.upsertWithDelta(id, materialId, warehouseId, before, qty, username, username);
-        // 写台账
-        writeLedger(materialId, warehouseId, before, qty, BigDecimal.ZERO, after, bizType, bizId);
+        writeLedger(materialId, warehouseId, before, qty, BigDecimal.ZERO, after, unitCost, amount, null, bizType, bizId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void stockOut(String materialId, String warehouseId, BigDecimal qty, String bizType, String bizId) {
+    public void stockOut(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId) {
         if (qty == null || qty.compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("出库数量必须大于0");
-        // 行锁查当前库存
         MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
         BigDecimal before = inv != null ? inv.getCurrentQty() : BigDecimal.ZERO;
         if (before.compareTo(qty) < 0) throw new JeecgBootException("库存不足：当前库存" + before + "，出库" + qty);
         BigDecimal after = before.subtract(qty);
-        // upsert
         String username = getUsername();
         String id = inv != null ? inv.getId() : UUID.randomUUID().toString().replace("-", "");
         inventoryMapper.upsertWithDelta(id, materialId, warehouseId, before, qty.negate(), username, username);
-        // 写台账
-        writeLedger(materialId, warehouseId, before, BigDecimal.ZERO, qty, after, bizType, bizId);
+        writeLedger(materialId, warehouseId, before, BigDecimal.ZERO, qty, after, unitCost, null, amount, bizType, bizId);
     }
 
-    private MesInventory findByMaterialAndWarehouse(String materialId, String warehouseId) {
-        LambdaQueryWrapper<MesInventory> qw = new LambdaQueryWrapper<>();
-        qw.eq(MesInventory::getMaterialId, materialId).eq(MesInventory::getWarehouseId, warehouseId);
-        return inventoryMapper.selectOne(qw);
-    }
-
-    private void writeLedger(String materialId, String warehouseId, BigDecimal beginningQty, BigDecimal inQty, BigDecimal outQty, BigDecimal endingQty, String bizType, String bizId) {
+    private void writeLedger(String materialId, String warehouseId,
+            BigDecimal beginningQty, BigDecimal inQty, BigDecimal outQty, BigDecimal endingQty,
+            BigDecimal unitCost, BigDecimal inAmount, BigDecimal outAmount,
+            String bizType, String bizId) {
         MesInventoryLedger ledger = new MesInventoryLedger();
         ledger.setMaterialId(materialId);
         ledger.setWarehouseId(warehouseId);
@@ -71,11 +63,18 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
         ledger.setInQty(inQty);
         ledger.setOutQty(outQty);
         ledger.setEndingQty(endingQty);
+        ledger.setUnitCost(unitCost);
+        ledger.setInAmount(inAmount);
+        ledger.setOutAmount(outAmount);
+        // TODO Phase2: 期初/期末金额需累计计算
+        ledger.setBeginningAmount(BigDecimal.ZERO);
+        ledger.setEndingAmount(BigDecimal.ZERO);
         ledger.setRecordDate(new Date());
         ledger.setBizType(bizType);
         ledger.setBizId(bizId);
         ledgerService.save(ledger);
     }
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存接口升级-增加单价金额参数-----------
 
     private String getUsername() {
         try { LoginUser u = (LoginUser) SecurityUtils.getSubject().getPrincipal(); return u != null ? u.getUsername() : "system"; } catch (Exception e) { return "system"; }
