@@ -20,10 +20,16 @@ public interface MesPurchaseApplyMapper extends BaseMapper<MesPurchaseApply> {
     @Select("SELECT * FROM c_mes_purchase_apply WHERE id = #{id} AND del_flag = 0 FOR UPDATE")
     MesPurchaseApply selectByIdForUpdate(@Param("id") String id);
 
-    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-原子状态机守卫-----------
-    @Update("UPDATE c_mes_purchase_apply SET status = '2', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核1→3(对齐采购订单模式)+驳回1→4+反审核3→1-----------
+    @Update("UPDATE c_mes_purchase_apply SET status = '3', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
     int auditWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
-    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
+
+    @Update("UPDATE c_mes_purchase_apply SET status = '4', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")
+    int rejectWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
+
+    @Update("UPDATE c_mes_purchase_apply SET status = '1', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '3'")
+    int unauditWithGuard(@Param("id") String id, @Param("updateBy") String updateBy, @Param("updateTime") Date updateTime);
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-状态机修正-----------
     //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-编辑/删除用FOR UPDATE行锁防并发击穿-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购申请Mapper-----------

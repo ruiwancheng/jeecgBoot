@@ -4,6 +4,7 @@ import { querySupplierSelect } from './order.api';
 
 export const columns: BasicColumn[] = [
   { title: '订单编号', dataIndex: 'code', width: 130 },
+  { title: '申请单号', dataIndex: 'purchaseApplyId', width: 130 },
   { title: '供应商', dataIndex: 'supplierId_dictText', width: 150 },
   { title: '采购类型', dataIndex: 'purchaseType_dictText', width: 80 },
   { title: '订单日期', dataIndex: 'orderDate', width: 110 },
@@ -17,6 +18,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { field: 'code', label: '订单编号', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
+  { field: 'purchaseApplyId', label: '申请单号', component: 'Input', colProps: { span: 6 } },
   { field: 'supplierId', label: '供应商', component: 'Input', colProps: { span: 6 } },
   { field: 'status', label: '订单状态', component: 'JDictSelectTag', colProps: { span: 6 }, componentProps: { dictCode: 'mes_purchase_order_status' } },
 ];

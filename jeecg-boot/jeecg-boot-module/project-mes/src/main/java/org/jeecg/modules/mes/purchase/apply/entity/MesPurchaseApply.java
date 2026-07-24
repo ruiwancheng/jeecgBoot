@@ -35,6 +35,17 @@ public class MesPurchaseApply implements Serializable {
     @Excel(name = "申请部门", width = 15)
     @Schema(description = "申请部门")
     private String deptId;
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-申请加供应商+采购类型-----------
+    @Excel(name = "供应商", width = 20, dictTable = "c_mes_supplier", dicText = "name", dicCode = "id")
+    @Dict(dictTable = "c_mes_supplier", dicText = "name", dicCode = "id")
+    @Schema(description = "供应商ID")
+    private String supplierId;
+
+    @Excel(name = "采购类型", width = 12, dicCode = "mes_purchase_type")
+    @Dict(dicCode = "mes_purchase_type")
+    @Schema(description = "采购类型")
+    private String purchaseType;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-申请加供应商+采购类型-----------
     @Excel(name = "申请人", width = 12)
     @Schema(description = "申请人")
     private String applicantId;

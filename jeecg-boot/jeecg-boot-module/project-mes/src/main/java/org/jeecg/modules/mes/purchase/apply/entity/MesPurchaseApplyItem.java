@@ -39,6 +39,10 @@ public class MesPurchaseApplyItem implements Serializable {
     @Schema(description = "金额")
     private BigDecimal amount;
     //update-end---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额字段-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-申请行加税率-----------
+    @Schema(description = "税率")
+    private BigDecimal taxRate;
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-申请行加税率-----------
     @Schema(description = "单位")
     private String unit;
     @Schema(description = "用途说明")

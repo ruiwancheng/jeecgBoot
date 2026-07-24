@@ -95,11 +95,21 @@ public class MesPurchaseApplyController extends JeecgController<MesPurchaseApply
         return super.exportXls(req, entity, MesPurchaseApply.class, "采购申请");
     }
 
-    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点(照抄订单+入库audit模式)-----------
-    @Operation(summary = "审核申请")
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核+驳回+反审核-----------
+    @Operation(summary = "审核申请(自动生成草稿采购订单)")
     @PutMapping("/audit")
     @RequiresPermissions("mes:purchaseApply:edit")
-    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
-    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，已自动生成采购订单"); }
+
+    @Operation(summary = "驳回申请")
+    @PutMapping("/reject")
+    @RequiresPermissions("mes:purchaseApply:edit")
+    public Result<String> reject(@RequestParam String id) { service.reject(id); return Result.ok("驳回成功"); }
+
+    @Operation(summary = "反审核申请(同步作废草稿订单)")
+    @PutMapping("/unaudit")
+    @RequiresPermissions("mes:purchaseApply:edit")
+    public Result<String> unaudit(@RequestParam String id) { service.unaudit(id); return Result.ok("反审核成功"); }
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核+驳回+反审核-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购申请接口-----------

@@ -9,8 +9,10 @@ public interface IMesPurchaseApplyService extends IService<MesPurchaseApply> {
     void saveWithItems(MesPurchaseApply entity);
     void updateWithItems(MesPurchaseApply entity);
     void removeWithItems(String id);
-    //update-begin---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
+    //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核+驳回+反审核-----------
     void audit(String id);
-    //update-end---author:ruisuyun---date:2026-07-22---for: 链路P0-申请审核端点-----------
+    void reject(String id);
+    void unaudit(String id);
+    //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核+驳回+反审核-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES采购管理-采购申请Service接口-----------

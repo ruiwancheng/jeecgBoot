@@ -171,7 +171,7 @@ public class MesPurchaseOrderServiceImpl extends ServiceImpl<MesPurchaseOrderMap
         if (!StringUtils.hasText(applyId)) throw new JeecgBootException("申请ID不能为空");
         MesPurchaseApply apply = applyMapper.selectById(applyId);
         if (apply == null) throw new JeecgBootException("采购申请不存在");
-        if (!"2".equals(apply.getStatus())) throw new JeecgBootException("仅已审核的申请可生成订单");
+        if (!"3".equals(apply.getStatus())) throw new JeecgBootException("仅已审核的申请可生成订单");
         LambdaQueryWrapper<MesPurchaseApplyItem> qw = new LambdaQueryWrapper<>();
         qw.eq(MesPurchaseApplyItem::getApplyId, applyId).orderByAsc(MesPurchaseApplyItem::getLineNo);
         java.util.List<MesPurchaseApplyItem> applyItems = applyItemMapper.selectList(qw);
