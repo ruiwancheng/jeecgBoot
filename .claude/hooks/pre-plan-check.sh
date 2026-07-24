@@ -1,4 +1,5 @@
 #!/bin/bash
+PYTHON=$(command -v python3 || command -v python || echo python)
 # Super Harness — 开发前依赖查证 (Pre-Plan Check)
 # 自动化 workflow.md 中 5 项手动检查的前 2 项
 # 非阻塞（纯建议，不返回非零 exit code）
@@ -6,7 +7,7 @@
 INPUT=$(cat 2>/dev/null)
 
 # 仅当调用 plan 技能时触发
-IS_PLAN=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('skill',''))" 2>/dev/null || echo "")
+IS_PLAN=$(echo "$INPUT" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(d.get('skill',''))" 2>/dev/null || echo "")
 if [ "$IS_PLAN" != "plan" ]; then
   exit 0
 fi

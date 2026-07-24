@@ -1,4 +1,5 @@
 #!/bin/bash
+PYTHON=$(command -v python3 || command -v python || echo python)
 # Super Harness — 部署前用户流程验证
 # 在 docker compose up 或 start-docker-compose 前自动运行
 # 验证 3 项核心用户流程是否可达（非阻塞，纯报告）
@@ -24,7 +25,7 @@ LOGIN_RESP=$(curl -s -w "\n%{http_code}" --max-time 10 \
   -d '{"username":"admin","password":"123456","captcha":"","remember":true}' 2>/dev/null)
 HTTP_CODE=$(echo "$LOGIN_RESP" | tail -1)
 if [ "$HTTP_CODE" = "200" ]; then
-  TOKEN=$(echo "$LOGIN_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('result',{}).get('token','NONE')[:20])" 2>/dev/null || echo "PARSE_ERR")
+  TOKEN=$(echo "$LOGIN_RESP" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(d.get('result',{}).get('token','NONE')[:20])" 2>/dev/null || echo "PARSE_ERR")
   if [ "$TOKEN" != "NONE" ] && [ "$TOKEN" != "PARSE_ERR" ]; then
     echo "    ✅ 登录接口正常 (HTTP 200, Token: ${TOKEN}...)"
     PASS=$((PASS+1))
@@ -44,7 +45,7 @@ if [ -n "$TOKEN" ] && [ "$TOKEN" != "NONE" ] && [ "$TOKEN" != "PARSE_ERR" ]; the
     -X GET "$BASE_URL/jeecg-boot/sys/permission/queryTreeList" \
     -H "X-Access-Token: $TOKEN" 2>/dev/null)
   if echo "$PERM_RESP" | grep -q '"success":true'; then
-    PERM_COUNT=$(echo "$PERM_RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('result',[])))" 2>/dev/null || echo "?")
+    PERM_COUNT=$(echo "$PERM_RESP" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('result',[])))" 2>/dev/null || echo "?")
     echo "    ✅ 菜单树加载正常 ($PERM_COUNT 条)"
     PASS=$((PASS+1))
   else

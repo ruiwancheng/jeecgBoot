@@ -1,4 +1,5 @@
 #!/bin/bash
+PYTHON=$(command -v python3 || command -v python || echo python)
 # 工具调用失败审计 — 结构化日志记录
 # 从 stdin JSON 提取失败上下文，写入结构化 jsonl + 兼容旧 log
 LOG_DIR="${CLAUDE_PROJECT_DIR:-.}/hermes/logs"
@@ -9,10 +10,10 @@ ISO_TIMESTAMP=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
 # 尝试从 stdin 提取结构化信息
 INPUT=$(cat 2>/dev/null)
-if [ -n "$INPUT" ] && echo "$INPUT" | python3 -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
-  TOOL_NAME=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_name','unknown'))" 2>/dev/null || echo "unknown")
-  ERROR_MSG=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('error','')[:200])" 2>/dev/null || echo "")
-  FILE_PATH=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))" 2>/dev/null || echo "")
+if [ -n "$INPUT" ] && echo "$INPUT" | $PYTHON -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
+  TOOL_NAME=$(echo "$INPUT" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_name','unknown'))" 2>/dev/null || echo "unknown")
+  ERROR_MSG=$(echo "$INPUT" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(d.get('error','')[:200])" 2>/dev/null || echo "")
+  FILE_PATH=$(echo "$INPUT" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))" 2>/dev/null || echo "")
   BRANCH=$(git branch --show-current 2>/dev/null || echo "N/A")
   WORKDIR=$(pwd)
 
@@ -21,12 +22,12 @@ if [ -n "$INPUT" ] && echo "$INPUT" | python3 -c "import sys,json; json.load(sys
   ORCA_WORKTREES="0"
   if command -v orca &>/dev/null; then
     ORCA_STATUS=$(orca status --json 2>/dev/null || echo '{"available":false}')
-    ORCA_AVAILABLE=$(echo "$ORCA_STATUS" | python3 -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('appRunning') else 'false')" 2>/dev/null || echo "false")
+    ORCA_AVAILABLE=$(echo "$ORCA_STATUS" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('result',{}).get('app',{}).get('running') else 'false')" 2>/dev/null || echo "false")
     ORCA_WORKTREES=$(orca worktree ps --limit 99 2>/dev/null | grep -c "refs/heads" || echo "0")
   fi
 
   # 结构化 JSONL 写入
-  python3 -c "
+  $PYTHON -c "
 import json, sys
 entry = {
     'timestamp': '$ISO_TIMESTAMP',

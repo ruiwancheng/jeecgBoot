@@ -1,4 +1,5 @@
 #!/bin/bash
+PYTHON=$(command -v python3 || command -v python || echo python)
 PROJECT=$(grep active .claude/memory/active-project.md 2>/dev/null | cut -d' ' -f2 || echo '未设置')
 echo "[Super Harness v2] 当前项目: $PROJECT"
 echo "命令: /new-project /switch-project /admin"
@@ -37,7 +38,7 @@ fi
 # Orca 上下文感知 (非阻塞)
 if command -v orca &>/dev/null; then
   ORCA_JSON=$(orca status --json 2>/dev/null || echo '{"available":false}')
-  ORCA_AVAILABLE=$(echo "$ORCA_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('result',{}).get('app',{}).get('running') else 'false')" 2>/dev/null || echo "false")
+  ORCA_AVAILABLE=$(echo "$ORCA_JSON" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('result',{}).get('app',{}).get('running') else 'false')" 2>/dev/null || echo "false")
   if [ "$ORCA_AVAILABLE" = "true" ]; then
     WORKTREE_COUNT=$(orca worktree ps --limit 10 2>/dev/null | grep -c "refs/heads" || echo "0")
     echo "🔧 Orca: 可用 (工作树: ${WORKTREE_COUNT:-0} 个)"
@@ -72,7 +73,7 @@ fi
 if [ -f "hermes/eagle-eye/state.json" ]; then
   echo ""
   echo "⚠️  检测到未完成的测试运行:"
-  python3 -c "
+  $PYTHON -c "
 import json
 with open('hermes/eagle-eye/state.json') as f:
     s = json.load(f)
