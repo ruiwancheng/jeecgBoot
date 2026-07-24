@@ -28,6 +28,11 @@ export function auditApply(params: any) {
   return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
 }
 
+export async function querySupplierSelect(params?: any) {
+  const res = await defHttp.get({ url: '/mes/basic/supplier/selectPage', params });
+  return res || [];
+}
+
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }

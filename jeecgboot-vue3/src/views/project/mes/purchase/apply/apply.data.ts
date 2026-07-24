@@ -1,5 +1,6 @@
 import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
+import { querySupplierSelect } from './apply.api';
 
 export const columns: BasicColumn[] = [
   { title: '申请单号', dataIndex: 'code', width: 130 },
@@ -24,7 +25,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '申请单号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50 } },
-  { field: 'supplierId', label: '供应商', component: 'ApiSelect', required: true, colProps: { span: 8 }, componentProps: { api: () => import('/@/views/project/mes/basic/supplier/supplier.api').then(m => m.querySupplierSelect) } },
+  { field: 'supplierId', label: '供应商', component: 'ApiSelect', required: true, colProps: { span: 8 }, componentProps: { api: querySupplierSelect } },
   { field: 'purchaseType', label: '采购类型', component: 'JDictSelectTag', colProps: { span: 8 }, componentProps: { dictCode: 'mes_purchase_type' } },
   { field: 'deptId', label: '申请部门', component: 'Input', colProps: { span: 8 } },
   { field: 'applicantId', label: '申请人', component: 'Input', colProps: { span: 8 } },
