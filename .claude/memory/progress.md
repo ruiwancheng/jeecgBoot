@@ -4,12 +4,12 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | idle | 采购申请增强+Harness重构+delegate灵敏度调整 |
-| last_verify | 2026-07-24 | orca computer实测通过 |
-| last_test | 2026-07-24 | 部署质量门控 PASS |
-| pending_step | 无 | — |
+| phase | idle | 跨平台修复+hooks硬约束+orca-review真双终端+多AI编排 |
+| last_verify | 2026-07-24 | delegate四连测试+orca-review双终端验证通过 |
+| last_test | 2026-07-24 | deploy quality gate PASS |
+| pending_step | 无 | 待用户试用delegate+orca-review效果 |
 
-## 会话收尾（2026-07-24 session-wrap）
+## 会话收尾（2026-07-24 session-wrap #2）
 - /delegate 工作流三轮迭代修复：orca-review强制触发+verify不卡死+worker_done必发
 - /new-terminal 命令修复：记忆卡片加入会话上下文 + terminal send→--inject注入
 - /cleanup-context 模板重构
