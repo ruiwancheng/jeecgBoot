@@ -34,7 +34,7 @@
 
   function materialText(record: any) {
     const m = materialMap.value[record.materialId];
-    if (m) return `${m.code} — ${m.name}`;
+    if (m) return m.code;
     return record.materialId_dictText || record.materialId || '-';
   }
 

@@ -2,7 +2,7 @@ import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
 
 export const columns: BasicColumn[] = [
-  { title: '物料', dataIndex: 'materialId_dictText', width: 150 },
+  { title: '物料', dataIndex: 'materialId', width: 120, slots: { customRender: 'materialId' } },
   { title: '仓库', dataIndex: 'warehouseId_dictText', width: 120 },
   { title: '期初数量', dataIndex: 'beginningQty', width: 100 },
   { title: '本期入库', dataIndex: 'inQty', width: 100 },
