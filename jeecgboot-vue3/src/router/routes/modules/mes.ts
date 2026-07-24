@@ -130,6 +130,12 @@ const mes: AppRouteModule = {
       meta: { title: '仓储管理' },
       children: [
         {
+          path: 'inventory',
+          name: 'MesInventoryOverview',
+          component: () => import('/@/views/project/mes/basic/inventory/index.vue'),
+          meta: { title: '库存总览' },
+        },
+        {
           path: 'ledger',
           name: 'MesInventoryLedger',
           component: () => import('/@/views/project/mes/purchase/ledger/index.vue'),

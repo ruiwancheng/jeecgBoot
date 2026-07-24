@@ -68,6 +68,10 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_purchase_receipt", "mes_purchase", "采购入库", "/project/mes/purchase/receipt", "project/mes/purchase/receipt/index", "MesPurchaseReceipt").sortNo(3.0).icon("ant-design:import-outlined"));
         addPerms(list, "mes:purchaseReceipt:", "mes_purchase_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
+        // 库存总览(仓储管理下)
+        list.add(MesMenuDefinition.leaf("mes_inventory_overview", "mes_warehouse", "库存总览", "/project/mes/warehouse/inventory", "project/mes/basic/inventory/index", "MesInventoryOverview").sortNo(3.0).icon("ant-design:eye-outlined"));
+        addPerms(list, "mes:inventory:", "mes_inventory_overview", new String[]{"list"});
+
         // 库存台账(仓储管理下)
         list.add(MesMenuDefinition.leaf("mes_inventory_ledger", "mes_warehouse", "库存台账", "/project/mes/warehouse/ledger", "project/mes/purchase/ledger/index", "MesInventoryLedger").sortNo(4.0).icon("ant-design:table-outlined"));
         addPerms(list, "mes:inventoryLedger:", "mes_inventory_ledger", new String[]{"list","export"});
