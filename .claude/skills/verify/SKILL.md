@@ -152,4 +152,9 @@ orca worktree rm --worktree branch:eagleeye/verify-{模块名}
 4. 逐项执行验证
 5. 汇总输出，标注通过/失败及证据
 6. 如有 ✗ 项，分析根因并尝试修复（最多 2 次），修复后重验证
-7. **强制输出（2026-07-22 新增）：如果 verify 全部通过，必须在输出末尾提示"✅ /verify 通过。下一步：运行 /quality-gate 做安全扫描+综合判定"**——这一步不依赖 AI 记忆，写在验证流程末尾作为硬输出
+7. **写入验证证据（2026-07-24 新增）：** verify 全部通过后执行：
+   ```bash
+   echo "$(date '+%Y-%m-%d %H:%M:%S') $(git rev-parse HEAD)" > .last-verify
+   ```
+   `.last-verify` 格式：`时间戳 commit_hash`。pre-commit hook 校验 commit hash——HEAD 变化后旧记录自动失效。
+8. **强制输出（2026-07-22 新增）：如果 verify 全部通过，必须在输出末尾提示"✅ /verify 通过。下一步：运行 /quality-gate 做安全扫描+综合判定"**——这一步不依赖 AI 记忆，写在验证流程末尾作为硬输出
