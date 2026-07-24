@@ -23,12 +23,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### orca-review 触发规则
 
-**delegate 模式下工人 preamble 强制执行，直接模式仅限以下豁免场景：**
+**任何代码改动（Java/Vue/TS/SQL）都必须 orca-review，无论 delegate 还是直接模式：**
 
-| 直接模式场景 | orca-review？ |
-|-------------|:--:|
+| 场景 | orca-review？ |
+|------|:--:|
+| 代码改动（Java/Vue/TS/SQL）| **强制** |
 | 文案/注释/样式 | 免 |
-| 用户说"直接改" | 按用户意思 |
 
 ### 自动 delegate 判定
 

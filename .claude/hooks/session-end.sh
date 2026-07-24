@@ -16,4 +16,9 @@ mkdir -p "$ARCHIVE_DIR"
     fi
 } > "$ARCHIVE_DIR/session-$(date '+%Y%m%d-%H%M%S').txt"
 
+# 清理 /plan 执行标记（避免跨会话泄漏）
+rm -f /tmp/claude-plan-executed 2>/dev/null
+# 清理 delegate 提醒标记
+rm -f /tmp/claude-delegate-reminded-* 2>/dev/null
+
 exit 0
