@@ -54,21 +54,21 @@ metadata:
 
    **无 Token（慢但稳）：**
    ```bash
-   cd /mnt/d/project/JeecgBoot
+   cd ${CLAUDE_PROJECT_DIR:-.}
    unset GITHUB_TOKEN
    python3 hermes/tasks/scripts/github_harness_scan.py
    ```
 
    **带 Token（快）：**
    ```bash
-   cd /mnt/d/project/JeecgBoot
+   cd ${CLAUDE_PROJECT_DIR:-.}
    export GITHUB_TOKEN="<your-token>"
    python3 hermes/tasks/scripts/github_harness_scan.py
    ```
 
    **快速试跑（每查询前 3 个）：**
    ```bash
-   cd /mnt/d/project/JeecgBoot
+   cd ${CLAUDE_PROJECT_DIR:-.}
    unset GITHUB_TOKEN
    python3 hermes/tasks/scripts/github_harness_scan.py 3
    ```
