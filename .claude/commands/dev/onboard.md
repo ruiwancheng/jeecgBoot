@@ -10,7 +10,7 @@ description: 自有命令 — 环境配置向导：检测 OS + 核对工具链 +
 - `minimal` — 仅前端（Git + Node/pnpm + Tailscale）
 - `standard` — 前后端（+ Java/Maven/MySQL/Redis）
 - `full` — 完整 harness（+ MCP + Orca）
-- 不指定 → 按需询问或默认 `full`
+- 不指定 → 询问用户：前端开发选 `minimal`（业务人员推荐），全栈开发选 `standard`/`full`
 
 ## 流程
 
