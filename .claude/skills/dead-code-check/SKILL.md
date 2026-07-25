@@ -76,7 +76,12 @@ version: 1.0.0
 - LOW 置信度: N 个（保留）
 ```
 
-## 降级策略
+## 降级策略（硬阻断）
 
-- 图谱不可用 → 输出 `"死代码检测需要 code-review-graph，请先运行 build_or_update_graph_tool"`
-- 结果量过大（>1000 条）→ 分批输出，按文件路径排序，前 100 条 + 提示剩余数量
+**此命令 100% 依赖 code-review-graph MCP 的 refactor_tool。MCP 不可用时必须阻断，不得降级。**
+
+MCP 不可用时：
+1. 输出：`❌ 阻断：dead-code-check 100% 依赖 code-review-graph MCP 的 refactor_tool(dead_code)，无法降级执行。请先安装 MCP 服务并运行 /update-graph 构建图谱。诊断工具：/capability-check`
+2. **停止执行。禁止**使用 Grep/Read 或任何替代方式继续。
+
+结果量过大（>1000 条）时：分批输出，按文件路径排序，前 100 条 + 提示剩余数量。
