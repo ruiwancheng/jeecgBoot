@@ -62,27 +62,45 @@ pi 把当前阶段的产出写成一段**结构化的评审输入**，包含：
 
 ### 步骤 2：派 Claude 评审
 
-创建 task，dispatch --inject：
+**2a. 找到 Claude 终端：**
+```bash
+orca terminal list --json | python3 -c "
+import json,sys
+data = json.load(sys.stdin)
+for t in data['result']['terminals']:
+    if 'Claude' in t.get('title',''):
+        print(t['handle'], t['title'], t['writable'])
+"
+```
 
+**2b. 创建编排任务并派发：**
+```bash
+# 创建任务
+orca orchestration task-create \
+  --spec "<评审输入>" \
+  --task-title "review-<任务名>"
+
+# 派发到 Claude 终端（--inject 模式：注入上下文不打断当前操作）
+orca orchestration dispatch \
+  --task <task_id> \
+  --to <claude_terminal_handle> \
+  --inject
 ```
-【外部评审 - brainstorm/plan】<评审输入>
-请从 <阶段视角> 审视以上草案。只读代码作为辅助，不修改任何文件。
-输出格式：
-## 评审结论（1 句总结）
-## ✅ 思路对齐（与草案一致的部分）
-## ⚠️ 遗漏或风险（草案没覆盖的、有问题的）
-## 💡 优化建议（如果有更优的路径）
-每个条目要具体到文件/数据/场景，禁止笼统说"缺少校验"。
-报告写到 hermes/reviews/<日期>-<任务>.md。
-按 preamble 回报 worker_done。
+
+**2c. 降级方案（orchestration dispatch 不可用时）：**
+```bash
+orca terminal send --terminal <handle> --text "<评审提示词>" --enter
 ```
+> 注意：terminal send 是文本注入，不是结构化任务派发。不保证 worker_done 信号。
 
 ### 步骤 3：等待并吸收
 
-- **等待**：TUI 自动投递 worker_done（主通道）+ 轮询 dispatch-show 兜底
+- **等待**：`orca orchestration dispatch-show --task <task_id>` 检查状态
+- **兜底**：直接检查报告文件是否生成 `test -f hermes/reviews/<日期>-<任务>.md`
 - **禁止 check --wait**（与 tiequan 同样的原因：TUI 截胡消息）
 - 收到回报后：读报告 → 判断哪些接受、哪些不接受 → 改进草案
 - **重要**：Claude 的建议不是圣旨，pi 有权拒绝（如"该项目模式，与 XX 模块保持一致，不采纳"），拒绝的理由写进最终输出
+- **超时**：等待最多 5 分钟，超时标记"外部评审未完成"
 
 ### 步骤 4：展示给用户
 
