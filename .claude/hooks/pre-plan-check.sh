@@ -12,8 +12,11 @@ if [ "$IS_PLAN" != "plan" ]; then
   exit 0
 fi
 
+# Portable temp dir (Windows-safe)
+PLAN_TMP="${TMPDIR:-${TEMP:-/tmp}}"
+[ -d "$PLAN_TMP" ] || PLAN_TMP="/tmp"
 # 写入 /plan 执行标记（pre-write-check 用此标记判断是否已走 plan→orca-review 流程）
-date +%s > /tmp/claude-plan-executed 2>/dev/null
+date +%s > "$PLAN_TMP/claude-plan-executed" 2>/dev/null
 
 PASS=0
 FAIL=0

@@ -56,7 +56,12 @@ fi
 # 深度巡检逾期检查（Phase 2：提醒用户运行 /deep-inspect）
 LAST_DEEP=$(cat hermes/eagle-eye/.last-deep-inspect 2>/dev/null || echo "")
 if [ -n "$LAST_DEEP" ]; then
-  DEEP_DATE=$(date -j -f "%Y-%m-%d" "$LAST_DEEP" +%s 2>/dev/null || echo 0)
+  # OS-safe date parsing (macOS uses -j -f, Linux uses -d)
+  if date -j -f "%Y-%m-%d" "2026-01-01" +%s >/dev/null 2>&1; then
+    DEEP_DATE=$(date -j -f "%Y-%m-%d" "$LAST_DEEP" +%s 2>/dev/null || echo 0)
+  else
+    DEEP_DATE=$(date -d "$LAST_DEEP" +%s 2>/dev/null || echo 0)
+  fi
   NOW=$(date +%s)
   DAYS_SINCE=$(( ($NOW - $DEEP_DATE) / 86400 ))
   if [ "$DAYS_SINCE" -gt 14 ]; then

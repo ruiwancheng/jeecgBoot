@@ -14,13 +14,16 @@ version: 1.0.0
 
 ## 前置依赖（运维一次性安装）
 
-以下工具必须在 Mac 上安装好（AI 没有 sudo 权限，需要人工完成）：
+以下工具需要预先安装（AI 没有 sudo 权限，需要人工完成）。根据操作系统选择对应方式：
 
-```bash
-# 一次性安装（业务人员不需要记住，运维/技术初始化时做一次）
-brew install mysql redis node@22 openjdk@17
-brew services start mysql redis
-```
+| 工具 | macOS | Linux/WSL | Windows |
+|------|------|-----------|---------|
+| MySQL 8.0 | `brew install mysql` | `sudo apt install mysql-server` | Docker 或 MySQL Installer |
+| Redis 7.0 | `brew install redis` | `sudo apt install redis-server` | Docker (`docker run -d -p 6379:6379 redis:7`) |
+| Node.js 20+ | `brew install node@20` | `curl -fsSL https://deb.nodesource.com/setup_20.x \| sudo -E bash - && sudo apt install nodejs` | `winget install OpenJS.NodeJS.LTS` |
+| Java 17 | `brew install openjdk@17` | `sudo apt install openjdk-17-jdk` | `winget install EclipseAdoptium.Temurin.17.JDK` |
+
+> 详细安装指引见 `/onboard` 命令。
 
 ## 启动流程（5 步，每步幂等）
 
@@ -29,20 +32,35 @@ brew services start mysql redis
 检查并自动启动需要的服务：
 
 ```bash
-# 检查 MySQL
-brew services list | grep mysql | grep started || brew services start mysql
+# MySQL root 密码（默认 root，可通过环境变量覆盖）
+MYSQL_ROOT_PASS="${MYSQL_ROOT_PASSWORD:-root}"
+
+# 检查 MySQL（macOS: brew services, Linux: systemctl, 通用: mysqladmin ping）
+if command -v brew >/dev/null 2>&1; then
+  brew services list 2>/dev/null | grep mysql | grep started || brew services start mysql
+elif command -v systemctl >/dev/null 2>&1; then
+  systemctl is-active mysql >/dev/null 2>&1 || sudo systemctl start mysql
+else
+  mysqladmin ping -uroot -p"$MYSQL_ROOT_PASS" 2>/dev/null || echo "⚠️ MySQL 未运行，请手动启动"
+fi
 
 # 检查 Redis
-brew services list | grep redis | grep started || brew services start redis
+if command -v brew >/dev/null 2>&1; then
+  brew services list 2>/dev/null | grep redis | grep started || brew services start redis
+elif command -v systemctl >/dev/null 2>&1; then
+  systemctl is-active redis >/dev/null 2>&1 || sudo systemctl start redis
+else
+  redis-cli ping 2>/dev/null || echo "⚠️ Redis 未运行，请手动启动"
+fi
 
 # 检查 Java（版本 ≥17）
-java --version | head -1
+java --version 2>/dev/null | head -1 || echo "❌ Java 未安装"
 
 # 检查 Node（版本 ≥20）
-node --version
+node --version 2>/dev/null || echo "❌ Node.js 未安装"
 
 # 检查 pnpm
-pnpm --version || npm install -g pnpm
+pnpm --version 2>/dev/null || npm install -g pnpm
 ```
 
 **任何一个缺** → 提示"请先运行：<brew install 命令>"，不继续。
@@ -53,24 +71,24 @@ pnpm --version || npm install -g pnpm
 
 ```bash
 # 建库（幂等：已存在则跳过）
-mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS \`jeecg-boot\` DEFAULT CHARACTER SET utf8mb4;"
+mysql -uroot -p"$MYSQL_ROOT_PASS" -e "CREATE DATABASE IF NOT EXISTS \`jeecg-boot\` DEFAULT CHARACTER SET utf8mb4;"
 
 # 判断是否需要导入（检查表数量）
-TABLE_COUNT=$(mysql -uroot -proot jeecg-boot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='jeecg-boot';" 2>/dev/null | tail -1)
+TABLE_COUNT=$(mysql -uroot -p"$MYSQL_ROOT_PASS" jeecg-boot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='jeecg-boot';" 2>/dev/null | tail -1)
 
 if [ "$TABLE_COUNT" = "0" ] || [ -z "$TABLE_COUNT" ]; then
   # 导入 JeecgBoot 平台基础表
-  mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
+  mysql -uroot -p"$MYSQL_ROOT_PASS" jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
 
   # 导入 JeecgBoot 平台基础表
-  mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
+  mysql -uroot -p"$MYSQL_ROOT_PASS" jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
 
   # 导入所有 MES 业务模块表（部署控制台扫描路径：**/sql/*.sql + **/db/*.sql）
   # 注意：必须同时扫描 db/ 和 src/main/resources/sql/ 两个目录，
   # 因为部分建表 SQL（如客户/供应商的基础 CREATE TABLE）在 resources/sql/ 中，
   # 后续 ALTER TABLE 的增量迁移在 db/ 中，按文件名字母序执行保证顺序正确
   find jeecg-boot/jeecg-boot-module/project-mes -path "*/target/*" -prune -o \( -path "*/sql/*.sql" -o -path "*/db/*.sql" \) -type f -print | sort | while read f; do
-    mysql -uroot -proot --force jeecg-boot < "$f" 2>/dev/null
+    mysql -uroot -p"$MYSQL_ROOT_PASS" --force jeecg-boot < "$f" 2>/dev/null
   done
 fi
 ```
@@ -86,13 +104,26 @@ cd jeecgboot-vue3 && pnpm install
 
 ```bash
 # 检查端口是否被占用
-lsof -i :8080 | grep LISTEN > /dev/null 2>&1
+# Portable port check (lsof/ss/netstat fallback)
+port_in_use() {
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -i ":$1" 2>/dev/null | grep -q LISTEN
+  elif command -v ss >/dev/null 2>&1; then
+    ss -tlnp 2>/dev/null | grep -q ":$1 "
+  elif command -v netstat >/dev/null 2>&1; then
+    netstat -tlnp 2>/dev/null | grep -q ":$1 "
+  else
+    curl -s -o /dev/null "http://localhost:$1" 2>/dev/null && return 0
+    return 1
+  fi
+}
+port_in_use 8080
 
 if [ $? -ne 0 ]; then
   # 端口空闲，启动后端（后台运行，DevTools 热重载）
   cd jeecg-boot/jeecg-module-system/jeecg-system-start
   nohup mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dspring.flyway.enabled=false \
-    > /tmp/jeecg-local-backend.log 2>&1 &
+    > ${TMPDIR:-/tmp}/jeecg-local-backend.log 2>&1 &
 fi
 
 # 等待后端就绪（最长 90 秒）
@@ -106,7 +137,7 @@ done
 
 ```bash
 # 检查端口是否被占用
-lsof -i :3100 | grep LISTEN > /dev/null 2>&1
+port_in_use 3100
 
 if [ $? -ne 0 ]; then
   # 检查前端 proxy 配置（确保指向本地后端而非服务端）
@@ -115,7 +146,7 @@ if [ $? -ne 0 ]; then
 VITE_GLOB_DOMAIN_URL=http://localhost:8080/jeecg-boot' > jeecgboot-vue3/.env.development.local
 
   # 端口空闲，启动前端
-  cd jeecgboot-vue3 && nohup pnpm dev > /tmp/jeecg-local-frontend.log 2>&1 &
+  cd jeecgboot-vue3 && nohup pnpm dev > ${TMPDIR:-/tmp}/jeecg-local-frontend.log 2>&1 &
 fi
 
 # 等待前端就绪（最长 30 秒）
@@ -147,8 +178,20 @@ done
 ## 停止本地环境
 
 ```
-pkill -f "spring-boot:run"
-pkill -f "vite"
+# 停止后端（跨平台兼容）
+if command -v pkill >/dev/null 2>&1; then
+  pkill -f "spring-boot:run"
+elif command -v taskkill >/dev/null 2>&1; then
+  taskkill //F //IM "java.exe" 2>/dev/null
+elif command -v killall >/dev/null 2>&1; then
+  killall "java" 2>/dev/null
+fi
+# 停止前端
+if command -v pkill >/dev/null 2>&1; then
+  pkill -f "vite"
+elif command -v taskkill >/dev/null 2>&1; then
+  taskkill //F //IM "node.exe" 2>/dev/null
+fi
 # MySQL/Redis 通常不停止（系统服务，低资源常驻）
 ```
 
@@ -163,6 +206,6 @@ pkill -f "vite"
 
 ## 文件约定
 
-- 后端日志：`/tmp/jeecg-local-backend.log`
-- 前端日志：`/tmp/jeecg-local-frontend.log`
+- 后端日志：`${TMPDIR:-/tmp}/jeecg-local-backend.log`
+- 前端日志：`${TMPDIR:-/tmp}/jeecg-local-frontend.log`
 - 前端代理配置：`jeecgboot-vue3/.env.development.local`（不会被 git 提交）

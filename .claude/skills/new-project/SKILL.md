@@ -167,7 +167,7 @@ SQL 文件生成后，检测 MySQL 可用性并自动执行：
 
 ```bash
 # ✅ 正确：管道传文件
-cat /tmp/init.sql | docker exec -i <容器名> mysql -u root -proot --default-character-set=utf8mb4
+cat ${TMPDIR:-/tmp}/init.sql | docker exec -i <容器名> mysql -u root -p"${MYSQL_ROOT_PASSWORD:-root}" --default-character-set=utf8mb4
 
 # ❌ 错误：-e 参数传中文
 # docker exec <容器名> mysql -e "INSERT ... VALUES('中文')"

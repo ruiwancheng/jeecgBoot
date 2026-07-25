@@ -101,7 +101,7 @@ mvn clean install -pl jeecg-boot-module/project-<项目名> -am -DskipTests
 ### 验证新模块已加载
 
 ```bash
-grep "project-<项目名>" /tmp/jeecg-backend.log
+grep "project-<项目名>" ${TMPDIR:-/tmp}/jeecg-backend.log
 ```
 
 在启动日志中搜索项目模块名，确认被 Spring Boot 扫描到。

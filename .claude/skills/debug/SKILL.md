@@ -16,7 +16,7 @@ debug 过程中频繁查看日志、重启服务、测试修复时，利用 Orca
 
 | 操作 | Orca 命令 | 降级 (Bash) |
 |------|-----------|-------------|
-| 查看后端日志 | `orca terminal read --terminal term_backend --lines 100` | `tail -100 /tmp/jeecg-backend.log` |
+| 查看后端日志 | `orca terminal read --terminal term_backend --lines 100` | `tail -100 ${TMPDIR:-/tmp}/jeecg-backend.log` |
 | 重启后端 | `orca terminal create --worktree active --command "mvn spring-boot:run"` | `kill` + `nohup` 手动 |
 | 查看终端输出 | `orca terminal read --terminal term_backend` | 手动切窗口查看 |
 | 发送构建命令 | `orca terminal send --terminal term_build --text "mvn compile"` | 直接 bash 执行 |

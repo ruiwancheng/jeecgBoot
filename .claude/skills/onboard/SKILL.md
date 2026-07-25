@@ -8,6 +8,13 @@ version: 1.0.0
 
 AI 不装软件（无 sudo），只做"向导"：检测 → 核对 → 给命令 → 用户执行 → 验证 → 下一步。
 
+**Linux 发行版适配：** 下表 Linux 列默认使用 `apt`（Debian/Ubuntu）。其他发行版自动替换：
+- RHEL/Fedora: `apt install` → `dnf install`，`apt` → `dnf`
+- Arch/Manjaro: `apt install` → `pacman -S`，`systemctl` → `systemctl`（相同）
+- openSUSE: `apt install` → `zypper install`
+
+> 部分命令需要 `sudo`。AI 会检测当前发行版后给出对应命令。
+
 ## 工具清单（按需三级）
 
 **推荐：业务人员（前端开发）用 `minimal`，服务端/全栈开发选更高级别。**

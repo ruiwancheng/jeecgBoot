@@ -138,7 +138,7 @@ orca worktree rm --worktree branch:eagleeye/verify-{模块名}
 
 | 操作 | Orca 命令 | 降级 (Bash) |
 |------|-----------|-------------|
-| 查看后端日志 | `orca terminal read --terminal term_backend --lines 50` | `tail -50 /tmp/jeecg-backend.log` |
+| 查看后端日志 | `orca terminal read --terminal term_backend --lines 50` | `tail -50 ${TMPDIR:-/tmp}/jeecg-backend.log` |
 | 重启后端 | `orca terminal send` + `create` + `wait` | `kill` + `nohup mvn spring-boot:run` |
 | 构建前端 | `orca terminal send --text "pnpm build"` | 直接 bash 执行 |
 

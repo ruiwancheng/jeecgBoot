@@ -127,15 +127,16 @@ if (MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL) {
 
 ```bash
 # 1. 写入 UTF-8 文件（用 Write 工具，或 printf + iconv）
-cat > /tmp/svn_msg.txt <<'EOF'
+SVN_TMP="${TMPDIR:-/tmp}/svn_msg.txt"
+cat > "$SVN_TMP" <<'EOF'
 JHHB-XXXX 简要说明
 EOF
 
 # 2. 用 -F 提交，--encoding 指定文件的编码
-svn commit -F /tmp/svn_msg.txt --encoding utf-8 "<file1>" "<file2>" 2>&1 | iconv -f GBK -t UTF-8
+svn commit -F "$SVN_TMP" --encoding utf-8 "<file1>" "<file2>" 2>&1 | iconv -f GBK -t UTF-8
 
 # 3. 提交完成后删除临时文件
-rm /tmp/svn_msg.txt
+rm "$SVN_TMP"
 ```
 
 **提交后必须验证**：用 `svn log -l 1 --xml <path> | iconv -f GBK -t UTF-8` 或直接看命令行输出，**肉眼确认** commit message 中的中文没有变成 `�?` 之类的乱码；一旦发现乱码立即用 `svn propset --revprop -r <rev> svn:log "<新msg>"` 修复（需服务端开启 `pre-revprop-change` hook）。

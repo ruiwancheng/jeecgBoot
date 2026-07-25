@@ -25,24 +25,29 @@ version: 1.0.0
 ### 1. 停止旧进程
 
 ```bash
-pkill -f "JeecgSystemApplication" 2>/dev/null
+# 跨平台停止后端进程
+if command -v pkill >/dev/null 2>&1; then
+  pkill -f "JeecgSystemApplication" 2>/dev/null
+elif command -v taskkill >/dev/null 2>&1; then
+  taskkill //F //IM "java.exe" 2>/dev/null
+fi
 sleep 3
 ```
 
-确保进程完全退出后再启动。如果进程不存在，`pkill` 不会报错（`2>/dev/null` 静默处理）。
+确保进程完全退出后再启动。如果进程不存在，停止命令不会报错。
 
 ### 2. 启动新进程
 
 ```bash
 cd jeecg-boot/jeecg-module-system/jeecg-system-start
-nohup mvn spring-boot:run -DskipTests > /tmp/jeecg-backend.log 2>&1 &
+nohup mvn spring-boot:run -DskipTests > ${TMPDIR:-/tmp}/jeecg-backend.log 2>&1 &
 ```
 
 | 参数 | 说明 |
 |------|------|
 | `nohup` | 后台运行，忽略 SIGHUP |
 | `-DskipTests` | 跳过测试，加快启动 |
-| `> /tmp/jeecg-backend.log 2>&1` | 标准输出和错误重定向到日志文件 |
+| `> ${TMPDIR:-/tmp}/jeecg-backend.log 2>&1` | 标准输出和错误重定向到日志文件 |
 | `&` | 放入后台 |
 
 ### 3. 验证启动
@@ -51,26 +56,26 @@ nohup mvn spring-boot:run -DskipTests > /tmp/jeecg-backend.log 2>&1 &
 
 **成功信号：**
 ```bash
-grep "Started JeecgSystemApplication" /tmp/jeecg-backend.log
+grep "Started JeecgSystemApplication" ${TMPDIR:-/tmp}/jeecg-backend.log
 ```
 
 出现该日志行表示应用启动成功，端口 8080 已就绪。
 
 **失败信号：**
 ```bash
-grep -E "BUILD FAILURE|Error" /tmp/jeecg-backend.log
+grep -E "BUILD FAILURE|Error" ${TMPDIR:-/tmp}/jeecg-backend.log
 ```
 
 出现 `BUILD FAILURE` 或严重 `Error` 表示启动失败。查看日志尾部获取详细错误信息：
 
 ```bash
-tail -50 /tmp/jeecg-backend.log
+tail -50 ${TMPDIR:-/tmp}/jeecg-backend.log
 ```
 
 ### 4. 查看实时日志（可选）
 
 ```bash
-tail -f /tmp/jeecg-backend.log
+tail -f ${TMPDIR:-/tmp}/jeecg-backend.log
 ```
 
 ---

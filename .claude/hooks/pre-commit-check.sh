@@ -58,7 +58,12 @@ if [ -n "$CODE_FILES" ] && [ -d "harness/tests" ]; then
     if ls "harness/tests/$MODULE/"*.spec.ts 2>/dev/null | grep -q .; then
       echo "[Super Harness] 模块 $MODULE 有测试，运行快速验证..."
       if command -v npx &>/dev/null; then
-        timeout 60 npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20
+        if command -v timeout >/dev/null 2>&1; then
+          timeout 60 npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20
+        else
+          # macOS/BSD fallback: no native timeout, run without time limit
+          npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20
+        fi
         TEST_EXIT=$?
         if [ $TEST_EXIT -ne 0 ]; then
           echo ""
@@ -83,7 +88,16 @@ fi
 # HEAD 变化后旧记录自动失效（防止一次touch永久通过）
 # ============================================
 STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E "\.(java|vue|ts)$" | head -20)
-if [ -n "$STAGED_JAVA_VUE" ] && lsof -i :8080 | grep -q LISTEN 2>/dev/null; then
+# Portable port check: try lsof, fallback to ss/netstat
+PORT_8080_UP=false
+if command -v lsof >/dev/null 2>&1; then
+  lsof -i :8080 2>/dev/null | grep -q LISTEN && PORT_8080_UP=true
+elif command -v ss >/dev/null 2>&1; then
+  ss -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
+elif command -v netstat >/dev/null 2>&1; then
+  netstat -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
+fi
+if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
   CURRENT_HEAD=$(git rev-parse HEAD 2>/dev/null)
   VERIFY_VALID=0
   if [ -f ".last-verify" ]; then
@@ -225,7 +239,16 @@ fi
 # 本地验证提醒：后端运行时必须 curl 实测
 # ============================================
 STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E ".(java|vue|ts)$" | head -20)
-if [ -n "$STAGED_JAVA_VUE" ] && lsof -i :8080 | grep -q LISTEN 2>/dev/null; then
+# Portable port check: try lsof, fallback to ss/netstat
+PORT_8080_UP=false
+if command -v lsof >/dev/null 2>&1; then
+  lsof -i :8080 2>/dev/null | grep -q LISTEN && PORT_8080_UP=true
+elif command -v ss >/dev/null 2>&1; then
+  ss -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
+elif command -v netstat >/dev/null 2>&1; then
+  netstat -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
+fi
+if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
   echo ""
   echo "[Super Harness] ╔══════════════════════════════════════╗"
   echo "[Super Harness] ║  本地后端在运行 (8080) — /verify 完成了吗？ ║"
