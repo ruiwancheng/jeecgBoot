@@ -1,0 +1,217 @@
+{
+  "$schema": "business-chains.schema.json",
+  "version": "1.0.0",
+  "description": "业务链路注册表——声明模块间上下游依赖，改任意节点触发全链路质量验证",
+  "lastUpdated": "2026-07-22",
+
+  "chains": {
+    "采购链路": {
+      "id": "purchase-chain",
+      "description": "采购申请→订单→入库→台账，包含业财联动(应付生成)",
+      "flow": ["申请", "审核", "生成订单", "审核订单", "收货入库", "审核入库", "库存更新", "应付生成"],
+      "modules": [
+        "purchase/apply",
+        "purchase/order",
+        "purchase/receipt",
+        "purchase/ledger"
+      ],
+      "sideEffects": [
+        "finance/payable"
+      ],
+      "tests": {
+        "api": "harness/tests/mes/purchase.test.js",
+        "e2e": "harness/e2e/mes/purchase.spec.ts"
+      },
+      "criticalPaths": [
+        "POST /mes/purchase/receipt/add → 校验订单存在+状态+超量",
+        "PUT /mes/purchase/receipt/audit → 原子扣减+库存更新+应付生成",
+        "POST /mes/purchase/order/add → 供应商校验+金额重算"
+      ],
+      "chainTests": {
+        "enabled": true,
+        "segments": [
+          {
+            "name": "申请→订单",
+            "file": "harness/tests/mes/purchase-apply-order.chain.test.js",
+            "assertions": 17,
+            "covers": ["创建申请→审核→加载到订单→创建订单→审核→反审核"]
+          },
+          {
+            "name": "订单→入库",
+            "file": "harness/tests/mes/purchase-order-receipt.chain.test.js",
+            "assertions": 16,
+            "covers": ["创建订单→审核→入库→超量拦截→全部到货→库存台账"]
+          }
+        ]
+      },
+      "health": {
+        "lastAudit": "2026-07-22",
+        "status": "healthy",
+        "openGaps": []
+      }
+    },
+
+    "销售链路": {
+      "id": "sales-chain",
+      "description": "销售订单→发货→出库",
+      "flow": ["下单", "发货通知", "出库"],
+      "modules": [
+        "sales/order",
+        "sales/delivery",
+        "sales/outbound"
+      ],
+      "sideEffects": [],
+      "tests": {
+        "api": null,
+        "e2e": "harness/e2e/mes/sales-order.spec.ts"
+      },
+      "criticalPaths": [],
+      "health": {
+        "lastAudit": null,
+        "status": "unknown",
+        "openGaps": []
+      }
+    },
+
+    "生产链路": {
+      "id": "manufacturing-chain",
+      "description": "BOM→生产订单→领料→完工入库",
+      "flow": ["定义BOM", "下生产单", "领料", "完工入库"],
+      "modules": [
+        "manufacturing/bom",
+        "manufacturing/order",
+        "manufacturing/picking",
+        "manufacturing/completion"
+      ],
+      "sideEffects": [],
+      "tests": {
+        "api": "harness/tests/mes/manufacturing.test.js",
+        "e2e": null
+      },
+      "criticalPaths": []
+    },
+
+    "基础数据": {
+      "id": "basic-data",
+      "description": "物料/供应商/仓库/客户等基础档案，独立模块无链路依赖",
+      "flow": [],
+      "modules": ["basic"],
+      "sideEffects": [],
+      "tests": {
+        "api": "harness/tests/mes/basic.test.js",
+        "e2e": "harness/e2e/mes/basic.spec.ts"
+      },
+      "criticalPaths": [],
+      "health": {
+        "lastAudit": null,
+        "status": "unknown",
+        "openGaps": []
+      },
+      "isStandalone": true
+    }
+  },
+
+  "changeClassification": {
+    "description": "按变更文件类型自动分级，决定触发哪些验证动作",
+    "levels": {
+      "skip": {
+        "description": "无需验证",
+        "matches": [
+          "*.md 仅文案修改",
+          "*.vue 仅 <template> 文字/样式变更(无 script 变更)",
+          "*.json 非 business-chains 文件",
+          "注释/格式化/import排序 等纯重构"
+        ],
+        "action": "无"
+      },
+      "light": {
+        "description": "轻量验证",
+        "matches": [
+          "*.vue script 逻辑变更",
+          "Controller.java 新增/修改查询方法",
+          ".data.ts 列配置变更"
+        ],
+        "action": "鹰眼团 E2E 回归",
+        "estimatedMinutes": 2
+      },
+      "standard": {
+        "description": "标准验证",
+        "matches": [
+          "Controller.java 新增/修改写操作方法(add/edit/delete/audit)",
+          "前端 api.ts / 路由配置变更",
+          "≥3 个同模块文件变更"
+        ],
+        "action": "鹰眼团 API 回归 + E2E 回归",
+        "estimatedMinutes": 5
+      },
+      "full": {
+        "description": "全量验证",
+        "matches": [
+          "Entity.java 新增/修改字段",
+          "ServiceImpl.java 核心逻辑变更",
+          "Mapper.java / Mapper.xml / SQL 文件变更",
+          "跨模块变更 ≥2 个模块目录",
+          "pom.xml 依赖变更"
+        ],
+        "action": "鹰眼团 API 全链路回归 + E2E + 铁拳团模块审计 + 链路审计",
+        "estimatedMinutes": 20
+      }
+    }
+  },
+
+  "qualityGate": {
+    "shadowMode": {
+      "description": "影子模式：审计发现不阻塞部署，仅记录",
+      "startDate": "2026-07-22",
+      "endDate": "2026-08-05",
+      "action": "审计P0记录到报告，部署继续"
+    },
+    "liveMode": {
+      "description": "正式模式：审计P0阻断部署（需影子模式数据达标后开启）",
+      "conditions": {
+        "falsePositiveRate": "< 20%",
+        "trueDiscoveryRate": "> 50%",
+        "minimumShadowDays": 14
+      },
+      "action": "审计P0 → BLOCKED，需修复后重新部署"
+    },
+    "skipAuditFlag": {
+      "description": "紧急旁路：生产P0 hotfix可跳过审计",
+      "flag": "--skip-audit",
+      "usageRule": "仅限生产P0修复，使用后记录到 hermes/logs/skip-audit.log"
+    },
+    "failureStrategy": {
+      "apiTestFailed": "报告失败详情，部署继续(不阻塞，人工判断)",
+      "e2eTestFailed": "报告失败详情，部署继续",
+      "auditP0_shadowMode": "记录P0，部署继续",
+      "auditP0_liveMode": "BLOCKED，修复后重新部署",
+      "auditP1": "记录，不阻塞",
+      "testTimeout": "5分钟超时，记录超时，部署继续"
+    }
+  },
+
+  "deployDiff": {
+    "description": "部署差异追踪",
+    "baseFile": ".last-deploy-commit",
+    "rule": "git diff .last-deploy-commit..HEAD 获取差集，部署完成后更新 .last-deploy-commit = HEAD"
+  },
+
+  "chainAudit": {
+    "description": "链路审计（铁拳团第11视角）——变更涉及≥2个模块时自动触发，追踪业务流程是否贯通",
+    "trigger": "变更命中任意链路 ≥2 个模块（不依赖变更分级，独立判断）",
+    "agent": "链路人1号 — 端到端链路贯通视角",
+    "skillFile": ".claude/skills/jeecg-chain-audit/SKILL.md",
+    "estimatedMinutes": 5,
+    "outputFile": "hermes/tiequan/{date}/{module}-chain/13_链路审计报告.md",
+    "dimensions": [
+      "状态机衔接",
+      "接口衔接",
+      "数据契约",
+      "逆向流程&回滚",
+      "跨模块事务边界",
+      "字典/常量一致性",
+      "权限衔接"
+    ],
+    "healthFeedback": "审计完成后回写 chains.<name>.health 字段，供下次部署时的 deploy-quality-gate 读取"
+  }
+}

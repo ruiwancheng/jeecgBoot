@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jeecgboot/hermes/business-chains.schema.json",
+  "title": "业务链路注册表",
+  "description": "声明模块间上下游依赖，改任意节点触发全链路质量验证",
+  "type": "object",
+  "required": ["version", "chains", "changeClassification", "qualityGate", "deployDiff"],
+  "properties": {
+    "version": { "type": "string", "description": "语义化版本号" },
+    "lastUpdated": { "type": "string", "format": "date" },
+
+    "chains": {
+      "type": "object",
+      "description": "业务链路定义，key=链路中文名",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "modules"],
+        "properties": {
+          "id": { "type": "string", "description": "链路唯一标识" },
+          "description": { "type": "string" },
+          "flow": { "type": "array", "items": { "type": "string" } },
+          "modules": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" },
+            "description": "模块路径前缀，如 purchase/apply"
+          },
+          "sideEffects": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "非直接依赖但受影响的模块"
+          },
+          "tests": {
+            "type": "object",
+            "properties": {
+              "api": { "type": ["string", "null"] },
+              "e2e": { "type": ["string", "null"] }
+            }
+          },
+          "criticalPaths": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "关键接口路径，验证优先级最高"
+          },
+          "isStandalone": { "type": "boolean", "default": false }
+        }
+      }
+    },
+
+    "changeClassification": {
+      "type": "object",
+      "required": ["levels"],
+      "properties": {
+        "description": { "type": "string" },
+        "levels": {
+          "type": "object",
+          "required": ["skip", "light", "standard", "full"],
+          "additionalProperties": false,
+          "properties": {
+            "skip": { "$ref": "#/$defs/classificationLevel" },
+            "light": { "$ref": "#/$defs/classificationLevel" },
+            "standard": { "$ref": "#/$defs/classificationLevel" },
+            "full": { "$ref": "#/$defs/classificationLevel" }
+          }
+        }
+      }
+    },
+
+    "qualityGate": {
+      "type": "object",
+      "required": ["shadowMode", "skipAuditFlag", "failureStrategy"],
+      "properties": {
+        "shadowMode": {
+          "type": "object",
+          "required": ["startDate", "endDate", "action"],
+          "properties": {
+            "description": { "type": "string" },
+            "startDate": { "type": "string", "format": "date" },
+            "endDate": { "type": "string", "format": "date" },
+            "action": { "type": "string" }
+          }
+        },
+        "liveMode": {
+          "type": "object",
+          "required": ["conditions", "action"],
+          "properties": {
+            "description": { "type": "string" },
+            "conditions": {
+              "type": "object",
+              "required": ["falsePositiveRate", "trueDiscoveryRate", "minimumShadowDays"],
+              "properties": {
+                "falsePositiveRate": { "type": "string" },
+                "trueDiscoveryRate": { "type": "string" },
+                "minimumShadowDays": { "type": "integer" }
+              }
+            },
+            "action": { "type": "string" }
+          }
+        },
+        "skipAuditFlag": {
+          "type": "object",
+          "required": ["flag", "usageRule"],
+          "properties": {
+            "description": { "type": "string" },
+            "flag": { "type": "string" },
+            "usageRule": { "type": "string" }
+          }
+        },
+        "failureStrategy": {
+          "type": "object",
+          "required": ["apiTestFailed", "auditP0_shadowMode", "auditP0_liveMode"],
+          "properties": {
+            "apiTestFailed": { "type": "string" },
+            "e2eTestFailed": { "type": "string" },
+            "auditP0_shadowMode": { "type": "string" },
+            "auditP0_liveMode": { "type": "string" },
+            "auditP1": { "type": "string" },
+            "testTimeout": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "deployDiff": {
+      "type": "object",
+      "required": ["baseFile", "rule"],
+      "properties": {
+        "description": { "type": "string" },
+        "baseFile": { "type": "string" },
+        "rule": { "type": "string" }
+      }
+    }
+  },
+
+  "$defs": {
+    "classificationLevel": {
+      "type": "object",
+      "required": ["description", "matches", "action"],
+      "properties": {
+        "description": { "type": "string" },
+        "matches": { "type": "array", "items": { "type": "string" } },
+        "action": { "type": "string" },
+        "estimatedMinutes": { "type": "integer" }
+      }
+    }
+  }
+}
