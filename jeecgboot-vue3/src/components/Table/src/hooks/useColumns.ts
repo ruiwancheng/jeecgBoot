@@ -128,12 +128,17 @@ export function useColumns(
     if (!columns) {
       return [];
     }
-    const { ellipsis } = unref(propsRef);
+    const { ellipsis, canColDrag } = unref(propsRef);
 
     columns.forEach((item) => {
       const { customRender, slots } = item;
 
       handleItem(item, Reflect.has(item, 'ellipsis') ? !!item.ellipsis : !!ellipsis && !customRender && !slots);
+      // update-begin---author:ruiwancheng ---date:2026-07-25  for：列宽拖动失效—canColDrag未传播到列级resizable
+      if (canColDrag && item.width != null && !(item.flag)) {
+        item.resizable = true;
+      }
+      // update-end---author:ruiwancheng ---date:2026-07-25  for：列宽拖动失效—canColDrag未传播到列级resizable
     });
     return columns;
   });
