@@ -60,6 +60,7 @@
 
   import { defineComponent, ref, computed, unref, toRaw, inject, watchEffect, watch, onUnmounted, onMounted, nextTick } from 'vue';
   import { Table } from 'ant-design-vue';
+  import { useRoute } from 'vue-router';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { PageWrapperFixedHeightKey } from '/@/components/Page/injectionKey';
   import CustomSelectHeader from './components/CustomSelectHeader.vue'
@@ -78,6 +79,7 @@
   import { useTableHeader } from './hooks/useTableHeader';
   import { useTableExpand } from './hooks/useTableExpand';
   import { createTableContext } from './hooks/useTableContext';
+  import { computeColumnCacheKey, saveTableColumnWidths } from './hooks/useColumnsCache';
   import { useTableFooter } from './hooks/useTableFooter';
   import { useTableForm } from './hooks/useTableForm';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -117,6 +119,7 @@
       'table-redo',
     ],
     setup(props, { attrs, emit, slots, expose }) {
+      const route = useRoute();
       const tableElRef = ref(null);
       const tableData = ref<Recordable[]>([]);
 
@@ -414,6 +417,7 @@
         wrapRef,
         tableAction,
         redoHeight,
+        // update-begin---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—拖完自动保存
         handleResizeColumn: (w, col) => {
           // 代码逻辑说明: 【issues/7101】列配置resizable: true时，表尾合计的列宽没有同步改变
           const columns = getColumns();
@@ -429,9 +433,15 @@
             findItem.width = w;
             setColumns(columns);
           }
-          console.log('col',col);
           col.width = w;
+          // 自动保存列宽到 localStorage
+          const cacheKey = computeColumnCacheKey(
+            route.path,
+            unref(getProps).tableSetting?.cacheKey
+          );
+          saveTableColumnWidths(cacheKey, columns);
         },
+        // update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—拖完自动保存
         getFormProps: getFormProps as any,
         replaceFormSlotKey,
         getFormSlotKeys,

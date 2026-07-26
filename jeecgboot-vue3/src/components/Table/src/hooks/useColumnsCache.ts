@@ -5,6 +5,49 @@ import { createLocalStorage } from '/@/utils/cache';
 import { useTableContext } from './useTableContext';
 import { useMessage } from '/@/hooks/web/useMessage';
 
+// update-begin---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—工具函数
+/**
+ * 计算列配置缓存 key
+ */
+export function computeColumnCacheKey(routePath: string, cacheKeySuffix?: string): string {
+  let key = routePath.replace(/[\/\\]/g, '_');
+  if (cacheKeySuffix) {
+    key += ':' + cacheKeySuffix;
+  }
+  return 'columnCache:' + key;
+}
+
+/**
+ * 保存列宽到缓存
+ */
+export function saveTableColumnWidths(
+  cacheKey: string,
+  columns: Array<{ key?: string; dataIndex?: string; flag?: string; width?: number }>
+) {
+  const $ls = createLocalStorage();
+  const cache = $ls.get(cacheKey) || {};
+  const columnWidths: Record<string, number> = { ...(cache.columnWidths || {}) };
+  for (const col of columns) {
+    if (col.flag) continue;
+    const key = col.key || col.dataIndex;
+    if (key && col.width != null) {
+      columnWidths[key] = col.width;
+    }
+  }
+  cache.columnWidths = columnWidths;
+  $ls.set(cacheKey, cache);
+}
+
+/**
+ * 读取列宽缓存
+ */
+export function getTableColumnWidths(cacheKey: string): Record<string, number> | null {
+  const $ls = createLocalStorage();
+  const cache = $ls.get(cacheKey);
+  return cache?.columnWidths || null;
+}
+// update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—工具函数
+
 /**
  * 列表配置缓存
  */
@@ -60,6 +103,20 @@ export function useColumnsCache(opt, setColumns, handleColumnFixed) {
       // 设置固定列
       setColumnFixed(columnCache);
     }
+    // update-begin---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—init恢复宽度（独立于checkedList，仅拖动过列宽也会恢复）
+    if (columnCache?.columnWidths) {
+      await nextTick();
+      const columns = table.getColumns();
+      for (const col of columns) {
+        if (col.flag) continue;
+        const key = col.key || col.dataIndex;
+        if (key && columnCache.columnWidths[key] != null) {
+          col.width = columnCache.columnWidths[key];
+        }
+      }
+      table.setColumns(columns);
+    }
+    // update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—init恢复宽度（独立于checkedList，仅拖动过列宽也会恢复）
   }
 
   /** 设置被固定的列 */
@@ -93,6 +150,22 @@ export function useColumnsCache(opt, setColumns, handleColumnFixed) {
     return fixedColumns;
   }
 
+  // update-begin---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—saveSetting中追加宽度字段
+  /** 获取列宽映射 */
+  function getColumnWidths() {
+    const widths: Record<string, number> = {};
+    const columns = opt.plainOptions.value;
+    for (const column of columns) {
+      if (column.flag) continue;
+      const key = column.key || column.dataIndex;
+      if (key && column.width != null) {
+        widths[key] = column.width;
+      }
+    }
+    return widths;
+  }
+  // update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—saveSetting中追加宽度字段
+
   /** 保存列配置 */
   function saveSetting() {
     const { checkedList } = opt.state;
@@ -103,6 +176,7 @@ export function useColumnsCache(opt, setColumns, handleColumnFixed) {
     } else {
       sortedList = unref(opt.plainSortOptions).map((item) => item.value);
     }
+    // update-begin---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—追加columnWidths到缓存
     $ls.set(cacheKey.value, {
       // 保存的列
       checkedList,
@@ -114,7 +188,10 @@ export function useColumnsCache(opt, setColumns, handleColumnFixed) {
       sortableOrder: unref(opt.sortableOrder),
       // 固定列
       fixedColumns: getFixedColumns(),
+      // 列宽
+      columnWidths: getColumnWidths(),
     });
+    // update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—追加columnWidths到缓存
     $message.success('保存成功');
     // 保存之后直接关闭
     opt.popoverVisible.value = false;
