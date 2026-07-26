@@ -38,14 +38,6 @@ export function saveTableColumnWidths(
   $ls.set(cacheKey, cache);
 }
 
-/**
- * 读取列宽缓存
- */
-export function getTableColumnWidths(cacheKey: string): Record<string, number> | null {
-  const $ls = createLocalStorage();
-  const cache = $ls.get(cacheKey);
-  return cache?.columnWidths || null;
-}
 // update-end---author:ruiwancheng ---date:2026-07-27  for：列宽拖动记忆—工具函数
 
 /**
