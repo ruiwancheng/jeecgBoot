@@ -4,10 +4,10 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | idle | harness钩子协议修复+python3 stub全链清理+自主学习闭环 |
-| last_verify | 2026-07-28 | 6钩子逐分支实测+11处skill修复+pre-commit WARNINGS实测 |
-| last_test | 2026-07-28 | /auto-learn三层报告+进化落地(hook-authoring.md) |
-| pending_step | 提交 | 26个未提交文件待用户确认提交 |
+| phase | idle | V9.8.0其它出入库全链路交付(开发→部署→deploy-verify PASS) |
+| last_verify | 2026-07-28 | 服务端deploy-verify: API冒烟5/5+全链路+菜单权限+视觉 |
+| last_test | 2026-07-28 | 本地curl全链路+超量拦截+/visual-check双页面基线 |
+| pending_step | 客户验证 | 明日: 非admin账号验证菜单可见→通知客户(主线11-12步) |
 
 ## 会话收尾（2026-07-28 session-wrap #3）
 - 死循环排查：DeepSeek代理空回复循环（非harness问题），顺带修复6个钩子协议问题（exit1→2/stderr/additionalContext/stub过滤/GBK/PIPESTATUS/true≠True）
@@ -57,3 +57,11 @@
 - 2026-07-18: calcTotal必须在save之前调用，否则totalAmount不持久化
 - 2026-07-18: useListPage的rowSelection需tableProps+BasicTable prop双配置
 - 2026-07-19: auditWithGuard必须先于stockOut执行（先改状态再扣库存）
+
+
+## 会话收尾（2026-07-28 session-wrap #4）
+- V9.8.0 其它出入库：brainstorm→plan→双轮orca评审(8+11遗漏全采纳)→22文件→curl全链路实测→/visual-check→部署→deploy-verify PASS
+- 指南重写：交付主线12步落地（笔记空间 Harness使用指南.md）
+- /verify 证据缺失升级为硬阻断（+--no-verify逃生门+netstat -ano修复——该门控Windows上从未生效）
+- learnings +2: netstat-tlnp静默死亡 / HTTP200包404
+- 待办：明日非admin账号验证→通知客户

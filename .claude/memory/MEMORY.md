@@ -32,3 +32,5 @@
 - [会话jsonl时间线取证法](learnings/2026-07-28-jsonl-timeline-forensics.md) — mtime≠会话开始时间，grep钩子输出原文+二进制时间戳对齐故障起点
 - [验证器假阳性](learnings/2026-07-28-validator-false-positive.md) — 验证命令必须消费输入真实断言，无条件print恒真
 - [钩子提醒可达性模式](learnings/2026-07-28-hook-warnings-accumulator-pattern.md) — WARNINGS累加器+裸echo additionalContext；变量初始化勿覆盖前置标记（已固化: hook-authoring.md）
+- [netstat -tlnp Windows静默死亡](learnings/2026-07-28-netstat-tlnp-windows-silent-death.md) — portable检测链必须在每个目标OS实测命中（与python3 stub同族）
+- [HTTP 200包着404](learnings/2026-07-28-http200-wraps-404.md) — 接口验证看body success字段；新类需install+重启不信DevTools热载
