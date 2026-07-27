@@ -122,8 +122,9 @@ echo "| $(date '+%Y-%m-%d') | <模块名> | <URL> | baseline.png | 首次建立 
 对比当前截图与基线。使用 `python` 做像素级对比：
 
 ```bash
-# Windows: python3 → python
+# Windows: python3 可能是 WindowsApps 商店 stub → 必须 --version 实测过滤
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)
 
 # 确保 Pillow 已安装
 $PY_CMD -c "from PIL import Image" 2>/dev/null || pip3 install Pillow 2>/dev/null || pip install Pillow

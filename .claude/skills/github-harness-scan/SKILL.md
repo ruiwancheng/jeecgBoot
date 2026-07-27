@@ -56,21 +56,27 @@ metadata:
    ```bash
    cd ${CLAUDE_PROJECT_DIR:-.}
    unset GITHUB_TOKEN
-   python3 hermes/tasks/scripts/github_harness_scan.py
+   PY_CMD=$(command -v python3 || command -v python || echo python)
+   $PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
+   $PY_CMD hermes/tasks/scripts/github_harness_scan.py
    ```
 
    **带 Token（快）：**
    ```bash
    cd ${CLAUDE_PROJECT_DIR:-.}
    export GITHUB_TOKEN="<your-token>"
-   python3 hermes/tasks/scripts/github_harness_scan.py
+   PY_CMD=$(command -v python3 || command -v python || echo python)
+   $PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
+   $PY_CMD hermes/tasks/scripts/github_harness_scan.py
    ```
 
    **快速试跑（每查询前 3 个）：**
    ```bash
    cd ${CLAUDE_PROJECT_DIR:-.}
    unset GITHUB_TOKEN
-   python3 hermes/tasks/scripts/github_harness_scan.py 3
+   PY_CMD=$(command -v python3 || command -v python || echo python)
+   $PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
+   $PY_CMD hermes/tasks/scripts/github_harness_scan.py 3
    ```
 
 3. 脚本执行后会自动：

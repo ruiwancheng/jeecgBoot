@@ -28,3 +28,7 @@
 - [权限注解先评估调用方范围](learnings/2026-07-21-permission-annotation-scope-check.md) — 缺权限≠必须加，误伤业务用户改注释说明放行
 - [pi协调者禁止check-wait](learnings/.archived/2026-07-21-orca-coordinator-no-check-wait.md) [ARCHIVED] — TUI截胡编排邮件，等待靠界面投递+dispatch-show轮询（等效: delegate.md preamble）
 - [自动生成关联单据检查NOT NULL字段](learnings/2026-07-22-auto-generate-check-not-null.md) — warehouse_id缺失导致静默失败，release反复部署4次
+- [Claude Code钩子协议四层坑](learnings/2026-07-28-claude-code-hook-protocol.md) — exit 1不阻断/旧JSON格式/python3 stub/GBK编码（已固化: hook-authoring.md）
+- [会话jsonl时间线取证法](learnings/2026-07-28-jsonl-timeline-forensics.md) — mtime≠会话开始时间，grep钩子输出原文+二进制时间戳对齐故障起点
+- [验证器假阳性](learnings/2026-07-28-validator-false-positive.md) — 验证命令必须消费输入真实断言，无条件print恒真
+- [钩子提醒可达性模式](learnings/2026-07-28-hook-warnings-accumulator-pattern.md) — WARNINGS累加器+裸echo additionalContext；变量初始化勿覆盖前置标记（已固化: hook-authoring.md）

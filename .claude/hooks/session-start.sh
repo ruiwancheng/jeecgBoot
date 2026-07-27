@@ -1,5 +1,10 @@
 #!/bin/bash
+# 2026-07-28 修复: WindowsApps 的 python3 可能是商店占位 stub（存在但不可执行，--version 退出码 49）
+# 必须实测可用性，不能只看 command -v
 PYTHON=$(command -v python3 || command -v python || echo python)
+$PYTHON --version >/dev/null 2>&1 || PYTHON=$(command -v python || echo python)
+# 2026-07-28 修复: Windows python 默认 GBK，读取含中文的 JSON 会解码失败 → 统一 UTF-8
+export PYTHONIOENCODING=utf-8
 PROJECT=$(grep active .claude/memory/active-project.md 2>/dev/null | cut -d' ' -f2 || echo '未设置')
 echo "[Super Harness v2] 当前项目: $PROJECT"
 echo "命令: /new-project /switch-project /admin"
@@ -40,10 +45,10 @@ if command -v orca &>/dev/null; then
   ORCA_JSON=$(orca status --json 2>/dev/null || echo '{"available":false}')
   ORCA_AVAILABLE=$(echo "$ORCA_JSON" | $PYTHON -c "import sys,json; d=json.load(sys.stdin); print('true' if d.get('result',{}).get('app',{}).get('running') else 'false')" 2>/dev/null || echo "false")
   if [ "$ORCA_AVAILABLE" = "true" ]; then
-    WORKTREE_COUNT=$(orca worktree ps --limit 10 2>/dev/null | grep -c "refs/heads" || echo "0")
+    # 2026-07-28 修复: grep -c 无匹配时输出 0 且 exit 1，|| echo "0" 会追加第二个 0 → || true
+    WORKTREE_COUNT=$(orca worktree ps --limit 10 2>/dev/null | grep -c "refs/heads" || true)
     echo "🔧 Orca: 可用 (工作树: ${WORKTREE_COUNT:-0} 个)"
-    # 显示工作树概况
-    orca worktree ps --limit 5 2>/dev/null | head -6
+    # 2026-07-28 修复: 删除 worktree ps 详情展示——其输出含终端 preview（会泄漏当前对话内容到会话上下文），只保留计数
   else
     echo "🔧 Orca: 不可用 (降级模式)"
   fi

@@ -77,6 +77,7 @@ echo "$CHANGED_FILES"
 ```bash
 # 并行创建任务
 PYTHON=$(command -v python3 || command -v python || echo python)
+$PYTHON --version >/dev/null 2>&1 || PYTHON=$(command -v python || echo python)  # WindowsApps stub 实测过滤
 TASK_API=$(orca orchestration task-create --spec "<Agent 1 spec>" --task-title "deploy-smoke-api" --json | $PYTHON -c "import sys,json; print(json.load(sys.stdin)['result']['id'])")
 TASK_VISUAL=$(orca orchestration task-create --spec "<Agent 2 spec>" --task-title "deploy-visual-check" --json | $PYTHON -c "import sys,json; print(json.load(sys.stdin)['result']['id'])")
 TASK_CHAIN=$(orca orchestration task-create --spec "<Agent 3 spec>" --task-title "deploy-chain-smoke" --json | $PYTHON -c "import sys,json; print(json.load(sys.stdin)['result']['id'])")

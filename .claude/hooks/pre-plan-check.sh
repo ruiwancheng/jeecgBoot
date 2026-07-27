@@ -1,5 +1,8 @@
 #!/bin/bash
+# 2026-07-28 修复: WindowsApps 的 python3 可能是商店占位 stub（存在但不可执行，--version 退出码 49）
+# 必须实测可用性，不能只看 command -v
 PYTHON=$(command -v python3 || command -v python || echo python)
+$PYTHON --version >/dev/null 2>&1 || PYTHON=$(command -v python || echo python)
 # Super Harness — 开发前依赖查证 (Pre-Plan Check)
 # 自动化 workflow.md 中 5 项手动检查的前 2 项
 # 2026-07-24 修复: delegate 判定从 exit 0(警告) 改 exit 1(硬阻断)
@@ -61,7 +64,7 @@ MANUAL=3
 #   强制走 /delegate 派工人执行
 # ============================================
 UNSTAGED_CODE=$(git diff --name-only 2>/dev/null | grep -v '\.md$' | grep -E '\.(java|vue|ts|tsx|sql)$' | head -20)
-UNSTAGED_COUNT=$(echo "$UNSTAGED_CODE" | grep -c '.' 2>/dev/null || echo 0)
+UNSTAGED_COUNT=$(echo "$UNSTAGED_CODE" | grep -c '.' 2>/dev/null || true)
 BLOCKED=0
 if [ "$UNSTAGED_COUNT" -gt 0 ]; then
   BLOCKED=1
@@ -83,24 +86,38 @@ if [ "$UNSTAGED_COUNT" -gt 0 ]; then
   RESULTS="$RESULTS\n  ╚══════════════════════════════════════════╝"
 fi
 
-echo ""
-echo "╔══════════════════════════════════════════════╗"
-echo "║  Super Harness — 开发前依赖查证              ║"
-echo "╚══════════════════════════════════════════════╝"
-echo -e "$RESULTS"
-echo ""
-echo "  自动通过: $PASS | 自动失败: $FAIL | 需手动确认: $MANUAL"
-echo ""
+# ============================================
+# 输出报告 + 阻断判定
+# 2026-07-28 修复:
+#   1) 硬阻断 exit 1 → exit 2 + stderr（Claude Code 中 exit 1 不阻断）
+#   2) 非阻断时报告改走 hookSpecificOutput.additionalContext — PreToolUse exit 0 的 stdout 不会送达 AI
+# ============================================
+REPORT=""
+REPORT="$REPORT\n╔══════════════════════════════════════════════╗"
+REPORT="$REPORT\n║  Super Harness — 开发前依赖查证              ║"
+REPORT="$REPORT\n╚══════════════════════════════════════════════╝"
+REPORT="$REPORT\n$RESULTS"
+REPORT="$REPORT\n"
+REPORT="$REPORT\n  自动通过: $PASS | 自动失败: $FAIL | 需手动确认: $MANUAL"
 
 if [ $FAIL -gt 0 ]; then
-  echo "⚠️  有 $FAIL 项自动检查未通过，建议修复后再制定实施计划。"
+  REPORT="$REPORT\n⚠️  有 $FAIL 项自动检查未通过，建议修复后再制定实施计划。"
 fi
 
 # 硬约束：代码文件未提交 + 调 /plan → 阻断，强制走 delegate
 if [ "$BLOCKED" -eq 1 ]; then
-  echo ""
-  echo "⛔ 已阻断 /plan。请先处理未提交的代码文件（commit 或 /delegate）。"
-  exit 1
+  REPORT="$REPORT\n"
+  REPORT="$REPORT\n⛔ 已阻断 /plan。请先处理未提交的代码文件（commit 或 /delegate）。"
+  echo -e "$REPORT" >&2
+  exit 2
 fi
+
+# 报告送达 AI（additionalContext），stdout 冗余保留给 verbose 模式
+REPORT="$REPORT" PYTHONIOENCODING=utf-8 $PYTHON -c "
+import sys, json, os
+# REPORT 中的 \\n 是字面量（原脚本靠 echo -e 解释），JSON 编码前转成真实换行
+print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'additionalContext': os.environ['REPORT'].replace('\\\\n', '\\n')}}, ensure_ascii=False))
+"
+echo -e "$REPORT"
 
 exit 0

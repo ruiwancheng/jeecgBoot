@@ -34,10 +34,11 @@ if [ -z "$FILE_PATH" ]; then
 fi
 
 # 1. 保护目录检查
+# 2026-07-28 修复: exit 1 → exit 2 + stderr — Claude Code 中 exit 1 不阻断，仅 stderr 会反馈给 AI
 for PROTECTED in "${PROTECTED_PATHS[@]}"; do
   if echo "$FILE_PATH" | grep -q "^$PROTECTED"; then
-    echo "{\"action\": \"block\", \"message\": \"[Super Harness] 此目录受保护: $PROTECTED。不允许写入核心框架文件。请在客户模块目录下操作。\"}"
-    exit 1
+    echo "[Super Harness] 此目录受保护: $PROTECTED。不允许写入核心框架文件。请在客户模块目录下操作。" >&2
+    exit 2
   fi
 done
 
@@ -47,8 +48,9 @@ done
 if echo "$FILE_PATH" | grep -qE '\.(java|vue|ts|tsx|sql)$' && echo "$FILE_PATH" | grep -qvE '(\.claude/|\.md$)'; then
   PLAN_MARKER="${HOOK_TMP}/claude-plan-executed"
   if [ ! -f "$PLAN_MARKER" ]; then
-    echo "{\"action\": \"block\", \"message\": \"[Super Harness] 🚫 未检测到 /plan 执行记录。请先走完整流程: /brainstorm → /plan → orca-review → 等确认 → 再写代码。如确属文案/注释/样式修改可豁免，请用 /admin 解除。\"}"
-    exit 1
+    # 2026-07-28 修复: exit 1 → exit 2 + stderr（硬阻断生效前提）
+    echo "[Super Harness] 🚫 未检测到 /plan 执行记录。请先走完整流程: /brainstorm → /plan → orca-review → 等确认 → 再写代码。如确属文案/注释/样式修改可豁免，请用 /admin 解除。" >&2
+    exit 2
   fi
 fi
 
@@ -56,7 +58,8 @@ fi
 if echo "$FILE_PATH" | grep -qE '\.(java|vue|ts|tsx|sql)$' && echo "$FILE_PATH" | grep -qvE '(\.claude/|\.md$)'; then
   SESSION_FLAG="${HOOK_TMP}/claude-delegate-reminded-$$"
   if [ ! -f "$SESSION_FLAG" ]; then
-    echo "{\"action\": \"warn\", \"message\": \"[Super Harness] ⚠️  首次编辑代码文件 ($FILE_PATH)。按规则：默认走 /delegate 派工人执行（仅文案/注释/样式免）。如已在 delegate 模式请忽略。\"}"
+    # 2026-07-28 修复: {"action":"warn"} 旧格式不被识别 → 改用 hookSpecificOutput.additionalContext（提醒才能真正送达 AI）
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"[Super Harness] ⚠️ 首次编辑代码文件。按规则：默认走 /delegate 派工人执行（仅文案/注释/样式免）。如已在 delegate 模式请忽略。"}}'
     touch "$SESSION_FLAG"
   fi
 fi

@@ -4,10 +4,20 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | idle | 跨平台修复+hooks硬约束+orca-review真双终端+多AI编排 |
-| last_verify | 2026-07-24 | delegate四连测试+orca-review双终端验证通过 |
-| last_test | 2026-07-24 | deploy quality gate PASS |
-| pending_step | 无 | 待用户试用delegate+orca-review效果 |
+| phase | idle | harness钩子协议修复+python3 stub全链清理+自主学习闭环 |
+| last_verify | 2026-07-28 | 6钩子逐分支实测+11处skill修复+pre-commit WARNINGS实测 |
+| last_test | 2026-07-28 | /auto-learn三层报告+进化落地(hook-authoring.md) |
+| pending_step | 提交 | 26个未提交文件待用户确认提交 |
+
+## 会话收尾（2026-07-28 session-wrap #3）
+- 死循环排查：DeepSeek代理空回复循环（非harness问题），顺带修复6个钩子协议问题（exit1→2/stderr/additionalContext/stub过滤/GBK/PIPESTATUS/true≠True）
+- python3 stub 全链清理：4钩子+11处skill文档（含jimubi 13处三级探测链）+compat-check防回归规则#13
+- pre-commit-check：WARNINGS累加器+裸echo发射（8处提醒可达）+L52阻断抹除bug+║n字面量bug
+- Orca误报排查：jsonl时间线取证定位python3 stub，修复+清除preview泄漏
+- 评审P1/P2清零：nul/gitignore/CLAUDE.md断链已修复，methodology-index+harness-check清单同步
+- 自主学习闭环：/learn×3 + /auto-learn + 固化 hook-authoring.md 规则
+- Harness使用指南（笔记空间）补自主学习进化场景
+- learnings 累计 64 活跃(+7)+24归档，规则 14+1，harness 健康度：hooks语法/MEMORY链接/settings 全过
 
 ## 会话收尾（2026-07-24 session-wrap #2）
 - /delegate 工作流三轮迭代修复：orca-review强制触发+verify不卡死+worker_done必发

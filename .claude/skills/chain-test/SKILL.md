@@ -45,6 +45,7 @@ version: 1.0.0
 # 获取变更文件路径
 CHANGED=$(git diff HEAD~1 --name-only)
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
 
 # 与每条链路的 modules[] 做前缀匹配
 for chain in $($PY_CMD -c "import json; [print(c['id']) for c in json.load(open('hermes/business-chains.json'))['chains'].values()]"); do
@@ -86,6 +87,7 @@ node <segment.file>
 ```bash
 # curl 单步
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
 RESP=$(curl -s -X PUT "http://localhost:8080/jeecg-boot/mes/purchase/apply/audit?id=$ID" \
   -H "X-Access-Token: $TOKEN")
 echo "$RESP" | $PY_CMD -c "import sys,json; d=json.load(sys.stdin); print('PASS' if d.get('success') else 'FAIL: '+d.get('message','?'))"

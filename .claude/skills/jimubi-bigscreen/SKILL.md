@@ -8,6 +8,21 @@ version: 1.0.0
 
 > 本 skill 处理大屏（bigScreen）。仪表盘（看板）请用 `jimubi-dashboard` skill。
 
+## 🔧 环境准备（每次会话先执行一次）
+
+后续所有脚本调用统一用 `$PY_CMD`（自动探测，兼容 macOS/Linux/Windows）。**先跑这一段再执行任何脚本**：
+
+```bash
+# Python 探测链：python3(Unix) → py(Windows 启动器) → python(兼容)
+# WindowsApps 的 python3 可能是商店占位 stub（command -v 能找到但不可执行，exit 49 零输出）→ 必须 --version 实测过滤
+PY_CMD=$(command -v python3 || command -v py || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v py || command -v python || echo python)
+$PY_CMD --version  # 确认 ≥ 3.10（脚本用了 dict | None 语法）
+export PYTHONIOENCODING=utf-8  # Windows python 默认 GBK，中文/emoji 输出会 UnicodeError
+```
+
+> 漏跑此段直接执行脚本 → `$PY_CMD` 为空导致 bash 报错（fail-loud 可见），补跑即可。
+
 ## ⚠️ 核心强制规则（9条）
 
 1. 所有大屏操作必须通过本 skill（禁止未调用 skill 直接读 memory 凭据自行执行）
@@ -15,7 +30,7 @@ version: 1.0.0
 3. 🚨 删除/重写/清空前必须询问用户确认（除非用户明确说"删除/去掉/移除/清空/清除"）
 4. 🚨 编写 SQL 前必须 SHOW TABLES 确认表名（onl_drag_page ≠ jimu_drag_page）
 5. `dataMapping.filed` 拼写：少一个 d（不是 field）
-6. Windows：用 `py` 不是 `python`；所有脚本加 `PYTHONIOENCODING=utf-8`
+6. 解释器统一走 `$PY_CMD` 自动探测（见顶部「环境准备」：python3/py/python 三级 + WindowsApps stub 过滤，无需人工切换）；所有脚本加 `PYTHONIOENCODING=utf-8`
 7. 🚨 **用户未指定数据来源时必须先问**（纯静态布局/纯装饰除外）。可选项：静态 mock / YApi 接口 / SQL 数据集 / Excel-CSV 文件 / 存储过程 / 自写 Java API / **BI 直连 Online 表/设计器表单/Online 报表（`dataType=4`）**。⚠️ 用户说"用某 Online 表 / cgform / jeecg 表 / Online 报表 / desform 作为数据源"时**优先 BI 模式**而非 SQL 数据集（详见 `references/bi-mode-online.md`）。禁止默认编造静态数据
 8. **真相源优先级（写组件配置 / 数据集绑定都遵循）**：
    - **数据集绑定字段映射** → `references/data-binding-mapping.md`（唯一真相源，描述冲突以此为准；按 §0 检测算法对照 `defaults/<CompType>.json` 判定 A/B/无映射 三型，别猜）
@@ -206,7 +221,7 @@ version: 1.0.0
 
 **创建空白大屏标准调用：**
 ```bash
-cd <skill目录> && python3 - <<'EOF'
+cd <skill目录> && $PY_CMD - <<'EOF'
 import sys, time; sys.path.insert(0, 'references')
 import bi_utils
 t0 = time.time()
@@ -280,12 +295,12 @@ EOF
 > `--page-id <ID>` 追加组件到已有页面（保留原有组件）；不传则新建页面。
 ```bash
 # 查组件 schema（字段不确定时）
-python3 references/scripts/spec_builder.py --schema JStatsSummary        # L1 精简
-python3 references/scripts/spec_builder.py --schema JColorGauge --full   # L2 完整
-python3 references/scripts/spec_builder.py --schema --list               # L3 总览
+$PY_CMD references/scripts/spec_builder.py --schema JStatsSummary        # L1 精简
+$PY_CMD references/scripts/spec_builder.py --schema JColorGauge --full   # L2 完整
+$PY_CMD references/scripts/spec_builder.py --schema --list               # L3 总览
 
 # 生成
-python3 \
+$PY_CMD \
   references/scripts/spec_builder.py <API> <TOKEN> /tmp/<名称>.spec.json
 ```
 spec_builder 自动处理：chartData 序列化、透明 bg、dark 主题、ECharts 轴样式、gradient 展开、pie 无 xAxis/yAxis、compareState 转换、命名色板应用、布局约束预警。
@@ -521,19 +536,19 @@ cat > /tmp/iter.spec.json <<'EOF'
   "components": [ {...仅新增组件...} ]
 }
 EOF
-python3 \
+$PY_CMD \
   references/scripts/spec_builder.py <API> <TOKEN> /tmp/iter.spec.json --page-id <PAGE_ID>
 ```
 
 **2. 批量删多类型 / 多名称（1 次 HTTP）**
 ```bash
 # 多类型（逗号分隔，禁止空格，禁止单引号包字符串）
-python3 references/scripts/comp_ops.py delete \
+$PY_CMD references/scripts/comp_ops.py delete \
   --api <API> --token <TOKEN> --page-id <PAGE_ID> \
   --types "JPie,JRing,JAntvGauge"
 
 # 多名称（中文需用双引号包整个值）
-python3 references/scripts/comp_ops.py delete \
+$PY_CMD references/scripts/comp_ops.py delete \
   --api <API> --token <TOKEN> --page-id <PAGE_ID> \
   --names "饼图1,柱图2"
 ```
@@ -541,10 +556,10 @@ python3 references/scripts/comp_ops.py delete \
 **3. 切换全屏命名色板（禁止 AI 自编色值）**
 ```bash
 # 查可用色板（不调 API）
-python3 references/scripts/style_ops.py list-palettes
+$PY_CMD references/scripts/style_ops.py list-palettes
 
 # 切配色（默认按 y/x 轮转色板起点）
-python3 references/scripts/style_ops.py set-palette \
+$PY_CMD references/scripts/style_ops.py set-palette \
   --api <API> --token <TOKEN> --page-id <PAGE_ID> --name 复古
 # 加 --no-rotate 让所有图都从 color[0] 起
 ```
@@ -557,7 +572,7 @@ cat > /tmp/q.sql <<'EOF'
 SELECT name, value FROM onl_drag_page WHERE tenant_id = ${tenantId}
 EOF
 
-python3 references/scripts/dataset_ops.py create-sql \
+$PY_CMD references/scripts/dataset_ops.py create-sql \
   --api <API> --token <TOKEN> --name "我的数据集" --sql-file /tmp/q.sql \
   --db-source <DS_CODE>
 ```
@@ -566,7 +581,7 @@ python3 references/scripts/dataset_ops.py create-sql \
 ```bash
 # multi_chart_linkage 适合：从 0 建 ≥2 张联动图
 # linkage_ops 适合：已有屏的图加联动
-python3 references/scripts/multi_chart_linkage.py \
+$PY_CMD references/scripts/multi_chart_linkage.py \
   --api <API> --token <TOKEN> --page-id <PAGE_ID> \
   --spec /tmp/multi_linkage.spec.json
 ```
@@ -574,13 +589,13 @@ python3 references/scripts/multi_chart_linkage.py \
 **6. YApi 高级 mock（按参数分支返参，支持联动/钻取）**
 ```bash
 # 高级 mock 脚本走 --advmock-file（含 JS 逻辑，避免 shell 转义）
-python3 references/scripts/yapi_ops.py create-mock \
+$PY_CMD references/scripts/yapi_ops.py create-mock \
   --project-id <PID> --path /api/sales/trend --method GET \
   --advmock-file /tmp/advmock.js
 ```
 
 > **环境约定（按本机情况调整）**：
-> - **Python 解释器**：示例统一写 `python3`（Unix 通用）。Windows 用户改为 `py`（或本机已配的 Python 3 路径）。脚本要求 Python ≥ 3.10（用了 `dict | None` 等语法）
+> - **Python 解释器**：示例统一写 `$PY_CMD`（顶部「环境准备」自动探测 python3/py/python 三级链 + WindowsApps stub 过滤，无需按 OS 人工切换）。脚本要求 Python ≥ 3.10（用了 `dict | None` 等语法）
 > - **本地 API 走代理**：若本机 HTTP 代理拦截 `127.0.0.1`/`localhost` 导致 502，命令前加 `no_proxy="127.0.0.1,localhost"`（macOS/Linux）或 `set no_proxy=127.0.0.1,localhost &&`（Windows）
 > - **Windows 中文输出乱码**：所有命令前加 `set PYTHONIOENCODING=utf-8 &&`
 > - 🚨 **临时配置文件路径必须用 `tempfile.gettempdir()`，不要硬编码 `/tmp`**：所有传给脚本的 `--config / --batch-file / --spec / --sql-file` 等 JSON/SQL 临时文件，跨平台靠 `tempfile.gettempdir()`：Windows `%TEMP%` / Linux `/tmp` / **macOS `/var/folders/.../T`（不是 `/tmp`！）**。命名带表名+步骤前缀（`onl_<场景>_<步骤>.json`）便于排错；OS 自动清理，**禁止主动 `rm` / `os.path.exists()`**（自身就是 tool call 浪费）；乐观调用 + 仅当报 `FileNotFoundError` 时用相同内容重写重试，不换路径。示例：`config_path = os.path.join(tempfile.gettempdir(), 'onl_sales_dashboard_iter.json')`

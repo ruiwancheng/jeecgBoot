@@ -11,14 +11,21 @@ PROTECTED_DIRS=(
   "jeecgboot-vue3/src/components/"
 )
 
+# 2026-07-28 提醒累加器：PreToolUse exit 0 时 stdout 不送达 AI，所有提醒在文末通过 additionalContext 统一发射
+# 注意：追加内容保持单行、不含双引号（文末裸 echo JSON 需防转义）
+WARNINGS=""
+# 移除 @RequiresPermissions 的阻断标记（独立变量——质量门控段的 QUALITY_GATE_BLOCK=0 初始化会抹掉前置写入，2026-07-28 踩坑）
+REMOVE_PERM_BLOCK=0
+
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)
 
 # SQL 危险操作检查
 SQL_FILES=$(echo "$STAGED_FILES" | grep '\.sql$')
 if [ -n "$SQL_FILES" ]; then
   if echo "$SQL_FILES" | xargs grep -l "DROP TABLE\|DROP DATABASE\|TRUNCATE" 2>/dev/null | grep -q .; then
-    echo "[Super Harness] SQL 文件包含 DROP/TRUNCATE，禁止提交"
-    exit 1
+    # 2026-07-28 修复: exit 1 → exit 2 + stderr（Claude Code 中 exit 1 不阻断）
+    echo "[Super Harness] SQL 文件包含 DROP/TRUNCATE，禁止提交" >&2
+    exit 2
   fi
 fi
 
@@ -28,10 +35,11 @@ if [ -n "$TS_VUE_FILES" ] && command -v npx &>/dev/null; then
   echo "[Super Harness] 检查前端语法..."
   TS_ERRORS=$(cd jeecgboot-vue3 2>/dev/null && npx vue-tsc --noEmit 2>&1 | grep -c "error TS\|Unexpected" || echo "0")
   if [ "$TS_ERRORS" -gt 0 ]; then
-    echo "[Super Harness] ❌ 前端语法错误 $TS_ERRORS 处 — 请修复后重新提交"
-    cd jeecgboot-vue3 && npx vue-tsc --noEmit 2>&1 | grep "error TS\|Unexpected" | head -5
-    echo "  跳过检查: git commit --no-verify"
-    exit 1
+    # 2026-07-28 修复: 阻断消息走 stderr + exit 2
+    echo "[Super Harness] ❌ 前端语法错误 $TS_ERRORS 处 — 请修复后重新提交" >&2
+    (cd jeecgboot-vue3 && npx vue-tsc --noEmit 2>&1 | grep "error TS\|Unexpected" | head -5) >&2
+    echo "  跳过检查: git commit --no-verify" >&2
+    exit 2
   fi
   echo "[Super Harness] ✅ 前端语法检查通过"
 fi
@@ -42,12 +50,14 @@ REMOVED_PERM=$(git diff --cached | grep -E '^\-.*@RequiresPermissions' | head -5
 if [ -n "$REMOVED_TX" ]; then
   echo "[Super Harness] ⚠️  检测到移除 @Transactional 注解:"
   echo "$REMOVED_TX"
+  WARNINGS="${WARNINGS}检测到移除 @Transactional 注解; "
 fi
 if [ -n "$REMOVED_PERM" ]; then
   echo "[Super Harness] 🔴 检测到移除 @RequiresPermissions 注解 — 可能导致未授权访问:"
   echo "$REMOVED_PERM"
   echo ""
-  QUALITY_GATE_BLOCK=1
+  REMOVE_PERM_BLOCK=1
+  WARNINGS="${WARNINGS}检测到移除 @RequiresPermissions 注解(可能致未授权访问); "
 fi
 
 # 测试门控: 检查变更模块是否有匹配测试，有则运行快速验证
@@ -58,19 +68,23 @@ if [ -n "$CODE_FILES" ] && [ -d "harness/tests" ]; then
     if ls "harness/tests/$MODULE/"*.spec.ts 2>/dev/null | grep -q .; then
       echo "[Super Harness] 模块 $MODULE 有测试，运行快速验证..."
       if command -v npx &>/dev/null; then
+        # 2026-07-28 修复: 原写法 TEST_EXIT=$? 取的是管道末尾 tail 的退出码，测试失败永远无法阻断 → 改用 PIPESTATUS 取 vitest 真实退出码
         if command -v timeout >/dev/null 2>&1; then
-          timeout 60 npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20
+          TEST_OUT=$(timeout 60 npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20)
+          TEST_EXIT=${PIPESTATUS[0]}
         else
           # macOS/BSD fallback: no native timeout, run without time limit
-          npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20
+          TEST_OUT=$(npx vitest run "harness/tests/$MODULE/" --reporter=verbose 2>&1 | tail -20)
+          TEST_EXIT=${PIPESTATUS[0]}
         fi
-        TEST_EXIT=$?
         if [ $TEST_EXIT -ne 0 ]; then
-          echo ""
-          echo "[Super Harness] ❌ 测试未通过！请修复后重新提交。"
-          echo "  跳过检查: git commit --no-verify"
-          exit 1
+          # 2026-07-28 修复: 失败详情+阻断消息走 stderr（exit 2 时只有 stderr 送达 AI）
+          echo "$TEST_OUT" >&2
+          echo "[Super Harness] ❌ 测试未通过！请修复后重新提交。" >&2
+          echo "  跳过检查: git commit --no-verify" >&2
+          exit 2
         else
+          echo "$TEST_OUT"
           echo "[Super Harness] ✅ 测试通过"
         fi
       else
@@ -109,6 +123,7 @@ if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
       VERIFY_VALID=1
     else
       echo "[Super Harness] ⚠️  .last-verify 记录的是旧 commit (${VERIFY_COMMIT:0:7})，当前 HEAD 已变 (${CURRENT_HEAD:0:7})"
+      WARNINGS="${WARNINGS}.last-verify 记录已过期(HEAD 已变); "
     fi
   fi
   if [ "$VERIFY_VALID" -eq 0 ]; then
@@ -129,6 +144,7 @@ fi
 
 # ===== 质量门控（Phase 1：轻量静态检查，秒级完成）=====
 # 完整代理分析通过 /quality-gate 命令执行
+# 2026-07-28 注意：此处只初始化质量门控段变量，勿把前置检测的标记（REMOVE_PERM_BLOCK）纳入重置
 QUALITY_GATE_WARN=0
 QUALITY_GATE_BLOCK=0
 
@@ -153,22 +169,24 @@ if [ -n "$JAVA_FILES" ]; then
       echo "[Quality Gate] ⚠️  新增 Controller 方法缺少 @RequiresPermissions："
       echo -e "$MISSING_PERM"
       QUALITY_GATE_WARN=1
+      WARNINGS="${WARNINGS}新增 Controller 方法缺少 @RequiresPermissions; "
     fi
   fi
 
   # 检测硬编码密钥/密码
+  # 2026-07-28 修复: 以下 3 处 🚫 发现项改走 stderr — 后续 exit 2 时只有 stderr 送达 AI
   HARDCODED_SECRET=$(git diff --cached | grep -iE '^\+.*(password|secret|token|apikey|api_key)\s*=\s*"[^"]{3,}"' | head -5)
   if [ -n "$HARDCODED_SECRET" ]; then
-    echo "[Quality Gate] 🚫 检测到硬编码密钥/密码："
-    echo "$HARDCODED_SECRET"
+    echo "[Quality Gate] 🚫 检测到硬编码密钥/密码：" >&2
+    echo "$HARDCODED_SECRET" >&2
     QUALITY_GATE_BLOCK=1
   fi
 
   # 检测 SQL 字符串拼接（Java 文件中，排除注释行和 log 调用行避免误判）
   SQL_CONCAT=$(git diff --cached | grep -E '^\+.*\+.*"SELECT|^\+.*\+.*"INSERT.*VALUES' | grep -v -E '^\+\s*//|^\+\s*\*|log\.|logger\.' | head -5)
   if [ -n "$SQL_CONCAT" ]; then
-    echo "[Quality Gate] 🚫 检测到 SQL 字符串拼接（应使用 MyBatis-Plus 参数化）："
-    echo "$SQL_CONCAT"
+    echo "[Quality Gate] 🚫 检测到 SQL 字符串拼接（应使用 MyBatis-Plus 参数化）：" >&2
+    echo "$SQL_CONCAT" >&2
     QUALITY_GATE_BLOCK=1
   fi
 fi
@@ -178,22 +196,27 @@ XML_FILES=$(echo "$STAGED_FILES" | grep '\.xml$')
 if [ -n "$XML_FILES" ]; then
   UNSAFE_PARAM=$(git diff --cached -- $XML_FILES | grep -E '^\+.*\$\{' | head -5)
   if [ -n "$UNSAFE_PARAM" ]; then
-    echo "[Quality Gate] 🚫 Mapper XML 使用了 \${} 非参数化（应使用 #{}）："
-    echo "$UNSAFE_PARAM"
+    echo "[Quality Gate] 🚫 Mapper XML 使用了 \${} 非参数化（应使用 #{}）：" >&2
+    echo "$UNSAFE_PARAM" >&2
     QUALITY_GATE_BLOCK=1
   fi
 fi
 
 # 3. 输出质量门控判定
+# 2026-07-28 合并前置的移除-注解阻断标记（独立变量，避免被段内初始化抹掉）
+if [ "$REMOVE_PERM_BLOCK" -eq 1 ]; then
+  QUALITY_GATE_BLOCK=1
+fi
 if [ "$QUALITY_GATE_BLOCK" -eq 1 ]; then
-  echo ""
-  echo "[Quality Gate] 🔴 判定：BLOCKED — 安全问题必须修复"
-  echo "  运行 /quality-gate 查看完整诊断报告"
-  echo "  跳过检查: git commit --no-verify"
-  exit 1
+  echo "" >&2
+  echo "[Quality Gate] 🔴 判定：BLOCKED — 安全问题必须修复" >&2
+  echo "  运行 /quality-gate 查看完整诊断报告" >&2
+  echo "  跳过检查: git commit --no-verify" >&2
+  exit 2
 elif [ "$QUALITY_GATE_WARN" -eq 1 ]; then
   echo ""
   echo "[Quality Gate] 🟡 判定：WARN — 建议运行 /quality-gate 检查"
+  WARNINGS="${WARNINGS}质量门控判定 WARN(建议运行 /quality-gate); "
 else
   echo "[Quality Gate] 🟢 轻量检查通过"
 fi
@@ -212,10 +235,11 @@ for FILE in $STAGED_FILES; do
 done
 
 if [ -n "$BLOCKED" ]; then
-  echo "[Super Harness] 以下文件位于受保护目录，不允许直接提交："
-  echo -e "$BLOCKED"
-  echo "请在客户模块目录下操作。如需修改框架代码，请联系技术负责人。"
-  exit 1
+  # 2026-07-28 修复: exit 1 → exit 2 + stderr
+  echo "[Super Harness] 以下文件位于受保护目录，不允许直接提交：" >&2
+  echo -e "$BLOCKED" >&2
+  echo "请在客户模块目录下操作。如需修改框架代码，请联系技术负责人。" >&2
+  exit 2
 fi
 
 
@@ -232,6 +256,7 @@ if [ -n "$MES_DICT_PATTERN" ]; then
   echo "  → 请改用 ApiSelect + 目标Controller的 /selectPage 端点"
   echo "  → 详见: .claude/rules/frontend.md 禁止模式"
   echo ""
+  WARNINGS="${WARNINGS}检测到 c_mes_ 表字典反模式(应改用 ApiSelect + /selectPage); "
 fi
 
 
@@ -254,12 +279,20 @@ if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
   echo "[Super Harness] ║  本地后端在运行 (8080) — /verify 完成了吗？ ║"
   echo "[Super Harness] ╠══════════════════════════════════════╣"
   echo "[Super Harness] ║  本次变更涉及以下文件：                ║"
-  echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-36s ║n" "$f"; done
+  echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-36s ║\n" "$f"; done
   echo "[Super Harness] ╠══════════════════════════════════════╣"
   echo "[Super Harness] ║  请在提交前 curl 实测改动点核心逻辑     ║"
   echo "[Super Harness] ║  mvn compile ≠ 验证通过              ║"
   echo "[Super Harness] ╚══════════════════════════════════════╝"
   echo ""
+  # 2026-07-28 与上方 /verify 证据检查合并为一条提醒（证据有效则不重复提醒）
+  [ "${VERIFY_VALID:-0}" -eq 0 ] && WARNINGS="${WARNINGS}本地后端在线(8080)+代码变更,提交前须 /verify curl 实测; "
+fi
+
+# 2026-07-28 修复: exit 0 的 stdout 不送达 AI → 提醒通过 additionalContext 统一发射
+# （裸 echo 零依赖；WARNINGS 为受控单行文本、无双引号，无 JSON 转义风险）
+if [ -n "$WARNINGS" ]; then
+  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"[Super Harness] 提交前提醒: ${WARNINGS}（跳过检查: git commit --no-verify）\"}}"
 fi
 
 exit 0

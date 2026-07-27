@@ -26,6 +26,7 @@ npx vitest run <测试文件路径> --reporter=verbose 2>&1 | tee ${TMPDIR:-/tmp
 
 ```bash
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
 LOG_FILE="${TMPDIR:-/tmp}/test-loop-output.log"
 $PY_CMD -c "
 import re
@@ -55,6 +56,7 @@ print(text[-5000:])  # 最后 5000 字符
 
 ```bash
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
 orca terminal list --json | $PY_CMD -c "
 import json,sys
 data = json.load(sys.stdin)

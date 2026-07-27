@@ -25,7 +25,9 @@ metadata:
 | 日期 | 经验 | 核心洞察 |
 |------|------|------|
 | 2026-07-20 | [增量增强+降级策略模式](learnings/2026-07-20-incremental-enhance-with-degradation.md) | 每项增强=新增能力+守卫条件+文档化降级 |
-| 2026-07-05 | [命令/技能边界分离](learnings/2026-07-05-command-skill-split.md) | 命令=工作流编排;技能=领域知识 |
+| 2026-07-05 | [命令/技能边界分离](learnings/.archived/2026-07-05-command-skill-split.md) [ARCHIVED] | 命令=工作流编排;技能=领域知识（等效: skill-command-boundary.md） |
+| 2026-07-28 | [验证器假阳性](learnings/2026-07-28-validator-false-positive.md) | 验证命令必须消费输入真实断言，无条件print恒真 |
+| 2026-07-28 | [会话jsonl时间线取证](learnings/2026-07-28-jsonl-timeline-forensics.md) | mtime≠会话开始时间，grep输出原文+时间戳对齐故障起点 |
 | 2026-07-05 | [Harness工程化](learnings/2026-07-04-harness-engineering.md) | 规则/Skills/Hooks标准化 |
 | 2026-07-04 | [业务用户沟通语言](learnings/2026-07-04-business-user-flow.md) | 面向业务人员，避免技术术语 |
 
@@ -38,7 +40,7 @@ metadata:
 | 2026-07-08 | [Tailscale DNS + git push](learnings/2026-07-08-tailscale-dns-git-push.md) | VPN DNS解析延迟导致git push超时 |
 | 2026-07-08 | [客户端-服务端开发工作流](learnings/2026-07-08-client-server-dev-workflow.md) | Tailscale VPN + Vite代理直连 |
 | 2026-07-06 | [登录超时诊断](learnings/2026-07-06-login-timeout-diagnosis.md) | timeout of 10000ms → MySQL/Redis未启动 |
-| 2026-07-04 | [Hook测试方法](learnings/2026-07-04-hook-testing.md) | 逐个hook模拟触发→验证行为 |
+| 2026-07-04 | [Hook测试方法](learnings/.archived/2026-07-04-hook-testing.md) [ARCHIVED] | 逐个hook模拟触发→验证行为（等效: 2026-07-28-claude-code-hook-protocol.md §排查方法论） |
 
 **Why:** 方法论/架构/运维类经验不适合写入代码规范（code-style.md）或组件规范（frontend.md），但同样是宝贵的工程积累。分索引避免散落在learnings/目录难以发现。
 **How to apply:** 每次 /learn 后判断新经验的类别。代码行为→写入对应规则；方法论/架构/运维→更新此索引。

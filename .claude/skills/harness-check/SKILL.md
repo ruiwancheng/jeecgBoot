@@ -13,14 +13,16 @@ version: 1.0.0
 - `.claude/settings.json` — 项目级设置
 - `.claude/features.json` — 功能模块清单
 
-### 命令 Commands（38 个）
-`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `dev/new-terminal`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `orca/delegate`, `quality/gate`, `quality/deep-inspect`, `quality/dashboard`
+### 命令 Commands（47 个）
+`admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `dev/new-terminal`, `dev/onboard`, `dev/chain-test`, `dev/client-start`, `dev/test-loop`, `dev/visual-check`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `util/capability-check`, `util/compat-check`, `orca/delegate`, `quality/gate`, `quality/deep-inspect`, `quality/dashboard`, `quality/deploy-verify`, `quality/pre-commit-gate`
 
-### 规则 Rules（22 个）
-`file-scope`, `backend-first`, `code-style`, `no-platform-modify`, `frontend`, `security`, `testing`, `workflow`, `debugging`, `karpathy-guidelines`, `skill-command-boundary`, `data-scope`, `override-mechanism`, `audit-classification`, `engineering-artifacts`, `tiequan-report-retention`, `tiequan-report-scope`, `deep-inspect-schedule`, `quality-escalation`, `quality-gate-criteria`, `security-gate-checklist`, `deploy-quality-gate`
+### 规则 Rules（14 个 + 1 配置）
+`audit-classification`, `boundary`, `code-style`, `debugging`, `deploy-quality-gate`, `engineering-artifacts`, `frontend`, `hook-authoring`, `karpathy-guidelines`, `quality-gates`, `skill-command-boundary`, `testing`, `tiequan-reports`, `workflow` + `gen-tests-rules.json`（配置）
 
-### 钩子 Hooks（9 个）
-`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-tool-failure`, `session-end`, `pre-plan-check`, `orca-setup`, `pre-deploy-check`
+> 2026-07-28 合并：file-scope+data-scope→`boundary`；backend-first/security/no-platform-modify/override-mechanism→`code-style`（原文件在 rules/.archived/）
+
+### 钩子 Hooks（10 个）
+`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-tool-failure`, `session-end`, `pre-plan-check`, `orca-setup`, `pre-deploy-check`, `_os-detect`（共享 OS 检测工具）
 
 ### 其他
 - `.claude/memory/progress.md` — 项目进度记录

@@ -29,14 +29,15 @@ version: 1.0.0
 | 10 | Linux 发行版假设 (apt only) | `grep -rn 'apt install' --include='*.md'` | skills/ | 排除含 `dnf\|yum\|pacman\|zypper\|发行版` 的行 |
 | 11 | 包管理器假设 (brew only) | `grep -rn 'brew install' --include='*.md'` | skills/ | 排除多 OS 表格行（同时含 `apt\|winget\|dnf` 的行） |
 | 12 | npm 全局安装 | `grep -rn 'npm install -g' --include='*.sh' --include='*.md'` | hooks/, skills/ | 排除含 `sudo\|nvm\|权限` 说明的行 |
+| 13 | 裸 `python3` 调用无可用性实测（WindowsApps 商店 stub：`command -v` 能找到但执行 exit 49 零输出） | `grep -rn 'python3' --include='*.sh' --include='*.md'` | hooks/, skills/ | 排除上下有 `--version` 实测过滤或 `command -v python` 的行 |
 
 ### P2 级（建议 — 可移植性改进）
 
 | # | 检测项 | grep 模式 | 目标目录 | 排除规则 |
 |---|--------|----------|---------|---------|
-| 13 | 非 POSIX `seq` 命令 | `grep -rn '\bseq\b.*1.*30\|\bseq\b.*1.*10' --include='*.sh'` | hooks/ | — |
-| 14 | 新增 hook 无 OS 检测 | 检查 hooks/ 下 .sh 文件（排除 _os-detect.sh 自身）是否有 `uname\|IS_MAC\|IS_LINUX\|OS_NAME\|TMPDIR` | hooks/ | _os-detect.sh |
-| 15 | Windows 专有命令无标注 | `grep -rn 'clip.exe\|taskkill\|powershell' --include='*.md'` | skills/ | 排除含 "Windows" 或 OS 表头标记的行 |
+| 14 | 非 POSIX `seq` 命令 | `grep -rn '\bseq\b.*1.*30\|\bseq\b.*1.*10' --include='*.sh'` | hooks/ | — |
+| 15 | 新增 hook 无 OS 检测 | 检查 hooks/ 下 .sh 文件（排除 _os-detect.sh 自身）是否有 `uname\|IS_MAC\|IS_LINUX\|OS_NAME\|TMPDIR` | hooks/ | _os-detect.sh |
+| 16 | Windows 专有命令无标注 | `grep -rn 'clip.exe\|taskkill\|powershell' --include='*.md'` | skills/ | 排除含 "Windows" 或 OS 表头标记的行 |
 
 ## 报告模板
 

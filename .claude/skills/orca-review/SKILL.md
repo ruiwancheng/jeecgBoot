@@ -64,7 +64,9 @@ pi 把当前阶段的产出写成一段**结构化的评审输入**，包含：
 
 **2a. 找到 Claude 终端：**
 ```bash
-orca terminal list --json | python3 -c "
+PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)  # WindowsApps stub 实测过滤
+orca terminal list --json | $PY_CMD -c "
 import json,sys
 data = json.load(sys.stdin)
 for t in data['result']['terminals']:

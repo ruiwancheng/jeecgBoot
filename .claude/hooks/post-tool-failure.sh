@@ -1,5 +1,10 @@
 #!/bin/bash
+# 2026-07-28 修复: WindowsApps 的 python3 可能是商店占位 stub（存在但不可执行，--version 退出码 49）
+# 必须实测可用性，不能只看 command -v
 PYTHON=$(command -v python3 || command -v python || echo python)
+$PYTHON --version >/dev/null 2>&1 || PYTHON=$(command -v python || echo python)
+# 2026-07-28 修复: Windows python 默认 GBK 编码，读写含中文的内容会 UnicodeError → 统一 UTF-8
+export PYTHONIOENCODING=utf-8
 # 工具调用失败审计 — 结构化日志记录
 # 从 stdin JSON 提取失败上下文，写入结构化 jsonl + 兼容旧 log
 LOG_DIR="${CLAUDE_PROJECT_DIR:-.}/hermes/logs"
@@ -26,6 +31,11 @@ if [ -n "$INPUT" ] && echo "$INPUT" | $PYTHON -c "import sys,json; json.load(sys
     ORCA_WORKTREES=$(orca worktree ps --limit 99 2>/dev/null | grep -c "refs/heads" || echo "0")
   fi
 
+  # 2026-07-28 修复: bash 的 true/false 直接插值进 Python 会 NameError（Python 是 True/False），
+  # 导致 jsonl 写入静默失败（被 2>/dev/null 吞掉）→ 在 bash 侧先转成 Python 字面量
+  ORCA_BOOL=False
+  [ "$ORCA_AVAILABLE" = "true" ] && ORCA_BOOL=True
+
   # 结构化 JSONL 写入
   $PYTHON -c "
 import json, sys
@@ -37,11 +47,11 @@ entry = {
     'branch': '$BRANCH',
     'workdir': '$WORKDIR',
     'orca': {
-        'available': $ORCA_AVAILABLE == 'true',
+        'available': $ORCA_BOOL,
         'worktrees': int($ORCA_WORKTREES)
     }
 }
-with open('$LOG_DIR/tool-failures.jsonl', 'a') as f:
+with open('$LOG_DIR/tool-failures.jsonl', 'a', encoding='utf-8') as f:
     f.write(json.dumps(entry, ensure_ascii=False) + '\n')
 " 2>/dev/null
 

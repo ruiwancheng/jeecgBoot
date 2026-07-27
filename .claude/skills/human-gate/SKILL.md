@@ -82,8 +82,9 @@ orca orchestration gate-create \
 
 ```bash
 # 每 30 秒轮询 gate 状态
-# Windows: python3 → python（Git Bash 下 python3 不存在）
+# Windows: python3 可能是 WindowsApps 商店占位 stub（command -v 能找到但执行 exit 49 零输出）→ 必须 --version 实测过滤
 PY_CMD=$(command -v python3 || command -v python || echo python)
+$PY_CMD --version >/dev/null 2>&1 || PY_CMD=$(command -v python || echo python)
 orca orchestration gate-list --json | $PY_CMD -c "
 import sys,json
 gates = json.load(sys.stdin).get('result',{}).get('gates',[])

@@ -1,5 +1,8 @@
 #!/bin/bash
+# 2026-07-28 修复: WindowsApps 的 python3 可能是商店占位 stub（存在但不可执行，--version 退出码 49）
+# 必须实测可用性，不能只看 command -v
 PYTHON=$(command -v python3 || command -v python || echo python)
+$PYTHON --version >/dev/null 2>&1 || PYTHON=$(command -v python || echo python)
 # Super Harness — 部署前用户流程验证
 # 在 docker compose up 或 start-docker-compose 前自动运行
 # 验证 3 项核心用户流程是否可达（非阻塞，纯报告）
@@ -80,4 +83,16 @@ if [ $FAIL -gt 0 ]; then
 fi
 
 echo ""
+
+# 2026-07-28 修复: PreToolUse exit 0 的 stdout 不会送达 AI（只在 verbose 可见）
+# → 补一条 hookSpecificOutput.additionalContext 摘要，让 AI 真正看到验证结论
+SUMMARY="[Super Harness] 部署前验证: ✅ $PASS 通过 | ⚠️ $WARN 警告 | ❌ $FAIL 失败"
+if [ $FAIL -gt 0 ]; then
+  SUMMARY="$SUMMARY — 有失败项，部署后需排查，建议部署完成后运行 /test-e2e smoke。"
+fi
+SUMMARY="$SUMMARY" PYTHONIOENCODING=utf-8 $PYTHON -c "
+import json, os
+print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'additionalContext': os.environ['SUMMARY']}}, ensure_ascii=False))
+"
+
 exit 0
