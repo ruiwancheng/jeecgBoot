@@ -51,8 +51,8 @@ description: 自有命令 — 上下文压缩：生成项目记忆卡片，用�
 - 活跃模块：<progress.md>
 - 待部署：<N> 个提交
 - 上次部署：<commit>
-- 工作区：见 `@rules/file-scope.md`
-- 禁止写入：见 `@rules/file-scope.md` 和 `@rules/no-platform-modify.md`
+- 工作区：见 `@rules/boundary.md`
+- 禁止写入：见 `@rules/boundary.md` 和 `@rules/code-style.md`
 
 ## ⚠️ 待处理
 - <progress.md 的 pending_step>

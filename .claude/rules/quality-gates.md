@@ -91,7 +91,7 @@ version: 1.1.0
 | DoS（拒绝服务） | 上限保护 | `queryAll` 有上限（1000），导出有上限 |
 | Elevation（提权） | 角色判断 | 用 `hasRole()` 而非硬编码用户名 |
 
-> 以下检查已由其他规则/钩子覆盖：受保护目录写操作（`pre-write-check.sh` + `file-scope.md`）、SQL DROP/TRUNCATE（`pre-commit-check.sh`）、前端 TS 语法（`pre-commit-check.sh`）
+> 以下检查已由其他规则/钩子覆盖：受保护目录写操作（`pre-write-check.sh` + `boundary.md`）、SQL DROP/TRUNCATE（`pre-commit-check.sh`）、前端 TS 语法（`pre-commit-check.sh`）
 
 ---
 

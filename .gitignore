@@ -17,6 +17,7 @@ derby.log
 .history
 .claude/settings.local.json
 .claude/worktrees/
+.claude/.client-start-initialized
 
 ## harness engineering artifacts
 harness/node_modules/

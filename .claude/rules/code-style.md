@@ -1,8 +1,8 @@
 ---
 name: code-style
-description: 代码规范——命名、格式、修改标记
-glob: "**/*.{java,vue,ts}"
-version: 1.0
+description: 代码规范——命名、格式、修改标记、后端优先、安全、平台保护与覆盖
+glob: "**/*.{java,vue,ts,sql,xml}"
+version: 2.0
 ---
 
 # 代码规范
@@ -13,7 +13,7 @@ version: 1.0
 - Service：`I{Entity}Service` / `{Entity}ServiceImpl`
 - Mapper：`{Entity}Mapper extends BaseMapper<Entity>`
 - 所有修改加 `update-begin`/`update-end` 标记
-- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（用 Mapper `@Select` 注解原生 SQL 绕过 `@TableLogic` 拦截器），找到则复用旧ID/创建人/创建时间，用 Mapper `@Update` 注解原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联
+- **软删除 + 唯一索引："借尸还魂"模式** — `save()` 先查活跃记录(正常MP)，再查软删除记录（用 Mapper `@Select` 注解原生 SQL 绕过 `@TableLogic` 拦截器），找到则复用旧ID/创建人/创建时间，用 Mapper `@Update` 注解原生 UPDATE 将 `del_flag` 归零并覆盖业务字段，同时设 `updateBy`/`updateTime` 保留审计链。避免唯一索引冲突+保留历史关联。**经验证：MyBatis-Plus 3.5.16 + JeecgBoot 3.9.5 中 `@Select` 注解的方法不会被 `@TableLogic` 拦截器追加 `AND del_flag=0`**，此方案适用当前版本。如遇升级 MyBatis-Plus 大版本，需重新验证此行为。
 - **禁止 Service 内部 `this.xxx()` 自调用** — Spring AOP 基于代理，`this` 指向原始对象，绕过事务拦截器。需要调用同类 `@Transactional` 方法时用 `super.xxx()`（调基类）或注入自身代理 Bean。典型反模式：`for (id : ids) this.removeById(id)` → 改为 `super.removeByIds(ids)`
 - **脱敏操作禁止直接修改实体引用** — Controller 对 MyBatis-Plus 分页结果做脱敏时，`page.getRecords()` 返回的是数据库实体的原引用。直接 `setXxx("****")` 会通过前端编辑回写覆盖数据库真实值。必须提供独立的 `queryById` 接口返回完整数据供编辑使用；或在脱敏前创建副本
 - **权限注册必须同时设 `id` 和 `perms`** — Shiro `@RequiresPermissions` 匹配的是 `sys_permission.perms` 列，不是 `id` 列。只设 `id` 不设 `perms` 会导致权限码形同虚设。`permission(id, parentId, name)` 工厂方法自动 `setPerms(id)`，Runner 注册时同步写入 `setPerms(def.getPerms())`
@@ -148,3 +148,69 @@ SQL 脚本可能被多次执行（部署控制台自动扫描 `sql/` 和 `db/` �
 ## 通用
 - 函数不超过 50 行，嵌套不超过 3 层
 - 不加无业务理由的依赖
+
+## 后端优先原则
+
+> 合并自 `backend-first.md`（2026-07-28 token 降本）
+
+- 数据验证、状态转换、计算逻辑、默认值——全部在 Service 中实现
+- Controller 只做参数接收和调用 Service
+- 前端仅做 UI 展示和格式校验（必填、长度），不做业务判断
+- 扩展字段用项目专属扩展表，不修改标品表结构
+
+## 平台保护与覆盖
+
+> 合并自 `no-platform-modify.md` + `override-mechanism.md`（2026-07-28 token 降本）
+
+### 发现框架 Bug 时
+1. 不修改框架代码
+2. 记录到 `.claude/memory/platform-issues.md`
+3. 在项目模块中用覆盖机制绕过
+4. 通知技术负责人
+
+记录格式：`[日期] 问题 | 文件 | 现象 | 临时绕过方案`
+
+### Bean 替换
+客户模块中创建同名 Service Bean，标记 `@Primary`：
+```java
+@Service
+@Primary
+public class ProjectXxxServiceImpl extends XxxServiceImpl {
+    // 覆盖标品方法
+}
+```
+
+### 路由覆盖
+客户目录下注册同名路由，路径加客户前缀：
+```typescript
+// project/{项目名}/xxx.ts
+path: '/project/{项目名}/xxx'
+```
+
+### 页面覆盖
+客户目录下创建同名 Vue 组件，通过菜单配置指向客户版本。
+
+### 记录追踪
+所有覆盖操作记录在 `project-{项目名}/.manifest.yml`：
+```yaml
+project: {项目名}
+overrides:
+  - type: bean
+    original: XxxServiceImpl
+    replacement: ProjectXxxServiceImpl
+  - type: route
+    path: /system/xxx
+    replacement: /project/{项目名}/xxx
+```
+
+### 扩展表
+不能修改标品表结构。在客户目录下创建扩展表（如 `c_{项目名}_order_ext`），通过外键关联标品表。
+
+## 安全规范
+
+> 合并自 `security.md`（2026-07-28 token 降本）
+
+- 不改 `.env`，不写死密码/Token/API Key
+- 不执行 `git push --force`、`DROP TABLE`、无 WHERE 的 DELETE
+- SQL 用 MyBatis-Plus 参数化，不拼字符串
+- 敏感配置通过环境变量注入

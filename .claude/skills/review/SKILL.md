@@ -8,6 +8,12 @@ version: 1.0.0
 
 ## 7 类审查定义
 
+> **双轴审查模式（v2.0，2026-07-28 升级）**：借鉴 mattpocock code-review 的双轴并行思想。
+> 与已有 commit/分支对比时，按两个独立维度审查：
+> - **Standards 轴** — 代码是否符合本仓库的文档化编码规范（code-style.md、frontend.md、security）
+> - **Spec 轴** — 代码是否忠实实现了原始 issue/PRD/需求描述
+> 如果用户提供了对比基准（commit/分支/PR），并行审视两份 diff；否则仅做 Standards 轴审查。
+
 ### 正确性
 逻辑错误、空值未处理、边界条件遗漏、类型转换错误、并发问题。
 
@@ -33,7 +39,7 @@ version: 1.0.0
 **检查要点：**
 - Java: `update-begin`/`update-end` 标记、Controller 继承 `JeecgController`、Entity 用 `@TableId(type = IdType.ASSIGN_ID)`
 - Vue: `index.vue` + `.api.ts` + `.data.ts` 三件套、组件名 kebab-case、`defHttp` 发请求
-- 文件必须在允许的目录内（参见 `.claude/rules/file-scope.md`）
+- 文件必须在允许的目录内（参见 `.claude/rules/boundary.md`）
 
 ### 安全性
 SQL 注入、XSS、密钥泄露、未授权访问、敏感数据暴露。
@@ -42,7 +48,7 @@ SQL 注入、XSS、密钥泄露、未授权访问、敏感数据暴露。
 - SQL 必须参数化，禁止字符串拼接
 - 用户输入是否校验和转义
 - 密码/Token/API Key 是否硬编码
-- 接口是否有权限校验（参见 `.claude/rules/data-scope.md`）
+- 接口是否有权限校验（参见 `.claude/rules/boundary.md`）
 - 无 WHERE 的 DELETE/UPDATE 是否被拦截
 
 ### 性能

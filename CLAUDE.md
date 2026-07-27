@@ -122,13 +122,12 @@ jeecg-boot/
 **基座 + 覆盖层** 策略。标品代码共享，客户定制放专属目录。
 
 > 完整规则见 `.claude/rules/`：
-> `file-scope` `data-scope` `override-mechanism` `code-style` `backend-first` `security`
-> `no-platform-modify` `engineering-artifacts` `workflow` `frontend` `testing` `debugging`
+> `code-style` `boundary` `debugging` `deploy-quality-gate`
+> `engineering-artifacts` `workflow` `frontend` `testing`
 > `karpathy-guidelines` `skill-command-boundary` `audit-classification` `quality-gates` `tiequan-reports`
-> `deploy-quality-gate`
 > 链路注册表 → `hermes/business-chains.json`
 
-**读操作：** 可读任意文件。**写操作：** 仅客户专属目录（详见 `file-scope.md`）。**新建客户模块：** `/new-project <客户名>`。
+**读操作：** 可读任意文件。**写操作：** 仅客户专属目录（详见 `boundary.md`）。**新建客户模块：** `/new-project <客户名>`。
 
 ### 代码修改标记（强制）
 

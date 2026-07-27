@@ -51,11 +51,28 @@ pnpm --version || npm install -g pnpm
 #### Windows 平台（Git Bash / WSL）
 
 ```bash
-# MySQL — 端口检测
-netstat -ano | grep ":3306 " | grep LISTEN || echo "⚠️ MySQL 未运行，请启动 MySQL 服务"
+# MySQL — 客户端路径探测（mysql 不在 Git Bash PATH 时的回退）
+for d in "C:/Program Files/MySQL/MySQL Server 8.4" "C:/Program Files/MySQL/MySQL Server 8.0" "C:/xampp/mysql"; do
+  test -f "$d/bin/mysql.exe" && { MYSQL="$d/bin/mysql.exe"; break; }
+done
+
+# MySQL — 端口检测 + 自动拉起（无 Windows 服务注册时直接起 mysqld）
+netstat -ano | grep ":3306 " | grep LISTEN || {
+  echo "🔧 MySQL 未运行，尝试拉起..."
+  for d in "C:/Program Files/MySQL/MySQL Server 8.4/bin" "C:/Program Files/MySQL/MySQL Server 8.0/bin"; do
+    test -f "$d/mysqld.exe" && "$d/mysqld.exe" --console > /tmp/jeecg-local-mysql.log 2>&1 &
+  done
+  # 等 10 秒确认端口就绪
+  for i in $(seq 1 10); do sleep 2; netstat -ano | grep ":3306 " | grep -q LISTEN && break; done
+}
 
 # Redis — 端口检测
 netstat -ano | grep ":6379 " | grep LISTEN || echo "⚠️ Redis 未运行，请启动 Redis 服务"
+
+# Maven — 路径探测（mvn 不在 Git Bash PATH 时的回退）
+for d in "C:/Users/$USER/apache-maven-3.9"* "C:/Program Files/Apache"* "C:/apache-maven"*; do
+  test -f "$d/bin/mvn.cmd" && { MVN="$d/bin/mvn.cmd"; break; }
+done
 
 # Java（要求 ≥17）
 java --version 2>&1 | head -1
@@ -67,32 +84,30 @@ node --version 2>&1
 pnpm --version 2>&1 || npm install -g pnpm
 ```
 
-> Windows 上用 `netstat -ano` 替代 `lsof -i`，`2>&1` 替代 `2>/dev/null`。端口检测只判断进程在不在监听，不做自动拉起（Windows 没有统一的 service manager）。
+> Windows 上用 `netstat -ano` 替代 `lsof -i`，`2>&1` 替代 `2>/dev/null`。端口检测不到 MySQL 时尝试直接起 `mysqld.exe --console`（无 Windows 服务注册时可用）。Maven 和 MySQL 客户端不在 PATH 时走目录探测回退。
 
 ### 步骤 2：数据库初始化（幂等）
 
 首次运行导入表结构，后续运行跳过：
 
 ```bash
+# MySQL 连接参数（Windows：避免 localhost socket 解析失败，必须走 TCP）
+MYSQL_OPTS="${MYSQL_OPTS:--u root -proot --host=127.0.0.1 --protocol=TCP}"
+MYSQL_CMD="${MYSQL:-mysql} ${MYSQL_OPTS}"
+
 # 建库（幂等：已存在则跳过）
-mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS \`jeecg-boot\` DEFAULT CHARACTER SET utf8mb4;"
+$MYSQL_CMD -e "CREATE DATABASE IF NOT EXISTS \`jeecg-boot\` DEFAULT CHARACTER SET utf8mb4;"
 
 # 判断是否需要导入（检查表数量）
-TABLE_COUNT=$(mysql -uroot -proot jeecg-boot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='jeecg-boot';" 2>/dev/null | tail -1)
+TABLE_COUNT=$($MYSQL_CMD jeecg-boot -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='jeecg-boot';" 2>&1 | tail -1)
 
 if [ "$TABLE_COUNT" = "0" ] || [ -z "$TABLE_COUNT" ]; then
   # 导入 JeecgBoot 平台基础表
-  mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
-
-  # 导入 JeecgBoot 平台基础表
-  mysql -uroot -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>/dev/null
+  $MYSQL_CMD jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql 2>&1
 
   # 导入所有 MES 业务模块表（部署控制台扫描路径：**/sql/*.sql + **/db/*.sql）
-  # 注意：必须同时扫描 db/ 和 src/main/resources/sql/ 两个目录，
-  # 因为部分建表 SQL（如客户/供应商的基础 CREATE TABLE）在 resources/sql/ 中，
-  # 后续 ALTER TABLE 的增量迁移在 db/ 中，按文件名字母序执行保证顺序正确
   find jeecg-boot/jeecg-boot-module/project-mes -path "*/target/*" -prune -o \( -path "*/sql/*.sql" -o -path "*/db/*.sql" \) -type f -print | sort | while read f; do
-    mysql -uroot -proot --force jeecg-boot < "$f" 2>/dev/null
+    $MYSQL_CMD --force jeecg-boot < "$f" 2>&1
   done
 fi
 ```
@@ -111,8 +126,9 @@ cd jeecgboot-vue3 && pnpm install
 netstat -ano 2>/dev/null | grep ":8080 " | grep -q LISTEN
 if [ $? -ne 0 ]; then
   # 端口空闲，启动后端（后台运行，DevTools 热重载）
+  # Windows：优先用 $MVN（步骤 1 探测到的 Maven 路径）
   cd jeecg-boot/jeecg-module-system/jeecg-system-start
-  nohup mvn spring-boot:run -Dspring-boot.run.profiles=dev -Dspring.flyway.enabled=false \
+  nohup ${MVN:-mvn} spring-boot:run -Dspring-boot.run.profiles=dev -Dspring.flyway.enabled=false \
     > /tmp/jeecg-local-backend.log 2>&1 &
 fi
 
@@ -196,3 +212,6 @@ pkill -f "vite"
 3. **进程管理**：Win 用 `taskkill /PID xxx /F`，Mac 用 `kill xxx` 或 `pkill -f xxx`
 4. **环境检查**：不依赖 `brew`/`which`，以端口监听 + `--version` 输出为准
 5. **`/tmp` 路径**：Git Bash 下 `/tmp` 可写，等价于 Windows `%TEMP%`
+6. **MySQL 连接**：Windows 上 `localhost` 默认走 socket 连接失败，必须 **`--host=127.0.0.1 --protocol=TCP`**
+7. **MySQL 拉起**：端口检测不到时，直接 `mysqld.exe --console &` 前台拉起（无 Windows 服务注册时的回退）
+8. **MySQL/Maven 不在 PATH**：步骤 1 先走目录探测，存到 `$MYSQL`/`$MVN` 变量，后续步骤用变量名调用

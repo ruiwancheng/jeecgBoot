@@ -3,7 +3,7 @@
 - [new-project SQL 未执行](learnings/2026-07-06-new-project-sql-gap.md) — 技能只生成文件不执行，需额外步骤写入数据库
 - [MySQL HEX() 编码诊断](learnings/2026-07-06-mysql-hex-encoding-check.md) — 用 HEX() 对比字节长度判断是否双重编码
 - [路由与菜单层级一致](learnings/2026-07-06-route-menu-hierarchy.md) — 数据库菜单每一层都需要前端路由对应节点
-- [Drawer/Modal Hook 配对](learnings/2026-07-06-drawer-modal-hooks.md) — BasicDrawer 用 useDrawer，BasicModal 用 useModal
+- [Drawer/Modal Hook 配对](learnings/.archived/2026-07-06-drawer-modal-hooks.md) [ARCHIVED] — BasicDrawer 用 useDrawer，BasicModal 用 useModal（等效: frontend.md）
 - [Maven 模块必须 install](learnings/2026-07-06-maven-install-vs-compile.md) — 新增模块用 mvn install 而不是 compile
 - [@TableLogic 复活模式](learnings/2026-07-06-tablelogic-resurrection.md) — 软删除记录查/改都要原始 SQL 绕过，复用时保留 ID
 - [defHttp.delete 参数](learnings/2026-07-06-defhttp-delete-joinparams.md) — 必须加 joinParamsToUrl 才能把参数拼到 URL
@@ -19,12 +19,12 @@
 - [增量增强+降级策略模式](learnings/2026-07-20-incremental-enhance-with-degradation.md) — Harness安全演进的架构基石
 - [表字典绕过@TableLogic](learnings/2026-07-20-table-dict-bypasses-tablelogic.md) — JSearchSelect原始SQL不自动过滤del_flag→下拉与列表不一致
 - [分支分叉时的rebase收敛](learnings/2026-07-20-deploy-divergent-branches-rebase.md) — 远程有服务端改动时的三步骤合并流程
-- [MySQL保留字列名DDL报错](learnings/2026-07-21-mysql-reserved-word-ddl.md) — ERROR 1064→部署静默失败+反引号+@TableField修复
+- [MySQL保留字列名DDL报错](learnings/.archived/2026-07-21-mysql-reserved-word-ddl.md) [ARCHIVED] — ERROR 1064→部署静默失败+反引号+@TableField修复（等效: code-style.md §SQL 迁移）
 - [数据隔离硬编码admin](learnings/2026-07-21-data-isolation-hardcoded-admin.md) — 多项目用户名不同→用角色判断替代
 - [新模块三步注册必做](learnings/2026-07-21-new-module-menu-route-auto-register.md) — 菜单+路由+权限码，最易漏的项
 - [synchronized+@Transactional窗口期](learnings/2026-07-21-synchronized-transactional-window.md) — 发号必用 FOR UPDATE 行锁，synchronized 锁释放早于事务提交
 - [软删唯一索引二次删除冲突](learnings/2026-07-21-softdelete-unique-index-double-delete.md) — (code,del_flag) 撞索引，测试用独立编码，彻底解法 del_flag 写 id
 - [单据自动编码接线模式](learnings/2026-07-21-drawer-autocode-wiring-pattern.md) — Drawer 新增分支 getNextCode + try/catch 回退 + bizCodeMap 统一映射
 - [权限注解先评估调用方范围](learnings/2026-07-21-permission-annotation-scope-check.md) — 缺权限≠必须加，误伤业务用户改注释说明放行
-- [pi协调者禁止check-wait](learnings/2026-07-21-orca-coordinator-no-check-wait.md) — TUI截胡编排邮件，等待靠界面投递+dispatch-show轮询
+- [pi协调者禁止check-wait](learnings/.archived/2026-07-21-orca-coordinator-no-check-wait.md) [ARCHIVED] — TUI截胡编排邮件，等待靠界面投递+dispatch-show轮询（等效: delegate.md preamble）
 - [自动生成关联单据检查NOT NULL字段](learnings/2026-07-22-auto-generate-check-not-null.md) — warehouse_id缺失导致静默失败，release反复部署4次
