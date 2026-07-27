@@ -108,6 +108,26 @@
         "openGaps": []
       },
       "isStandalone": true
+    },
+
+    "其它出入库": {
+      "id": "other-stock",
+      "description": "非采购/订单场景的直接出入库（盘盈盘亏/报废/领用/期初），独立模块无上下游单据",
+      "flow": ["新增", "审核", "库存更新", "台账"],
+      "modules": ["stock/other-in", "stock/other-out"],
+      "sideEffects": ["basic/inventory"],
+      "tests": {},
+      "criticalPaths": [
+        "PUT /mes/stock/otherIn/audit → 原子状态守卫+库存增加+台账（不记金额）",
+        "PUT /mes/stock/otherOut/audit → 原子状态守卫+超量拦截+库存扣减（不产生应收应付）",
+        "PUT /mes/stock/otherIn/unaudit → stockOut回冲 / PUT /mes/stock/otherOut/unaudit → stockIn恢复"
+      ],
+      "health": {
+        "lastAudit": null,
+        "status": "unknown",
+        "openGaps": []
+      },
+      "isStandalone": true
     }
   },
 

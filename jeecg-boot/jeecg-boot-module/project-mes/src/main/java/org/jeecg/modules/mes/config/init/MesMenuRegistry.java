@@ -76,6 +76,13 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_inventory_ledger", "mes_warehouse", "库存台账", "/project/mes/warehouse/ledger", "project/mes/purchase/ledger/index", "MesInventoryLedger").sortNo(4.0).icon("ant-design:table-outlined"));
         addPerms(list, "mes:inventoryLedger:", "mes_inventory_ledger", new String[]{"list","export"});
 
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: V9.8.0 其它出入库菜单(仓储管理下)-----------
+        list.add(MesMenuDefinition.leaf("mes_other_stock_in", "mes_warehouse", "其它入库", "/project/mes/stock/other-in", "project/mes/stock/other-in/index", "MesOtherStockIn").sortNo(5.0).icon("ant-design:import-outlined"));
+        addPerms(list, "mes:otherStockIn:", "mes_other_stock_in", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        list.add(MesMenuDefinition.leaf("mes_other_stock_out", "mes_warehouse", "其它出库", "/project/mes/stock/other-out", "project/mes/stock/other-out/index", "MesOtherStockOut").sortNo(6.0).icon("ant-design:export-outlined"));
+        addPerms(list, "mes:otherStockOut:", "mes_other_stock_out", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:ruiwancheng---date:2026-07-28---for: V9.8.0 其它出入库菜单-----------
+
         // ==================== 生产制造 ====================
         list.add(MesMenuDefinition.folder("mes_manufacturing", "mes_menu_001", "生产制造", "/project/mes/manufacturing", "/project/mes/manufacturing/bom").sortNo(60.0).icon("ant-design:tool-outlined"));
         list.add(MesMenuDefinition.leaf("mes_bom", "mes_manufacturing", "BOM管理", "/project/mes/manufacturing/bom", "project/mes/manufacturing/bom/index", "MesBom").sortNo(1.0).icon("ant-design:cluster-outlined"));

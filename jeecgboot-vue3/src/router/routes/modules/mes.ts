@@ -143,6 +143,27 @@ const mes: AppRouteModule = {
         },
       ],
     },
+    {
+      path: 'stock',
+      name: 'MesStock',
+      component: LAYOUT,
+      redirect: '/project/mes/stock/other-in',
+      meta: { title: '其它出入库' },
+      children: [
+        {
+          path: 'other-in',
+          name: 'MesOtherStockIn',
+          component: () => import('/@/views/project/mes/stock/other-in/index.vue'),
+          meta: { title: '其它入库' },
+        },
+        {
+          path: 'other-out',
+          name: 'MesOtherStockOut',
+          component: () => import('/@/views/project/mes/stock/other-out/index.vue'),
+          meta: { title: '其它出库' },
+        },
+      ],
+    },
   ],
 };
 export default mes;

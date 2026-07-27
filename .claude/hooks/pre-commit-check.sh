@@ -17,6 +17,12 @@ WARNINGS=""
 # 移除 @RequiresPermissions 的阻断标记（独立变量——质量门控段的 QUALITY_GATE_BLOCK=0 初始化会抹掉前置写入，2026-07-28 踩坑）
 REMOVE_PERM_BLOCK=0
 
+# 2026-07-28 逃生门：git commit --no-verify 显式跳过（PreToolUse 钩子对 --no-verify 不天然豁免，需脚本自己识别）
+INPUT_CMD=$(cat 2>/dev/null)
+if echo "$INPUT_CMD" | grep -q -- '--no-verify'; then
+  exit 0
+fi
+
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)
 
 # SQL 危险操作检查
@@ -103,13 +109,14 @@ fi
 # ============================================
 STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E "\.(java|vue|ts)$" | head -20)
 # Portable port check: try lsof, fallback to ss/netstat
+# 2026-07-28 修复: Windows netstat 无 -tlnp 参数（该语法仅 Linux）→ 补 -ano 检测，此前 Windows 上此门控一直静默失效
 PORT_8080_UP=false
 if command -v lsof >/dev/null 2>&1; then
   lsof -i :8080 2>/dev/null | grep -q LISTEN && PORT_8080_UP=true
 elif command -v ss >/dev/null 2>&1; then
   ss -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
 elif command -v netstat >/dev/null 2>&1; then
-  netstat -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
+  { netstat -tlnp 2>/dev/null | grep -q ':8080 ' || netstat -ano 2>/dev/null | grep -q ':8080 '; } && PORT_8080_UP=true
 fi
 if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
   CURRENT_HEAD=$(git rev-parse HEAD 2>/dev/null)
@@ -127,18 +134,18 @@ if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
     fi
   fi
   if [ "$VERIFY_VALID" -eq 0 ]; then
-    echo ""
-    echo "[Super Harness] ╔══════════════════════════════════════════╗"
-    echo "[Super Harness] ║  🚫 /verify 证据缺失或过期              ║"
-    echo "[Super Harness] ╠══════════════════════════════════════════╣"
-    echo "[Super Harness] ║  本地后端在运行 (8080) + 代码变更       ║"
-    echo "[Super Harness] ║  按铁律：必须先 /verify（curl实测）     ║"
-    echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-40s ║\n" "$f"; done
-    echo "[Super Harness] ╠══════════════════════════════════════════╣"
-    echo "[Super Harness] ║  修复: 运行 /verify → 自动记录证据      ║"
-    echo "[Super Harness] ║  紧急: git commit --no-verify            ║"
-    echo "[Super Harness] ╚══════════════════════════════════════════╝"
-    echo ""
+    # 2026-07-28 升级: 提醒 → 硬阻断（原则：靠自觉的步骤=从不触发。逃生门 --no-verify 见脚本头部）
+    {
+      echo ""
+      echo "[Super Harness] 🚫 /verify 证据缺失或过期 — 提交已阻断"
+      echo "  本地后端在运行 (8080) + 暂存含代码文件，按铁律必须先 /verify（curl 实测）"
+      echo "  涉及文件:"
+      echo "$STAGED_JAVA_VUE" | head -10
+      echo "  修复: 运行 /verify → 自动记录证据 → 重新提交"
+      echo "  紧急跳过: git commit --no-verify"
+      echo ""
+    } >&2
+    exit 2
   fi
 fi
 
@@ -259,35 +266,6 @@ if [ -n "$MES_DICT_PATTERN" ]; then
   WARNINGS="${WARNINGS}检测到 c_mes_ 表字典反模式(应改用 ApiSelect + /selectPage); "
 fi
 
-
-# ============================================
-# 本地验证提醒：后端运行时必须 curl 实测
-# ============================================
-STAGED_JAVA_VUE=$(echo "$STAGED_FILES" | grep -E ".(java|vue|ts)$" | head -20)
-# Portable port check: try lsof, fallback to ss/netstat
-PORT_8080_UP=false
-if command -v lsof >/dev/null 2>&1; then
-  lsof -i :8080 2>/dev/null | grep -q LISTEN && PORT_8080_UP=true
-elif command -v ss >/dev/null 2>&1; then
-  ss -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
-elif command -v netstat >/dev/null 2>&1; then
-  netstat -tlnp 2>/dev/null | grep -q ':8080 ' && PORT_8080_UP=true
-fi
-if [ -n "$STAGED_JAVA_VUE" ] && [ "$PORT_8080_UP" = true ]; then
-  echo ""
-  echo "[Super Harness] ╔══════════════════════════════════════╗"
-  echo "[Super Harness] ║  本地后端在运行 (8080) — /verify 完成了吗？ ║"
-  echo "[Super Harness] ╠══════════════════════════════════════╣"
-  echo "[Super Harness] ║  本次变更涉及以下文件：                ║"
-  echo "$STAGED_JAVA_VUE" | while read f; do printf "[Super Harness] ║    %-36s ║\n" "$f"; done
-  echo "[Super Harness] ╠══════════════════════════════════════╣"
-  echo "[Super Harness] ║  请在提交前 curl 实测改动点核心逻辑     ║"
-  echo "[Super Harness] ║  mvn compile ≠ 验证通过              ║"
-  echo "[Super Harness] ╚══════════════════════════════════════╝"
-  echo ""
-  # 2026-07-28 与上方 /verify 证据检查合并为一条提醒（证据有效则不重复提醒）
-  [ "${VERIFY_VALID:-0}" -eq 0 ] && WARNINGS="${WARNINGS}本地后端在线(8080)+代码变更,提交前须 /verify curl 实测; "
-fi
 
 # 2026-07-28 修复: exit 0 的 stdout 不送达 AI → 提醒通过 additionalContext 统一发射
 # （裸 echo 零依赖；WARNINGS 为受控单行文本、无双引号，无 JSON 转义风险）

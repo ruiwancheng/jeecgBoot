@@ -26,4 +26,8 @@ export const MES_BIZ_CODE = {
   PURCHASE_INVOICE: 'PI',
   /** 采购申请 — views/project/mes/purchase/apply */
   PURCHASE_APPLY: 'PA',
+  /** 其它入库 — views/project/mes/stock/other-in */
+  OTHER_STOCK_IN: 'QI',
+  /** 其它出库 — views/project/mes/stock/other-out */
+  OTHER_STOCK_OUT: 'QO',
 } as const;

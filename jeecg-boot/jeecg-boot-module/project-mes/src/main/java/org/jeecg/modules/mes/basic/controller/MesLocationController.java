@@ -62,5 +62,21 @@ public class MesLocationController extends JeecgController<MesLocation, IMesLoca
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesLocation.class);
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-28---for: V9.8.0 其它出入库-库位下拉(ApiSelect用，替代平台字典 c_mes_location)-----------
+    @GetMapping("/selectPage") @RequiresPermissions("mes:location:list")
+    public Result<java.util.List<java.util.Map<String,String>>> selectPage(@RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String warehouseId) {
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<MesLocation> qw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (org.springframework.util.StringUtils.hasText(warehouseId)) { qw.eq(MesLocation::getWarehouseId, warehouseId); }
+        if (org.springframework.util.StringUtils.hasText(keyword)) { qw.like(MesLocation::getName, keyword).or().like(MesLocation::getCode, keyword); }
+        qw.orderByAsc(MesLocation::getCode).last("LIMIT 100");
+        java.util.List<java.util.Map<String,String>> list = service.list(qw).stream().map(s -> {
+            java.util.Map<String,String> m = new java.util.HashMap<>();
+            m.put("label", s.getCode() + " — " + s.getName()); m.put("value", s.getId()); return m;
+        }).collect(java.util.stream.Collectors.toList());
+        return Result.ok(list);
+    }
+    //update-end---author:ruiwancheng---date:2026-07-28---for: V9.8.0 库位下拉-----------
 }
 //update-end---author:admin---date:2026-07-06---for: MES基础设置-库位管理接口-----------
