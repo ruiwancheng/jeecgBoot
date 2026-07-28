@@ -1,6 +1,6 @@
 ---
 name: human-gate
-description: 人工介入门控框架 — Orca decision_gate 硬阻断 + 上下文膨胀保护，被 /visual-check /test-loop /chain-test /deploy-verify /pre-commit-gate 共用
+description: 人工介入门控框架 — Orca decision_gate 硬阻断 + 上下文膨胀保护，被 /visual-check /chain-test /deploy-verify /pre-commit-gate 共用
 version: 1.0.0
 ---
 
@@ -139,7 +139,6 @@ print('PENDING')
 
 ```
 /visual-check   → 步骤 4（发现 UI 差异）→ human-gate
-/test-loop      → 步骤 4（自动修复完成）→ human-gate
 /chain-test     → 步骤 4（链路断裂）    → human-gate
 /deploy-verify  → 步骤 4（异常判定）    → human-gate
 /pre-commit-gate → 步骤 5（BLOCKED 判定）→ human-gate
