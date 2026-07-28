@@ -28,6 +28,7 @@ version: 1.0
 - 项目页面加前缀 `/project/{项目名}/`
 - **新增 Vue 组件后必须重启 Vite**（`import.meta.glob` 缓存）
 - **菜单 404 排查：** 先查 `sys_permission.is_route` 是否为 1。`is_route=0` 时前端不生成路由，直接返回 404。其次查 `parent_id` 是否指向正确的父菜单
+- **静态路由 404 排查：** permissionGuard 登录后按后端菜单权限重建可访问路由表，**没有菜单支撑的静态路由（routes/modules 里注册了的）会被移除** → 新页面 404 第一怀疑菜单注册（MesMenuRegistry），不是路由本身（实证：2026-07-29 Gallery）
 
 ## 路由匹配
 - 数据库菜单 url 和前端路由 path 必须一致
@@ -83,7 +84,7 @@ localStorage['<prefix>COMMON__LOCAL__KEY__']
 1. **抽屉 vs 背后搜索区**：列表页搜索表单与抽屉表单有同名 select，必须作用域限定 `.ant-drawer:has-text("标题")` 再操作，否则点中背后被遮罩元素
 2. **select 点击目标**：点 `.ant-select-selector`（不是根 div 也不是 `-selection-wrap`）；选项用 `.ant-select-item-option`，动画期 `waitForTimeout(400)`，必要时 `force: true`
 3. **字典下拉首项是"全部"（空值）**：点 first 会回显但表单值为空→提交校验失败，用 `.nth(1)`
-4. **按钮两汉字有空格**：ant 自动加空格（"确 认"/"搜 索"），`has-text("确认")` 匹配不到，用 `getByRole('button', { name: '确 认' })`
+4. **按钮两汉字有空格**：ant 自动加空格（"确 认"/"搜 索"），`has-text("确认")` 匹配不到，用 `getByRole('button', { name: '确 认' })`；且 `has-text` 是**子串匹配**（"审核"会误中"反审核"），按钮状态断言必须加 `exact: true`
 5. **单选/多选不同**：MaterialSelectModal single=radio，multiple=checkbox，写选择器前先看 mode
 6. **抽屉默认带空明细行**：OtherInDrawer 初始化已有一行，再"添加行"产生空行导致静默保存失败；**保存结果别信 toast，用 API 查落库断言**（`list?code=xxx`）
 
