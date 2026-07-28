@@ -114,9 +114,9 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
 
-        // 审核成功后逐行加库存（不记成本价/金额，传 null）
+        // 审核成功后逐行加库存（按明细快照成本改库存金额）
         for (MesOtherStockInItem item : e.getItems()) {
-            inventoryService.stockIn(item.getMaterialId(), item.getWarehouseId(), item.getQty(), null, null, "其它入库", e.getCode());
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库", e.getCode());
         }
     }
 
@@ -131,7 +131,7 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         int rows = baseMapper.unauditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("反审核失败：入库单不存在或状态不是已审核，请刷新后重试");
         for (MesOtherStockInItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), item.getWarehouseId(), item.getQty(), null, null, "其它入库红冲", e.getCode());
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库红冲", e.getCode());
         }
     }
 
@@ -155,19 +155,27 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("入库单号不能为空");
         if (entity.getCode().length() > 50) throw new JeecgBootException("入库单号长度不能超过50个字符");
         if (!StringUtils.hasText(entity.getInType())) throw new JeecgBootException("入库类型不能为空");
+        if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("仓库不能为空");
         if (entity.getReason() != null && entity.getReason().length() > 500) throw new JeecgBootException("原因长度不能超过500个字符");
         if (entity.getRemark() != null && entity.getRemark().length() > 500) throw new JeecgBootException("备注长度不能超过500个字符");
         List<MesOtherStockInItem> items = entity.getItems();
         if (items == null || items.isEmpty()) throw new JeecgBootException("至少需要一个入库行");
+        BigDecimal totalAmount = BigDecimal.ZERO;
         for (int i = 0; i < items.size(); i++) {
             MesOtherStockInItem item = items.get(i);
             if (!StringUtils.hasText(item.getMaterialId())) throw new JeecgBootException("第" + (i + 1) + "行物料不能为空");
-            if (!StringUtils.hasText(item.getWarehouseId())) throw new JeecgBootException("第" + (i + 1) + "行仓库不能为空");
             if (item.getQty() == null || item.getQty().compareTo(BigDecimal.ZERO) <= 0)
                 throw new JeecgBootException("第" + (i + 1) + "行数量必须大于0");
+            if (item.getUnitCost() != null && item.getUnitCost().compareTo(BigDecimal.ZERO) < 0)
+                throw new JeecgBootException("第" + (i + 1) + "行成本单价不能为负数");
+            // 服务端权威计算金额快照（无条件覆盖，前端只读只是 UI 防线）
+            BigDecimal cost = item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO;
+            item.setAmount(item.getQty().multiply(cost).setScale(2, java.math.RoundingMode.HALF_UP));
+            totalAmount = totalAmount.add(item.getAmount());
             item.setLineNo(i + 1);
             item.setInId(entity.getId());
         }
+        entity.setTotalAmount(totalAmount);
     }
 
     private void saveItems(MesOtherStockIn entity) {

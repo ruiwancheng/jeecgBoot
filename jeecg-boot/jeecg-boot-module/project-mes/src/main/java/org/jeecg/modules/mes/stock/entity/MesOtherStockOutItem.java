@@ -31,14 +31,12 @@ public class MesOtherStockOutItem implements Serializable {
     @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id")
     @Schema(description = "物料ID")
     private String materialId;
-    @Dict(dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
-    @Schema(description = "仓库ID")
-    private String warehouseId;
-    @Dict(dictTable = "c_mes_location", dicText = "name", dicCode = "id")
-    @Schema(description = "库位ID(仅记录,不参与库存计算)")
-    private String locationId;
     @Schema(description = "数量")
     private BigDecimal qty;
+    @Schema(description = "成本单价(手工录入,审核快照)")
+    private BigDecimal unitCost;
+    @Schema(description = "金额(qty*unit_cost)")
+    private BigDecimal amount;
     @Schema(description = "创建人") private String createBy;
     @Schema(description = "创建时间") private Date createTime;
     @Schema(description = "更新人") private String updateBy;

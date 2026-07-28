@@ -13,7 +13,7 @@ public interface MesOtherStockOutMapper extends BaseMapper<MesOtherStockOut> {
     @Select("SELECT * FROM c_mes_other_stock_out WHERE code = #{code} AND del_flag = 1 LIMIT 1")
     MesOtherStockOut selectDeletedByCode(String code);
 
-    @Update("UPDATE c_mes_other_stock_out SET code=#{code}, out_type=#{outType}, reason=#{reason}, stock_date=#{stockDate}, status=#{status}, remark=#{remark}, update_by=#{updateBy}, update_time=#{updateTime}, del_flag=0 WHERE id=#{id} AND del_flag=1")
+    @Update("UPDATE c_mes_other_stock_out SET code=#{code}, out_type=#{outType}, warehouse_id=#{warehouseId}, total_amount=#{totalAmount}, reason=#{reason}, stock_date=#{stockDate}, status=#{status}, remark=#{remark}, update_by=#{updateBy}, update_time=#{updateTime}, del_flag=0 WHERE id=#{id} AND del_flag=1")
     int resurrect(MesOtherStockOut entity);
 
     @Update("UPDATE c_mes_other_stock_out SET status = '2', update_by = #{updateBy}, update_time = #{updateTime} WHERE id = #{id} AND status = '1'")

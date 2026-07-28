@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
+      <template #expandedRowRender="{ record }">
+        <OtherInItemsSubTable :docId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增入库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -24,6 +27,7 @@
   import { columns, searchFormSchema } from './otherIn.data';
   import { queryOtherInList, deleteOtherIn, auditOtherIn, unauditOtherIn, getExportUrl } from './otherIn.api';
   import OtherInDrawer from './OtherInDrawer.vue';
+  import OtherInItemsSubTable from './OtherInItemsSubTable.vue';
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesOtherStockIn' });

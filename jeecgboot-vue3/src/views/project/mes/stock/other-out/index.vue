@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
+      <template #expandedRowRender="{ record }">
+        <OtherOutItemsSubTable :docId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增出库单</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
@@ -24,6 +27,7 @@
   import { columns, searchFormSchema } from './otherOut.data';
   import { queryOtherOutList, deleteOtherOut, auditOtherOut, unauditOtherOut, getExportUrl } from './otherOut.api';
   import OtherOutDrawer from './OtherOutDrawer.vue';
+  import OtherOutItemsSubTable from './OtherOutItemsSubTable.vue';
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesOtherStockOut' });

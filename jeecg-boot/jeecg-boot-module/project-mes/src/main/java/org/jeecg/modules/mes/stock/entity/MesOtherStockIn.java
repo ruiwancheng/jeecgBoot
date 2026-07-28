@@ -35,6 +35,13 @@ public class MesOtherStockIn implements Serializable {
     @Dict(dicCode = "mes_other_stock_in_type")
     @Schema(description = "入库类型")
     private String inType;
+    @Excel(name = "仓库", width = 15, dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
+    @Dict(dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
+    @Schema(description = "仓库ID(单据级,单仓单)")
+    private String warehouseId;
+    @Excel(name = "总金额", width = 15)
+    @Schema(description = "总金额")
+    private java.math.BigDecimal totalAmount;
     @Excel(name = "原因", width = 25)
     @Schema(description = "原因(手工填)")
     private String reason;
