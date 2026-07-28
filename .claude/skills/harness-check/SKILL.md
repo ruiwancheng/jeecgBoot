@@ -13,8 +13,10 @@ version: 1.0.0
 - `.claude/settings.json` — 项目级设置
 - `.claude/features.json` — 功能模块清单
 
-### 命令 Commands（48 个）
+### 命令 Commands（47 个）
 `admin/admin`, `dev/brainstorm`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `dev/new-terminal`, `dev/onboard`, `dev/chain-test`, `dev/client-start`, `dev/visual-check`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `util/capability-check`, `util/compat-check`, `orca/delegate`, `quality/gate`, `quality/deep-inspect`, `quality/dashboard`, `quality/deploy-verify`, `quality/pre-commit-gate`, `quality/tiequan-audit`
+
+> 死命令治理判据（来源：2026-07-28 /test-loop 移除）：4 问全中=死命令，应删除并清理引用——①项目无可跑资产（如测试命令但无测试套件）②技能描述技术栈与项目不匹配 ③无任何 hook/CI/其它命令引用 ④近期开发从未触发。/test-loop 即因此移除。
 
 ### 规则 Rules（14 个 + 1 配置）
 `audit-classification`, `boundary`, `code-style`, `debugging`, `deploy-quality-gate`, `engineering-artifacts`, `frontend`, `hook-authoring`, `karpathy-guidelines`, `quality-gates`, `skill-command-boundary`, `testing`, `tiequan-reports`, `workflow` + `gen-tests-rules.json`（配置）

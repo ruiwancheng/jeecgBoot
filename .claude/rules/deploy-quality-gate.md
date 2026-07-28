@@ -135,6 +135,23 @@ full 级变更时，自动运行 `business-chains.json` 中对应链路的 `chai
 
 > **为什么 API/E2E 失败不阻塞？** 测试环境与生产环境可能有差异，测试失败不一定是代码问题。但必须记录，人工判断。
 
+## 产物特征串验证（来源：2026-07-28 前端漏部署事件）
+
+争议场景"用户说部署了但行为没变"时，不猜，30 秒出铁证：
+
+```bash
+# 1. 拿主 bundle 名
+curl -s http://server/ | grep -oE '/js/index-[^"]+\.js'
+# 2. 主 bundle 里找目标页面懒加载 chunk 名
+curl -s http://server/js/index-XXX.js | grep -oE "XxxDrawer[^\"']*\.js"
+# 3. grep chunk 特征串（函数名会被压缩，属性名字符串保留）
+curl -s http://server/js/XxxDrawer-YYY.js | grep -c "movingAvgCost"
+# 4. 与本地 pnpm build 的 dist 同位置 chunk 对比出现次数/上下文
+```
+
+- 特征串选择：取本次改动引入的**属性名/字符串字面量**（如 `movingAvgCost`、`costDiff`），不要取函数名（生产构建会压缩）
+- 判定：服务器 chunk 缺失特征串 = 前端没重新部署，不是代码 bug
+
 ## 紧急旁路
 
 生产 P0 hotfix 使用 `--skip-audit` 跳过验证：

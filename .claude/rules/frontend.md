@@ -62,3 +62,31 @@ version: 1.0
 3. **配套数据**：SQL 补规则（INSERT IGNORE 固定 id）+ 规则实体 `@Dict` 注解 + 字典 `mes_code_biz_type`
 
 已知行为（设计取舍）：打开弹窗即占号，取消不归还 → 单号允许跳号。
+
+## E2E 测试规范（来源：2026-07-28 harness E2E 体系建设）
+
+### 登录注入（标准姿势，必须复用 helper）
+
+JeecgBoot token 是**双层包装**，直接 `setItem('Access-Token'/'TOKEN__', token)` 无效（路由守卫读不到→跳登录页并清 token）：
+
+```
+localStorage['<prefix>COMMON__LOCAL__KEY__']
+= { value: { TOKEN__: { value: token, time, expire } }, time, expire }
+  └─ 外层 storageCache 包装       └─ 内层 Persistent 包装（getLocal 读 .value）
+```
+
+- **统一用** `harness/e2e/mes/helpers/auth.ts` 的 `loginViaApi(page, path?)`（含 token 缓存 + 登录竞态自动重试），禁止各 spec 重复写注入逻辑
+- prefix 运行时动态查找 `keys.find(k => k.includes('COMMON__LOCAL__KEY__'))`（服务器是 DOCKER 环境，勿硬编码 PRODUCTION）
+
+### antd 组件操作六坑
+
+1. **抽屉 vs 背后搜索区**：列表页搜索表单与抽屉表单有同名 select，必须作用域限定 `.ant-drawer:has-text("标题")` 再操作，否则点中背后被遮罩元素
+2. **select 点击目标**：点 `.ant-select-selector`（不是根 div 也不是 `-selection-wrap`）；选项用 `.ant-select-item-option`，动画期 `waitForTimeout(400)`，必要时 `force: true`
+3. **字典下拉首项是"全部"（空值）**：点 first 会回显但表单值为空→提交校验失败，用 `.nth(1)`
+4. **按钮两汉字有空格**：ant 自动加空格（"确 认"/"搜 索"），`has-text("确认")` 匹配不到，用 `getByRole('button', { name: '确 认' })`
+5. **单选/多选不同**：MaterialSelectModal single=radio，multiple=checkbox，写选择器前先看 mode
+6. **抽屉默认带空明细行**：OtherInDrawer 初始化已有一行，再"添加行"产生空行导致静默保存失败；**保存结果别信 toast，用 API 查落库断言**（`list?code=xxx`）
+
+### 存量 E2E 修复顺序（登录闸门原则）
+
+登录是闸门：登录注入不通时所有用例都死在第一步，下游漂移被掩盖。**先修通公共登录 → 全量跑暴露真失败（失败数"变多"是好转）→ 逐个修内容漂移**。失败全在同一步→查登录/导航；失败分散→内容漂移。
