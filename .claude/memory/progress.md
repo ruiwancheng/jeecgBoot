@@ -4,10 +4,13 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | idle | 其它出入库 B+A+ 全链路交付完毕（开发→部署→自动化测试全绿） |
-| last_verify | 2026-07-28 | /test-all mes 其它入库：API 9/9 + 前端构建 + E2E 全量 12/12 |
-| last_test | 2026-07-28 | 服务端移动平均联动+总览金额+台账差异列实测通过 |
-| pending_step | 客户验收 | 非admin账号(mes_admin)接口权限已验，待业务侧最终确认 |
+| phase | idle | 测试体系v2+黄金模板体系交付；盘点单4bug待修（用户明天试新流程） |
+| last_verify | 2026-07-29 | 两轮全量零失败+E2E 12/12+Gallery控件12/12 |
+| last_test | 2026-07-29 | 链路18/18+16/16，API 124+用例，模板变体验收零占位符 |
+| pending_step | 盘点单4bug修复 | 显示ID/账面取值/审核未生效/明细过多（用新标准修+补E2E完整流） |
+| shelved | DB密码环境变量化 / PD-DVST-001残留 / purchase链路排期 | 见下 |
+| shelved | DB密码硬编码环境变量化 | jeecg-codegen/jeecg-onlchart 技能 5 处 -uroot -proot（P1低危，用户决定暂搁） |
+| shelved | PD-DVST-001 测试盘点单残留 | 已审核无红冲接口，用户联系管理员DB手工删（SQL已给）；V2考虑加"作废"状态 |
 
 ## 会话收尾（2026-07-28 session-wrap #4）
 - 方案B+A+闭环：其它入库成本联动移动平均+台账差异列，/verify 全场景过→提交a33628a→部署→deploy-verify PASS
