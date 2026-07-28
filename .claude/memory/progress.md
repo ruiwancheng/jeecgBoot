@@ -4,10 +4,21 @@
 
 | 字段 | 值 | 说明 |
 |------|-----|------|
-| phase | idle | V9.8.0其它出入库全链路交付(开发→部署→deploy-verify PASS) |
-| last_verify | 2026-07-28 | 服务端deploy-verify: API冒烟5/5+全链路+菜单权限+视觉 |
-| last_test | 2026-07-28 | 本地curl全链路+超量拦截+/visual-check双页面基线 |
-| pending_step | 客户验证 | 明日: 非admin账号验证菜单可见→通知客户(主线11-12步) |
+| phase | idle | 其它出入库 B+A+ 全链路交付完毕（开发→部署→自动化测试全绿） |
+| last_verify | 2026-07-28 | /test-all mes 其它入库：API 9/9 + 前端构建 + E2E 全量 12/12 |
+| last_test | 2026-07-28 | 服务端移动平均联动+总览金额+台账差异列实测通过 |
+| pending_step | 客户验收 | 非admin账号(mes_admin)接口权限已验，待业务侧最终确认 |
+
+## 会话收尾（2026-07-28 session-wrap #4）
+- 方案B+A+闭环：其它入库成本联动移动平均+台账差异列，/verify 全场景过→提交a33628a→部署→deploy-verify PASS
+- 第11步验收：mes_admin 非admin账号接口权限 5/5 OK（本地+服务器）
+- 清理僵尸命令：/test-loop 删除（项目无JUnit/Vitest套件，纯模板占位）
+- harness 测试盘点：/test-api 实测能跑(14用例)，/test-e2e 缺依赖，/gen-tests 覆盖式慎用
+- E2E 环境修复：harness npm ci + playwright install chromium
+- /test-all mes 其它入库：新建 API 9用例+E2E 1用例；发现服务器前端旧版（bundle grep 铁证）→重新部署后全绿
+- E2E 登录公共化：helpers/auth.ts 双层包装注入；顺手修复3老用例（checkbox/确 认空格/脆弱500断言）→全量 12/12
+- /update-graph：图谱 25436节点/161772边，基线 e5061fb
+- learnings +3：token双层包装、antd-playwright六坑、bundle grep部署验证法
 
 ## 会话收尾（2026-07-28 session-wrap #3）
 - 死循环排查：DeepSeek代理空回复循环（非harness问题），顺带修复6个钩子协议问题（exit1→2/stderr/additionalContext/stub过滤/GBK/PIPESTATUS/true≠True）
