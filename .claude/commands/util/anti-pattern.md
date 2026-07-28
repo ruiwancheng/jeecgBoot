@@ -14,4 +14,4 @@
 - Drawer/Modal Hook 混用（见 @rules/frontend.md）
 - DELETE 缺 joinParamsToUrl
 
-引用: @rules/code-style.md, @rules/backend-first.md, @rules/security.md
+引用: @rules/code-style.md（backend-first/security 已于 2026-07-28 合并入此文件）
