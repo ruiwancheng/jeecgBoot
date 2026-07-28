@@ -7,6 +7,11 @@
       <template #materialId="{ record }">
         <span>{{ getMaterialCode(record.materialId) || record.materialId || '-' }}</span>
       </template>
+      <!-- A+ 成本差异高亮：手工价与移动平均不一致时飘红 -->
+      <template #costDiff="{ record }">
+        <span v-if="record.costDiff && Number(record.costDiff) !== 0" style="color: #f5222d; font-weight: 600">{{ record.costDiff }}</span>
+        <span v-else style="color: #999">0.00</span>
+      </template>
     </BasicTable>
   </div>
 </template>

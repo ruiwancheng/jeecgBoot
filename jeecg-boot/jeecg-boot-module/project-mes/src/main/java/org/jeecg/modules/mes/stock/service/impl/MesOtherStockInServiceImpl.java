@@ -29,6 +29,9 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
 
     @Autowired private MesOtherStockInItemMapper itemMapper;
     @Autowired private IMesInventoryService inventoryService;
+    //update-begin---author:ruiwancheng---date:2026-07-28---for: 方案B 手工成本进入移动平均体系-----------
+    @Autowired private org.jeecg.modules.mes.basic.service.IMesMaterialService materialService;
+    //update-end---author:ruiwancheng---date:2026-07-28---for: 方案B 成本联动-----------
 
     @Override
     public MesOtherStockIn queryWithItems(String id) {
@@ -119,6 +122,11 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         MesOtherStockIn e = queryWithItems(id);
         // 审核成功后逐行加库存（按明细快照成本改库存金额）
         for (MesOtherStockInItem item : e.getItems()) {
+            //update-begin---author:ruiwancheng---date:2026-07-28---for: 方案B 手工成本进入移动平均（先成本后库存，镜像采购入库；0/空成本跳过不污染）-----------
+            if (item.getUnitCost() != null && item.getUnitCost().compareTo(BigDecimal.ZERO) > 0) {
+                materialService.updateMovingAvgCostOnStockIn(item.getMaterialId(), item.getQty(), item.getUnitCost(), e.getWarehouseId(), "其它入库", e.getCode());
+            }
+            //update-end---author:ruiwancheng---date:2026-07-28---for: 方案B 成本联动-----------
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库", e.getCode());
         }
     }

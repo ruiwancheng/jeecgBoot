@@ -68,6 +68,15 @@ public class MesInventoryLedger implements Serializable {
     @Schema(description = "期末金额")
     private BigDecimal endingAmount;
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存台账金额字段-----------
+
+    //update-begin---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异可见（手工价与移动平均的差异可度量）-----------
+    @Schema(description = "当前移动平均成本（实时关联，非表字段）")
+    @com.baomidou.mybatisplus.annotation.TableField(exist = false)
+    private BigDecimal movingAvgCost;
+    @Schema(description = "成本差异=(单位成本-移动平均)×数量（实时计算，非表字段）")
+    @com.baomidou.mybatisplus.annotation.TableField(exist = false)
+    private BigDecimal costDiff;
+    //update-end---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异可见-----------
     @Excel(name = "记录日期", width = 15, format = "yyyy-MM-dd")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

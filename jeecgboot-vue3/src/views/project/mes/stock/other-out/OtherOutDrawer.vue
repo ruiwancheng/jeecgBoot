@@ -8,7 +8,7 @@
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => onMaterialChange(index, v)" style="width:100%" />
       </template>
       <template #qty="{ record, index }">
         <InputNumber :value="record.qty" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'qty', v)" />
@@ -57,6 +57,12 @@
   function addLine() { items.value.push({ qty: 1, unitCost: 0 }); }
   function removeLine(i: number) { if (items.value.length > 1) items.value.splice(i, 1); }
   function updateItem(i: number, f: string, v: any) { items.value[i] = { ...items.value[i], [f]: v }; }
+  // 选中物料时预填移动平均成本（可手工修改）
+  function onMaterialChange(i: number, v: any) {
+    updateItem(i, 'materialId', v?.value ?? v);
+    const cost = v?.record?.movingAvgCost;
+    if (cost != null) updateItem(i, 'unitCost', cost);
+  }
   function calcAmount(r: any) { return ((Number(r.qty) || 0) * (Number(r.unitCost) || 0)).toFixed(2); }
 
   // 批量添加物料（参考采购申请单）

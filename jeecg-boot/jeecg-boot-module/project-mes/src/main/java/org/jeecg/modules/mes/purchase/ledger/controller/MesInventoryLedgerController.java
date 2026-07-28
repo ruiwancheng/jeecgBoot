@@ -39,8 +39,37 @@ public class MesInventoryLedgerController extends JeecgController<MesInventoryLe
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
         QueryWrapper<MesInventoryLedger> qw = QueryGenerator.initQueryWrapper(entity, req.getParameterMap());
         qw.orderByDesc("record_date").orderByAsc("material_id");
-        return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
+        IPage<MesInventoryLedger> page = service.page(new Page<>(pageNo, pageSize), qw);
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异实时计算（与库存总览 inventory_amount 同模式）-----------
+        fillCostDiff(page.getRecords());
+        //update-end---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异-----------
+        return Result.ok(page);
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异实时计算-----------
+    @Autowired
+    private org.jeecg.modules.mes.basic.service.IMesMaterialService materialService;
+
+    /** 成本差异 = (单位成本 - 当前移动平均成本) × 数量；手工价与移动平均的漂移可度量可归因 */
+    private void fillCostDiff(java.util.List<MesInventoryLedger> records) {
+        if (records == null || records.isEmpty()) return;
+        java.util.Set<String> matIds = records.stream().map(MesInventoryLedger::getMaterialId)
+                .filter(java.util.Objects::nonNull).collect(java.util.stream.Collectors.toSet());
+        if (matIds.isEmpty()) return;
+        java.util.Map<String, java.math.BigDecimal> costMap = new java.util.HashMap<>();
+        materialService.listByIds(matIds).forEach(m ->
+                costMap.put(m.getId(), m.getMovingAvgCost() != null ? m.getMovingAvgCost() : java.math.BigDecimal.ZERO));
+        for (MesInventoryLedger r : records) {
+            java.math.BigDecimal avg = costMap.getOrDefault(r.getMaterialId(), java.math.BigDecimal.ZERO);
+            r.setMovingAvgCost(avg);
+            if (r.getUnitCost() != null) {
+                java.math.BigDecimal qty = (r.getInQty() != null ? r.getInQty() : java.math.BigDecimal.ZERO)
+                        .add(r.getOutQty() != null ? r.getOutQty() : java.math.BigDecimal.ZERO);
+                r.setCostDiff(r.getUnitCost().subtract(avg).multiply(qty).setScale(2, java.math.RoundingMode.HALF_UP));
+            }
+        }
+    }
+    //update-end---author:ruiwancheng---date:2026-07-28---for: A+ 成本差异-----------
 
     @Operation(summary = "查询全部台账")
     @GetMapping("/queryAll")
