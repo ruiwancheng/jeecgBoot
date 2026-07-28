@@ -162,6 +162,12 @@ const mes: AppRouteModule = {
           component: () => import('/@/views/project/mes/stock/other-out/index.vue'),
           meta: { title: '其它出库' },
         },
+        {
+          path: 'stocktake',
+          name: 'MesStocktake',
+          component: () => import('/@/views/project/mes/stock/stocktake/index.vue'),
+          meta: { title: '盘点单' },
+        },
       ],
     },
   ],

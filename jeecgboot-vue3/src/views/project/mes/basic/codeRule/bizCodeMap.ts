@@ -30,4 +30,6 @@ export const MES_BIZ_CODE = {
   OTHER_STOCK_IN: 'QI',
   /** 其它出库 — views/project/mes/stock/other-out */
   OTHER_STOCK_OUT: 'QO',
+  /** 盘点单 — views/project/mes/stock/stocktake */
+  STOCKTAKE: 'PD',
 } as const;

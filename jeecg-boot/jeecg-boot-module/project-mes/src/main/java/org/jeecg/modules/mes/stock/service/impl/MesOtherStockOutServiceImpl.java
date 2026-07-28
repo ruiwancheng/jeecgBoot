@@ -104,15 +104,20 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void audit(String id) {
-        MesOtherStockOut e = queryWithItems(id);
-        if (e == null) throw new JeecgBootException("出库单不存在");
-        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: orca评审 P0 出库audit同步TOCTOU修复（与入库同一模式）-----------
+        MesOtherStockOut locked = baseMapper.selectByIdForUpdate(id);
+        if (locked == null) throw new JeecgBootException("出库单不存在");
+        if (!"1".equals(locked.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-end---author:ruiwancheng---date:2026-07-28---for: 出库audit TOCTOU修复-----------
 
         // 先改状态（原子守卫），成功后再执行副作用——以 purchase/receipt 顺序为准
         String username = getCurrentUsername();
         Date now = new Date();
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：出库单不存在或状态已变更，请刷新后重试");
+
+        // 锁内读明细（主表行锁阻断 updateWithItems，明细稳定）
+        MesOtherStockOut e = queryWithItems(id);
 
         // 审核成功后逐行扣库存（stockOut 内置库存不足拦截；按明细快照成本改库存金额）
         for (MesOtherStockOutItem item : e.getItems()) {

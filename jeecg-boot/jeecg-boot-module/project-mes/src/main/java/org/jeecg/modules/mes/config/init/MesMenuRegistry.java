@@ -83,6 +83,11 @@ public final class MesMenuRegistry {
         addPerms(list, "mes:otherStockOut:", "mes_other_stock_out", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-end---author:ruiwancheng---date:2026-07-28---for: V9.8.0 其它出入库菜单-----------
 
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: V9.9.0 盘点单菜单(仓储管理下)-----------
+        list.add(MesMenuDefinition.leaf("mes_stocktake", "mes_warehouse", "盘点单", "/project/mes/stock/stocktake", "project/mes/stock/stocktake/index", "MesStocktake").sortNo(7.0).icon("ant-design:audit-outlined"));
+        addPerms(list, "mes:stocktake:", "mes_stocktake", new String[]{"list","add","edit","delete","audit"});
+        //update-end---author:ruiwancheng---date:2026-07-28---for: V9.9.0 盘点单菜单-----------
+
         // ==================== 生产制造 ====================
         list.add(MesMenuDefinition.folder("mes_manufacturing", "mes_menu_001", "生产制造", "/project/mes/manufacturing", "/project/mes/manufacturing/bom").sortNo(60.0).icon("ant-design:tool-outlined"));
         list.add(MesMenuDefinition.leaf("mes_bom", "mes_manufacturing", "BOM管理", "/project/mes/manufacturing/bom", "project/mes/manufacturing/bom/index", "MesBom").sortNo(1.0).icon("ant-design:cluster-outlined"));
