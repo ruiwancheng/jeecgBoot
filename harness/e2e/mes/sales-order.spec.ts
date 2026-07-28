@@ -3,20 +3,7 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = 'http://100.122.125.106';
 
-async function loginViaApi(page) {
-  const res = await fetch(`${BASE_URL}:8080/jeecg-boot/sys/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'admin', password: '123456' }),
-  });
-  const data = await res.json();
-  if (data.code === 200) {
-    await page.goto(BASE_URL);
-    await page.evaluate((token) => {
-      localStorage.setItem('Access-Token', token);
-    }, data.result.token);
-  }
-}
+import { loginViaApi } from './helpers/auth';
 
 test.describe('销售订单', () => {
   test.beforeEach(async ({ page }) => { await loginViaApi(page); });

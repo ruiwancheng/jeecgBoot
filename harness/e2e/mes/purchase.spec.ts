@@ -3,21 +3,7 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = 'http://100.122.125.106';
 
-async function loginViaApi(page) {
-  // 通过API获取token，注入到localStorage
-  const res = await fetch(`${BASE_URL}:8080/jeecg-boot/sys/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'admin', password: '123456' })
-  });
-  const data = await res.json();
-  if (data.code === 200) {
-    await page.goto(BASE_URL);
-    await page.evaluate((token) => {
-      localStorage.setItem('Access-Token', token);
-    }, data.result.token);
-  }
-}
+import { loginViaApi } from './helpers/auth';
 
 // ====== 采购申请 ======
 test.describe('采购申请', () => {
@@ -69,10 +55,7 @@ test.describe('采购订单', () => {
 
   test('E2E-04: 页面加载', async ({ page }) => {
     await page.goto(`${BASE_URL}/project/mes/purchase/order`);
-    await page.waitForTimeout(3000);
-    const bodyText = await page.locator('body').innerText();
-    expect(bodyText).not.toContain('500');
-    expect(bodyText).not.toContain('404');
+    await page.waitForSelector('.ant-table', { timeout: 15000 });
   });
 });
 
@@ -82,10 +65,7 @@ test.describe('采购入库', () => {
 
   test('E2E-05: 页面加载', async ({ page }) => {
     await page.goto(`${BASE_URL}/project/mes/purchase/receipt`);
-    await page.waitForTimeout(3000);
-    const bodyText = await page.locator('body').innerText();
-    expect(bodyText).not.toContain('500');
-    expect(bodyText).not.toContain('404');
+    await page.waitForSelector('.ant-table', { timeout: 15000 });
   });
 });
 

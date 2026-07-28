@@ -1,48 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { loginViaApi, BASE } from './helpers/auth';
 
-const BASE = 'http://100.122.125.106';
 let accessToken: string;
-
-async function loginViaApi(page: any) {
-  const res = await fetch(`${BASE}:8080/jeecg-boot/sys/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'mes_admin', password: '123456' }),
-  });
-  const data = await res.json();
-  expect(data.code).toBe(200);
-  accessToken = data.result.token;
-  await page.goto('/');
-  // JeecgBoot 缓存结构: localStorage[<prefix>COMMON__LOCAL__KEY__] = { value: { TOKEN__: token, ... }, time, expire }
-  await page.evaluate((token: string) => {
-    const keys = Object.keys(localStorage);
-    const cacheKey = keys.find(k => k.includes('COMMON__LOCAL__KEY__'))
-      || 'JEECGBOOT_PRO__PRODUCTION__3.9.2__COMMON__LOCAL__KEY__';
-    let cache: any = {};
-    try { cache = JSON.parse(localStorage.getItem(cacheKey) || '{}'); } catch { cache = {}; }
-    if (!cache.value) cache.value = {};
-    // 每个 key 也是 {value, time, expire} 包装结构（Persistent.getLocal 读 .value）
-    cache.value['TOKEN__'] = { value: token, time: Date.now(), expire: Date.now() + 7 * 24 * 3600 * 1000 };
-    cache.time = Date.now();
-    cache.expire = Date.now() + 7 * 24 * 3600 * 1000;
-    localStorage.setItem(cacheKey, JSON.stringify(cache));
-  }, accessToken);
-  await page.goto('/project/mes/stock/other-in');
-  await page.waitForTimeout(2000);
-  // 偶发竞态：若被重定向回登录页，重注入再跳一次
-  if (page.url().includes('/login')) {
-    await page.evaluate((token: string) => {
-      const key = Object.keys(localStorage).find(k => k.includes('COMMON__LOCAL__KEY__'));
-      if (!key) return;
-      const cache = JSON.parse(localStorage.getItem(key) || '{}');
-      if (!cache.value) cache.value = {};
-      cache.value['TOKEN__'] = { value: token, time: Date.now(), expire: Date.now() + 7 * 24 * 3600 * 1000 };
-      localStorage.setItem(key, JSON.stringify(cache));
-    }, accessToken);
-    await page.goto('/project/mes/stock/other-in');
-    await page.waitForTimeout(2500);
-  }
-}
 
 async function cleanupDoc(code: string) {
   try {
@@ -59,7 +18,7 @@ async function cleanupDoc(code: string) {
 }
 
 test.describe('其它入库', () => {
-  test.beforeEach(async ({ page }) => { await loginViaApi(page); });
+  test.beforeEach(async ({ page }) => { accessToken = await loginViaApi(page, '/project/mes/stock/other-in'); });
 
   test('新增入库单-物料选中后自动预填移动平均成本', async ({ page }) => {
     const code = `E2E_OST_${Date.now()}`;

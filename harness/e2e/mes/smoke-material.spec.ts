@@ -1,23 +1,5 @@
 import { test, expect } from '@playwright/test';
-
-const BASE = 'http://100.122.125.106';
-
-async function loginViaApi(page) {
-  const res = await fetch(`${BASE}:8080/jeecg-boot/sys/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'admin', password: '123456' }),
-  });
-  const data = await res.json();
-  if (data.code === 200) {
-    await page.goto(BASE);
-    await page.evaluate((token) => {
-      localStorage.setItem('Access-Token', token);
-    }, data.result.token);
-    await page.reload();
-    await page.waitForTimeout(1000);
-  }
-}
+import { loginViaApi, BASE } from './helpers/auth';
 
 test.describe('物料选择窗口', () => {
   test.beforeEach(async ({ page }) => { await loginViaApi(page); });
@@ -43,19 +25,18 @@ test.describe('物料选择窗口', () => {
     await addMaterialBtn.click();
     await page.waitForTimeout(2000);
 
-    // 5. 验证弹窗
-    const modal = page.locator('.ant-modal:has-text("批量选择物料")');
+    // 5. 验证弹窗（multiple 模式）
+    const modal = page.locator('.ant-modal').filter({ hasText: '选择物料' }).first();
     expect(await modal.isVisible()).toBeTruthy();
-    console.log('✅ 批量选择物料弹窗');
+    console.log('✅ 选择物料弹窗');
 
-    // 6. 点选第一个物料
-    const radio = modal.locator('.ant-radio-wrapper').first();
-    await radio.click();
+    // 6. 勾选第一个物料（multiple 模式是 checkbox）
+    await modal.locator('.ant-checkbox-wrapper').first().click();
     await page.waitForTimeout(500);
-    console.log('✅ 已点选物料');
+    console.log('✅ 已勾选物料');
 
-    // 7. 确认
-    await modal.locator('button:has-text("确认")').click();
+    // 7. 确认（ant 按钮两汉字间有空格：确 认）
+    await modal.getByRole('button', { name: '确 认' }).click();
     await page.waitForTimeout(1000);
 
     // 8. 截图验证
