@@ -8,5 +8,6 @@
 4. **按钮两汉字间有空格**：ant 自动给两汉字按钮加空格（"确 认"/"搜 索"），`has-text("确认")` 匹配不到，用 `getByRole('button', { name: '确 认' })`。
 5. **单选/多选组件不同**：MaterialSelectModal single 模式是 radio，multiple 模式是 checkbox——写选择器前先看 mode。
 6. **抽屉默认带空明细行**：OtherInDrawer 初始化就有一行，再"添加行"会产生空行导致静默保存失败（无 toast 无落库）。**保存结果别信 toast，用 API 查落库**（`list?code=xxx` 断言 + totalAmount）。
+7. **`has-text` 子串误匹配**：`button:has-text("审核")` 会同时命中"反审核"，断言按钮状态时误报。用 `getByRole('button', { name: '审 核', exact: true })`（注意 ant 两汉字间空格）。实证：Gallery 状态守卫验证，粗选择器报假失败，精确选择器证实控件正常。
 
 **复用**：`harness/e2e/mes/other-stock-in.spec.ts` 是完整范例。
