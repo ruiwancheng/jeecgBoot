@@ -18,11 +18,11 @@
 
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { columns, searchFormSchema } from './ledger.data';
   import { queryLedgerList, getExportUrl } from './ledger.api';
-  import { queryAllMaterial } from '../../basic/material/material.api';
+  import { selectMaterialPage } from '../../basic/material/material.api';
 
   defineOptions({ name: 'MesInventoryLedger' });
 
@@ -32,7 +32,7 @@
     return materialMap.value[materialId]?.code || '';
   }
 
-  const { prefixCls, tableContext, onExportXls } = useListPage({
+  const { tableContext, onExportXls } = useListPage({
     designScope: 'mes-inventory-ledger',
     tableProps: {
       title: '库存台账',
@@ -48,9 +48,15 @@
 
   onMounted(async () => {
     try {
-      const materials: any[] = await queryAllMaterial() || [];
+      // 物料超1000条时 queryAll 接口会拒绝（保护上限），改用分页接口全量拉取
       const map: Record<string, any> = {};
-      materials.forEach((m: any) => { if (m?.id) map[m.id] = m; });
+      const PAGE_SIZE = 1000;
+      for (let pageNo = 1; pageNo <= 20; pageNo++) {
+        const res: any = await selectMaterialPage({ pageNo, pageSize: PAGE_SIZE });
+        const records = res?.records || [];
+        records.forEach((m: any) => { if (m?.id) map[m.id] = m; });
+        if (records.length < PAGE_SIZE) break;
+      }
       materialMap.value = map;
     } catch (e) { /* ignore */ }
   });
