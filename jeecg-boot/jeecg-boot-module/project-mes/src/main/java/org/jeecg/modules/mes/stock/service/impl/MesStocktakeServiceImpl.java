@@ -36,6 +36,9 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
 
     @Autowired private MesStocktakeItemMapper itemMapper;
     @Autowired private IMesCodeRuleService codeRuleService;
+    //update-begin---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1 抽盘book_qty后端校验-----------
+    @Autowired private org.jeecg.modules.mes.basic.mapper.MesInventoryMapper inventoryMapper;
+    //update-end---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1-----------
     // 评审 P0：必须通过 Spring 代理调用（@Transactional 传播 REQUIRED 合并为一大事务），禁止 this.xxx() 自调用
     @Autowired private IMesOtherStockInService otherStockInService;
     @Autowired private IMesOtherStockOutService otherStockOutService;
@@ -62,11 +65,17 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
 
         // 全盘且未传明细 → 后端快照全仓账面库存（评审：普通SELECT不加锁；actual_qty默认=账面）
         List<MesStocktakeItem> items = entity.getItems();
-        if ("1".equals(entity.getTakeType()) && (items == null || items.isEmpty())) {
+        boolean autoSnapshot = "1".equals(entity.getTakeType()) && (items == null || items.isEmpty());
+        if (autoSnapshot) {
             items = snapshotItems(entity.getWarehouseId());
             if (items.isEmpty()) throw new JeecgBootException("该仓库无库存物料，无法全盘");
         }
         if (items == null || items.isEmpty()) throw new JeecgBootException("盘点明细不能为空");
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1 前端传入的book_qty必须等于当前库存（防API篡改差异）-----------
+        if (!autoSnapshot) {
+            for (MesStocktakeItem item : items) validateBookQty(item, entity.getWarehouseId(), null);
+        }
+        //update-end---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1-----------
         entity.setSnapshotTime(new Date());
 
         QueryWrapper<MesStocktake> activeQw = new QueryWrapper<>();
@@ -98,6 +107,17 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         if (!"1".equals(exist.getStatus())) throw new JeecgBootException("当前状态不允许编辑，仅草稿状态可操作");
         entity.setDelFlag(null); entity.setCreateBy(null); entity.setCreateTime(null);
         entity.setStatus(null); entity.setSnapshotTime(null);
+        //update-begin---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1/P0-3 编辑时校验：原有行book_qty必须等于原快照（快照不可篡改）；新增行必须等于当前库存-----------
+        if (entity.getItems() != null && !entity.getItems().isEmpty()) {
+            LambdaQueryWrapper<MesStocktakeItem> oldQw = new LambdaQueryWrapper<>();
+            oldQw.eq(MesStocktakeItem::getTakeId, entity.getId());
+            java.util.Map<String, BigDecimal> oldBookMap = new java.util.HashMap<>();
+            for (MesStocktakeItem old : itemMapper.selectList(oldQw)) oldBookMap.put(old.getMaterialId(), old.getBookQty());
+            for (MesStocktakeItem item : entity.getItems()) {
+                validateBookQty(item, exist.getWarehouseId(), oldBookMap.get(item.getMaterialId()));
+            }
+        }
+        //update-end---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-1/P0-3-----------
         super.updateById(entity);
         LambdaQueryWrapper<MesStocktakeItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesStocktakeItem::getTakeId, entity.getId());
@@ -228,6 +248,10 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
             if (item.getMaterialId() == null) throw new JeecgBootException("明细行物料不能为空");
             if (item.getBookQty() == null) throw new JeecgBootException("明细行账面数量不能为空");
             item.setId(null);
+            //update-begin---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-2/P0-3 防注入伪造关联单号-----------
+            item.setGeneratedInId(null);
+            item.setGeneratedOutId(null);
+            //update-end---author:ruiwancheng---date:2026-07-28---for: 铁拳团P0-2/P0-3-----------
             item.setTakeId(entity.getId());
             item.setLineNo(ln++);
             BigDecimal cost = item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO;
@@ -242,6 +266,21 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         }
         entity.setTotalDiffAmount(totalDiff);
         baseMapper.updateById(new MesStocktake().setId(entity.getId()).setTotalDiffAmount(totalDiff));
+    }
+
+    /** 铁拳团 P0-1：校验 book_qty 可信度。expectOldBook 非空=编辑原有行（必须等于原快照）；空=新行（FOR UPDATE 读当前库存校验） */
+    private void validateBookQty(MesStocktakeItem item, String warehouseId, BigDecimal expectOldBook) {
+        if (expectOldBook != null) {
+            if (item.getBookQty() == null || item.getBookQty().compareTo(expectOldBook) != 0) {
+                throw new JeecgBootException("账面数量不允许修改（快照口径），物料ID:" + item.getMaterialId());
+            }
+            return;
+        }
+        org.jeecg.modules.mes.basic.entity.MesInventory inv = inventoryMapper.selectForUpdate(item.getMaterialId(), warehouseId);
+        BigDecimal cur = inv != null && inv.getCurrentQty() != null ? inv.getCurrentQty() : BigDecimal.ZERO;
+        if (item.getBookQty() == null || item.getBookQty().compareTo(cur) != 0) {
+            throw new JeecgBootException("账面数量与当前库存不一致（当前:" + cur + "），物料ID:" + item.getMaterialId() + "，请刷新后重试");
+        }
     }
 
     private String getCurrentUsername() {

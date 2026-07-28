@@ -28,7 +28,7 @@ public interface MesStocktakeMapper extends BaseMapper<MesStocktake> {
     @Select("SELECT i.material_id AS materialId, i.current_qty AS bookQty, m.moving_avg_cost AS unitCost " +
             "FROM c_mes_inventory i " +
             "LEFT JOIN c_mes_material m ON i.material_id = m.id AND m.del_flag = 0 " +
-            "WHERE i.warehouse_id = #{warehouseId} AND i.current_qty > 0 ORDER BY i.material_id")
+            "WHERE i.warehouse_id = #{warehouseId} ORDER BY i.material_id")
     List<Map<String, Object>> snapshotByWarehouse(@Param("warehouseId") String warehouseId);
 }
 //update-end---author:ruiwancheng---date:2026-07-28---for: V9.9.0 MES盘点单-Mapper-----------
