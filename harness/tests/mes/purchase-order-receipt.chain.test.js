@@ -1,183 +1,139 @@
-// 微链路测试: 采购订单 → 采购入库
-// 验证 criticalPath: POST /mes/purchase/receipt/add → 校验订单存在+状态+超量
-// 测试维度: 跨步骤状态一致性、数据传递正确性
-// 不重复单端点已有的输入校验（空code/空物料等）
+// 链路测试: 采购订单 → 采购入库（真实 fixture 版，修复假ID破窗）
+// 验证: 订单审核流转、部分/全部收货状态、超量拦截、台账记录
+const { createClient } = require('../helpers/api');
+const { createSupplier, createMaterial, createWarehouse, safeDeleteDoc, cleanupWarehouseScope } = require('../helpers/fixtures');
 
-const BASE = 'http://localhost:8080/jeecg-boot';
-let token = '';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
+const c = createClient(BASE);
 const TS = Date.now();
 
-async function login() {
-  const res = await fetch(`${BASE}/sys/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'admin', password: '123456' })
-  });
-  token = (await res.json()).result.token;
-}
-
-async function api(method, path, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json', 'X-Access-Token': token } };
-  if (body) opts.body = JSON.stringify(body);
-  let url = `${BASE}${path}`;
-  if (method === 'DELETE' && body) url += '?' + new URLSearchParams(body).toString(), opts.body = undefined;
-  return (await fetch(url, opts)).json();
-}
-
-function assert(condition, msg) {
-  console.log((condition ? '  ✓' : '  ✗') + ' ' + msg);
-  if (!condition) process.exitCode = 1;
-}
-
 async function run() {
-  await login();
-  console.log('✓ 登录成功\n');
-
-  // ==========================================
-  // 链路: 订单 → 入库
-  // ==========================================
+  await c.login();
+  console.log('✅ 登录成功\n');
   console.log('━━━ 链路测试: 采购订单 → 采购入库 ━━━\n');
+
+  // Setup
+  const sup = await createSupplier(c, TS);
+  const wh = await createWarehouse(c, TS);
+  const m1 = await createMaterial(c, `${TS}a`, '链路料A');
+  const m2 = await createMaterial(c, `${TS}b`, '链路料B');
+  console.log(`✅ fixture: 供应商/仓库/物料×2 就绪\n`);
+
+  let orderId = null;
+  const receiptIds = [];
 
   // Step 1: 创建订单
   console.log('Step 1: 创建订单');
-  let r = await api('POST', '/mes/purchase/order/add', {
-    code: 'CHAIN-' + TS,
-    supplierId: 'temp_s_001',
-    orderDate: '2026-07-22',
+  let r = await c.api('POST', '/mes/purchase/order/add', {
+    code: 'CHAIN-RO-' + TS,
+    supplierId: sup.id,
+    orderDate: '2026-07-29',
     deliveryDate: '2026-07-30',
     items: [
-      { lineNo: 1, materialId: 'm001', quantity: 100, unitPrice: 25.50, taxRate: 0.13 },
-      { lineNo: 2, materialId: 'm002', quantity: 50, unitPrice: 10.00, taxRate: 0.06 }
-    ]
+      { lineNo: 1, materialId: m1.id, quantity: 100, unitPrice: 25.50, taxRate: 0.13 },
+      { lineNo: 2, materialId: m2.id, quantity: 50, unitPrice: 10.00, taxRate: 0.06 },
+    ],
   });
-  assert(r.code === 200, '创建订单: ' + r.message);
+  c.check('创建订单', r.code === 200, r.message);
+  const order = await c.findDoc('/mes/purchase/order/list', 'CHAIN-RO-' + TS);
+  c.check('订单已出现在列表', !!order);
+  c.check('[链路] 新订单状态=草稿(1)', order?.status === '1', `实际=${order?.status}`);
+  orderId = order.id;
 
-  // 获取订单ID
-  r = await api('GET', '/mes/purchase/order/list?pageNo=1&pageSize=5');
-  const order = r.result?.records?.find(x => x.code === 'CHAIN-' + TS);
-  assert(order != null, '订单已出现在列表中');
-  assert(order.status === '1', '[链路] 新订单状态=草稿(1)');
-  const orderId = order.id;
-
-  // Step 2: 草稿订单不能入库
+  // Step 2: 草稿订单入库应被拦截
   console.log('\nStep 2: 草稿订单入库应被拦截');
-  r = await api('POST', '/mes/purchase/receipt/add', {
+  r = await c.api('POST', '/mes/purchase/receipt/add', {
     code: 'CHAIN-R1-' + TS,
     purchaseOrderId: orderId,
-    supplierId: 'temp_s_001',
-    warehouseId: 'wh001',
-    items: [{ lineNo: 1, materialId: 'm001', receiptQuantity: 10 }]
+    supplierId: sup.id,
+    warehouseId: wh.id,
+    items: [{ lineNo: 1, materialId: m1.id, receiptQuantity: 10 }],
   });
-  assert(r.code === 500 && r.message.includes('状态不允许入库'),
-    '[链路] 草稿订单入库被拦截: ' + (r.message || '').substring(0, 40));
+  c.check('[链路] 草稿订单入库被拦截', r.code === 500 && (r.message || '').includes('状态不允许入库'), (r.message || '').substring(0, 40));
 
   // Step 3: 审核订单
   console.log('\nStep 3: 审核订单');
-  r = await api('PUT', '/mes/purchase/order/audit?id=' + orderId);
-  assert(r.code === 200, '审核订单: ' + r.message);
+  r = await c.api('PUT', '/mes/purchase/order/audit?id=' + orderId);
+  c.check('审核订单', r.code === 200, r.message);
+  r = await c.api('GET', '/mes/purchase/order/queryById?id=' + orderId);
+  c.check('[链路] 审核后订单状态=已确认(3)', r.result?.status === '3', `实际=${r.result?.status}`);
 
-  // 验证状态变更
-  r = await api('GET', '/mes/purchase/order/queryById?id=' + orderId);
-  assert(r.code === 200, '查询订单详情');
-  assert(r.result?.status === '3', '[链路] 审核后订单状态=已确认(3)，实际=' + r.result?.status);
-
-  // Step 4: 正常入库
-  console.log('\nStep 4: 正常入库（部分收货）');
-  r = await api('POST', '/mes/purchase/receipt/add', {
+  // Step 4: 部分收货（30+20）
+  console.log('\nStep 4: 部分收货');
+  r = await c.api('POST', '/mes/purchase/receipt/add', {
     code: 'CHAIN-R2-' + TS,
     purchaseOrderId: orderId,
-    supplierId: 'temp_s_001',
-    warehouseId: 'wh001',
+    supplierId: sup.id,
+    warehouseId: wh.id,
     items: [
-      { lineNo: 1, materialId: 'm001', receiptQuantity: 30 },
-      { lineNo: 2, materialId: 'm002', receiptQuantity: 20 }
-    ]
+      { lineNo: 1, materialId: m1.id, receiptQuantity: 30 },
+      { lineNo: 2, materialId: m2.id, receiptQuantity: 20 },
+    ],
   });
-  assert(r.code === 200, '创建入库单: ' + r.message);
+  c.check('创建入库单', r.code === 200, r.message);
+  const receipt = await c.findDoc('/mes/purchase/receipt/list', 'CHAIN-R2-' + TS);
+  c.check('入库单已出现在列表', !!receipt);
+  receiptIds.push(receipt.id);
+  r = await c.api('PUT', '/mes/purchase/receipt/audit?id=' + receipt.id);
+  c.check('审核入库单', r.code === 200, r.message);
 
-  // 获取入库单并审核
-  r = await api('GET', '/mes/purchase/receipt/list?pageNo=1&pageSize=5');
-  const receipt = r.result?.records?.find(x => x.code === 'CHAIN-R2-' + TS);
-  assert(receipt != null, '入库单已出现在列表中');
+  r = await c.api('GET', '/mes/purchase/order/queryById?id=' + orderId);
+  c.check('[链路] 部分收货后订单状态=部分到货(4)', r.result?.status === '4', `实际=${r.result?.status}`);
+  const item1 = r.result?.items?.find(i => i.materialId === m1.id);
+  c.check('[链路] m1已收货30', Number(item1?.receivedQty) === 30, `实际=${item1?.receivedQty}`);
 
-  r = await api('PUT', '/mes/purchase/receipt/audit?id=' + receipt.id);
-  assert(r.code === 200, '审核入库单: ' + r.message);
-
-  // 验证：订单状态应变为部分到货
-  r = await api('GET', '/mes/purchase/order/queryById?id=' + orderId);
-  assert(r.result?.status === '4', '[链路] 部分收货后订单状态=部分到货(4)，实际=' + r.result?.status);
-
-  // 验证：物料m001已收货30
-  r = await api('GET', '/mes/purchase/order/queryById?id=' + orderId);
-  const item1 = r.result?.items?.find(i => i.materialId === 'm001');
-  assert(item1?.receivedQty === 30, '[链路] m001已收货30，实际=' + item1?.receivedQty);
-
-  // Step 5: 超量入库应被拦截
+  // Step 5: 超量入库应被拦截（30已收+80=110>100）
   console.log('\nStep 5: 超量入库应被拦截');
-  r = await api('POST', '/mes/purchase/receipt/add', {
+  r = await c.api('POST', '/mes/purchase/receipt/add', {
     code: 'CHAIN-R3-' + TS,
     purchaseOrderId: orderId,
-    supplierId: 'temp_s_001',
-    warehouseId: 'wh001',
-    items: [
-      { lineNo: 1, materialId: 'm001', receiptQuantity: 80 }  // 30已收 + 80 = 110 > 100
-    ]
+    supplierId: sup.id,
+    warehouseId: wh.id,
+    items: [{ lineNo: 1, materialId: m1.id, receiptQuantity: 80 }],
   });
-  assert(r.code === 500 && r.message.includes('超过采购数量'),
-    '[链路] 超量入库被拦截(累计110>100): ' + (r.message || '').substring(0, 50));
+  c.check('[链路] 超量被拦截(累计110>100)', r.code === 500 && (r.message || '').includes('超过采购数量'), (r.message || '').substring(0, 50));
 
-  // Step 6: 正常补足剩余
+  // Step 6: 补足剩余（70+30）
   console.log('\nStep 6: 补足剩余数量');
-  r = await api('POST', '/mes/purchase/receipt/add', {
+  r = await c.api('POST', '/mes/purchase/receipt/add', {
     code: 'CHAIN-R4-' + TS,
     purchaseOrderId: orderId,
-    supplierId: 'temp_s_001',
-    warehouseId: 'wh001',
+    supplierId: sup.id,
+    warehouseId: wh.id,
     items: [
-      { lineNo: 1, materialId: 'm001', receiptQuantity: 70 },  // 30+70=100 ✓
-      { lineNo: 2, materialId: 'm002', receiptQuantity: 30 }   // 20+30=50 ✓
-    ]
+      { lineNo: 1, materialId: m1.id, receiptQuantity: 70 },
+      { lineNo: 2, materialId: m2.id, receiptQuantity: 30 },
+    ],
   });
-  assert(r.code === 200, '补足入库: ' + r.message);
-
-  // 审核第二笔入库
-  r = await api('GET', '/mes/purchase/receipt/list?pageNo=1&pageSize=5');
-  const receipt2 = r.result?.records?.find(x => x.code === 'CHAIN-R4-' + TS);
+  c.check('补足入库', r.code === 200, r.message);
+  const receipt2 = await c.findDoc('/mes/purchase/receipt/list', 'CHAIN-R4-' + TS);
   if (receipt2) {
-    r = await api('PUT', '/mes/purchase/receipt/audit?id=' + receipt2.id);
-    assert(r.code === 200, '审核补足入库: ' + r.message);
+    receiptIds.push(receipt2.id);
+    r = await c.api('PUT', '/mes/purchase/receipt/audit?id=' + receipt2.id);
+    c.check('审核补足入库', r.code === 200, r.message);
   }
 
-  // 验证：全部到货后订单状态
-  r = await api('GET', '/mes/purchase/order/queryById?id=' + orderId);
-  assert(r.result?.status === '5', '[链路] 全部到货后订单状态=已到货(5)，实际=' + r.result?.status);
+  r = await c.api('GET', '/mes/purchase/order/queryById?id=' + orderId);
+  c.check('[链路] 全部到货后订单状态=已到货(5)', r.result?.status === '5', `实际=${r.result?.status}`);
 
-  // 验证：库存台账应有记录
+  // Step 7: 台账记录
   console.log('\nStep 7: 验证库存台账');
-  r = await api('GET', '/mes/warehouse/ledger/queryAll');
-  assert(r.code === 200, '台账可查询');
-  const ledgerEntries = r.result?.filter(e => e.bizId === 'CHAIN-R2-' + TS || e.bizId === 'CHAIN-R4-' + TS);
-  assert((ledgerEntries?.length || 0) >= 2, '[链路] 台账有2条入库记录，实际=' + (ledgerEntries?.length || 0));
+  r = await c.api('GET', `/mes/warehouse/ledger/list?pageNo=1&pageSize=50&warehouseId=${wh.id}`);
+  const entries = (r.result?.records || []).filter(e => e.bizId === 'CHAIN-R2-' + TS || e.bizId === 'CHAIN-R4-' + TS);
+  c.check('[链路] 台账有2笔入库记录', entries.length >= 2, `实际=${entries.length}`);
 
-  // ==========================================
   // 清理
-  // ==========================================
   console.log('\n━━━ 清理 ━━━');
-  // 删除入库单
-  for (const code of ['CHAIN-R1-', 'CHAIN-R2-', 'CHAIN-R3-', 'CHAIN-R4-']) {
-    r = await api('GET', '/mes/purchase/receipt/list?pageNo=1&pageSize=10');
-    const rec = r.result?.records?.find(x => x.code?.startsWith(code + TS));
-    if (rec) {
-      await api('PUT', '/mes/purchase/receipt/unaudit?id=' + rec.id).catch(() => {});
-      await api('DELETE', '/mes/purchase/receipt/delete', { id: rec.id });
-    }
-  }
-  // 删除订单
-  await api('PUT', '/mes/purchase/order/unaudit?id=' + orderId).catch(() => {});
-  await api('DELETE', '/mes/purchase/order/delete', { id: orderId });
-  console.log('  清理完成');
+  for (const rid of receiptIds) await safeDeleteDoc(c, '/mes/purchase/receipt', rid);
+  await safeDeleteDoc(c, '/mes/purchase/order', orderId);
+  await c.api('DELETE', `/mes/basic/supplier/delete?id=${sup.id}`);
+  const dbOk = cleanupWarehouseScope(wh.id, null) && cleanupWarehouseScope(wh.id, m1.id);
+  await c.api('DELETE', `/mes/basic/material/delete?id=${m1.id}`);
+  await c.api('DELETE', `/mes/basic/material/delete?id=${m2.id}`);
+  if (!dbOk) await c.api('DELETE', `/mes/basic/warehouse/delete?id=${wh.id}`);
+  console.log('✅ 清理完成');
 
-  console.log('\n========== ' + (process.exitCode ? '链路测试失败 ✗' : '链路测试通过 ✓') + ' ==========');
+  return c.summary('链路: 订单→入库');
 }
 
-run().catch(e => { console.error('异常:', e.message); process.exitCode = 1; });
+run().then(ok => process.exit(ok ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });

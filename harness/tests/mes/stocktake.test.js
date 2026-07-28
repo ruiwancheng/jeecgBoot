@@ -1,5 +1,5 @@
 // MES 盘点单 API 测试（全链路：快照→实盘→审核→自动生成调整单→库存校准）
-const { execSync } = require('child_process');
+const { dbCleanup: sqlFileCleanup } = require('../helpers/fixtures');
 const BASE = 'http://localhost:8080/jeecg-boot';
 
 async function api(method, path, token, body) {
@@ -18,7 +18,7 @@ async function login() {
 
 function dbCleanup(whId, matId, pdCodes) {
   const cond = pdCodes.map(c => `'${c}'`).join(',');
-  const sql = `
+  const ok = sqlFileCleanup(`
     DELETE si FROM c_mes_stocktake_item si JOIN c_mes_stocktake s ON si.take_id=s.id WHERE s.code IN (${cond});
     DELETE FROM c_mes_stocktake WHERE code IN (${cond});
     DELETE ii FROM c_mes_other_stock_in_item ii JOIN c_mes_other_stock_in d ON ii.in_id=d.id WHERE d.reason LIKE '盘点单 PD-TEST%';
@@ -31,10 +31,8 @@ function dbCleanup(whId, matId, pdCodes) {
     UPDATE c_mes_material SET moving_avg_cost=0, last_purchase_price=NULL, last_purchase_date=NULL WHERE id='${matId}';
     DELETE FROM c_mes_material WHERE id='${matId}';
     DELETE FROM c_mes_warehouse WHERE id='${whId}';
-  `;
-  try {
-    execSync(`mysql -uroot -proot --host=127.0.0.1 --protocol=TCP jeecg-boot -e "${sql.replace(/\n/g, ' ').replace(/"/g, '\\"')}"`, { stdio: 'pipe' });
-  } catch (e) { console.log('  (DB清理跳过:', e.message.slice(0, 60), ')'); }
+  `);
+  if (!ok) console.log('  (DB清理不可用，非本地库或 mysql 缺失)');
 }
 
 async function findDoc(token, path, code) {

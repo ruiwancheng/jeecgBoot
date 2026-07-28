@@ -68,7 +68,7 @@ async function run() {
   r = await api('POST', '/mes/manufacturing/bom/add', {
     code: 'BOM-' + TS,
     productId: MATERIAL_1,
-    version: 'V1.0',
+    version: 'V1.0-' + TS,
     effectiveDate: '2026-07-01',
     expiryDate: '2026-12-31',
     remark: '鹰眼团测试BOM',
@@ -82,7 +82,7 @@ async function run() {
   r = await api('POST', '/mes/manufacturing/bom/add', {
     code: 'BOM-SELF-' + TS,
     productId: MATERIAL_1,
-    version: 'V1.0',
+    version: 'V1.0-' + TS,
     items: [{ lineNo: 1, materialId: MATERIAL_1, quantity: 1 }]
   });
   assert(r.code === 500 && /不能与父项物料相同/.test(r.message || ''), '1.2b 子项=父项被拦截: ' + (r.message || r.code));

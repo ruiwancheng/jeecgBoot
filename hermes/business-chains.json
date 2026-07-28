@@ -2,13 +2,21 @@
   "$schema": "business-chains.schema.json",
   "version": "1.0.0",
   "description": "业务链路注册表——声明模块间上下游依赖，改任意节点触发全链路质量验证",
-  "lastUpdated": "2026-07-22",
-
+  "lastUpdated": "2026-07-29",
   "chains": {
     "采购链路": {
       "id": "purchase-chain",
       "description": "采购申请→订单→入库→台账，包含业财联动(应付生成)",
-      "flow": ["申请", "审核", "生成订单", "审核订单", "收货入库", "审核入库", "库存更新", "应付生成"],
+      "flow": [
+        "申请",
+        "审核",
+        "生成订单",
+        "审核订单",
+        "收货入库",
+        "审核入库",
+        "库存更新",
+        "应付生成"
+      ],
       "modules": [
         "purchase/apply",
         "purchase/order",
@@ -34,13 +42,17 @@
             "name": "申请→订单",
             "file": "harness/tests/mes/purchase-apply-order.chain.test.js",
             "assertions": 17,
-            "covers": ["创建申请→审核→加载到订单→创建订单→审核→反审核"]
+            "covers": [
+              "创建申请→审核→加载到订单→创建订单→审核→反审核"
+            ]
           },
           {
             "name": "订单→入库",
             "file": "harness/tests/mes/purchase-order-receipt.chain.test.js",
             "assertions": 16,
-            "covers": ["创建订单→审核→入库→超量拦截→全部到货→库存台账"]
+            "covers": [
+              "创建订单→审核→入库→超量拦截→全部到货→库存台账"
+            ]
           }
         ]
       },
@@ -50,11 +62,14 @@
         "openGaps": []
       }
     },
-
     "销售链路": {
       "id": "sales-chain",
       "description": "销售订单→发货→出库",
-      "flow": ["下单", "发货通知", "出库"],
+      "flow": [
+        "下单",
+        "发货通知",
+        "出库"
+      ],
       "modules": [
         "sales/order",
         "sales/delivery",
@@ -72,11 +87,15 @@
         "openGaps": []
       }
     },
-
     "生产链路": {
       "id": "manufacturing-chain",
       "description": "BOM→生产订单→领料→完工入库",
-      "flow": ["定义BOM", "下生产单", "领料", "完工入库"],
+      "flow": [
+        "定义BOM",
+        "下生产单",
+        "领料",
+        "完工入库"
+      ],
       "modules": [
         "manufacturing/bom",
         "manufacturing/order",
@@ -90,12 +109,13 @@
       },
       "criticalPaths": []
     },
-
     "基础数据": {
       "id": "basic-data",
       "description": "物料/供应商/仓库/客户等基础档案，独立模块无链路依赖",
       "flow": [],
-      "modules": ["basic"],
+      "modules": [
+        "basic"
+      ],
       "sideEffects": [],
       "tests": {
         "api": "harness/tests/mes/basic.test.js",
@@ -109,13 +129,22 @@
       },
       "isStandalone": true
     },
-
     "其它出入库": {
       "id": "other-stock",
       "description": "非采购/订单场景的直接出入库（盘盈盘亏/报废/领用/期初），独立模块无上下游单据",
-      "flow": ["新增", "审核", "库存更新", "台账"],
-      "modules": ["stock/other-in", "stock/other-out"],
-      "sideEffects": ["basic/inventory"],
+      "flow": [
+        "新增",
+        "审核",
+        "库存更新",
+        "台账"
+      ],
+      "modules": [
+        "stock/other-in",
+        "stock/other-out"
+      ],
+      "sideEffects": [
+        "basic/inventory"
+      ],
       "tests": {},
       "criticalPaths": [
         "PUT /mes/stock/otherIn/audit → 原子状态守卫+库存增加+台账（不记金额）",
@@ -128,9 +157,41 @@
         "openGaps": []
       },
       "isStandalone": true
+    },
+    "仓储链路": {
+      "id": "warehouse-chain",
+      "description": "仓储业务链路：其它出入库(成本联动) → 库存总览/台账 → 盘点(快照→差异→自动调整单)",
+      "flow": [
+        "其它入库",
+        "其它出库",
+        "库存总览",
+        "库存台账",
+        "盘点单"
+      ],
+      "modules": [
+        "stock/other-in",
+        "stock/other-out",
+        "stock/stocktake",
+        "basic/inventory",
+        "purchase/ledger"
+      ],
+      "sideEffects": [
+        "basic/material(movingAvgCost)"
+      ],
+      "tests": {
+        "api": "harness/tests/mes/other-stock-in.test.js + harness/tests/mes/stocktake.test.js",
+        "e2e": "harness/e2e/mes/other-stock-in.spec.ts"
+      },
+      "criticalPaths": [
+        "PUT /mes/stock/otherIn/audit → 库存增加 + unitCost>0时移动平均联动(先成本后库存)",
+        "PUT /mes/stock/otherOut/audit → 库存扣减(超量拦截) + 不联动成本 + 台账快照",
+        "GET /mes/warehouse/ledger/list → 台账含 movingAvgCost + costDiff 实时差异列",
+        "POST /mes/stock/stocktake/add → 全盘自动快照(book_qty+unit_cost) + 抽盘book_qty后端校验",
+        "PUT /mes/stock/stocktake/edit → 原有行book_qty必须等于原快照(防篡改) + generatedId清空",
+        "PUT /mes/stock/stocktake/audit → 差异行合并生成盘盈入库/盘亏出库单并审核(同事务) + 库存校准 + generated_in/out_id回写"
+      ]
     }
   },
-
   "changeClassification": {
     "description": "按变更文件类型自动分级，决定触发哪些验证动作",
     "levels": {
@@ -178,7 +239,6 @@
       }
     }
   },
-
   "qualityGate": {
     "shadowMode": {
       "description": "影子模式：审计发现不阻塞部署，仅记录",
@@ -209,13 +269,11 @@
       "testTimeout": "5分钟超时，记录超时，部署继续"
     }
   },
-
   "deployDiff": {
     "description": "部署差异追踪",
     "baseFile": ".last-deploy-commit",
     "rule": "git diff .last-deploy-commit..HEAD 获取差集，部署完成后更新 .last-deploy-commit = HEAD"
   },
-
   "chainAudit": {
     "description": "链路审计（铁拳团第11视角）——变更涉及≥2个模块时自动触发，追踪业务流程是否贯通",
     "trigger": "变更命中任意链路 ≥2 个模块（不依赖变更分级，独立判断）",

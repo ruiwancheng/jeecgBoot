@@ -11,6 +11,7 @@ description: 自有命令 — 部署后编排式验证：并行冒烟 API + 视�
 ```
 /deploy-verify                    # 部署后验证
 /deploy-verify --skip-visual      # 部署后验证（跳过视觉检查）
+/deploy-verify --api-only         # 快速模式：只跑 API 关键套件（轻量变更用）
 ```
 
 ## 流程

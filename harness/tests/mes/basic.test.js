@@ -1,4 +1,5 @@
 // MES 基础设置 API 测试
+const { dbCleanup } = require('../helpers/fixtures');
 const BASE = 'http://localhost:8080/jeecg-boot';
 
 async function api(method, path, token, body) {
@@ -23,6 +24,12 @@ async function run() {
   };
 
   console.log('\n===== MES 基础设置 API 测试 =====\n');
+
+  // 预清理历史残留（保证可重复运行）
+  dbCleanup(`
+    DELETE FROM c_mes_location WHERE warehouse_id IN (SELECT id FROM c_mes_warehouse WHERE code LIKE 'TEST_WH%');
+    DELETE FROM c_mes_warehouse WHERE code LIKE 'TEST_WH%';
+  `);
 
   // ---- 登录 ----
   const token = await login();

@@ -72,6 +72,31 @@ echo "$CHANGED_FILES"
 
 仅在 full 级执行。调用 `/chain-test` 逻辑，检查变更的链路有对应 chain test 文件 → 运行；无 chain test → 仅执行 criticalPaths 的 curl 验证。
 
+### Agent 4：关键套件验证（2026-07-29 新增，测试体系 v2）
+
+部署后在**本地**跑 harness 关键套件（不是 Orca dispatch，测试 runner 直接执行）：
+
+**关键套件清单**（与 business-chains.json tests 字段对应）：
+
+```bash
+# API 套件（~3-5min）：全部业务流测试
+for f in harness/tests/mes/*.test.js harness/tests/mes/*.test.mjs; do
+  node "$f" || SUITE_FAILED=1
+done
+
+# E2E 关键流（~2min，可用 --api-only 跳过）
+cd harness && npx playwright test --config=e2e/playwright.config.ts --reporter=line
+```
+
+**判定**：
+- 全部套件绿 → 计入 PASS
+- 任一失败 → 输出失败套件+断言详情（helper 自带请求/响应根因），判定 NEEDS WORK
+- 关键路径遗漏：business-chains.json 中变更链路的 criticalPaths 未被任何测试覆盖 → WARN
+
+**快速模式**：`/deploy-verify --api-only` → 只跑 API 套件（轻量变更用）
+
+**前置**：破窗测试必须清零（红=真问题是信任基础）。预存在失败的测试先修或隔离再启用本 Agent 的 NEEDS WORK 判定。
+
 ### 编排派发
 
 ```bash
