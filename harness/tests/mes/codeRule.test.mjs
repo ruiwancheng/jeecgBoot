@@ -33,7 +33,7 @@ if (!token) process.exit(1);
 const EXPECTED = { SO: '销售订单', PO: '采购订单', MO: '生产订单', DN: '发货单', OB: '销售出库单', PR: '采购收货单', PP: '生产领料单', MC: '完工入库单', SI: '销售发票', PI: '采购发票' };
 const list = await get('/mes/basic/codeRule/list', { pageNo: 1, pageSize: 50 });
 const records = list?.result?.records || [];
-check('规则列表总数=10', records.length === 10, `实际 ${records.length} 条`);
+check('规则列表总数≥10', records.length >= 10, `实际 ${records.length} 条（随业务增长，不断言精确值）`);
 const missing = [], noDict = [];
 for (const [rc, name] of Object.entries(EXPECTED)) {
   const r = records.find(x => x.ruleCode === rc);

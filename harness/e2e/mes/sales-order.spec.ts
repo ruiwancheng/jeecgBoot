@@ -10,11 +10,7 @@ test.describe('销售订单', () => {
 
   test('E2E-01: 页面加载 + 列表渲染', async ({ page }) => {
     await page.goto(`${BASE_URL}/project/mes/sales/order`);
-    await page.waitForTimeout(3000);
-    const hasContent = await page.locator('body').innerText();
-    expect(hasContent.length).toBeGreaterThan(0);
-    expect(hasContent).not.toContain('500');
-    expect(hasContent).not.toContain('404');
+    await page.waitForSelector('.ant-table', { timeout: 15000 });
     console.log('✅ 页面加载正常');
   });
 
