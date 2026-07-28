@@ -123,13 +123,14 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void unaudit(String id) {
-        // 先改状态（原子守卫），成功后恢复库存（stockIn 回退）
+        // 铁拳团 P1-2 修复：unaudit 同样先锁主表再读明细（与 audit 同一 TOCTOU 加固）
         String username = getCurrentUsername();
         Date now = new Date();
-        MesOtherStockOut e = queryWithItems(id);
-        if (e == null) throw new JeecgBootException("出库单不存在");
+        MesOtherStockOut locked = baseMapper.selectByIdForUpdate(id);
+        if (locked == null) throw new JeecgBootException("出库单不存在");
         int rows = baseMapper.unauditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("反审核失败：出库单不存在或状态不是已审核，请刷新后重试");
+        MesOtherStockOut e = queryWithItems(id);
         for (MesOtherStockOutItem item : e.getItems()) {
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库红冲", e.getCode());
         }

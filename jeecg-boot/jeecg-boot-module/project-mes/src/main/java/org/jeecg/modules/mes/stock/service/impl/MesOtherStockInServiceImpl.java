@@ -104,9 +104,10 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void audit(String id) {
-        MesOtherStockIn e = queryWithItems(id);
-        if (e == null) throw new JeecgBootException("入库单不存在");
-        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        // 铁拳团 P0-4 修复：先 FOR UPDATE 锁主表（与 updateWithItems 同锁互斥），再读明细——消除审核使用过期明细的 TOCTOU
+        MesOtherStockIn locked = baseMapper.selectByIdForUpdate(id);
+        if (locked == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(locked.getStatus())) throw new JeecgBootException("只有草稿可审核");
 
         // 先改状态（原子守卫），成功后再执行副作用——以 purchase/receipt 顺序为准，禁止参考 completion 的反序bug
         String username = getCurrentUsername();
@@ -114,6 +115,8 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
 
+        // 锁内读明细（主表行锁阻断 updateWithItems，明细稳定）
+        MesOtherStockIn e = queryWithItems(id);
         // 审核成功后逐行加库存（按明细快照成本改库存金额）
         for (MesOtherStockInItem item : e.getItems()) {
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库", e.getCode());
@@ -123,15 +126,21 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void unaudit(String id) {
-        // 先改状态（原子守卫），成功后回冲库存（stockOut 回退，库存不足时由 stockOut 内置拦截报错）
+        // 铁拳团 P1-2 修复：unaudit 同样先锁主表再读明细（与 audit 同一 TOCTOU 加固）
         String username = getCurrentUsername();
         Date now = new Date();
-        MesOtherStockIn e = queryWithItems(id);
-        if (e == null) throw new JeecgBootException("入库单不存在");
+        MesOtherStockIn locked = baseMapper.selectByIdForUpdate(id);
+        if (locked == null) throw new JeecgBootException("入库单不存在");
         int rows = baseMapper.unauditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("反审核失败：入库单不存在或状态不是已审核，请刷新后重试");
+        MesOtherStockIn e = queryWithItems(id);
         for (MesOtherStockInItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库红冲", e.getCode());
+            // 铁拳团 P1-1：库存已被消耗时回冲失败，补充业务指引（保持拦截，不碰平台 stockOut）
+            try {
+                inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库红冲", e.getCode());
+            } catch (JeecgBootException ex) {
+                throw new JeecgBootException("反审核回冲失败：" + ex.getMessage() + "。该入库的库存已被后续出库消耗，请先补足库存再反审核，或联系管理员处理。");
+            }
         }
     }
 
