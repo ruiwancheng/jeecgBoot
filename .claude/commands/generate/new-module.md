@@ -2,20 +2,24 @@
 
 快速生成 JeecgBoot MES 项目的标准 CRUD 模块（单表或主子表），减少手工探索模板的 Token 消耗。
 
+> 2026-07-29 升级：前端改用**黄金模板**（`harness/templates/mes-doc-page/`），10 个 UX 模式生成即内置，不再产出基础版。
+
 ## 触发词
 
-"新建模块"、"创建模块"、"new module"、"加一个XX管理"
+"新建模块"、"创建模块"、"new module"、"加一个XX管理"、"新建页面"
 
 ## 流程
 
 ### 1. 模式匹配
 
-AI 自动识别模块类型并加载已有模板：
+AI 自动识别模块类型并加载黄金模板：
 
-| 类型 | 模板模块 | 文件数 | 何时用 |
+| 类型 | 模板目录 | 文件数 | 内置 UX 模式 |
 |------|---------|:--:|------|
-| 单表 | 供应商(mes_basic_supplier) 或 仓库(mes_basic_wh) | 10 | 只有主表，无子表 |
-| 主子表 | 销售订单(mes_sales_order) | 13 | 头+明细，`transient List<Item>` |
+| 单表 | `harness/templates/mes-doc-page/single-table/` | 4 | 1/2/4/7/10 |
+| 主子表 | `harness/templates/mes-doc-page/master-detail/` | 5 | 全 10 个 |
+
+模板占位符规范见 `harness/templates/mes-doc-page/README.md`（5 个核心占位符 {{BIZ}}/{{BIZ_NAME}}/{{MOD}}/{{PAGE_COMPONENT}}/{{API_PREFIX}}，case 变体由生成时派生）。
 
 ### 2. 生成清单
 

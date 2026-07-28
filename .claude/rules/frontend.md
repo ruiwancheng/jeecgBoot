@@ -90,3 +90,29 @@ localStorage['<prefix>COMMON__LOCAL__KEY__']
 ### 存量 E2E 修复顺序（登录闸门原则）
 
 登录是闸门：登录注入不通时所有用例都死在第一步，下游漂移被掩盖。**先修通公共登录 → 全量跑暴露真失败（失败数"变多"是好转）→ 逐个修内容漂移**。失败全在同一步→查登录/导航；失败分散→内容漂移。
+
+## 单据页 UX 基线（2026-07-29 黄金模板配套，新增单据页逐项核对）
+
+模板源：`harness/templates/mes-doc-page/`（单表版 5 模式 / 主子表版 10 模式）。铁拳团产品 agent 按本清单审计新页面。
+
+### 列表页
+- [ ] 搜索栏有字典下拉（JDictSelectTag），涉及仓库的有 ApiSelect 下拉
+- [ ] 复选框可用（rowSelection），批量审核/反审核按钮有状态守卫（全选同状态才可用）
+- [ ] 操作列按钮按 status 动态显隐（草稿=编辑+删除，已审核=空）
+- [ ] 主子表有展开行组件（ItemsSubTable：物料编码/规格/数量/单价/金额）
+
+### 抽屉页
+- [ ] 新增时自动获取编码（getNextCode + MES_BIZ_CODE），失败回退手工输入不阻塞
+- [ ] 明细行：JMaterialSelect 选物料 + 数量/单价 InputNumber + 金额自动算
+- [ ] 选物料自动预填移动平均成本（onMaterialChange → unitCost）
+- [ ] 批量添加物料弹窗（MaterialSelectModal mode="multiple"，同样预填成本）
+- [ ] 提交时 confirmLoading 防重复点击
+- [ ] 有口径/快照类业务规则时顶部 Alert 说明
+
+### 状态机
+- [ ] 删除有 popConfirm；审核/反审核有确认
+- [ ] 已审核单据编辑/删除入口隐藏
+
+### 展示值
+- [ ] 物料列显示编码/名称，**禁止裸 ID**（testing.md 断言锚点 #4）
+- [ ] 差异/异常值红标高亮（#f5222d 加粗）

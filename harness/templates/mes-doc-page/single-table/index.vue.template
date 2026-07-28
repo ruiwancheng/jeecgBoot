@@ -1,0 +1,67 @@
+<!-- @generated-from: harness/templates/mes-doc-page/single-table @version: 1.0.0 -->
+<!-- 单表版：模式 1(搜索下拉)/2(复选+批量)/4(自动编码)/7(状态机按钮)/10(popConfirm) -->
+<template>
+  <div>
+    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+      <template #tableTitle>
+        <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增{{BIZ_NAME}}</a-button>
+      </template>
+      <template #action="{ record }">
+        <TableAction :actions="getActions(record)" />
+      </template>
+    </BasicTable>
+    <DocDrawer @register="registerDrawer" @success="reload" />
+  </div>
+</template>
+
+<script lang="ts" setup>
+  import { computed, reactive } from 'vue';
+  import { BasicTable, TableAction } from '/@/components/Table';
+  import { useListPage } from '/@/hooks/system/useListPage';
+  import { useDrawer } from '/@/components/Drawer';
+  import { columns, searchFormSchema } from './data';
+  import { queryList, deleteDoc } from './api';
+  import DocDrawer from './Drawer.vue';
+  import { message } from 'ant-design-vue';
+
+  defineOptions({ name: '{{PAGE_COMPONENT}}' });
+  const [registerDrawer, { openDrawer }] = useDrawer();
+
+  const selectedRowKeys = reactive<string[]>([]);
+  const selectedRows = reactive<Recordable[]>([]);
+  const rowSelection = {
+    type: 'checkbox' as const,
+    columnWidth: 50,
+    selectedRowKeys,
+    onChange(keys: string[], rows: Recordable[]) {
+      selectedRowKeys.length = 0;
+      selectedRowKeys.push(...keys);
+      selectedRows.length = 0;
+      selectedRows.push(...rows);
+    },
+  };
+  const allStatus = computed(() => {
+    if (!selectedRows.length) return '';
+    const s = selectedRows[0].status;
+    return selectedRows.every((r) => r.status === s) ? s : '';
+  });
+
+  const { tableContext } = useListPage({
+    designScope: '{{MENU_ID}}',
+    tableProps: { title: '{{BIZ_NAME}}', api: queryList, columns, rowKey: 'id', formConfig: { labelWidth: 120, schemas: searchFormSchema } },
+  });
+
+  const [registerTable, { reload }] = tableContext;
+
+  function getActions(r: Recordable) {
+    const acts: any[] = [];
+    if (r.status == '1' || r.status == null) {
+      acts.push({ label: '编辑', onClick: () => openDrawer(true, { record: r, isUpdate: true }) });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除？', confirm: () => handleDelete(r) } });
+    }
+    return acts;
+  }
+
+  function handleAdd() { openDrawer(true, { isUpdate: false }); }
+  async function handleDelete(r: Recordable) { await deleteDoc({ id: r.id }); message.success('删除成功'); reload(); }
+</script>

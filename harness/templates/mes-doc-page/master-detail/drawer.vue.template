@@ -1,0 +1,84 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
+<template>
+  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+    <!-- 模式 8：口径/快照提示（不需要可删） -->
+    <a-alert v-if="alertText" type="info" show-icon style="margin-bottom:8px" :message="alertText" />
+    <a-divider>{{BIZ_NAME}}明细</a-divider>
+    <div style="margin-bottom:8px">
+      <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
+      <!-- 模式 6：批量添加物料 -->
+      <a-button type="dashed" preIcon="ant-design:appstore-add-outlined" style="margin-left:8px" @click="handleOpenBatchModal">批量添加物料</a-button>
+    </div>
+    <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
+      <template #materialId="{ record, index }">
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => onMaterialChange(index, v)" style="width:100%" />
+      </template>
+      <template #qty="{ record, index }">
+        <InputNumber :value="record.qty" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'qty', v)" />
+      </template>
+      <template #unitCost="{ record, index }">
+        <InputNumber :value="record.unitCost" :min="0" :step="0.01" :precision="4" style="width:100%" placeholder="手工录入" @change="(v:number) => updateItem(index, 'unitCost', v)" />
+      </template>
+      <!-- 模式 9：差异/异常红标（不需要可删，默认展示金额） -->
+      <template #amount="{ record }"><span>{{ calcAmount(record) }}</span></template>
+      <template #action="{ index }"><a-button type="link" danger @click="removeLine(index)">删除</a-button></template>
+    </a-table>
+    <MaterialSelectModal :visible="batchModalVisible" mode="multiple" @update:visible="batchModalVisible = $event" @select="handleBatchAddMaterials" />
+  </BasicDrawer>
+</template>
+
+<script lang="ts" setup>
+  import { ref, computed, unref } from 'vue';
+  import { InputNumber } from 'ant-design-vue';
+  import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
+  import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
+  import { BasicForm, useForm } from '/@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { formSchema } from './data';
+  import { saveOrUpdate, queryById } from './api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
+
+  const emit = defineEmits(['success', 'register']);
+  const isUpdate = ref(false);
+  const items = ref<any[]>([]);
+  const alertText = ref(''); // 模式 8：如 '成本按移动平均预填，可手工修改'
+  const itemColumns = [
+    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 240 },
+    { title: '数量', dataIndex: 'qty', slots: { customRender: 'qty' }, width: 110 },
+    { title: '成本单价', dataIndex: 'unitCost', slots: { customRender: 'unitCost' }, width: 130 },
+    { title: '金额', dataIndex: 'amount', slots: { customRender: 'amount' }, width: 110 },
+    { title: '操作', slots: { customRender: 'action' }, width: 70 },
+  ];
+
+  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({ schemas: formSchema, showActionButtonGroup: false, labelWidth: 100 });
+  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    await resetFields(); items.value = [{ qty: 1, unitCost: 0 }]; isUpdate.value = !!data?.isUpdate; setDrawerProps({ confirmLoading: false });
+    // 模式 4：自动编码接线（失败回退手工输入，不阻塞开单）
+    if (!unref(isUpdate)) { try { const nextCode = await getNextCode(MES_BIZ_CODE.{{BIZ_CODE_KEY}}); if (nextCode) await setFieldsValue({ code: nextCode }); } catch (e) { /* fallback: 手工输入 */ } }
+    if (unref(isUpdate) && data.record) { try { const o = await queryById({ id: data.record.id }); if (o) { await setFieldsValue(o); items.value = o.items?.length ? o.items : [{ qty: 1, unitCost: 0 }]; } } catch (e) {} }
+  });
+  const getTitle = computed(() => (unref(isUpdate) ? '编辑{{BIZ_NAME}}单' : '新增{{BIZ_NAME}}单'));
+  function addLine() { items.value.push({ qty: 1, unitCost: 0 }); }
+  function removeLine(i: number) { if (items.value.length > 1) items.value.splice(i, 1); }
+  function updateItem(i: number, f: string, v: any) { items.value[i] = { ...items.value[i], [f]: v }; }
+  // 模式 6：选中物料时预填移动平均成本（可手工修改）
+  function onMaterialChange(i: number, v: any) {
+    updateItem(i, 'materialId', v?.value ?? v);
+    const cost = v?.record?.movingAvgCost;
+    if (cost != null) updateItem(i, 'unitCost', cost);
+  }
+  function calcAmount(r: any) { return ((Number(r.qty) || 0) * (Number(r.unitCost) || 0)).toFixed(2); }
+
+  // 模式 6：批量添加（预填移动平均成本）
+  const batchModalVisible = ref(false);
+  function handleOpenBatchModal() { batchModalVisible.value = true; }
+  function handleBatchAddMaterials(materials: any[]) {
+    materials.forEach((m) => {
+      items.value.push({ materialId: m.id, qty: 1, unitCost: m.movingAvgCost ?? 0 });
+    });
+  }
+
+  async function handleSubmit() { const v = await validate(); setDrawerProps({ confirmLoading: true }); try { await saveOrUpdate({ ...v, items: items.value }, unref(isUpdate)); closeDrawer(); emit('success'); } finally { setDrawerProps({ confirmLoading: false }); } }
+</script>

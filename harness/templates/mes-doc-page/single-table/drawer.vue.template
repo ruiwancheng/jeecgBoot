@@ -1,0 +1,30 @@
+<!-- @generated-from: harness/templates/mes-doc-page/single-table @version: 1.0.0 -->
+<template>
+  <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="720px" destroyOnClose :showFooter="true" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+  </BasicDrawer>
+</template>
+
+<script lang="ts" setup>
+  import { ref, computed, unref } from 'vue';
+  import { BasicForm, useForm } from '/@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { formSchema } from './data';
+  import { saveOrUpdate, queryById } from './api';
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
+
+  const emit = defineEmits(['success', 'register']);
+  const isUpdate = ref(false);
+
+  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({ schemas: formSchema, showActionButtonGroup: false, labelWidth: 100 });
+  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    await resetFields(); isUpdate.value = !!data?.isUpdate; setDrawerProps({ confirmLoading: false });
+    // 模式 4：自动编码接线（无编码需求的单表可删此段）
+    if (!unref(isUpdate)) { try { const nextCode = await getNextCode(MES_BIZ_CODE.{{BIZ_CODE_KEY}}); if (nextCode) await setFieldsValue({ code: nextCode }); } catch (e) { /* fallback */ } }
+    if (unref(isUpdate) && data.record) { try { const o = await queryById({ id: data.record.id }); if (o) await setFieldsValue(o); } catch (e) {} }
+  });
+  const getTitle = computed(() => (unref(isUpdate) ? '编辑{{BIZ_NAME}}' : '新增{{BIZ_NAME}}'));
+
+  async function handleSubmit() { const v = await validate(); setDrawerProps({ confirmLoading: true }); try { await saveOrUpdate(v, unref(isUpdate)); closeDrawer(); emit('success'); } finally { setDrawerProps({ confirmLoading: false }); } }
+</script>
