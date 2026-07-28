@@ -168,6 +168,15 @@ const mes: AppRouteModule = {
           component: () => import('/@/views/project/mes/stock/stocktake/index.vue'),
           meta: { title: '盘点单' },
         },
+      ],
+    },
+    {
+      path: 'dev',
+      name: 'MesDev',
+      component: LAYOUT,
+      redirect: '/project/mes/dev/template-gallery',
+      meta: { title: '开发工具' },
+      children: [
         {
           path: 'template-gallery',
           name: 'MesTemplateGallery',
