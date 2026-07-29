@@ -75,12 +75,12 @@ test.describe('盘点单（黄金模板重构版）', () => {
     expect(detail.result.snapshotTime).toBeTruthy();
     console.log('✅ 快照断言: book=20 cost=8 snapshotTime 记录');
 
-    // 4. 展开行：物料列显示编码（显示值锚点#4，裸ID判负）
+    // 4. 展开行：物料列显示编码（显示值锚点#4，DOM 级限定防全页误判）
     await page.locator('.ant-table-row-expand-icon').first().click();
     await page.waitForTimeout(1500);
-    const bodyText = await page.locator('body').innerText();
-    expect(bodyText).toContain(fx.matCode);
-    console.log(`✅ 显示值断言: 子表物料列含编码 ${fx.matCode}`);
+    const subTableCell = page.locator('.ant-table-expanded-row .ant-table-tbody td').first();
+    await expect(subTableCell).toContainText(fx.matCode);
+    console.log(`✅ 显示值断言: 子表物料列含编码 ${fx.matCode}（DOM级）`);
 
     // 5. 录入实盘（抽屉物料列也是编码）
     await page.locator('a:has-text("录入实盘"), button:has-text("录入实盘")').first().click();

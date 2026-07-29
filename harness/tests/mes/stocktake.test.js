@@ -67,7 +67,7 @@ async function run() {
   await api('PUT', `/mes/stock/otherIn/audit?id=${inDoc.id}`, token);
   console.log('  ✅ 期初入库 100×10 已审核\n');
 
-  const pdCodes = [`PD-TEST-${suffix}-1`, `PD-TEST-${suffix}-2`, `PD-TEST-${suffix}-3`];
+  const pdCodes = [`PD-TEST-${suffix}-1`, `PD-TEST-${suffix}-2`, `PD-TEST-${suffix}-3`, `PD-TEST-${suffix}-4`, `PD-TEST-${suffix}-5`, `PD-TEST-${suffix}-6`, `PD-TEST-${suffix}-7`, `PD-TEST-${suffix}-8`];
 
   // ---- 场景1: 全盘创建自动快照 ----
   console.log('--- 场景1: 全盘创建自动快照 ---');
@@ -103,6 +103,18 @@ async function run() {
   const inv2 = await api('GET', `/mes/warehouse/inventory/list?pageNo=1&pageSize=5&warehouseId=${whId}`, token);
   check('库存 95→98', Number(inv2.result.records[0].current_qty) === 98, `qty=${inv2.result.records[0].current_qty}`);
 
+  // ---- 场景3b: 断言加强（评审建议：generatedInId+金额对账+avg不变+已审核编辑拦截）----
+  const detail2b = await api('GET', `/mes/stock/stocktake/queryById?id=${pd2.id}`, token);
+  const genInId = detail2b.result.items[0].generatedInId;
+  check('generatedInId 已回写', !!genInId, genInId?.slice(-6));
+  const genInDoc = await api('GET', `/mes/stock/otherIn/queryById?id=${genInId}`, token);
+  check('盘盈入库金额=diffAmount(3×10=30)', Number(genInDoc.result.items[0].amount) === 30, `amount=${genInDoc.result.items[0].amount}`);
+  check('盘盈入库单已审核', genInDoc.result.status === '2', `status=${genInDoc.result.status}`);
+  const mat2 = await api('GET', `/mes/basic/material/queryById?id=${matId}`, token);
+  check('盘盈后移动平均仍不变=10', Number(mat2.result.movingAvgCost) === 10, `avg=${mat2.result.movingAvgCost}`);
+  const editAudited = await api('PUT', '/mes/stock/stocktake/edit', token, { id: pd2.id, code: pdCodes[1], takeType: '1', warehouseId: whId, takeDate: '2026-07-28', items: [{ materialId: matId, bookQty: 95, actualQty: 97, unitCost: 10 }] });
+  check('已审核单编辑被拒', editAudited.code !== 200, editAudited.message);
+
   // ---- 场景4: 守卫 ----
   console.log('\n--- 场景4: 守卫 ---');
   const delAudited = await api('DELETE', `/mes/stock/stocktake/delete?id=${pd1.id}`, token);
@@ -111,6 +123,55 @@ async function run() {
   const pd3 = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[2]);
   const delDraft = await api('DELETE', `/mes/stock/stocktake/delete?id=${pd3.id}`, token);
   check('草稿可删除', delDraft.code === 200, delDraft.message);
+
+  // ---- 场景5: 抽盘校验（评审 P1 盲区）----
+  console.log('\n--- 场景5: 抽盘 book_qty 校验 ---');
+  const tamperAdd = await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[3], takeType: '2', warehouseId: whId, takeDate: '2026-07-28', items: [{ materialId: matId, bookQty: 999, actualQty: 50, unitCost: 10 }] });
+  check('抽盘篡改bookQty=999被拒', tamperAdd.code !== 200, tamperAdd.message);
+  const validAdd = await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[3], takeType: '2', warehouseId: whId, takeDate: '2026-07-28', items: [{ materialId: matId, bookQty: 98, actualQty: 98, unitCost: 10 }] });
+  check('抽盘正确bookQty=98通过', validAdd.code === 200, validAdd.message);
+  const pd4 = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[3]);
+  await api('DELETE', `/mes/stock/stocktake/delete?id=${pd4.id}`, token);
+
+  // ---- 场景6: refreshItems 保留（评审 P1 盲区）----
+  console.log('\n--- 场景6: refreshItems 保留实盘数+手工成本 ---');
+  await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[4], takeType: '1', warehouseId: whId, takeDate: '2026-07-28' });
+  const pd5 = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[4]);
+  await api('PUT', '/mes/stock/stocktake/edit', token, { id: pd5.id, code: pdCodes[4], takeType: '1', warehouseId: whId, takeDate: '2026-07-28', items: [{ materialId: matId, bookQty: 98, actualQty: 96, unitCost: 12 }] });
+  // 出库5制造快照过期（98→93）
+  const outCode = `PDTEST_OUT_${suffix}`;
+  await api('POST', '/mes/stock/otherOut/add', token, { code: outCode, outType: '3', warehouseId: whId, reason: '领用', stockDate: '2026-07-28', items: [{ materialId: matId, qty: 5, unitCost: 10 }] });
+  const outDoc = await findDoc(token, '/mes/stock/otherOut/list', outCode);
+  await api('PUT', `/mes/stock/otherOut/audit?id=${outDoc.id}`, token);
+  await api('POST', `/mes/stock/stocktake/refreshItems?id=${pd5.id}`, token);
+  const detail5 = await api('GET', `/mes/stock/stocktake/queryById?id=${pd5.id}`, token);
+  const item5 = detail5.result.items[0];
+  check('刷新后book=当前库存93', Number(item5.bookQty) === 93, `book=${item5.bookQty}`);
+  check('刷新保留actualQty=96', Number(item5.actualQty) === 96, `actual=${item5.actualQty}`);
+  check('刷新保留手工成本=12', Number(item5.unitCost) === 12, `cost=${item5.unitCost}`);
+  await api('DELETE', `/mes/stock/stocktake/delete?id=${pd5.id}`, token);
+  await api('PUT', `/mes/stock/otherOut/unaudit?id=${outDoc.id}`, token);
+  await api('DELETE', `/mes/stock/otherOut/delete?id=${outDoc.id}`, token);
+
+  // ---- 场景7: batchAudit 单事务（评审 P0 盲区）----
+  console.log('\n--- 场景7: batchAudit ---');
+  await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[5], takeType: '1', warehouseId: whId, takeDate: '2026-07-28' });
+  const pdA = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[5]);
+  await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[6], takeType: '1', warehouseId: whId, takeDate: '2026-07-28' });
+  const pdB = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[6]);
+  const batchOk = await api('POST', '/mes/stock/stocktake/batchAudit', token, { ids: [pdA.id, pdB.id] });
+  check('批量审核2条全绿', batchOk.code === 200, batchOk.message);
+  const pdAAfter = await api('GET', `/mes/stock/stocktake/queryById?id=${pdA.id}`, token);
+  const pdBAfter = await api('GET', `/mes/stock/stocktake/queryById?id=${pdB.id}`, token);
+  check('两条均已审核', pdAAfter.result.status === '2' && pdBAfter.result.status === '2', `${pdAAfter.result.status}/${pdBAfter.result.status}`);
+  // 混批（已审核+草稿）→ 整体失败且草稿回滚
+  await api('POST', '/mes/stock/stocktake/add', token, { code: pdCodes[7], takeType: '1', warehouseId: whId, takeDate: '2026-07-28' });
+  const pdC = await findDoc(token, '/mes/stock/stocktake/list', pdCodes[7]);
+  const batchMix = await api('POST', '/mes/stock/stocktake/batchAudit', token, { ids: [pdA.id, pdC.id] });
+  check('混批(已审核+草稿)失败', batchMix.code !== 200, batchMix.message);
+  const pdCAfter = await api('GET', `/mes/stock/stocktake/queryById?id=${pdC.id}`, token);
+  check('草稿回滚保持status=1', pdCAfter.result.status === '1', `status=${pdCAfter.result.status}`);
+  await api('DELETE', `/mes/stock/stocktake/delete?id=${pdC.id}`, token);
 
   // ---- 清理（含期初入库单）----
   console.log('\n--- 清理 ---');
