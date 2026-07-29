@@ -96,8 +96,8 @@ test.describe('盘点单（黄金模板重构版）', () => {
     await page.locator('.ant-drawer').getByRole('button', { name: '确 认' }).click();
     await page.waitForTimeout(2000);
 
-    // 6. 审核（popConfirm 确认）
-    await page.locator('a:has-text("审核"), button:has-text("审核")').first().click();
+    // 6. 审核（行内操作按钮，popConfirm 确认）
+    await page.locator('.ant-table-tbody .ant-table-row').nth(0).locator('a:has-text("审核")').first().click();
     await page.waitForTimeout(600);
     const confirmBtn = page.locator('.ant-popover button.ant-btn-primary, .ant-popconfirm button.ant-btn-primary').first();
     await confirmBtn.click();
