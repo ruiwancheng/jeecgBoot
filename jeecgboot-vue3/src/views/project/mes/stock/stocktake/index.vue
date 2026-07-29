@@ -75,7 +75,8 @@
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   async function batchAudit() {
     const res: any = await batchAuditStocktake([...selectedRowKeys]);
-    Modal.success({ title: '批量审核完成', content: res || `已审核${selectedRowKeys.length}条` });
+    const content = String(res || `已审核${selectedRowKeys.length}条`).replace(/，/g, '，\n').replace(/ \| /g, '\n');
+    Modal.success({ title: '批量审核完成', content: h('div', { style: 'white-space:pre-line; word-break:break-all' }, content) });
     selectedRowKeys.length = 0;
     selectedRows.length = 0;
     reload();
