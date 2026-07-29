@@ -26,8 +26,11 @@ public interface MesInventoryMapper extends BaseMapper<MesInventory> {
             "LEFT JOIN c_mes_warehouse w ON i.warehouse_id = w.id AND w.del_flag = 0 " +
             "WHERE (m.code LIKE CONCAT('%',#{keyword},'%') OR m.name LIKE CONCAT('%',#{keyword},'%') OR #{keyword} IS NULL) " +
             "AND (i.warehouse_id = #{warehouseId} OR #{warehouseId} IS NULL) " +
+            //update-begin---author:ruiwancheng---date:2026-07-29---for: /debug 盘点抽盘账面数拉取-materialId过滤支持-----------
+            "AND (i.material_id = #{materialId} OR #{materialId} IS NULL) " +
+            //update-end---author:ruiwancheng---date:2026-07-29---for: materialId过滤-----------
             "ORDER BY m.code, w.name")
-    java.util.List<java.util.Map<String, Object>> selectInventoryWithMaterial(@Param("keyword") String keyword, @Param("warehouseId") String warehouseId);
+    java.util.List<java.util.Map<String, Object>> selectInventoryWithMaterial(@Param("keyword") String keyword, @Param("warehouseId") String warehouseId, @Param("materialId") String materialId);
     //update-end---author:ruiwancheng---date:2026-07-25---for: V9.7.1 库存总览-联表查询-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存Mapper-----------

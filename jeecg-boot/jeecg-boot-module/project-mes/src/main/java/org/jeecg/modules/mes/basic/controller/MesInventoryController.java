@@ -40,10 +40,16 @@ public class MesInventoryController {
 
         String keyword = req.getParameter("keyword");
         String warehouseId = req.getParameter("warehouseId");
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: /debug 盘点抽盘账面数拉取-materialId过滤支持-----------
+        String materialId = req.getParameter("materialId");
+        //update-end---author:ruiwancheng---date:2026-07-29---for: materialId过滤-----------
 
         List<Map<String, Object>> allRows = inventoryMapper.selectInventoryWithMaterial(
                 (keyword != null && !keyword.isEmpty()) ? keyword : null,
-                (warehouseId != null && !warehouseId.isEmpty()) ? warehouseId : null);
+                (warehouseId != null && !warehouseId.isEmpty()) ? warehouseId : null,
+                //update-begin---author:ruiwancheng---date:2026-07-29---for: materialId过滤-----------
+                (materialId != null && !materialId.isEmpty()) ? materialId : null);
+                //update-end---author:ruiwancheng---date:2026-07-29---for: materialId过滤-----------
 
         // 计算库存金额 + 手动分页
         for (Map<String, Object> row : allRows) {

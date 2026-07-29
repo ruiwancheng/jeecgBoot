@@ -51,7 +51,7 @@
   import { formSchema } from './stocktake.data';
   import { saveOrUpdateStocktake, queryStocktakeById, refreshStocktakeItems } from './stocktake.api';
   import { queryInventoryList } from '/@/views/project/mes/basic/inventory/inventory.api';
-  import { queryMaterialById, queryMaterialsByIds } from '/@/views/project/mes/basic/material/material.api';
+  import { queryMaterialsByIds } from '/@/views/project/mes/basic/material/material.api';
   import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
   import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
@@ -163,20 +163,20 @@
     }
   }
 
-  // 模式 6：批量添加物料（逐个拉账面库存 + 预填移动平均成本）
+  // 模式 6：批量添加物料（一次拉全仓库存，客户端按物料过滤——避免 N+1 且杜绝参数被忽略）
   const batchVisible = ref(false);
   async function onBatchMaterials(materials: any[]) {
     const wh = getFieldsValue().warehouseId || currentWarehouseId.value;
     if (!wh) { message.warning('请先选择仓库'); return; }
     currentWarehouseId.value = wh;
+    // 一次拉全仓库存建 map（/debug 修复：逐料调用被后端忽略 materialId 参数时全部拿到第一行）
+    const invMap: Record<string, number> = {};
+    try {
+      const res: any = await queryInventoryList({ warehouseId: wh, pageNo: 1, pageSize: 500 });
+      (res?.records || []).forEach((r: any) => { invMap[r.material_id] = Number(r.current_qty) || 0; });
+    } catch (e) { /* 全为0 */ }
     for (const m of materials) {
-      const item: any = { materialId: m.id, bookQty: 0, actualQty: null, unitCost: m.movingAvgCost ?? 0 };
-      try {
-        const res: any = await queryInventoryList({ materialId: m.id, warehouseId: wh, pageNo: 1, pageSize: 1 });
-        const row = res?.records?.[0];
-        item.bookQty = row ? Number(row.current_qty) : 0;
-      } catch (e) { /* book=0 */ }
-      items.value.push(item);
+      items.value.push({ materialId: m.id, bookQty: invMap[m.id] ?? 0, actualQty: null, unitCost: m.movingAvgCost ?? 0 });
       materialMap.value[m.id] = m;
     }
   }

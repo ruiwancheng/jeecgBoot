@@ -30,6 +30,7 @@
   import StocktakeDrawer from './StocktakeDrawer.vue';
   import StocktakeItemsSubTable from './StocktakeItemsSubTable.vue';
   import { message, Modal } from 'ant-design-vue';
+  import { h } from 'vue';
 
   defineOptions({ name: 'MesStocktake' });
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -82,7 +83,9 @@
   async function handleDelete(r: Recordable) { await deleteStocktake({ id: r.id }); message.success('删除成功'); reload(); }
   async function handleAudit(r: Recordable) {
     const res: any = await auditStocktake({ id: r.id });
-    Modal.success({ title: '盘点审核完成', content: res || '审核成功' });
+    // /debug 修复：长文本在 Modal 中向右滚动——插入换行并允许断行
+    const content = String(res || '审核成功').replace(/，/g, '，\n');
+    Modal.success({ title: '盘点审核完成', content: h('div', { style: 'white-space:pre-line; word-break:break-all' }, content) });
     reload();
   }
 </script>
