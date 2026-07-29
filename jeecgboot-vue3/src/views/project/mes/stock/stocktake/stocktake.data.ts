@@ -1,6 +1,10 @@
 import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
+import { ref } from 'vue';
 import { queryWarehouseSelect } from '/@/views/project/mes/basic/warehouse/warehouse.api';
+
+// 新建时盘点类型联动（全盘禁用添加物料按钮，引导保存后到「录入实盘」填数）
+export const createTakeType = ref('1');
 
 export const columns: BasicColumn[] = [
   { title: '盘点单号', dataIndex: 'code', width: 150 },
@@ -22,7 +26,7 @@ export const searchFormSchema: FormSchema[] = [
 export const formSchema: FormSchema[] = [
   { field: 'id', label: 'id', component: 'Input', show: false },
   { field: 'code', label: '盘点单号', component: 'Input', required: true, colProps: { span: 8 }, componentProps: { maxlength: 50, placeholder: 'PD-YYYYMMDD-0001' } },
-  { field: 'takeType', label: '盘点类型', component: 'JDictSelectTag', required: true, colProps: { span: 8 }, componentProps: { dictCode: 'mes_stocktake_type' }, defaultValue: '1' },
+  { field: 'takeType', label: '盘点类型', component: 'JDictSelectTag', required: true, colProps: { span: 8 }, componentProps: { dictCode: 'mes_stocktake_type', onChange: (v: any) => { createTakeType.value = v?.target?.value ?? v; } }, defaultValue: '1' },
   { field: 'warehouseId', label: '仓库', component: 'ApiSelect', required: true, colProps: { span: 8 }, componentProps: { api: queryWarehouseSelect } },
   { field: 'takeDate', label: '盘点日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
   { field: 'remark', label: '备注', component: 'InputTextArea', colProps: { span: 24 }, componentProps: { maxlength: 500 } },

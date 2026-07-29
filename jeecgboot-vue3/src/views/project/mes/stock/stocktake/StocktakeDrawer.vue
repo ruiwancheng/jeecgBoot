@@ -8,10 +8,11 @@
       </template>
     </a-alert>
     <a-divider>盘点明细</a-divider>
-    <div v-if="!isUpdate && takeType === '1'" style="color:#888;margin-bottom:8px">全盘：保存后自动快照该仓全部库存物料为明细，再到「录入实盘」中填实盘数；零库存物料用「添加行」手工盘点</div>
+    <div v-if="!isUpdate && createTakeType === '1'" style="color:#888;margin-bottom:8px">全盘：保存后自动带出该仓全部库存物料明细，无需手工添加；保存后请在「录入实盘」中填写实盘数</div>
     <div style="margin-bottom:8px">
-      <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
-      <a-button type="dashed" preIcon="ant-design:appstore-add-outlined" style="margin-left:8px" @click="batchVisible = true">批量添加物料</a-button>
+      <a-button type="dashed" preIcon="ant-design:plus-outlined" :disabled="isFullCreate" @click="addLine">添加行</a-button>
+      <a-button type="dashed" preIcon="ant-design:appstore-add-outlined" style="margin-left:8px" :disabled="isFullCreate" @click="batchVisible = true">批量添加物料</a-button>
+      <span v-if="isFullCreate" style="margin-left:8px;color:#bbb">全盘无需添加</span>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
@@ -48,7 +49,7 @@
   import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { formSchema } from './stocktake.data';
+  import { formSchema, createTakeType } from './stocktake.data';
   import { saveOrUpdateStocktake, queryStocktakeById, refreshStocktakeItems } from './stocktake.api';
   import { queryInventoryList } from '/@/views/project/mes/basic/inventory/inventory.api';
   import { queryMaterialsByIds } from '/@/views/project/mes/basic/material/material.api';
@@ -103,6 +104,8 @@
     }
   });
   const getTitle = computed(() => (unref(isUpdate) ? '编辑盘点单（录入实盘）' : '新增盘点单'));
+  // 新建+全盘：禁用添加物料按钮（避免手工输入被快照覆盖，引导保存后到「录入实盘」填数）
+  const isFullCreate = computed(() => !unref(isUpdate) && createTakeType.value === '1');
 
   function materialText(record: any) {
     const m = materialMap.value[record.materialId];
