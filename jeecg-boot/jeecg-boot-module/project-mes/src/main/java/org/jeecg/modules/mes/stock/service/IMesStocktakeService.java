@@ -11,5 +11,9 @@ public interface IMesStocktakeService extends IService<MesStocktake> {
     void removeWithItems(String id);
     /** 审核：差异行自动生成盘盈入库/盘亏出库单并审核（同事务），返回摘要 */
     String audit(String id);
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 黄金模板重构 草稿态刷新账面快照-----------
+    /** 草稿态重新快照账面数（快照过期一键刷新；仅草稿） */
+    void refreshItems(String id);
+    //update-end---author:ruiwancheng---date:2026-07-29---for: refreshItems-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-28---for: V9.9.0 MES盘点单-Service接口-----------

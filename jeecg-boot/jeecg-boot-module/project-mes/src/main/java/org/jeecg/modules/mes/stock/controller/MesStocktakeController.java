@@ -74,5 +74,15 @@ public class MesStocktakeController extends JeecgController<MesStocktake, IMesSt
     public Result<String> audit(@RequestParam String id) {
         return Result.ok(service.audit(id));
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 黄金模板重构 草稿态刷新账面快照-----------
+    @Operation(summary = "刷新账面数（仅草稿，重新快照当前库存）")
+    @PostMapping("/refreshItems")
+    @RequiresPermissions("mes:stocktake:edit")
+    public Result<String> refreshItems(@RequestParam String id) {
+        service.refreshItems(id);
+        return Result.ok("账面数已刷新为当前库存");
+    }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: refreshItems-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-28---for: V9.9.0 MES盘点单-Controller-----------

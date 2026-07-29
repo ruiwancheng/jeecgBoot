@@ -6,13 +6,15 @@
  */
 import type { Page } from '@playwright/test';
 
-export const BASE = 'http://100.122.125.106';
+// 双地址分离：UI 地址 + API 地址，可用环境变量覆盖（默认打服务器，本地跑传 E2E_UI_BASE/E2E_API_BASE）
+export const BASE = process.env.E2E_UI_BASE || 'http://100.122.125.106';
+export const API_BASE = process.env.E2E_API_BASE || 'http://100.122.125.106:8080/jeecg-boot';
 
 let cachedToken: string | null = null;
 
 async function fetchToken(): Promise<string> {
   if (cachedToken) return cachedToken;
-  const res = await fetch(`${BASE}:8080/jeecg-boot/sys/login`, {
+  const res = await fetch(`${API_BASE}/sys/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: 'mes_admin', password: '123456' }),

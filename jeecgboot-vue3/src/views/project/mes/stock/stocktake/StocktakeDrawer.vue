@@ -1,26 +1,30 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1100px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
-    <a-alert v-if="snapshotTime" type="info" show-icon style="margin-bottom:8px"
-      :message="`账面数为快照时点（${snapshotTime}）的库存；审核差异以此为准，期间出入库不影响本次盘点`" />
+    <a-alert v-if="snapshotTime" type="info" show-icon style="margin-bottom:8px">
+      <template #message>
+        账面数为快照时点（{{ snapshotTime }}）的库存；审核差异以此为准
+        <a-button type="link" size="small" :loading="refreshing" @click="handleRefresh">刷新账面数</a-button>
+      </template>
+    </a-alert>
     <a-divider>盘点明细</a-divider>
-    <div v-if="!isUpdate && takeType === '1'" style="color:#888;margin-bottom:8px">全盘：保存后自动快照该仓全部库存物料为明细，再到编辑中录入实盘数</div>
+    <div v-if="!isUpdate && takeType === '1'" style="color:#888;margin-bottom:8px">全盘：保存后自动快照该仓全部库存物料为明细，再到「录入实盘」中填实盘数；零库存物料用「添加行」手工盘点</div>
     <div style="margin-bottom:8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <span v-if="isUpdate">{{ record.materialName || record.materialId }}</span>
+        <span v-if="isUpdate">{{ materialText(record) }}</span>
         <JMaterialSelect v-else v-model:modelValue="record.materialId" @change="(v:any) => onMaterialChange(index, v)" style="width:100%" />
       </template>
       <template #bookQty="{ record }">
         <span>{{ record.bookQty }}</span>
       </template>
       <template #actualQty="{ record, index }">
-        <InputNumber :value="record.actualQty" :min="0" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'actualQty', v)" />
+        <InputNumber :value="record.actualQty" :min="0" :step="1" style="width:100%" placeholder="填这里" @change="(v:number) => updateItem(index, 'actualQty', v)" />
       </template>
       <template #diffQty="{ record }">
-        <span :style="{ color: calcDiff(record) != 0 ? '#f5222d' : '#999', fontWeight: calcDiff(record) != 0 ? 600 : 400 }">{{ calcDiff(record) }}</span>
+        <span :style="{ color: calcDiff(record) !== '-' && Number(calcDiff(record)) !== 0 ? '#f5222d' : '#999', fontWeight: calcDiff(record) !== '-' && Number(calcDiff(record)) !== 0 ? 600 : 400 }">{{ calcDiff(record) }}</span>
       </template>
       <template #unitCost="{ record, index }">
         <InputNumber :value="record.unitCost" :min="0" :step="0.01" :precision="4" style="width:100%" placeholder="移动平均" @change="(v:number) => updateItem(index, 'unitCost', v)" />
@@ -42,8 +46,9 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './stocktake.data';
-  import { saveOrUpdateStocktake, queryStocktakeById } from './stocktake.api';
+  import { saveOrUpdateStocktake, queryStocktakeById, refreshStocktakeItems } from './stocktake.api';
   import { queryInventoryList } from '/@/views/project/mes/basic/inventory/inventory.api';
+  import { queryMaterialById } from '/@/views/project/mes/basic/material/material.api';
   import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
   import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
@@ -52,11 +57,14 @@
   const takeType = ref('1');
   const snapshotTime = ref('');
   const items = ref<any[]>([]);
+  const materialMap = ref<Record<string, any>>({});
   const currentWarehouseId = ref('');
+  const currentDocId = ref('');
+  const refreshing = ref(false);
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 240 },
-    { title: '账面数', dataIndex: 'bookQty', slots: { customRender: 'bookQty' }, width: 100 },
-    { title: '实盘数', dataIndex: 'actualQty', slots: { customRender: 'actualQty' }, width: 110 },
+    { title: '账面数（快照）', dataIndex: 'bookQty', slots: { customRender: 'bookQty' }, width: 110 },
+    { title: '实盘数（填这里）', dataIndex: 'actualQty', slots: { customRender: 'actualQty' }, width: 130 },
     { title: '差异', dataIndex: 'diffQty', slots: { customRender: 'diffQty' }, width: 90 },
     { title: '成本单价', dataIndex: 'unitCost', slots: { customRender: 'unitCost' }, width: 120 },
     { title: '差异金额', dataIndex: 'diffAmount', slots: { customRender: 'diffAmount' }, width: 100 },
@@ -68,6 +76,8 @@
     await resetFields();
     items.value = [];
     snapshotTime.value = '';
+    materialMap.value = {};
+    currentDocId.value = '';
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
     if (!unref(isUpdate)) {
@@ -82,12 +92,40 @@
           takeType.value = o.takeType || '1';
           snapshotTime.value = o.snapshotTime || '';
           currentWarehouseId.value = o.warehouseId || '';
-          items.value = (o.items || []).map((it: any) => ({ ...it, materialName: it.materialId_dictText }));
+          currentDocId.value = o.id;
+          items.value = o.items || [];
+          await loadMaterialMap();
         }
       } catch (e) {}
     }
   });
   const getTitle = computed(() => (unref(isUpdate) ? '编辑盘点单（录入实盘）' : '新增盘点单'));
+
+  function materialText(record: any) {
+    const m = materialMap.value[record.materialId];
+    if (m) return `${m.code} — ${m.name}`;
+    return record.materialId_dictText || record.materialId || '-';
+  }
+  async function loadMaterialMap() {
+    const ids = [...new Set(items.value.map((i) => i.materialId).filter(Boolean))] as string[];
+    const materials = await Promise.all(ids.map((id) => queryMaterialById({ id }).catch(() => null)));
+    const map: Record<string, any> = {};
+    materials.forEach((m) => { if (m?.id) map[m.id] = m; });
+    materialMap.value = map;
+  }
+
+  async function handleRefresh() {
+    if (!currentDocId.value) return;
+    refreshing.value = true;
+    try {
+      await refreshStocktakeItems({ id: currentDocId.value });
+      const o = await queryStocktakeById({ id: currentDocId.value });
+      items.value = o.items || [];
+      snapshotTime.value = o.snapshotTime || '';
+      await loadMaterialMap();
+      message.success('账面数已刷新为当前库存');
+    } finally { refreshing.value = false; }
+  }
 
   function updateItem(i: number, f: string, v: any) { items.value[i] = { ...items.value[i], [f]: v }; }
   function addLine() {
@@ -125,7 +163,6 @@
   async function handleSubmit() {
     const v = await validate();
     takeType.value = v.takeType || '1';
-    // 全盘新建：不传 items，后端自动快照；抽盘/编辑：带 items
     const payload: any = { ...v };
     if (unref(isUpdate) || takeType.value !== '1') {
       if (!items.value.length) { message.warning('请添加盘点明细行'); return; }

@@ -1,6 +1,9 @@
 <template>
   <div>
     <BasicTable @register="registerTable">
+      <template #expandedRowRender="{ record }">
+        <StocktakeItemsSubTable :docId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增盘点单</a-button>
       </template>
@@ -19,6 +22,7 @@
   import { columns, searchFormSchema } from './stocktake.data';
   import { queryStocktakeList, deleteStocktake, auditStocktake } from './stocktake.api';
   import StocktakeDrawer from './StocktakeDrawer.vue';
+  import StocktakeItemsSubTable from './StocktakeItemsSubTable.vue';
   import { message, Modal } from 'ant-design-vue';
 
   defineOptions({ name: 'MesStocktake' });

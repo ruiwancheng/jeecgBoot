@@ -219,7 +219,7 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         return "审核成功：差异" + (inLines.size() + outLines.size()) + "行"
                 + (inCode != null ? "，盘盈入库单 " + inCode : "")
                 + (outCode != null ? "，盘亏出库单 " + outCode : "")
-                + (inLines.isEmpty() && outLines.isEmpty() ? "（无差异，库存未调整）" : "");
+                + (inLines.isEmpty() && outLines.isEmpty() ? "（实盘=账面，无需调整）" : "");
     }
 
     /** 全盘快照：普通 SELECT 不加锁（评审 P1），actual_qty 默认=账面（用户只改差异行） */
@@ -267,6 +267,24 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         entity.setTotalDiffAmount(totalDiff);
         baseMapper.updateById(new MesStocktake().setId(entity.getId()).setTotalDiffAmount(totalDiff));
     }
+
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 黄金模板重构 草稿态刷新账面快照-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void refreshItems(String id) {
+        MesStocktake exist = baseMapper.selectByIdForUpdate(id);
+        if (exist == null) throw new JeecgBootException("盘点单不存在");
+        if (!"1".equals(exist.getStatus())) throw new JeecgBootException("仅草稿状态可刷新账面数");
+        List<MesStocktakeItem> items = snapshotItems(exist.getWarehouseId());
+        if (items.isEmpty()) throw new JeecgBootException("该仓库无库存物料，无法刷新");
+        LambdaQueryWrapper<MesStocktakeItem> delQw = new LambdaQueryWrapper<>();
+        delQw.eq(MesStocktakeItem::getTakeId, id);
+        itemMapper.delete(delQw);
+        exist.setSnapshotTime(new Date());
+        calcAndSaveItems(exist, items);
+        baseMapper.updateById(new MesStocktake().setId(id).setSnapshotTime(exist.getSnapshotTime()));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: refreshItems-----------
 
     /** 铁拳团 P0-1：校验 book_qty 可信度。expectOldBook 非空=编辑原有行（必须等于原快照）；空=新行（FOR UPDATE 读当前库存校验） */
     private void validateBookQty(MesStocktakeItem item, String warehouseId, BigDecimal expectOldBook) {
