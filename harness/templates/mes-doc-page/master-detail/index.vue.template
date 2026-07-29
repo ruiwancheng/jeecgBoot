@@ -14,6 +14,9 @@
         <a-button type="primary" :disabled="allStatus != '1'" @click="batchAudit">审核</a-button>
         <a-button danger :disabled="allStatus != '2'" @click="batchUnaudit">反审核</a-button>
       </template>
+      <template #statusTag="{ record }">
+        <a-tag :color="record.status === '2' ? 'green' : 'orange'">{{ record.status_dictText || (record.status === '2' ? '已审核' : '草稿') }}</a-tag>
+      </template>
       <template #action="{ record }">
         <TableAction :actions="getActions(record)" />
       </template>

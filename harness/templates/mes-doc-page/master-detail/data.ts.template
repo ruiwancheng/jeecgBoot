@@ -10,7 +10,7 @@ export const columns: BasicColumn[] = [
   { title: '仓库', dataIndex: 'warehouseId_dictText', width: 120 },
   { title: '总金额', dataIndex: 'totalAmount', width: 100 },
   { title: '业务日期', dataIndex: 'bizDate', width: 110 },
-  { title: '状态', dataIndex: 'status_dictText', width: 80 },
+  { title: '状态', dataIndex: 'status', width: 80, slots: { customRender: 'statusTag' } },
   { title: '备注', dataIndex: 'remark', width: 140 },
 ];
 

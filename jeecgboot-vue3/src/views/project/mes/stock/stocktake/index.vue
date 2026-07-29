@@ -1,11 +1,16 @@
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <BasicTable @register="registerTable" :rowSelection="rowSelection">
       <template #expandedRowRender="{ record }">
         <StocktakeItemsSubTable :docId="record.id" />
       </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增盘点单</a-button>
+        <a-divider type="vertical" />
+        <a-button type="primary" :disabled="allStatus != '1'" @click="batchAudit">批量审核</a-button>
+      </template>
+      <template #statusTag="{ record }">
+        <a-tag :color="record.status === '2' ? 'green' : 'orange'">{{ record.status_dictText || (record.status === '2' ? '已审核' : '草稿') }}</a-tag>
       </template>
       <template #action="{ record }">
         <TableAction :actions="getActions(record)" />
@@ -19,6 +24,7 @@
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
+  import { computed, reactive } from 'vue';
   import { columns, searchFormSchema } from './stocktake.data';
   import { queryStocktakeList, deleteStocktake, auditStocktake } from './stocktake.api';
   import StocktakeDrawer from './StocktakeDrawer.vue';
@@ -27,6 +33,26 @@
 
   defineOptions({ name: 'MesStocktake' });
   const [registerDrawer, { openDrawer }] = useDrawer();
+
+  // 模式 2：复选框 + 批量审核状态守卫
+  const selectedRowKeys = reactive<string[]>([]);
+  const selectedRows = reactive<Recordable[]>([]);
+  const rowSelection = {
+    type: 'checkbox' as const,
+    columnWidth: 50,
+    selectedRowKeys,
+    onChange(keys: string[], rows: Recordable[]) {
+      selectedRowKeys.length = 0;
+      selectedRowKeys.push(...keys);
+      selectedRows.length = 0;
+      selectedRows.push(...rows);
+    },
+  };
+  const allStatus = computed(() => {
+    if (!selectedRows.length) return '';
+    const s = selectedRows[0].status;
+    return selectedRows.every((r) => r.status === s) ? s : '';
+  });
 
   const { tableContext } = useListPage({
     designScope: 'mes-stocktake',
@@ -46,6 +72,13 @@
   }
 
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
+  async function batchAudit() {
+    for (const r of selectedRows) { await auditStocktake({ id: r.id }); }
+    message.success(`已审核${selectedRowKeys.length}条`);
+    selectedRowKeys.length = 0;
+    selectedRows.length = 0;
+    reload();
+  }
   async function handleDelete(r: Recordable) { await deleteStocktake({ id: r.id }); message.success('删除成功'); reload(); }
   async function handleAudit(r: Recordable) {
     const res: any = await auditStocktake({ id: r.id });

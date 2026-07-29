@@ -11,6 +11,7 @@
     <div v-if="!isUpdate && takeType === '1'" style="color:#888;margin-bottom:8px">全盘：保存后自动快照该仓全部库存物料为明细，再到「录入实盘」中填实盘数；零库存物料用「添加行」手工盘点</div>
     <div style="margin-bottom:8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
+      <a-button type="dashed" preIcon="ant-design:appstore-add-outlined" style="margin-left:8px" @click="batchVisible = true">批量添加物料</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
@@ -36,6 +37,7 @@
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
       </template>
     </a-table>
+    <MaterialSelectModal :visible="batchVisible" mode="multiple" @update:visible="batchVisible = $event" @select="onBatchMaterials" />
   </BasicDrawer>
 </template>
 
@@ -43,6 +45,7 @@
   import { ref, computed, unref } from 'vue';
   import { InputNumber, message } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
+  import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './stocktake.data';
@@ -157,6 +160,24 @@
         const row = res?.records?.[0];
         updateItem(i, 'bookQty', row ? Number(row.current_qty) : 0);
       } catch (e) { updateItem(i, 'bookQty', 0); }
+    }
+  }
+
+  // 模式 6：批量添加物料（逐个拉账面库存 + 预填移动平均成本）
+  const batchVisible = ref(false);
+  async function onBatchMaterials(materials: any[]) {
+    const wh = getFieldsValue().warehouseId || currentWarehouseId.value;
+    if (!wh) { message.warning('请先选择仓库'); return; }
+    currentWarehouseId.value = wh;
+    for (const m of materials) {
+      const item: any = { materialId: m.id, bookQty: 0, actualQty: null, unitCost: m.movingAvgCost ?? 0 };
+      try {
+        const res: any = await queryInventoryList({ materialId: m.id, warehouseId: wh, pageNo: 1, pageSize: 1 });
+        const row = res?.records?.[0];
+        item.bookQty = row ? Number(row.current_qty) : 0;
+      } catch (e) { /* book=0 */ }
+      items.value.push(item);
+      materialMap.value[m.id] = m;
     }
   }
 

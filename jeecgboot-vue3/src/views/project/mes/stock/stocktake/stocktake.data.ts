@@ -9,7 +9,7 @@ export const columns: BasicColumn[] = [
   { title: '账面快照时间', dataIndex: 'snapshotTime', width: 150 },
   { title: '差异金额合计', dataIndex: 'totalDiffAmount', width: 110 },
   { title: '盘点日期', dataIndex: 'takeDate', width: 110 },
-  { title: '状态', dataIndex: 'status_dictText', width: 80 },
+  { title: '状态', dataIndex: 'status', width: 80, slots: { customRender: 'statusTag' } },
   { title: '备注', dataIndex: 'remark', width: 140 },
 ];
 
