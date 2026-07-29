@@ -28,6 +28,15 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void stockIn(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId) {
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注(7参委托8参,向后兼容)-----------
+        stockIn(materialId, warehouseId, qty, unitCost, amount, bizType, bizId, null);
+        //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
+    }
+
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注8参版本-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void stockIn(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId, String remark) {
         if (qty == null || qty.compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("入库数量必须大于0");
         String username = getUsername();
         MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
@@ -35,12 +44,22 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
         BigDecimal after = before.add(qty);
         String id = inv != null ? inv.getId() : UUID.randomUUID().toString().replace("-", "");
         inventoryMapper.upsertWithDelta(id, materialId, warehouseId, before, qty, username, username);
-        writeLedger(materialId, warehouseId, before, qty, BigDecimal.ZERO, after, unitCost, amount, null, bizType, bizId);
+        writeLedger(materialId, warehouseId, before, qty, BigDecimal.ZERO, after, unitCost, amount, null, bizType, bizId, remark);
     }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注8参-----------
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void stockOut(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId) {
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注(7参委托8参,向后兼容)-----------
+        stockOut(materialId, warehouseId, qty, unitCost, amount, bizType, bizId, null);
+        //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
+    }
+
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注8参版本-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void stockOut(String materialId, String warehouseId, BigDecimal qty, BigDecimal unitCost, BigDecimal amount, String bizType, String bizId, String remark) {
         if (qty == null || qty.compareTo(BigDecimal.ZERO) <= 0) throw new JeecgBootException("出库数量必须大于0");
         MesInventory inv = inventoryMapper.selectForUpdate(materialId, warehouseId);
         BigDecimal before = inv != null ? inv.getCurrentQty() : BigDecimal.ZERO;
@@ -49,13 +68,24 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
         String username = getUsername();
         String id = inv != null ? inv.getId() : UUID.randomUUID().toString().replace("-", "");
         inventoryMapper.upsertWithDelta(id, materialId, warehouseId, before, qty.negate(), username, username);
-        writeLedger(materialId, warehouseId, before, BigDecimal.ZERO, qty, after, unitCost, null, amount, bizType, bizId);
+        writeLedger(materialId, warehouseId, before, BigDecimal.ZERO, qty, after, unitCost, null, amount, bizType, bizId, remark);
     }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注8参-----------
 
     private void writeLedger(String materialId, String warehouseId,
             BigDecimal beginningQty, BigDecimal inQty, BigDecimal outQty, BigDecimal endingQty,
             BigDecimal unitCost, BigDecimal inAmount, BigDecimal outAmount,
             String bizType, String bizId) {
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注(旧签名委托)-----------
+        writeLedger(materialId, warehouseId, beginningQty, inQty, outQty, endingQty, unitCost, inAmount, outAmount, bizType, bizId, null);
+        //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
+    }
+
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注writeLedger带参版-----------
+    private void writeLedger(String materialId, String warehouseId,
+            BigDecimal beginningQty, BigDecimal inQty, BigDecimal outQty, BigDecimal endingQty,
+            BigDecimal unitCost, BigDecimal inAmount, BigDecimal outAmount,
+            String bizType, String bizId, String remark) {
         MesInventoryLedger ledger = new MesInventoryLedger();
         ledger.setMaterialId(materialId);
         ledger.setWarehouseId(warehouseId);
@@ -72,6 +102,9 @@ public class MesInventoryServiceImpl implements IMesInventoryService {
         ledger.setRecordDate(new Date());
         ledger.setBizType(bizType);
         ledger.setBizId(bizId);
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
+        ledger.setRemark(remark);
+        //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
         ledgerService.save(ledger);
     }
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 库存接口升级-增加单价金额参数-----------

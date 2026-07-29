@@ -121,7 +121,7 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
 
         // 审核成功后逐行扣库存（stockOut 内置库存不足拦截；按明细快照成本改库存金额）
         for (MesOtherStockOutItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库", e.getCode());
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库", e.getCode(), e.getReason());
         }
     }
 
@@ -137,7 +137,7 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
         if (rows == 0) throw new JeecgBootException("反审核失败：出库单不存在或状态不是已审核，请刷新后重试");
         MesOtherStockOut e = queryWithItems(id);
         for (MesOtherStockOutItem item : e.getItems()) {
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库红冲", e.getCode());
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库红冲", e.getCode(), e.getReason());
         }
     }
 

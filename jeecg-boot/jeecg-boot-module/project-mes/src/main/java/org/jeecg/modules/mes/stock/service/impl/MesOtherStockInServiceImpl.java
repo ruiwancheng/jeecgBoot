@@ -127,7 +127,7 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
                 materialService.updateMovingAvgCostOnStockIn(item.getMaterialId(), item.getQty(), item.getUnitCost(), e.getWarehouseId(), "其它入库", e.getCode());
             }
             //update-end---author:ruiwancheng---date:2026-07-28---for: 方案B 成本联动-----------
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库", e.getCode());
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库", e.getCode(), e.getReason());
         }
     }
 
@@ -145,7 +145,7 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
         for (MesOtherStockInItem item : e.getItems()) {
             // 铁拳团 P1-1：库存已被消耗时回冲失败，补充业务指引（保持拦截，不碰平台 stockOut）
             try {
-                inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库红冲", e.getCode());
+                inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它入库红冲", e.getCode(), e.getReason());
             } catch (JeecgBootException ex) {
                 throw new JeecgBootException("反审核回冲失败：" + ex.getMessage() + "。该入库的库存已被后续出库消耗，请先补足库存再反审核，或联系管理员处理。");
             }

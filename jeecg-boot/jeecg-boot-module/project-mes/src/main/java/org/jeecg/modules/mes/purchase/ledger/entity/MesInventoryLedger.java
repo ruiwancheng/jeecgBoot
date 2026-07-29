@@ -87,6 +87,10 @@ public class MesInventoryLedger implements Serializable {
     private String bizType;
     @Schema(description = "业务单号")
     private String bizId;
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注列（可读性：盘点/手工原因可见）-----------
+    @Schema(description = "备注(单据原因)")
+    private String remark;
+    //update-end---author:ruiwancheng---date:2026-07-29---for: V9.9.2 台账备注-----------
     @Schema(description = "创建人") private String createBy;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

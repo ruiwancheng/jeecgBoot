@@ -14,6 +14,7 @@ export const columns: BasicColumn[] = [
   { title: '出库金额', dataIndex: 'outAmount', width: 100 },
   { title: '记录日期', dataIndex: 'recordDate', width: 110 },
   { title: '业务类型', dataIndex: 'bizType', width: 100 },
+  { title: '备注', dataIndex: 'remark', width: 200 },
 ];
 
 export const searchFormSchema: FormSchema[] = [
