@@ -24,12 +24,13 @@
   const rows = ref<any[]>([]);
   const cols = [
     { title: '业务类型', dataIndex: 'bizType', width: 100 },
-    { title: '入库', dataIndex: 'inQty', width: 80 },
-    { title: '出库', dataIndex: 'outQty', width: 80 },
+    { title: '入库', dataIndex: 'inQty', width: 70 },
+    { title: '出库', dataIndex: 'outQty', width: 70 },
     { title: '单位成本', dataIndex: 'unitCost', width: 90 },
     { title: '成本差异', dataIndex: 'costDiff', width: 90 },
-    { title: '记录日期', dataIndex: 'recordDate', width: 110 },
-    { title: '单号', dataIndex: 'bizId', width: 170 },
+    { title: '记录日期', dataIndex: 'recordDate', width: 100 },
+    { title: '单号', dataIndex: 'bizId', width: 160 },
+    { title: '备注', dataIndex: 'remark', width: 200 },
   ];
 
   onMounted(async () => {
