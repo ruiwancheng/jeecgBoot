@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   需求澄清     实施方案    外部评审      编码实现    自验证     完成检查
 ```
 
-遇报错用 `/debug`。步骤清单见 `workflow.md`。
+遇报错用 `/debug`，看不懂技术回复用 `/business-description`。步骤清单见 `workflow.md`。
 
 ### 关键规则
 
@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 2 | **改完必验证** — 写完代码执行 `/verify` |
 | 3 | **验证必实测** — 本地后端在线时 `/verify` 会 curl 实测 |
 | 4 | **简单精准** — 只写必要代码、不顺手改邻居、困惑就问 |
+| 5 | **信任结果不信任过程** — 功能对+数据对是最硬证据，不纠结 AI 有没有跳步。结果验证 > 过程验证 |
 
 ---
 

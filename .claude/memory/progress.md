@@ -12,14 +12,12 @@
 | shelved | DB密码硬编码环境变量化 | jeecg-codegen/jeecg-onlchart 技能 5 处 -uroot -proot（P1低危，用户决定暂搁） |
 | shelved | PD-DVST-001 测试盘点单残留 | 已审核无红冲接口，用户联系管理员DB手工删（SQL已给）；V2考虑加"作废"状态 |
 
-## 会话收尾（2026-07-29 session-wrap #5）
-- 测试体系复盘：人工测试发现盘点单4bug（显示ID/账面取值/审核未生效/明细过多）→ 4bug×4盲区诊断 → orca-review定稿
-- v2落地①-④：破窗清零（2 chain真实fixture重写 18/18+16/16）+ 共享helper（api.js断言带根因/fixtures.js）+ /deploy-verify Agent4关键套件 + testing.md v2 + /plan测试三件套 + 仓储链路criticalPaths
-- 脆弱断言再修2处，两轮连续全量零失败（幂等可信）
-- 黄金模板体系：模板源（单表5/主子表10模式）+ Gallery展示页 + /new-module升级 + frontend.md UX基线 + 验收零占位符
-- Gallery 404排障：permissionGuard按菜单过滤路由 → 菜单Registry注册解决（新经验入 learnings）
-- Gallery控件级验证 12/12；指南更新×2；自主闭环 /learn+2 /auto-learn /evolve → 规则覆盖100%
-- learnings 累计 72
+## 会话收尾（2026-07-29 session-wrap #6）
+- /business-description 命令+技能落地：按需翻译技术语言→业务语言，双文件架构符合 skill-command-boundary
+- /strict 深度探索→判定不可行回退：AI监督AI是死循环，结果验证>过程验证（新 insight 写入 learnings + 关键规则第5条）
+- orca-review 流程修复：必须先 terminal list 查热 Claude 终端复用，不可直接 create（新 learning）
+- 全闭环：/learn → /auto-learn → /evolve，learnings +2，反哺 frontend.md/debugging.md/CLAUDE.md 4处规则
+- learnings 累计 72 活跃 + 24 归档
 
 ## 会话收尾（2026-07-28 session-wrap #4）
 - 方案B+A+闭环：其它入库成本联动移动平均+台账差异列，/verify 全场景过→提交a33628a→部署→deploy-verify PASS

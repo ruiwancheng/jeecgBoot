@@ -52,6 +52,7 @@ version: 1.0
 ## 接口
 - `defHttp.get/post/put/delete`
 - DELETE 请求必须加 `{ joinParamsToUrl: true }`，否则参数在请求体，后端 `@RequestParam` 收不到
+- **长文本接口必须 `successMessageMode:'none'`**：defHttp 全局拦截器对 `success && message` 自动弹顶部通栏横幅，长文本（审核摘要、批量结果）会向右溢出滚动。调用时加 `{ successMessageMode: 'none' }`，由页面自行展示。判断信号：顶部出现通栏长文本横幅=拦截器弹的，去 api.ts 加 'none'（实证：2026-07-29 盘点审核滚动）
 - 路径枚举在 `.api.ts`
 
 ## 单据自动编码（编码规则接线模式）

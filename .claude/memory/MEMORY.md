@@ -34,3 +34,5 @@
 - [钩子提醒可达性模式](learnings/2026-07-28-hook-warnings-accumulator-pattern.md) — WARNINGS累加器+裸echo additionalContext；变量初始化勿覆盖前置标记（已固化: hook-authoring.md）
 - [netstat -tlnp Windows静默死亡](learnings/2026-07-28-netstat-tlnp-windows-silent-death.md) — portable检测链必须在每个目标OS实测命中（与python3 stub同族）
 - [HTTP 200包着404](learnings/2026-07-28-http200-wraps-404.md) — 接口验证看body success字段；新类需install+重启不信DevTools热载
+- [AI 监督 AI 是死循环](learnings/2026-07-29-ai-supervise-ai-dead-loop.md) — 对非技术用户，过程验证不如结果验证；机械校验和功能测试才是硬证据
+- [orca-review 热终端复用](learnings/2026-07-29-orca-review-hot-terminal.md) — 必须先 terminal list 查已有 Claude 终端，不可直接 create
