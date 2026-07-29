@@ -22,6 +22,7 @@ export const editMaterial = (params: Recordable) => defHttp.put({ url: Api.edit,
 export const deleteMaterial = (params: Recordable) => defHttp.delete({ url: Api.delete, params }, { joinParamsToUrl: true });
 export const deleteBatchMaterial = (params: Recordable) => defHttp.delete({ url: Api.deleteBatch, params }, { joinParamsToUrl: true });
 export const queryMaterialById = (params: Recordable) => defHttp.get({ url: Api.queryById, params });
+export const queryMaterialsByIds = (ids: string[]) => defHttp.get({ url: '/mes/basic/material/queryByIds', params: { ids: ids.join(',') } });
 export const queryAllMaterial = () => defHttp.get({ url: Api.queryAll });
 export const selectMaterialPage = (params: { keyword?: string; pageNo?: number; pageSize?: number }) =>
   defHttp.get({ url: Api.selectPage, params });

@@ -75,6 +75,15 @@ public class MesStocktakeController extends JeecgController<MesStocktake, IMesSt
         return Result.ok(service.audit(id));
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3 批量审核单事务-----------
+    @Operation(summary = "批量审核（单事务，任一失败全部回滚）")
+    @PostMapping("/batchAudit")
+    @RequiresPermissions("mes:stocktake:audit")
+    public Result<String> batchAudit(@RequestBody java.util.Map<String, java.util.List<String>> body) {
+        return Result.ok(service.batchAudit(body.get("ids")));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3-----------
+
     //update-begin---author:ruiwancheng---date:2026-07-29---for: 黄金模板重构 草稿态刷新账面快照-----------
     @Operation(summary = "刷新账面数（仅草稿，重新快照当前库存）")
     @PostMapping("/refreshItems")

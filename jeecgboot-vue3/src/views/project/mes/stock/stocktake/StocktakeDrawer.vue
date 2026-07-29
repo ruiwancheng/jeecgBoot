@@ -51,7 +51,7 @@
   import { formSchema } from './stocktake.data';
   import { saveOrUpdateStocktake, queryStocktakeById, refreshStocktakeItems } from './stocktake.api';
   import { queryInventoryList } from '/@/views/project/mes/basic/inventory/inventory.api';
-  import { queryMaterialById } from '/@/views/project/mes/basic/material/material.api';
+  import { queryMaterialById, queryMaterialsByIds } from '/@/views/project/mes/basic/material/material.api';
   import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
   import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
 
@@ -111,9 +111,9 @@
   }
   async function loadMaterialMap() {
     const ids = [...new Set(items.value.map((i) => i.materialId).filter(Boolean))] as string[];
-    const materials = await Promise.all(ids.map((id) => queryMaterialById({ id }).catch(() => null)));
+    const materials = ids.length ? await queryMaterialsByIds(ids).catch(() => []) : [];
     const map: Record<string, any> = {};
-    materials.forEach((m) => { if (m?.id) map[m.id] = m; });
+    (materials || []).forEach((m: any) => { if (m?.id) map[m.id] = m; });
     materialMap.value = map;
   }
 

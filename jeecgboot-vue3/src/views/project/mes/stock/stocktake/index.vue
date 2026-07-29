@@ -26,7 +26,7 @@
   import { useDrawer } from '/@/components/Drawer';
   import { computed, reactive } from 'vue';
   import { columns, searchFormSchema } from './stocktake.data';
-  import { queryStocktakeList, deleteStocktake, auditStocktake } from './stocktake.api';
+  import { queryStocktakeList, deleteStocktake, auditStocktake, batchAuditStocktake } from './stocktake.api';
   import StocktakeDrawer from './StocktakeDrawer.vue';
   import StocktakeItemsSubTable from './StocktakeItemsSubTable.vue';
   import { message, Modal } from 'ant-design-vue';
@@ -73,8 +73,8 @@
 
   function handleAdd() { openDrawer(true, { isUpdate: false }); }
   async function batchAudit() {
-    for (const r of selectedRows) { await auditStocktake({ id: r.id }); }
-    message.success(`已审核${selectedRowKeys.length}条`);
+    const res: any = await batchAuditStocktake([...selectedRowKeys]);
+    Modal.success({ title: '批量审核完成', content: res || `已审核${selectedRowKeys.length}条` });
     selectedRowKeys.length = 0;
     selectedRows.length = 0;
     reload();

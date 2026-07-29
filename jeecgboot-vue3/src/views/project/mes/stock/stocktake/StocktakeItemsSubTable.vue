@@ -19,7 +19,7 @@
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
   import { queryStocktakeById } from './stocktake.api';
-  import { queryMaterialById } from '../../basic/material/material.api';
+  import { queryMaterialsByIds } from '../../basic/material/material.api';
 
   const props = defineProps<{ docId: string }>();
 
@@ -52,9 +52,9 @@
         generated: it.generatedInId ? '盘盈入库单' : it.generatedOutId ? '盘亏出库单' : '',
       }));
       const ids = [...new Set(items.value.map((i) => i.materialId).filter(Boolean))] as string[];
-      const materials = await Promise.all(ids.map((id) => queryMaterialById({ id }).catch(() => null)));
+      const materials = ids.length ? await queryMaterialsByIds(ids).catch(() => []) : [];
       const map: Record<string, any> = {};
-      materials.forEach((m) => { if (m?.id) map[m.id] = m; });
+      (materials || []).forEach((m: any) => { if (m?.id) map[m.id] = m; });
       materialMap.value = map;
     } finally { loading.value = false; }
   });

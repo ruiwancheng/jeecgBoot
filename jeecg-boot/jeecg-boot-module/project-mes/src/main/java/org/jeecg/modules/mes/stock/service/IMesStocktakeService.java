@@ -14,6 +14,10 @@ public interface IMesStocktakeService extends IService<MesStocktake> {
     //update-begin---author:ruiwancheng---date:2026-07-29---for: 黄金模板重构 草稿态刷新账面快照-----------
     /** 草稿态重新快照账面数（快照过期一键刷新；仅草稿） */
     void refreshItems(String id);
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3 批量审核单事务-----------
+    /** 批量审核（单事务，任一失败全部回滚） */
+    String batchAudit(java.util.List<String> ids);
+    //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3-----------
     //update-end---author:ruiwancheng---date:2026-07-29---for: refreshItems-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-28---for: V9.9.0 MES盘点单-Service接口-----------

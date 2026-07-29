@@ -158,8 +158,14 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         for (MesStocktakeItem item : e.getItems()) {
             if (item.getActualQty() == null) throw new JeecgBootException("存在未填实盘数量的行（物料ID:" + item.getMaterialId() + "），请补全后再审核");
             BigDecimal diff = item.getActualQty().subtract(item.getBookQty());
-            if (diff.compareTo(BigDecimal.ZERO) > 0) inLines.add(item);
-            else if (diff.compareTo(BigDecimal.ZERO) < 0) outLines.add(item);
+            if (diff.compareTo(BigDecimal.ZERO) > 0) {
+                //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P1-1 零成本盘盈守卫-----------
+                if (item.getUnitCost() == null || item.getUnitCost().compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new JeecgBootException("盘盈行成本不能为0（物料ID:" + item.getMaterialId() + "），请填写成本后再审核，否则入库金额为0造成业财偏差");
+                }
+                //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P1-1-----------
+                inLines.add(item);
+            } else if (diff.compareTo(BigDecimal.ZERO) < 0) outLines.add(item);
         }
 
         String inCode = null, outCode = null;
@@ -222,6 +228,20 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
                 + (inLines.isEmpty() && outLines.isEmpty() ? "（实盘=账面，无需调整）" : "");
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3 批量审核单事务-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String batchAudit(List<String> ids) {
+        if (ids == null || ids.isEmpty()) throw new JeecgBootException("请选择要审核的盘点单");
+        StringBuilder sb = new StringBuilder("批量审核完成 " + ids.size() + " 条：");
+        for (String id : ids) {
+            // 同事务内调用（外层 @Transactional 保证任一失败全部回滚）
+            sb.append(" | ").append(audit(id));
+        }
+        return sb.toString();
+    }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-3-----------
+
     /** 全盘快照：普通 SELECT 不加锁（评审 P1），actual_qty 默认=账面（用户只改差异行） */
     private List<MesStocktakeItem> snapshotItems(String warehouseId) {
         List<Map<String, Object>> rows = baseMapper.snapshotByWarehouse(warehouseId);
@@ -275,8 +295,23 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
         MesStocktake exist = baseMapper.selectByIdForUpdate(id);
         if (exist == null) throw new JeecgBootException("盘点单不存在");
         if (!"1".equals(exist.getStatus())) throw new JeecgBootException("仅草稿状态可刷新账面数");
+        //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-1/P0-4 刷新保留已填实盘数与手工成本-----------
+        // 先按 materialId 记录旧行的 actualQty/unitCost，刷新后回写（快照只更新账面数，不丢用户录入）
+        java.util.Map<String, BigDecimal> oldActualMap = new java.util.HashMap<>();
+        java.util.Map<String, BigDecimal> oldCostMap = new java.util.HashMap<>();
+        LambdaQueryWrapper<MesStocktakeItem> oldQw = new LambdaQueryWrapper<>();
+        oldQw.eq(MesStocktakeItem::getTakeId, id);
+        for (MesStocktakeItem old : itemMapper.selectList(oldQw)) {
+            if (old.getActualQty() != null) oldActualMap.put(old.getMaterialId(), old.getActualQty());
+            if (old.getUnitCost() != null) oldCostMap.put(old.getMaterialId(), old.getUnitCost());
+        }
         List<MesStocktakeItem> items = snapshotItems(exist.getWarehouseId());
         if (items.isEmpty()) throw new JeecgBootException("该仓库无库存物料，无法刷新");
+        for (MesStocktakeItem item : items) {
+            if (oldActualMap.containsKey(item.getMaterialId())) item.setActualQty(oldActualMap.get(item.getMaterialId()));
+            if (oldCostMap.containsKey(item.getMaterialId())) item.setUnitCost(oldCostMap.get(item.getMaterialId()));
+        }
+        //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-1/P0-4-----------
         LambdaQueryWrapper<MesStocktakeItem> delQw = new LambdaQueryWrapper<>();
         delQw.eq(MesStocktakeItem::getTakeId, id);
         itemMapper.delete(delQw);

@@ -94,6 +94,17 @@ public class MesMaterialController extends JeecgController<MesMaterial, IMesMate
         return Result.ok(service.list());
     }
 
+    //update-begin---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-5 批量按ID查物料消N+1-----------
+    @Operation(summary = "按ID批量查询物料", description = "一次调用查多个物料，消除前端逐条查询的N+1")
+    @GetMapping("/queryByIds")
+    @RequiresPermissions("mes:material:list")
+    public Result<List<MesMaterial>> queryByIds(@RequestParam(name = "ids") String ids) {
+        List<String> idList = java.util.Arrays.stream(ids.split(",")).filter(s -> !s.isEmpty()).collect(java.util.stream.Collectors.toList());
+        if (idList.isEmpty()) return Result.ok(new java.util.ArrayList<>());
+        return Result.ok(service.listByIds(idList));
+    }
+    //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P0-5-----------
+
     //update-begin---author:ruiwancheng---date:2026-07-20  for：【物料选择窗口】新增分页查询接口，过滤del_flag+status-----------
     @Operation(summary = "物料选择分页查询", description = "用于物料选择弹窗，自动过滤已删除和已停用物料，支持keyword搜索")
     @GetMapping("/selectPage")
