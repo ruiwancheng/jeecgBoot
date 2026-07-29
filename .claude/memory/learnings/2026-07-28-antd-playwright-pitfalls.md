@@ -9,5 +9,6 @@
 5. **单选/多选组件不同**：MaterialSelectModal single 模式是 radio，multiple 模式是 checkbox——写选择器前先看 mode。
 6. **抽屉默认带空明细行**：OtherInDrawer 初始化就有一行，再"添加行"会产生空行导致静默保存失败（无 toast 无落库）。**保存结果别信 toast，用 API 查落库**（`list?code=xxx` 断言 + totalAmount）。
 7. **`has-text` 子串误匹配**：`button:has-text("审核")` 会同时命中"反审核"，断言按钮状态时误报。用 `getByRole('button', { name: '审 核', exact: true })`（注意 ant 两汉字间空格）。实证：Gallery 状态守卫验证，粗选择器报假失败，精确选择器证实控件正常。
+8. **`innerText` 不含 input 的值**：表格单元格里 InputNumber 的当前值不会出现在 innerText 中（看到的是空白）。读输入值必须 `locator('input').inputValue()`，列定位用 `td.nth(N)` 比全局 `input.nth(N)` 可靠（物料只读输入框会占位）。
 
 **复用**：`harness/e2e/mes/other-stock-in.spec.ts` 是完整范例。
