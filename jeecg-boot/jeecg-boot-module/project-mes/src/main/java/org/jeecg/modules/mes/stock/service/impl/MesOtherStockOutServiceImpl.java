@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
+import org.jeecg.modules.mes.basic.service.IMesMaterialService;
 import org.jeecg.modules.mes.stock.entity.MesOtherStockOut;
 import org.jeecg.modules.mes.stock.entity.MesOtherStockOutItem;
 import org.jeecg.modules.mes.stock.mapper.MesOtherStockOutItemMapper;
@@ -29,6 +31,7 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
 
     @Autowired private MesOtherStockOutItemMapper itemMapper;
     @Autowired private IMesInventoryService inventoryService;
+    @Autowired private IMesMaterialService materialService;
 
     @Override
     public MesOtherStockOut queryWithItems(String id) {
@@ -119,10 +122,29 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
         // 锁内读明细（主表行锁阻断 updateWithItems，明细稳定）
         MesOtherStockOut e = queryWithItems(id);
 
-        // 审核成功后逐行扣库存（stockOut 内置库存不足拦截；按明细快照成本改库存金额）
+        //update-begin---author:ruiwancheng---date:20260730---for:【其它出库金额bug】audit 锁定物料当前移动平均成本，避免用户手工录入误算出库金额-----------
+        // 审核成功后逐行扣库存（出库不改变移动平均成本——记账按出库时的物料.movingAvgCost 锁定）
+        // 设计：出库前物料 movingAvgCost=166.6667 → 出库金额 = qty × 166.6667 (而非用户手工录入值)
+        BigDecimal totalAmount = BigDecimal.ZERO;
         for (MesOtherStockOutItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), item.getUnitCost(), item.getAmount(), "其它出库", e.getCode(), e.getReason());
+            MesMaterial mat = materialService.getById(item.getMaterialId());
+            BigDecimal lockedUnitCost = (mat != null && mat.getMovingAvgCost() != null) ? mat.getMovingAvgCost() : BigDecimal.ZERO;
+            BigDecimal lockedAmount = item.getQty().multiply(lockedUnitCost).setScale(2, java.math.RoundingMode.HALF_UP);
+            // 持久化锁定值（unaudit 红冲与台账 out_amount 均依赖明细表 amount）
+            item.setUnitCost(lockedUnitCost);
+            item.setAmount(lockedAmount);
+            item.setUpdateBy(username);
+            item.setUpdateTime(now);
+            itemMapper.updateById(item);
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQty(), lockedUnitCost, lockedAmount, "其它出库", e.getCode(), e.getReason());
+            totalAmount = totalAmount.add(lockedAmount);
         }
+        // 同步刷新主表 totalAmount（明细 amount 重算后）
+        if (e.getTotalAmount() == null || e.getTotalAmount().compareTo(totalAmount) != 0) {
+            e.setTotalAmount(totalAmount);
+            baseMapper.updateById(e);
+        }
+        //update-end---author:ruiwancheng---date:20260730---for:【其它出库金额bug】audit 锁定物料当前移动平均成本，避免用户手工录入误算出库金额-----------
     }
 
     @Override
