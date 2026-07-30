@@ -86,3 +86,12 @@
 - /verify 证据缺失升级为硬阻断（+--no-verify逃生门+netstat -ano修复——该门控Windows上从未生效）
 - learnings +2: netstat-tlnp静默死亡 / HTTP200包404
 - 待办：明日非admin账号验证→通知客户
+
+## 会话收尾（2026-07-30 session-wrap #7）
+- 黄金模板对齐第1弹：其它出入库（入库+出库）8前端文件，10 模式补齐模式8 Alert（库存减少/增加文案）+ 状态tag颜色
+- bug修复：其它出库audit未按物料当前movingAvgCost锁定金额→账实偏差 17.78；audit()强制读取+持久化锁定，unaudit 红冲用同一锁定值
+- 领域建模首次建立：CONTEXT-MAP.md + stock/CONTEXT.md v1.3（27术语，3次修订）+ ADR 0001（出库金额锁定）
+- 黄金模板对齐第2弹：销售链路（订单/发货单/出库）14文件（13+shared/statusColor.ts），三模块分表状态颜色映射+Alert响应式文案（_dictText fallback ID）+ 页面间跳转3个
+- 评审5项调整全采纳：searchForm补下拉/Alert用响应式数据/分模块映射表/保留3个列表跳转（去掉2个详情回溯）/加shared工具
+- 全闭环：/learn → /auto-learn → /evolve，learnings +2，反哺 frontend.md 字典章节+ audit-classification.md 速查表 (+1 行)
+- git push：6 commit 已上 origin main

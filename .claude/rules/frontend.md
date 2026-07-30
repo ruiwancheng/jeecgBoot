@@ -21,6 +21,7 @@ version: 1.0
 ## 字典
 - 平台字典：`JDictSelectTag` + `dictCode`
 - 表字典：`@Dict(dictTable, dicText, dicCode)`
+- **`_dictText` 仅 list 接口带出**：JeecgBoot 平台的 DictAspect 字典填充切面只对 `*Controller.list` 这类分页查询生效；自定义 `*Service.queryWithItems` 走 MyBatis Plus `selectById`，绕过切面，不返回 `_dictText`。前端响应式关联文案（Drawer Alert 等）必须 fallback：`const ref = record.xId_dictText || record.xId;`。不相信 Claude 评审“自动带出”的结论，必须实测两个接口。← 2026-07-30 销售链路对齐踩坑
 
 ## 路由
 - 一级菜单 `LAYOUT` + `redirect`
