@@ -1,3 +1,4 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <div>
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
@@ -10,6 +11,11 @@
         <a-button danger :disabled="allStatus != '1'" @click="batchCancel">取消</a-button>
         <!--update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转----------->
       </template>
+      <!--update-begin---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】statusTag槽位（阶段颜色）----------->
+      <template #statusTag="{ record }">
+        <a-tag :color="getStatusColor('outbound', record.status)">{{ record.status_dictText || (record.status === '2' ? '待审核' : '草稿') }}</a-tag>
+      </template>
+      <!--update-end---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】statusTag槽位----------->
       <template #action="{ record }">
         <TableAction :actions="getActions(record)" />
       </template>
@@ -24,6 +30,7 @@
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './outbound.data';
+  import { getStatusColor } from '../shared/statusColor';
   import { queryOutboundList, deleteOutbound, auditOutbound, cancelOutbound, getExportUrl } from './outbound.api';
   import OutboundDrawer from './OutboundDrawer.vue';
   import { message } from 'ant-design-vue';
@@ -50,7 +57,7 @@
   const allStatus = computed(() => {
     if (!selectedRows.length) return '';
     const s = selectedRows[0].status;
-    return selectedRows.every(r => r.status === s) ? s : '';
+    return selectedRows.every((r) => r.status === s) ? s : '';
   });
   //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
 
@@ -71,8 +78,30 @@
     return acts;
   }
 
-  function handleAdd() { openDrawer(true, { isUpdate: false }); }
-  async function handleDelete(r: Recordable) { await deleteOutbound({ id: r.id }); message.success('删除成功'); reload(); }
-  async function batchAudit() { for (const r of selectedRows) { await auditOutbound({ id: r.id }); } message.success(`已审核${selectedRowKeys.length}条`); selectedRowKeys.length = 0; selectedRows.length = 0; reload(); }
-  async function batchCancel() { for (const r of selectedRows) { await cancelOutbound({ id: r.id }); } message.success(`已取消${selectedRowKeys.length}条`); selectedRowKeys.length = 0; selectedRows.length = 0; reload(); }
+  function handleAdd() {
+    openDrawer(true, { isUpdate: false });
+  }
+  async function handleDelete(r: Recordable) {
+    await deleteOutbound({ id: r.id });
+    message.success('删除成功');
+    reload();
+  }
+  async function batchAudit() {
+    for (const r of selectedRows) {
+      await auditOutbound({ id: r.id });
+    }
+    message.success(`已审核${selectedRowKeys.length}条`);
+    selectedRowKeys.length = 0;
+    selectedRows.length = 0;
+    reload();
+  }
+  async function batchCancel() {
+    for (const r of selectedRows) {
+      await cancelOutbound({ id: r.id });
+    }
+    message.success(`已取消${selectedRowKeys.length}条`);
+    selectedRowKeys.length = 0;
+    selectedRows.length = 0;
+    reload();
+  }
 </script>

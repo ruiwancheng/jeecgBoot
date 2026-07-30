@@ -1,14 +1,18 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert----------->
     <a-divider>订单行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
       <a-button type="dashed" preIcon="ant-design:unordered-list-outlined" @click="handleOpenBatchModal" style="margin-left: 8px">添加物料</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => onMaterialChange(index, v)" style="width:100%" />
+        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v: any) => onMaterialChange(index, v)" style="width: 100%" />
       </template>
       <template #spec="{ record }">
         <span>{{ record.spec || '-' }}</span>
@@ -17,13 +21,26 @@
         <span>{{ record.unitText || '-' }}</span>
       </template>
       <template #quantity="{ record, index }">
-        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
+        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <template #unitPrice="{ record, index }">
-        <InputNumber :value="record.unitPrice" :min="0" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'unitPrice', v)" />
+        <InputNumber
+          :value="record.unitPrice"
+          :min="0"
+          :precision="2"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'unitPrice', v)"
+        />
       </template>
       <template #taxRate="{ record, index }">
-        <InputNumber :value="record.taxRate" :min="0" :max="1" :step="0.01" style="width:100%" @change="(v:number) => updateItem(index, 'taxRate', v)" />
+        <InputNumber
+          :value="record.taxRate"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'taxRate', v)"
+        />
       </template>
       <template #taxAmount="{ record }">
         <span>{{ ((record.quantity || 0) * (record.unitPrice || 0) * (record.taxRate || 0)).toFixed(2) }}</span>
@@ -35,10 +52,15 @@
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
       </template>
     </a-table>
-    <div style="text-align:right; padding:8px 4px; font-weight:500">
+    <div style="text-align: right; padding: 8px 4px; font-weight: 500">
       合计：数量 {{ totalQty }} ｜ 金额 ¥{{ totalAmount }} ｜ 税额 ¥{{ totalTax }}
     </div>
-    <MaterialSelectModal :visible="batchModalVisible" mode="multiple" @update:visible="batchModalVisible = $event" @select="handleBatchAddMaterials" />
+    <MaterialSelectModal
+      :visible="batchModalVisible"
+      mode="multiple"
+      @update:visible="batchModalVisible = $event"
+      @select="handleBatchAddMaterials"
+    />
   </BasicDrawer>
 </template>
 
@@ -58,6 +80,10 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
+  //update-begin---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 销售订单口径提示：审核后自动生成发货单，无需手工创建
+  const alertText = ref('审核后将自动生成发货单。状态流转：草稿 → 已审核 → 已下达 → 已发货。');
+  //update-end---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert-----------
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
@@ -93,7 +119,9 @@
       try {
         const nextCode = await getNextCode(MES_BIZ_CODE.SALES_ORDER);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       try {
@@ -102,15 +130,23 @@
           await setFieldsValue(order);
           items.value = order.items?.length ? await enrichItems(order.items) : [{ lineNo: 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }];
         }
-      } catch (e) { /* fallback to list data */ }
+      } catch (e) {
+        /* fallback to list data */
+      }
     }
   });
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑订单' : '新增订单'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }); }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, taxRate: 0.13 });
+  }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   // 选择物料时同步带出规格/单位/标准售价
   function onMaterialChange(index: number, v: any) {
@@ -130,12 +166,21 @@
     const ids = [...new Set(list.map((i) => i.materialId).filter(Boolean))] as string[];
     const materials = await Promise.all(ids.map((id) => queryMaterialById({ id }).catch(() => null)));
     const map: Record<string, any> = {};
-    materials.forEach((m) => { if (m?.id) map[m.id] = m; });
-    return list.map((i) => ({ ...i, spec: map[i.materialId]?.spec || '', unitText: map[i.materialId]?.unit_dictText || '', taxRate: i.taxRate ?? 0.13 }));
+    materials.forEach((m) => {
+      if (m?.id) map[m.id] = m;
+    });
+    return list.map((i) => ({
+      ...i,
+      spec: map[i.materialId]?.spec || '',
+      unitText: map[i.materialId]?.unit_dictText || '',
+      taxRate: i.taxRate ?? 0.13,
+    }));
   }
 
   const batchModalVisible = ref(false);
-  function handleOpenBatchModal() { batchModalVisible.value = true; }
+  function handleOpenBatchModal() {
+    batchModalVisible.value = true;
+  }
   function handleBatchAddMaterials(materials: any[]) {
     const startLineNo = items.value.length + 1;
     materials.forEach((m, i) => {
