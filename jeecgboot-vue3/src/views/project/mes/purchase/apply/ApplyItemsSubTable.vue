@@ -1,3 +1,4 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <div style="padding: 4px 16px 8px 48px; background: #fafafa">
     <a-spin :spinning="loading">
@@ -46,7 +47,9 @@
       const ids = [...new Set(items.value.map((i) => i.materialId).filter(Boolean))] as string[];
       const materials = await Promise.all(ids.map((id) => queryMaterialById({ id }).catch(() => null)));
       const map: Record<string, any> = {};
-      materials.forEach((m) => { if (m?.id) map[m.id] = m; });
+      materials.forEach((m) => {
+        if (m?.id) map[m.id] = m;
+      });
       materialMap.value = map;
       items.value = items.value.map((i) => ({
         ...i,

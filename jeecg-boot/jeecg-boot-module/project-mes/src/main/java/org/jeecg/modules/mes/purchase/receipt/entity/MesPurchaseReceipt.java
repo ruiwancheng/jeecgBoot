@@ -32,6 +32,7 @@ public class MesPurchaseReceipt implements Serializable {
     @Schema(description = "入库单号")
     private String code;
     @Excel(name = "采购订单", width = 15)
+    @Dict(dictTable = "c_mes_purchase_order", dicText = "code", dicCode = "id")
     @Schema(description = "关联采购订单ID")
     private String purchaseOrderId;
     @Excel(name = "供应商", width = 20, dictTable = "c_mes_supplier", dicText = "name", dicCode = "id")

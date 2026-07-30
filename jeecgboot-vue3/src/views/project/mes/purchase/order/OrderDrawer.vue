@@ -1,22 +1,43 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
     <a-divider>订单行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect
+          v-model:modelValue="record.materialId"
+          @change="(v: any) => updateItem(index, 'materialId', v?.value ?? v)"
+          style="width: 100%"
+        />
       </template>
       <template #quantity="{ record, index }">
-        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
+        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <template #unitPrice="{ record, index }">
-        <InputNumber :value="record.unitPrice" :min="0" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'unitPrice', v)" />
+        <InputNumber
+          :value="record.unitPrice"
+          :min="0"
+          :precision="2"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'unitPrice', v)"
+        />
       </template>
       <template #taxRate="{ record, index }">
-        <InputNumber :value="record.taxRate" :min="0" :max="1" :step="0.01" style="width:100%" @change="(v:number) => updateItem(index, 'taxRate', v)" />
+        <InputNumber
+          :value="record.taxRate"
+          :min="0"
+          :max="1"
+          :step="0.01"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'taxRate', v)"
+        />
       </template>
       <template #taxAmount="{ record }">
         <span>{{ ((record.quantity || 0) * (record.unitPrice || 0) * (record.taxRate || 0)).toFixed(2) }}</span>
@@ -45,6 +66,10 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
+  //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 采购订单口径提示：默认文案。状态流转：草稿→待确认→已确认→已到货/已关闭
+  const alertText = ref('收货后订单自动置已到货。状态：草稿 → 待确认 → 已确认 → 部分到货 → 已到货。');
+  //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert-----------
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
@@ -73,24 +98,43 @@
       try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_ORDER);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       try {
         const order = await queryOrderById({ id: data.record.id });
         if (order) {
           await setFieldsValue(order);
-          items.value = order.items?.length ? order.items.map((i:any) => ({ ...i, taxRate: i.taxRate ?? 0.13 })) : [{ lineNo: 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }];
+          items.value = order.items?.length
+            ? order.items.map((i: any) => ({ ...i, taxRate: i.taxRate ?? 0.13 }))
+            : [{ lineNo: 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }];
+          //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】Alert文案响应式赋值（_dictText）-----------
+          // 动态更新 Alert 文案：list 接口返回 purchaseApplyId_dictText，queryById 不返回（仅 ID）。
+          const applyRef = order.purchaseApplyId_dictText || order.purchaseApplyId;
+          if (applyRef) {
+            alertText.value = `由申请 ${applyRef} 创建。收货后订单自动到货。`;
+          }
+          //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】Alert文案响应式赋值-----------
         }
-      } catch (e) { /* fallback */ }
+      } catch (e) {
+        /* fallback */
+      }
     }
   });
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑采购订单' : '新增采购订单'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, taxRate: 0.13 }); }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, taxRate: 0.13 });
+  }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   async function handleSubmit() {
     const values = await validate();

@@ -11,9 +11,7 @@ export function queryOrderById(params: any) {
 }
 
 export function saveOrUpdateOrder(data: any, isUpdate: boolean) {
-  return isUpdate
-    ? defHttp.put({ url: `${BASE}/edit`, data })
-    : defHttp.post({ url: `${BASE}/add`, data });
+  return isUpdate ? defHttp.put({ url: `${BASE}/edit`, data }) : defHttp.post({ url: `${BASE}/add`, data });
 }
 
 export function deleteOrder(params: any) {
@@ -27,6 +25,12 @@ export function deleteBatchOrder(params: any) {
 export function auditOrder(params: any) {
   return defHttp.put({ url: `${BASE}/audit`, params }, { joinParamsToUrl: true });
 }
+
+//update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】批量状态流转函数（反审核）-----------
+export function unauditOrder(params: any) {
+  return defHttp.put({ url: `${BASE}/unaudit`, params }, { joinParamsToUrl: true });
+}
+//update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】unauditOrder导入-----------
 
 export function getExportUrl() {
   return `${BASE}/exportXls`;

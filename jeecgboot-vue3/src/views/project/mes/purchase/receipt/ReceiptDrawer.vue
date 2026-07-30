@@ -1,27 +1,49 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm">
+      <!--update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
+      <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+      <!--update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
       <template #purchaseOrderIdSlot="{ model, field }">
         <JPurchaseOrderSelect v-model:modelValue="model[field]" status="3" @change="onOrderSelected" />
       </template>
     </BasicForm>
     <a-divider>入库行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">手动添加行</a-button>
-      <span v-if="items.length > 0" style="margin-left: 12px; color: #666;">已勾选 <strong>{{ selectedCount }}</strong> 行 / 共 {{ items.length }} 行</span>
+      <span v-if="items.length > 0" style="margin-left: 12px; color: #666"
+        >已勾选 <strong>{{ selectedCount }}</strong> 行 / 共 {{ items.length }} 行</span
+      >
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo" :rowSelection="rowSelection">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect
+          v-model:modelValue="record.materialId"
+          @change="(v: any) => updateItem(index, 'materialId', v?.value ?? v)"
+          style="width: 100%"
+        />
       </template>
       <template #orderQuantity="{ record }">
         <span>{{ record.orderQuantity }}</span>
       </template>
       <template #receiptQuantity="{ record, index }">
-        <InputNumber :value="record.receiptQuantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'receiptQuantity', v)" />
+        <InputNumber
+          :value="record.receiptQuantity"
+          :min="0.01"
+          :step="1"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'receiptQuantity', v)"
+        />
       </template>
       <template #qcResult="{ record, index }">
-        <a-select :value="record.qcResult" style="width:100%" @change="(v:any) => updateItem(index, 'qcResult', v)" :options="qcOptions" placeholder="请选择" />
+        <a-select
+          :value="record.qcResult"
+          style="width: 100%"
+          @change="(v: any) => updateItem(index, 'qcResult', v)"
+          :options="qcOptions"
+          placeholder="请选择"
+        />
       </template>
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
@@ -45,6 +67,10 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
+  //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 采购收货口径提示：默认文案。审核后增加库存、重算物料移动平均成本。
+  const alertText = ref('由采购订单入库。审核后增加库存、重算物料移动平均成本。');
+  //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert-----------
 
   const qcOptions = [
     { label: '合格', value: '1' },
@@ -80,7 +106,9 @@
       try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_RECEIPT);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       try {
@@ -88,8 +116,17 @@
         if (receipt) {
           await setFieldsValue(receipt);
           items.value = receipt.items?.length ? receipt.items : [{ lineNo: 1, receiptQuantity: 1 }];
+          //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】Alert文案响应式赋值（_dictText）-----------
+          // 动态更新 Alert 文案：list 接口返回 purchaseOrderId_dictText，queryById 不返回（仅 ID）。
+          const orderRef = receipt.purchaseOrderId_dictText || receipt.purchaseOrderId;
+          if (orderRef) {
+            alertText.value = `由订单 ${orderRef} 入库。审核后增加库存、重算物料移动平均成本。`;
+          }
+          //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】Alert文案响应式赋值-----------
         }
-      } catch (e) { /* fallback */ }
+      } catch (e) {
+        /* fallback */
+      }
     }
   });
 
@@ -98,16 +135,24 @@
   const selectedRowKeys = ref<string[]>([]);
   const rowSelection = computed(() => ({
     selectedRowKeys: selectedRowKeys.value,
-    onChange: (keys: string[]) => { selectedRowKeys.value = keys; },
+    onChange: (keys: string[]) => {
+      selectedRowKeys.value = keys;
+    },
     getCheckboxProps: (record: any) => ({ disabled: record.remainQty != null && record.remainQty <= 0 }),
   }));
   const selectedCount = computed(() => selectedRowKeys.value.length);
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, receiptQuantity: 1 }); }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, receiptQuantity: 1 });
+  }
 
   // 选择采购订单后自动加载明细
   async function onOrderSelected(selected: { value: string; label: string; record: any }) {
-    if (!selected?.value) { items.value = []; selectedRowKeys.value = []; return; }
+    if (!selected?.value) {
+      items.value = [];
+      selectedRowKeys.value = [];
+      return;
+    }
     try {
       const orderItems = await loadOrderItemsForReceipt(selected.value);
       if (orderItems && orderItems.length > 0) {
@@ -125,9 +170,7 @@
           _taxRate: it.taxRate,
         }));
         // 默认全选可入库行
-        selectedRowKeys.value = items.value
-          .filter((it: any) => it.remainQty > 0)
-          .map((_: any, i: number) => String(i));
+        selectedRowKeys.value = items.value.filter((it: any) => it.remainQty > 0).map((_: any, i: number) => String(i));
       } else {
         items.value = [];
         selectedRowKeys.value = [];
@@ -137,8 +180,12 @@
       selectedRowKeys.value = [];
     }
   }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   async function handleSubmit() {
     const values = await validate();

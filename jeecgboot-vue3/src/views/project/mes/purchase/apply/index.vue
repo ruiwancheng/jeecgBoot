@@ -1,3 +1,4 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <div>
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
@@ -7,8 +8,15 @@
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增申请</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
-        <a-button v-if="selectedRowKeys.length > 0" danger preIcon="ant-design:delete-outlined" @click="handleBatchDelete">批量删除 ({{ selectedRowKeys.length }})</a-button>
+        <a-button v-if="selectedRowKeys.length > 0" danger preIcon="ant-design:delete-outlined" @click="handleBatchDelete"
+          >批量删除 ({{ selectedRowKeys.length }})</a-button
+        >
       </template>
+      <!--update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】statusTag槽位（阶段颜色）----------->
+      <template #statusTag="{ record }">
+        <a-tag :color="getStatusColor('apply', record.status)">{{ record.status_dictText || (record.status === '3' ? '已通过' : '草稿') }}</a-tag>
+      </template>
+      <!--update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】statusTag槽位----------->
       <template #action="{ record }">
         <TableAction :actions="getActions(record)" />
       </template>
@@ -19,11 +27,13 @@
 
 <script lang="ts" setup>
   import { ref, reactive } from 'vue';
+  import { useRouter } from 'vue-router';
   import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './apply.data';
+  import { getStatusColor } from '../shared/statusColor';
   import { queryApplyList, deleteApply, deleteBatchApply, auditApply, getExportUrl } from './apply.api';
   import ApplyDrawer from './ApplyDrawer.vue';
   import ApplyItemsSubTable from './ApplyItemsSubTable.vue';
@@ -49,7 +59,10 @@
   const rowSelection = {
     type: 'checkbox' as const,
     selectedRowKeys,
-    onChange: (keys: string[]) => { selectedRowKeys.length = 0; selectedRowKeys.push(...keys); },
+    onChange: (keys: string[]) => {
+      selectedRowKeys.length = 0;
+      selectedRowKeys.push(...keys);
+    },
   };
 
   const [registerTable, { reload }] = tableContext;
@@ -61,13 +74,32 @@
       acts.push({ label: '审核', popConfirm: { title: '确认审核该申请吗？', confirm: () => handleAudit(record) } });
       acts.push({ label: '删除', popConfirm: { title: '确认删除该申请吗？', confirm: () => handleDelete(record) } });
     }
+    //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】申请→订单跳转（保留）-----------
+    // 跨页面跳转：查看本申请生成的采购订单
+    acts.push({ label: '查看订单', onClick: () => router.push({ path: '/project/mes/purchase/order', query: { applyId: record.id } }) });
+    //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】申请跳转按钮-----------
     return acts;
   }
 
-  function handleAdd() { openDrawer(true, { isUpdate: false }); }
-  function handleEdit(record: Recordable) { openDrawer(true, { record, isUpdate: true }); }
-  async function handleAudit(record: Recordable) { await auditApply({ id: record.id }); message.success('审核成功'); reload(); }
-  async function handleDelete(record: Recordable) { await deleteApply({ id: record.id }); message.success('删除成功'); reload(); }
+  function handleAdd() {
+    openDrawer(true, { isUpdate: false });
+  }
+  function handleEdit(record: Recordable) {
+    openDrawer(true, { record, isUpdate: true });
+  }
+  async function handleAudit(record: Recordable) {
+    await auditApply({ id: record.id });
+    message.success('审核成功');
+    reload();
+  }
+  async function handleDelete(record: Recordable) {
+    await deleteApply({ id: record.id });
+    message.success('删除成功');
+    reload();
+  }
+  //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】router实例化（跳转按钮使用）-----------
+  const router = useRouter();
+  //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】router实例化-----------
   async function handleBatchDelete() {
     Modal.confirm({
       title: `确认删除选中的 ${selectedRowKeys.length} 条申请吗？`,

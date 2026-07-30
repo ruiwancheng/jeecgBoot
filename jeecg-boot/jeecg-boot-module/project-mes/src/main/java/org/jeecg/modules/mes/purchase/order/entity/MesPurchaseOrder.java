@@ -34,6 +34,7 @@ public class MesPurchaseOrder implements Serializable {
     private String code;
     //update-begin---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-关联申请单-----------
     @Excel(name = "申请单号", width = 15)
+    @Dict(dictTable = "c_mes_purchase_apply", dicText = "code", dicCode = "id")
     @Schema(description = "采购申请单ID")
     private String purchaseApplyId;
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-关联申请单-----------

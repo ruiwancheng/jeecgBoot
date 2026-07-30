@@ -1,37 +1,56 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert----------->
     <a-divider>申请行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
       <a-button type="dashed" preIcon="ant-design:unordered-list-outlined" @click="handleOpenBatchModal" style="margin-left: 8px">添加物料</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect
+          v-model:modelValue="record.materialId"
+          @change="(v: any) => updateItem(index, 'materialId', v?.value ?? v)"
+          style="width: 100%"
+        />
       </template>
       <template #quantity="{ record, index }">
-        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
+        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <!--update-begin---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列---------->
       <template #unitPrice="{ record, index }">
-        <InputNumber :value="record.unitPrice" :min="0" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'unitPrice', v)" />
+        <InputNumber
+          :value="record.unitPrice"
+          :min="0"
+          :precision="2"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'unitPrice', v)"
+        />
       </template>
       <template #amount="{ record }">
         <span>{{ ((record.quantity || 0) * (record.unitPrice || 0)).toFixed(2) }}</span>
       </template>
       <!--update-end---author:ruisuyun---date:2026-07-23---for: 采购申请明细加单价/金额列---------->
       <template #unit="{ record, index }">
-        <a-input :value="record.unit" style="width:100%" @change="(e:any) => updateItem(index, 'unit', e.target.value)" />
+        <a-input :value="record.unit" style="width: 100%" @change="(e: any) => updateItem(index, 'unit', e.target.value)" />
       </template>
       <template #purpose="{ record, index }">
-        <a-input :value="record.purpose" style="width:100%" @change="(e:any) => updateItem(index, 'purpose', e.target.value)" />
+        <a-input :value="record.purpose" style="width: 100%" @change="(e: any) => updateItem(index, 'purpose', e.target.value)" />
       </template>
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
       </template>
     </a-table>
-    <MaterialSelectModal :visible="batchModalVisible" mode="multiple" @update:visible="batchModalVisible = $event" @select="handleBatchAddMaterials" />
+    <MaterialSelectModal
+      :visible="batchModalVisible"
+      mode="multiple"
+      @update:visible="batchModalVisible = $event"
+      @select="handleBatchAddMaterials"
+    />
   </BasicDrawer>
 </template>
 
@@ -52,6 +71,10 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
+  //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 采购申请口径提示：默认文案。状态流转：草稿→已提交→已通过/已驳回。
+  const alertText = ref('审核通过后自动生成采购订单。状态：草稿 → 已提交 → 已通过/已驳回。');
+  //update-end---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert-----------
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
@@ -80,14 +103,16 @@
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
     // 新增时自动填入当前用户为申请人 + 自动获取编码
-      if (!unref(isUpdate)) {
-        const applicant = userStore.getUserInfo?.realname || '';
-        const today = new Date().toISOString().split('T')[0];
-        await setFieldsValue({ applicantId: applicant, applyDate: today });
-        try {
+    if (!unref(isUpdate)) {
+      const applicant = userStore.getUserInfo?.realname || '';
+      const today = new Date().toISOString().split('T')[0];
+      await setFieldsValue({ applicantId: applicant, applyDate: today });
+      try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PURCHASE_APPLY);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       try {
@@ -96,19 +121,29 @@
           await setFieldsValue(apply);
           items.value = apply.items?.length ? apply.items : [{ lineNo: 1, quantity: 1, unitPrice: 0, materialId: undefined }];
         }
-      } catch (e) { /* fallback */ }
+      } catch (e) {
+        /* fallback */
+      }
     }
   });
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑采购申请' : '新增采购申请'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, materialId: undefined }); }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, quantity: 1, unitPrice: 0, materialId: undefined });
+  }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   // 批量添加物料
   const batchModalVisible = ref(false);
-  function handleOpenBatchModal() { batchModalVisible.value = true; }
+  function handleOpenBatchModal() {
+    batchModalVisible.value = true;
+  }
   function handleBatchAddMaterials(materials: any[]) {
     const startLineNo = items.value.length + 1;
     materials.forEach((m, i) => {
