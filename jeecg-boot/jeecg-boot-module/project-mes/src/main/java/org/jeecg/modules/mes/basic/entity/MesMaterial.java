@@ -65,6 +65,11 @@ public class MesMaterial implements Serializable {
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 物料成本价体系-移动平均成本+最近采购价-----------
     //update-begin---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
     @Excel(name = "安全库存", width = 10) @Schema(description = "安全库存") private java.math.BigDecimal safetyStock;
+    //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-物料启用批次标志-----------
+    @Excel(name = "启用批次", width = 10, dicCode = "yn")
+    @Schema(description = "是否启用批次管理(0否/1是,默认0)")
+    private Integer batchEnabled;
+    //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-物料启用批次标志-----------
     @Excel(name = "最高库存", width = 10) @Schema(description = "最高库存") private java.math.BigDecimal maxStock;
     //update-end---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
     @Excel(name = "状态", width = 10, dicCode = "yn")

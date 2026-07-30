@@ -27,7 +27,9 @@ public class MesProductionPicking implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.ASSIGN_ID) private String id;
     @Excel(name = "领料单号", width = 15) private String code;
-    @Excel(name = "生产订单", width = 15) private String productionOrderId;
+    @Excel(name = "生产订单", width = 15)
+    @Dict(dictTable = "c_mes_production_order", dicText = "code", dicCode = "id")
+    private String productionOrderId;
     @Excel(name = "仓库", width = 15, dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")
     @Dict(dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id") private String warehouseId;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") private Date pickingDate;

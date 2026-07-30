@@ -1,22 +1,42 @@
+<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
     <a-divider>BOM行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect
+          v-model:modelValue="record.materialId"
+          @change="(v: any) => updateItem(index, 'materialId', v?.value ?? v)"
+          style="width: 100%"
+        />
       </template>
       <template #quantity="{ record, index }">
-        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
+        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <template #lossRate="{ record, index }">
-        <InputNumber :value="record.lossRate" :min="0" :max="100" :precision="2" style="width:100%" @change="(v:number) => updateItem(index, 'lossRate', v)" />
+        <InputNumber
+          :value="record.lossRate"
+          :min="0"
+          :max="100"
+          :precision="2"
+          style="width: 100%"
+          @change="(v: number) => updateItem(index, 'lossRate', v)"
+        />
       </template>
       <template #isAlternative="{ record, index }">
-        <a-switch :checked="record.isAlternative === 1" :checkedValue="1" :unCheckedValue="0" @change="(v:number) => updateItem(index, 'isAlternative', v)" />
+        <a-switch
+          :checked="record.isAlternative === 1"
+          :checkedValue="1"
+          :unCheckedValue="0"
+          @change="(v: number) => updateItem(index, 'isAlternative', v)"
+        />
       </template>
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
@@ -37,6 +57,10 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
   const items = ref<any[]>([]);
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // BOM 口径提示：默认文案。BOM 生效后才能被生产订单引用。
+  const alertText = ref('BOM 生效后才能被生产订单引用。状态：草稿 → 生效 → 失效。');
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 200 },
@@ -65,15 +89,23 @@
           await setFieldsValue(bom);
           items.value = bom.items?.length ? bom.items : [{ lineNo: 1, quantity: 1, lossRate: 0, isAlternative: 0 }];
         }
-      } catch (e) { /* fallback */ }
+      } catch (e) {
+        /* fallback */
+      }
     }
   });
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑BOM' : '新增BOM'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1, lossRate: 0, isAlternative: 0 }); }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, quantity: 1, lossRate: 0, isAlternative: 0 });
+  }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   async function handleSubmit() {
     const values = await validate();

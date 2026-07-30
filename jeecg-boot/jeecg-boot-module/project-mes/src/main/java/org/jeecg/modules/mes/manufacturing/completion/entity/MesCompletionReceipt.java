@@ -27,7 +27,9 @@ public class MesCompletionReceipt implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.ASSIGN_ID) private String id;
     @Excel(name = "入库单号", width = 15) private String code;
-    @Excel(name = "生产订单", width = 15) private String productionOrderId;
+    @Excel(name = "生产订单", width = 15)
+    @Dict(dictTable = "c_mes_production_order", dicText = "code", dicCode = "id")
+    private String productionOrderId;
     @Excel(name = "产品", width = 20, dictTable = "c_mes_material", dicText = "name", dicCode = "id")
     @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id") private String productId;
     @Excel(name = "仓库", width = 15, dictTable = "c_mes_warehouse", dicText = "name", dicCode = "id")

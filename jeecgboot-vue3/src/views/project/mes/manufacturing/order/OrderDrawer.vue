@@ -1,6 +1,9 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="800px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
   </BasicDrawer>
 </template>
 
@@ -15,6 +18,10 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 生产订单口径提示：默认文案。状态流转：草稿→已审核→已下达→执行中→已完工/已关闭/已取消。
+  const alertText = ref('下达后领料/完工单可引用本订单。状态：草稿 → 已审核 → 已下达 → 执行中 → 已完工。');
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: formSchema,
@@ -32,7 +39,9 @@
       try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PRODUCTION_ORDER);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       await setFieldsValue({ ...data.record });

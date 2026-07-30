@@ -104,6 +104,18 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
         addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
+        //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-菜单注册-----------
+        list.add(MesMenuDefinition.folder("mes_batch", "mes_warehouse", "批次管理", "/project/mes/batch", "/project/mes/batch/master").sortNo(4.5).icon("ant-design:barcode-outlined"));
+        list.add(MesMenuDefinition.leaf("mes_batch_master", "mes_batch", "批次主档", "/project/mes/batch/master", "project/mes/batch/master/index", "MesBatchMaster").sortNo(1.0).icon("ant-design:profile-outlined"));
+        addPerms(list, "mes:batchMaster:", "mes_batch_master", new String[]{"list","add","edit","delete","export"});
+        list.add(MesMenuDefinition.leaf("mes_batch_inventory", "mes_batch", "批次库存", "/project/mes/batch/inventory", "project/mes/batch/inventory/index", "MesBatchInventory").sortNo(2.0).icon("ant-design:container-outlined"));
+        addPerms(list, "mes:batchInventory:", "mes_batch_inventory", new String[]{"list","export"});
+        list.add(MesMenuDefinition.leaf("mes_batch_ledger", "mes_batch", "批次流水", "/project/mes/batch/ledger", "project/mes/batch/ledger/index", "MesBatchLedger").sortNo(3.0).icon("ant-design:file-text-outlined"));
+        addPerms(list, "mes:batchLedger:", "mes_batch_ledger", new String[]{"list","export"});
+        list.add(MesMenuDefinition.leaf("mes_batch_traceability", "mes_batch", "批次追溯", "/project/mes/batch/traceability", "project/mes/batch/traceability/index", "MesBatchTraceability").sortNo(4.0).icon("ant-design:search-outlined"));
+        addPerms(list, "mes:batchTraceability:", "mes_batch_traceability", new String[]{"list","export"});
+        //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-菜单注册-----------
+
         //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财管控菜单-----------
         list.add(MesMenuDefinition.folder("mes_finance", "mes_menu_001", "业财管控", "/project/mes/finance", "/project/mes/finance/receivable").sortNo(70.0).icon("ant-design:bank-outlined"));
         // 会计科目

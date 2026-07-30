@@ -95,3 +95,32 @@
 - 评审5项调整全采纳：searchForm补下拉/Alert用响应式数据/分模块映射表/保留3个列表跳转（去掉2个详情回溯）/加shared工具
 - 全闭环：/learn → /auto-learn → /evolve，learnings +2，反哺 frontend.md 字典章节+ audit-classification.md 速查表 (+1 行)
 - git push：6 commit 已上 origin main
+
+## 会话收尾（2026-07-31 session-wrap #8）
+- 黄金模板对齐第3弹：采购链路（申请/订单/收货）16文件（13前端改+1新建shared+2后端Entity补@Dict）
+- 评审7项调整全采纳：2字段补@Dict(阻塞#1)/order 4部分到货cyan/修复dictCode错误/补状态下拉/保留3跳转/补rowSelection+批量审核
+- 状态机发现：status=6"已关闭"是正常业务终态（green），与销售订单对称——避免用default（灰）误表异常
+- 领域建模首次建立采购子域：CONTEXT.md 14术语+3套状态机表+业务对偶（入库重算vs出库不重算）
+- 跨链路@Dict一致性扫描learning：销售链路4字段全有@Dict、采购链路2字段漏掉——黄金模板对齐前必做
+- /learn + /evolve：audit-classification.md 速查表 +1 行（38 行）
+- 全闭环：3 commit + 1 evolve commit + 1 learning commit，全部推送 origin main
+
+## 2026-07-31 Phase 3 部分进度（待续）
+- ✅ 完工入库集成：material.batch_enabled=1 时强制创建批次
+- ⏳ 采购收货集成：可选创建批次（明天续）
+- ⏳ 生产领料集成：选批次出库（明天续）
+- ⏳ 销售出库集成：选批次出库（明天续）
+- ⏳ Phase 3 整体验证（明天续）
+
+## 待办 (pending-items)
+- **2026-07-31** 采购收货集成批次（material.batch_enabled=1 时 createBatch）
+- **2026-07-31** 生产领料集成批次（audit 时 stockOutFifo）
+- **2026-07-31** 销售出库集成批次（audit 时 stockOutFifo + 不动 ADR 0001 锁定成本逻辑）
+- **2026-07-31** Phase 3 完整回归测试（playwright + 集成）
+- **2026-07-31** /learn 提取批次管理学习
+
+## 历史关键决策（Phase 1+2 已完成）
+- 4 制造子模块黄金模板对齐（bom/order/picking/completion，17 文件）
+- 批次管理 4 子模块（master/inventory/ledger/traceability，41 文件）
+- MesMenuRegistry 增 4 项菜单（mes_batch_*）
+- 关键修正：warehouse_id NOT NULL 改为可空（批次创建时无仓库）

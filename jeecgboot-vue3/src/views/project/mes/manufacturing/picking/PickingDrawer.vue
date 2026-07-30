@@ -1,16 +1,23 @@
 <template>
   <BasicDrawer v-bind="$attrs" @register="registerDrawer" :title="getTitle" width="1000px" destroyOnClose :showFooter="true" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
+    <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
+    <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
+    <!--update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
     <a-divider>领料行</a-divider>
-    <div style="margin-bottom:8px">
+    <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
-        <JMaterialSelect v-model:modelValue="record.materialId" @change="(v:any) => updateItem(index, 'materialId', v?.value ?? v)" style="width:100%" />
+        <JMaterialSelect
+          v-model:modelValue="record.materialId"
+          @change="(v: any) => updateItem(index, 'materialId', v?.value ?? v)"
+          style="width: 100%"
+        />
       </template>
       <template #quantity="{ record, index }">
-        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width:100%" @change="(v:number) => updateItem(index, 'quantity', v)" />
+        <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
@@ -32,6 +39,10 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
+  // 领料单口径提示：默认文案。Phase 2/3 将增加批次选择（FIFO 默认）。
+  const alertText = ref('领料从仓库扣减库存。状态：草稿 → 已审核。');
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
   const items = ref<any[]>([]);
 
   const itemColumns = [
@@ -57,7 +68,9 @@
       try {
         const nextCode = await getNextCode(MES_BIZ_CODE.PRODUCTION_PICKING);
         if (nextCode) await setFieldsValue({ code: nextCode });
-      } catch (e) { /* fallback: 手动输入 */ }
+      } catch (e) {
+        /* fallback: 手动输入 */
+      }
     }
     if (unref(isUpdate) && data.record) {
       try {
@@ -66,15 +79,23 @@
           await setFieldsValue(picking);
           items.value = picking.items?.length ? picking.items : [{ lineNo: 1, quantity: 1 }];
         }
-      } catch (e) { /* fallback */ }
+      } catch (e) {
+        /* fallback */
+      }
     }
   });
 
   const getTitle = computed(() => (unref(isUpdate) ? '编辑领料' : '新增领料'));
 
-  function addLine() { items.value.push({ lineNo: items.value.length + 1, quantity: 1 }); }
-  function removeLine(index: number) { if (items.value.length > 1) items.value.splice(index, 1); }
-  function updateItem(index: number, field: string, value: any) { items.value[index] = { ...items.value[index], [field]: value }; }
+  function addLine() {
+    items.value.push({ lineNo: items.value.length + 1, quantity: 1 });
+  }
+  function removeLine(index: number) {
+    if (items.value.length > 1) items.value.splice(index, 1);
+  }
+  function updateItem(index: number, field: string, value: any) {
+    items.value[index] = { ...items.value[index], [field]: value };
+  }
 
   async function handleSubmit() {
     const values = await validate();

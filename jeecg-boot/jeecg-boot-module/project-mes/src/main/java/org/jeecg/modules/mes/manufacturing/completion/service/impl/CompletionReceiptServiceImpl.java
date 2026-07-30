@@ -13,7 +13,10 @@ import org.jeecg.modules.mes.manufacturing.completion.entity.MesCompletionReceip
 import org.jeecg.modules.mes.manufacturing.completion.mapper.MesCompletionReceiptItemMapper;
 import org.jeecg.modules.mes.manufacturing.completion.mapper.MesCompletionReceiptMapper;
 import org.jeecg.modules.mes.manufacturing.completion.service.ICompletionReceiptService;
-import org.jeecg.modules.mes.manufacturing.order.entity.MesProductionOrder;
+import org.jeecg.modules.mes.batch.master.service.IMesBatchService;
+import org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
+import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;import org.jeecg.modules.mes.manufacturing.order.entity.MesProductionOrder;
 import org.jeecg.modules.mes.manufacturing.order.mapper.MesProductionOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -29,6 +32,11 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
 
     @Autowired private MesCompletionReceiptItemMapper itemMapper;
     @Autowired private MesProductionOrderMapper orderMapper;
+    //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库集成依赖-----------
+    @Autowired private IMesBatchService batchService;
+    @Autowired private IMesBatchInventoryService batchInventoryService;
+    @Autowired private MesMaterialMapper materialMapper;
+    //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库集成依赖-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
@@ -117,11 +125,25 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         MesCompletionReceipt e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
-        for (MesCompletionReceiptItem item : e.getItems()) {
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), null, null, "完工入库", e.getCode());
-        }
         String username = getCurrentUsername();
         Date now = new Date();
+        for (MesCompletionReceiptItem item : e.getItems()) {
+            // 1. 物料主库存入库（保留原逻辑：unitCost=null 不重算移动平均）
+            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), null, null, "完工入库", e.getCode());
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
+            // 2. 降级：物料 batch_enabled=1 才创建批次（防数据库膨胀）
+            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                String batchId = batchService.createBatch(
+                    item.getMaterialId(), "2",
+                    e.getId(), e.getCode(),
+                    item.getReceiptQty(), null,
+                    null, null);
+                batchInventoryService.stockIn(batchId, e.getWarehouseId(),
+                    item.getReceiptQty(), "2", e.getId(), e.getCode());
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
+        }
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
     }
