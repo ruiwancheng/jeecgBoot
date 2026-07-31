@@ -23,7 +23,9 @@ import org.jeecg.modules.mes.sales.mapper.MesSalesOrderMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundItemMapper;
 import org.jeecg.modules.mes.sales.mapper.MesSalesOutboundMapper;
 import org.jeecg.modules.mes.sales.service.IMesSalesOutboundService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
+import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,10 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
     @Autowired private IMesInventoryService inventoryService;
+    //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成依赖-----------
+    @Autowired private IMesBatchInventoryService batchInventoryService;
+    @Autowired private MesMaterialMapper materialMapper;
+    //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成依赖-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应收-----------
     @Autowired private IMesReceivableService receivableService;
@@ -119,6 +125,16 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         // 2. 扣库存（状态已确认，事务内回滚安全）
         for (MesSalesOutboundItem item : e.getItems()) {
             inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), null, null, "销售出库", e.getCode());
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成（FIFO选批次）-----------
+            // 降级：物料 batch_enabled=1 时按 FIFO 选批次出库（不影响 ADR 0001 锁定成本逻辑）
+            // 销售出库物料移动平均成本仍按"出库时锁定"，但批次选择走 FIFO 单独链路
+            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                batchInventoryService.stockOutFifo(
+                    item.getMaterialId(), e.getWarehouseId(), item.getActualQty(),
+                    "4", e.getId(), e.getCode()); // bizType=4 销售出库
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成-----------
         }
         // 3. 联动更新发货单状态：全部物料足量出库才置已出库(3)，部分出库保持2（oracle-review 前置缺陷修复）
         if (e.getDeliveryNoteId() != null) {
@@ -143,7 +159,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         ar.setCreditPeriod(30);
         ar.setDueDate(new Date(now.getTime() + 30L * 86400000));
         ar.setStatus("1");
-        try { receivableService.save(ar); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ }
+        //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-应收报错保护（不阻塞出库主流程）-----------
+        try { receivableService.save(ar); } catch (org.springframework.dao.DuplicateKeyException ex) { /* 已生成 */ } catch (Exception ex) { /* 不阻塞出库 */ }
+        //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-应收报错保护-----------
         //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-自动生成应收-----------
         //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase3 已发货状态自动流转-----------
         // 5. 检查销售订单是否全部出库完成→自动置已发货(4)

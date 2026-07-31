@@ -20,7 +20,10 @@ import org.jeecg.modules.mes.purchase.receipt.entity.MesPurchaseReceiptItem;
 import org.jeecg.modules.mes.purchase.receipt.mapper.MesPurchaseReceiptItemMapper;
 import org.jeecg.modules.mes.purchase.receipt.mapper.MesPurchaseReceiptMapper;
 import org.jeecg.modules.mes.purchase.receipt.service.IMesPurchaseReceiptService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jeecg.modules.mes.batch.master.service.IMesBatchService;
+import org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
+import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,11 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Autowired private MesPurchaseOrderItemMapper purchaseOrderItemMapper;
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
     @Autowired private IMesInventoryService inventoryService;
+    //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成依赖-----------
+    @Autowired private IMesBatchService batchService;
+    @Autowired private IMesBatchInventoryService batchInventoryService;
+    @Autowired private MesMaterialMapper materialMapper;
+    //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成依赖-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
     @Autowired private IMesPayableService payableService;
@@ -166,6 +174,19 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
 
             // 入库（带成本参数）
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成（可选创建批次）-----------
+            // 降级：物料 batch_enabled=1 时可选创建批次（采购收货可创建采购批次）
+            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                String batchId = batchService.createBatch(
+                    item.getMaterialId(), "1", // origin_type=1 采购入库
+                    e.getId(), e.getCode(),
+                    item.getReceiptQuantity(), unitCost,
+                    null, null);
+                batchInventoryService.stockIn(batchId, e.getWarehouseId(),
+                    item.getReceiptQuantity(), "1", e.getId(), e.getCode());
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成-----------
 
             // 应付: 不含税金额 + 税额
             item.setUnitPrice(unitPriceWithTax);

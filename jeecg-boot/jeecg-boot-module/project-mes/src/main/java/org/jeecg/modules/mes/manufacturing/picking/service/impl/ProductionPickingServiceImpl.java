@@ -15,7 +15,9 @@ import org.jeecg.modules.mes.manufacturing.picking.entity.MesProductionPickingIt
 import org.jeecg.modules.mes.manufacturing.picking.mapper.MesProductionPickingItemMapper;
 import org.jeecg.modules.mes.manufacturing.picking.mapper.MesProductionPickingMapper;
 import org.jeecg.modules.mes.manufacturing.picking.service.IProductionPickingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService;
+import org.jeecg.modules.mes.basic.entity.MesMaterial;
+import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,10 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
     @Autowired private MesProductionOrderMapper orderMapper;
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
     @Autowired private IMesInventoryService inventoryService;
+    //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成依赖-----------
+    @Autowired private IMesBatchInventoryService batchInventoryService;
+    @Autowired private MesMaterialMapper materialMapper;
+    //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成依赖-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
 
     @Override
@@ -119,6 +125,15 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
         for (MesProductionPickingItem item : e.getItems()) {
             inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), null, null, "生产领料", e.getCode());
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成（选批次出库）-----------
+            // 降级：物料 batch_enabled=1 时按 FIFO 选批次出库
+            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                batchInventoryService.stockOutFifo(
+                    item.getMaterialId(), e.getWarehouseId(), item.getQuantity(),
+                    "3", e.getId(), e.getCode()); // bizType=3 领料
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成-----------
         }
         String username = getCurrentUsername();
         Date now = new Date();

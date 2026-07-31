@@ -8,6 +8,7 @@ import org.jeecg.modules.mes.batch.inventory.entity.MesBatchInventory;
 import org.jeecg.modules.mes.batch.inventory.mapper.MesBatchInventoryMapper;
 import org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService;
 import org.jeecg.modules.mes.batch.ledger.service.IMesBatchLedgerService;
+import org.jeecg.modules.mes.batch.master.mapper.MesBatchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.List;
 public class MesBatchInventoryServiceImpl extends ServiceImpl<MesBatchInventoryMapper, MesBatchInventory> implements IMesBatchInventoryService {
 
     @Autowired private IMesBatchLedgerService ledgerService;
+    @Autowired private MesBatchMapper batchMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -30,6 +32,15 @@ public class MesBatchInventoryServiceImpl extends ServiceImpl<MesBatchInventoryM
         MesBatchInventory inv = this.getOne(qw);
         if (inv == null) {
             inv = new MesBatchInventory();
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-stockIn补batchNo（避免NOT NULL报错）-----------
+            // 从主档同步 batchNo/materialId（避免 NOT NULL 报错）
+            org.jeecg.modules.mes.batch.master.entity.MesBatch batch = batchMapper.selectById(batchId);
+            if (batch != null) {
+                inv.setBatchNo(batch.getBatchNo())
+                   .setMaterialId(batch.getMaterialId())
+                   .setUnitCost(batch.getUnitCost());
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-stockIn补batchNo-----------
             inv.setBatchId(batchId).setWarehouseId(warehouseId).setQty(BigDecimal.ZERO);
             this.save(inv);
         }
