@@ -124,3 +124,31 @@
 - 批次管理 4 子模块（master/inventory/ledger/traceability，41 文件）
 - MesMenuRegistry 增 4 项菜单（mes_batch_*）
 - 关键修正：warehouse_id NOT NULL 改为可空（批次创建时无仓库）
+
+## 2026-07-31 批次管理 /verify 收尾
+- 后端 100% 验证通过（14/14）
+- 前端代码修复 + commit 完成（Vue 引号 bug）
+- 前端 UI 视觉确认遗留（orca 浏览器卡 loading 30s+，未真正视觉确认）
+- 截图 4 张存档 hermes/visual-baselines/batch-{master,inventory,ledger,traceability}/2026-07-30/
+- 遗留原因：JeecgBoot 整体打包大 + orca 嵌入浏览器首次加载慢
+
+## 待办 (pending-items)
+- 2026-07-31 批次管理前端 4 页面 UI 视觉确认（orca 卡 loading 重新截图）
+
+## 2026-07-31 session-wrap #9
+- 批次管理 3 Phase 全部完成（4 制造子模块对齐 + 4 批次子模块建设 + 4 集成点整合）
+- /verify: 后端 100% 通过（14/14），前端代码 + bug 修复完成，UI 视觉确认遗留（orca 卡 loading）
+- /learn + /evolve: 新增 2 条 learning（Vue 引号 / 降级策略），反哺 frontend.md + audit-classification.md（39 行）
+- /pre-commit-gate: 🟢 PASS
+
+## 历史关键决策（批次管理全程）
+- ADR 路径被评审报告（PASS），设计原则采纳
+- 批次号生成规则：BT-{物料ID前6位}-{YYYYMMDD}{4位序号}
+- 状态机：在用(1)/冻结(2)/已耗尽(3)/过期(4)；过期用 red
+- 降级策略：物料 batch_enabled=0 不创建批次（防数据库膨胀）
+- 不动 ADR 0001：销售出库仍按物料移动平均成本锁定，批次链路独立
+- Phase 3 关键 bugfix: warehouse_id NOT NULL 改为可空 / receivableService.save try-catch 保护
+
+## 待办 (pending-items)
+- **2026-07-31** 批次管理前端 4 页面 UI 视觉确认（orca 卡 loading 重新截图）
+- **2026-07-31** Phase 3 完整回归测试（playwright + 集成端到端）
