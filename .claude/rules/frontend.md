@@ -64,6 +64,8 @@ version: 1.0
 2. **Drawer 接线**：`useDrawerInner` 内 `if (!unref(isUpdate))` 分支调 `getNextCode(MES_BIZ_CODE.XXX)` → `setFieldsValue({ code })`，外层 try/catch 静默回退手工输入（不阻塞开单）
 3. **配套数据**：SQL 补规则（INSERT IGNORE 固定 id）+ 规则实体 `@Dict` 注解 + 字典 `mes_code_biz_type`
 
+- **Vue 模板属性禁用半角引号**：写含引号的中文 Alert/文案时不能用 `message="点击"查看"按钮"`，会触发 Vite 编译错误 "Attribute name cannot contain U+0022 (")"。**用「」中文方括号或全角引号替代**（如 `message="点击「查看追溯」按钮"`）。判错信号：/verify 截 Playwright 截图卡 loading、`cat /tmp/jeecg-local-frontend.log | grep ERROR` 报 attribute 错误。← 2026-07-31 批次管理 traceability 模块踩坑
+
 已知行为（设计取舍）：打开弹窗即占号，取消不归还 → 单号允许跳号。
 
 ## E2E 测试规范（来源：2026-07-28 harness E2E 体系建设）
