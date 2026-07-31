@@ -1,7 +1,7 @@
 <!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <div>
-    <a-alert type="info" show-icon style="margin-bottom:12px" message="点击"查看追溯"按钮，可查看该批次的所有流水记录（采购入库/生产完工/领料/销售出库）。" />
+    <a-alert type="info" show-icon style="margin-bottom:12px" message="点击「查看追溯」按钮，可查看该批次的所有流水记录（采购入库/生产完工/领料/销售出库）。" />
     <BasicTable @register="registerTable">
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
