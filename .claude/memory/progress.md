@@ -152,3 +152,31 @@
 ## 待办 (pending-items)
 - **2026-07-31** 批次管理前端 4 页面 UI 视觉确认（orca 卡 loading 重新截图）
 - **2026-07-31** Phase 3 完整回归测试（playwright + 集成端到端）
+
+## 2026-07-31 Hermes 终审（tiequan-audit）
+- Hermes（Orca Worker 派发，MiniMax-M3 引擎）完成 MES 批次管理完整优化审计
+- 报告：hermes/reviews/2026-07-31/orca-review-mes-batch-management-final.md
+- 整体判定：🟡 WARN
+- 报告范围：66 文件，+2415/-62
+
+## P0 必修（跨 sprint 处理）
+- P0-1: c_mes_batch_ledger.warehouse_id NOT NULL 冲突（MesBatchServiceImpl:53 传 null）
+- P0-2: MesBatchInventoryServiceImpl.stockIn 无 selectForUpdate 行锁（lost update）
+- P0-3: FIFO 扣减无行锁（并发超扣风险，stockOutFifo:60）
+
+## P1 警告（下次迭代）
+- P1-1: 批次号 count(*)+1 并发撞 uk_batch_no_del
+- P1-2: 销售出库 audit 应收 customer_id NOT NULL 治本
+- P1-3: 销售 cancel 不回滚批次库存
+- P1-4: stockIn 创建新行主档同步（隐式 bug）
+
+## P2 建议
+- FIFO 索引 (material_id, warehouse_id, qty, create_time)
+- warehouse_id NULL 防御校验
+- master/index.vue 模板 status fallback 缺陷
+
+## 待办 (pending-items)
+- 2026-07-31 批次管理前端 4 页面 UI 视觉确认（orca 卡 loading 重新截图）
+- 2026-07-31 Phase 3 完整回归测试
+- **2026-07-31 [P0 必修] 批次库存行锁 + FIFO 行锁 + warehouse_id NULL 冲突（5-8h 估时）**
+- **2026-07-31 [P1 警告] 批次号并发安全 + 应收治本 + 销售 cancel 回滚（8-12h 估时）**
