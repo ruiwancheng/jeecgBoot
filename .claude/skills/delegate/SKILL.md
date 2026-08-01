@@ -200,6 +200,42 @@ PYEOF
 - 按 5 分钟分段轮询，到点用户决定是否续跑
 - 跑过 3 段仍未收到 worker_done → 主动 `terminal read --limit 200` 看完整输出判断是否僵死
 
+### 工人僵死兑底（2026-08 联合模式坑）
+
+**场景**：工人 commit 了但 coordinator 未收到 worker_done，或 TUI busy 但 buffer 空、预览仅轮换状态字符 `⠦⠧⠇⠋⠸`。
+
+**判僵死信号（任一）**：
+
+1. `preview` 只显示 TUI busy 字符，无实际内容 > 5 分钟
+2. `terminal read --limit 200` 返回 `output=""`（buffer 空）
+3. `terminal send "ping" --enter` 30 秒后 preview 仍无变化
+
+**兑底流程**：
+
+```bash
+# Step 1: Ping 测试
+orca terminal send --terminal $HANDLE --text "ping" --enter
+sleep 30
+orca terminal show --terminal $HANDLE --json | grep preview
+
+# Step 2: 仍有僵死信号 → 杀工人，重派（精简 preamble，跳过 orca-review）
+orca terminal close --terminal $HANDLE
+orca terminal create --command "pi" --json
+# 新 preamble：明示跳过 orca-review、直接 commit、必须 worker_done
+```
+
+**防僵死 preamble 补充要求**：
+
+- 每个阶段发 heartbeat（已存在），僵死工人必然缺 heartbeat → 可反推
+- 重派时 preamble 精简到 < 1000 字节（避免工人再 TUI 假死）
+- 重派 preamble 明确 `不进行 orca-review，直接 commit`（跳过独立评审减少交互面）
+
+**commit 兑底**：
+
+- 即使 worker_done 未到，协调者也可走 git 兑底：`git log --oneline -5 | grep <slice-id>` 看是否出现新 commit
+- 新 commit 出现 → 判完成（不严格依赖 worker_done 消息）
+- 出现 commit + 超 5 分钟无 worker_done → 判僵死 + 兑底重派
+
 ## 降级策略
 
 Orca 不可用时：退化为 `/cleanup-context`，输出卡片后提示用户手动开新终端粘贴。无空闲终端槽位时：提示用户关闭不需要的终端后重试。
