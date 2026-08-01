@@ -12,6 +12,17 @@
 | shelved | DB密码硬编码环境变量化 | jeecg-codegen/jeecg-onlchart 技能 5 处 -uroot -proot（P1低危，用户决定暂搁） |
 | shelved | PD-DVST-001 测试盘点单残留 | 已审核无红冲接口，用户联系管理员DB手工删（SQL已给）；V2考虑加"作废"状态 |
 
+## 会话收尾（2026-08-02 session-wrap #7）
+- /delegate 3 轮调优：agent 统一 pi、worker 工作流对齐 v4.0、preamble 加 build/push 钩子
+- auto-delegate.sh 脚本（拓扑序+git 兜底+僵死重派）
+- 3 个新命令：/vue-audit（黄金模板 UX 审计 14 项）、/vue-migrate（半自动改造）、post-merge-check.sh（git pull 自动 verify）
+- deploy-quality-gate.md / debugging.md / code-style.md 3 处规则反哺
+- 5 条 learnings 沉淀：V8 漏 commit / Vue SFC parser 行号误导 / m2 缓存 / update-begin 不对账 / 部署重置状态
+- 重大修复：服务端部署 8 次失败 → 排查 4 小时 → 根因 5 个 untracked 文件 + m2 缓存 → commit + 推送后部署成功
+- 删除 MesSalesOutboundServiceImpl L336 重复 update-end（4 年历史 bug 1 行修复）
+- L2 验证 V10.0.0 shelfLife / unitPrice / expiryDate / taxRate 字段全部 API 透出正常
+- learnings 累计 96 条（今日 +5）
+
 ## 会话收尾（2026-07-29 session-wrap #6）
 - /business-description 命令+技能落地：按需翻译技术语言→业务语言，双文件架构符合 skill-command-boundary
 - /strict 深度探索→判定不可行回退：AI监督AI是死循环，结果验证>过程验证（新 insight 写入 learnings + 关键规则第5条）
