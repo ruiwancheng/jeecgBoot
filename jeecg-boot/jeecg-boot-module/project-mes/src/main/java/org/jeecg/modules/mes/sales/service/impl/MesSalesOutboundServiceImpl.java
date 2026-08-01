@@ -333,7 +333,6 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     }
     //update-end---author:ruiwancheng---date:2026-07-16---for: P0-02/03/10来源+数量校验-----------
 
-    //update-begin---author:ruiwancheng---date:2026-07-18---for: Phase2 金额字段补齐-计算合计方法-----------
     private void calcTotal(MesSalesOutbound entity) {
         BigDecimal total = BigDecimal.ZERO;
         for (MesSalesOutboundItem item : entity.getItems()) {
