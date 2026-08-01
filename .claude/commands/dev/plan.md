@@ -47,3 +47,23 @@ description: 自有命令 — 制定实施计划：查模块、锚定模式、�
 5. **关键路径注册**：`hermes/business-chains.json` 对应链路补充 `criticalPaths`（只增不减）
 
 ### 6. 用户确认后执行
+
+### 6.5. 写入 plan 缓存（供 /decompose 自动复用）
+
+将本次 plan 的完整输出写入 `.claude/.last-plan.json`：
+
+```bash
+mkdir -p .claude
+TIMESTAMP=$(date '+%Y-%m-%dT%H:%M:%S%z' 2>/dev/null || date -Iseconds 2>/dev/null || date)
+echo "{
+  \"task\": \"<任务描述>\",
+  \"plan_output\": \"<完整 plan 内容（文件清单+步骤+风险+测试三件套）>\",
+  \"timestamp\": \"$TIMESTAMP\"
+}" > .claude/.last-plan.json
+```
+
+**用途：** 后续 `/decompose` 会自动检测此缓存，避免用户重复描述任务。
+
+**失效条件：** 缓存超过 30 分钟视为过期（`/decompose` 会提示重新描述）。
+
+> `.claude/.last-plan.json` 已在根 `.gitignore` 中忽略。
