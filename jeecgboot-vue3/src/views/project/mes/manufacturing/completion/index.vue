@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script lang="ts" setup">
+<script lang="ts" setup>
   import { useRouter } from 'vue-router';
   import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
