@@ -37,6 +37,9 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
     @Autowired private IMesBatchInventoryService batchInventoryService;
     @Autowired private MesMaterialMapper materialMapper;
     //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库集成依赖-----------
+    //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】注入总开关 Service（事务内仅查一次缓存）-----------
+    @Autowired private org.jeecg.modules.mes.system.service.IMesGlobalSwitchService globalSwitchService;
+    //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关注入-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-完工入库-----------
@@ -125,22 +128,35 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         MesCompletionReceipt e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】事务内仅查一次总开关状态-----------
+        // 全局总开关：关闭时跳过批次创建（降级链：总开关 → 物料 batch_enabled）
+        final boolean batchSwitchOn = globalSwitchService.isEnabled("mes_batch_enabled");
+        //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关缓存-----------
         String username = getCurrentUsername();
         Date now = new Date();
         for (MesCompletionReceiptItem item : e.getItems()) {
             // 1. 物料主库存入库（保留原逻辑：unitCost=null 不重算移动平均）
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), null, null, "完工入库", e.getCode());
             //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
-            // 2. 降级：物料 batch_enabled=1 才创建批次（防数据库膨胀）
-            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
-            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                String batchId = batchService.createBatch(
-                    item.getMaterialId(), "2",
-                    e.getId(), e.getCode(),
-                    item.getReceiptQty(), null,
-                    null, null);
-                batchInventoryService.stockIn(batchId, e.getWarehouseId(),
-                    item.getReceiptQty(), "2", e.getId(), e.getCode());
+            // 2. 降级：总开关开启 + 物料 batch_enabled=1 才创建批次（防数据库膨胀）
+            if (batchSwitchOn) {
+                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+                if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                    // V8.0.3 手工录入模式：传 item.batchNo（明行必填），item.productionDate（可选）
+                    String batchId = batchService.createBatchWithManualNo(
+                        item.getMaterialId(),
+                        item.getBatchNo(),     // 从明行取（为 null/空时报错）
+                        "2",                    // origin_type=2 生产完工
+                        e.getId(), e.getCode(),
+                        item.getReceiptQty(), null,
+                        item.getProductionDate(),  // 从明行取（可空）
+                        null,                    // expiryDate 完工入库未接入（V10.0.0 仅采购入库模块）
+                        //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-完工入库保质期参数透传预留位（暂传null）-----------
+                        null);                   // shelfLife 完工入库未接入，预留 V10.0.0+ 后续工单可补 entity 字段
+                        //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-完工入库保质期参数透传预留位（暂传null）-----------
+                    batchInventoryService.stockIn(batchId, e.getWarehouseId(),
+                        item.getReceiptQty(), "2", e.getId(), e.getCode());
+                }
             }
             //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
         }

@@ -54,9 +54,16 @@ public class MesBatch implements Serializable {
     @Schema(description = "生产日期")
     private Date productionDate;
 
+    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次主档保质期字段-----------
+    @Schema(description = "保质期(天,可空)")
+    private Integer shelfLife;
+    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次主档保质期字段-----------
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "有效期(可空)")
+    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-有效期字段名改为"有效期至"-----------
+    @Schema(description = "有效期至(可空)")
+    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-有效期字段名改为"有效期至"-----------
     private Date expiryDate;
 
     @Schema(description = "批次单位成本(采购价/加权平均成本)")
