@@ -145,12 +145,15 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
             if (batchSwitchOn) {
                 MesMaterial mat = materialMapper.selectById(item.getMaterialId());
                 if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                    //update-begin---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值（TODO批次成本落点待业务确认）-----------
+                    //update-begin---author:ruiwancheng---date:2026-08-01---for: P0-5 铁拳团-批次成本落点决议：保持现状（落 c_mes_batch_ledger.unitCost 不写业务明细表）-----------
+                    // 决议：stockOutFifo() 内部已按 FIFO 顺序为每个扣减批次生成一条 ledger 流水（in/out_qty + unitCost），
+                    //       业务查询成本走 c_mes_batch_ledger 即可。c_mes_production_picking_item 没有成本字段，
+                    //       ADR 0002 拍板前不动表结构。
                     List<org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService.BatchOutDetail> batchCosts = batchInventoryService.stockOutFifo(
                         item.getMaterialId(), e.getWarehouseId(), item.getQuantity(),
                         "3", e.getId(), e.getCode()); // bizType=3 领料
-                    // TODO: 批次成本落点（待业务确认 ADR 0002）
-                    // update-end---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值-----------
+                    // P0-5 终态：返回值仍接收（防止 IDE 告警 + 调试可见），batchCosts 后续如需二次加工可在此处追加。
+                    //update-end---author:ruiwancheng---date:2026-08-01---for: P0-5 铁拳团-批次成本落点决议-----------
                 }
             }
             //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成-----------
