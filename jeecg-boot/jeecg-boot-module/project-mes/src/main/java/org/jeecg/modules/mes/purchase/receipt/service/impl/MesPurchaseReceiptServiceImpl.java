@@ -218,6 +218,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             item.setAmount(lineAmount);
             totalAmount = totalAmount.add(lineAmount);
             totalTax = totalTax.add(lineAmount.multiply(taxRate).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-begin---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB（修复工人自报范围外 bug）-----------
+            itemMapper.updateById(item);
+            //update-end---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB-----------
         }
 
         // 【P1修复-订单状态回写】按累计入库量推进状态（oracle-review P1-1）
