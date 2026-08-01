@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { columns, searchFormSchema } from './ledger.data';
   import { queryLedgerList, getExportUrl } from './ledger.api';
@@ -28,4 +28,7 @@
     },
     exportConfig: { name: '批次流水', url: getExportUrl },
   });
+  //update-begin---author:ruiwancheng---date:20260801---for:/debug 修复 registerTable 未定义（与 inventory 同一根因）-----------
+  const [registerTable] = tableContext;
+  //update-end---author:ruiwancheng---date:20260801---for:/debug 修复 registerTable 未定义（与 inventory 同一根因）-----------
 </script>

@@ -59,6 +59,14 @@ const mes: AppRouteModule = {
           meta: { title: '编码规则' },
         },
         //update-end---author:ruiwancheng---date:2026-07-21  for：编码规则路由注册-----------
+        //update-begin---author:ruiwancheng---date:20260731---for:【生产批次总开关】通用设置路由注册-----------
+        {
+          path: 'commonSetting',
+          name: 'MesBasicCommonSetting',
+          component: () => import('/@/views/project/mes/basic/commonSetting/index.vue'),
+          meta: { title: '通用设置' },
+        },
+        //update-end---author:ruiwancheng---date:20260731---for:【生产批次总开关】通用设置路由注册-----------
       ],
     },
     {

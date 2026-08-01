@@ -29,3 +29,9 @@ export function freezeBatch(params: any) {
 export function unfreezeBatch(params: any) {
   return defHttp.put({ url: `${BASE}/unfreeze`, params }, { joinParamsToUrl: true });
 }
+
+//update-begin---author:ruiwancheng---date:2026-07-31---for: P0-4 铁拳团-批次主档导出函数-----------
+export function getExportUrl() {
+  return '/mes/batch/master/exportXls';
+}
+//update-end---author:ruiwancheng---date:2026-07-31---for: P0-4 铁拳团-批次主档导出函数-----------

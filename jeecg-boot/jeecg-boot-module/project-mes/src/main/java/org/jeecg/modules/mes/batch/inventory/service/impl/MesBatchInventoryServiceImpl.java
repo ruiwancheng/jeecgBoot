@@ -1,7 +1,6 @@
 //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-批次库存ServiceImpl-----------
 package org.jeecg.modules.mes.batch.inventory.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.modules.mes.batch.inventory.entity.MesBatchInventory;
@@ -27,9 +26,9 @@ public class MesBatchInventoryServiceImpl extends ServiceImpl<MesBatchInventoryM
     @Transactional(rollbackFor = Exception.class)
     public void stockIn(String batchId, String warehouseId, BigDecimal qty, String bizType, String bizId, String bizNo) {
         // 1. 累加批次库存（同 batch+warehouse）
-        QueryWrapper<MesBatchInventory> qw = new QueryWrapper<>();
-        qw.eq("batch_id", batchId).eq("warehouse_id", warehouseId).eq("del_flag", 0);
-        MesBatchInventory inv = this.getOne(qw);
+        //update-begin---author:ruiwancheng---date:2026-07-31---for: V8.0.0.2 MES批次管理-stockIn使用批次库存行锁-----------
+        MesBatchInventory inv = baseMapper.selectForUpdate(batchId, warehouseId);
+        //update-end---author:ruiwancheng---date:2026-07-31---for: V8.0.0.2 MES批次管理-stockIn使用批次库存行锁-----------
         if (inv == null) {
             inv = new MesBatchInventory();
             //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-stockIn补batchNo（避免NOT NULL报错）-----------
@@ -56,8 +55,10 @@ public class MesBatchInventoryServiceImpl extends ServiceImpl<MesBatchInventoryM
     @Transactional(rollbackFor = Exception.class)
     public List<BatchOutDetail> stockOutFifo(String materialId, String warehouseId, BigDecimal qty,
                                              String bizType, String bizId, String bizNo) {
-        // 1. FIFO 拉取（按创建时间升序）
-        List<MesBatchInventory> invs = baseMapper.selectFifoByMaterial(materialId, warehouseId);
+        // 1. FIFO 拉取（按创建时间升序，并在当前事务内锁定待扣减行）
+        //update-begin---author:ruiwancheng---date:2026-07-31---for: V8.0.0.3 MES批次管理-stockOutFifo使用批次库存行锁-----------
+        List<MesBatchInventory> invs = baseMapper.selectFifoByMaterialForUpdate(materialId, warehouseId);
+        //update-end---author:ruiwancheng---date:2026-07-31---for: V8.0.0.3 MES批次管理-stockOutFifo使用批次库存行锁-----------
         BigDecimal remaining = qty;
         List<BatchOutDetail> outDetails = new ArrayList<>();
         for (MesBatchInventory inv : invs) {

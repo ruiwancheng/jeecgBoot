@@ -33,6 +33,11 @@ public final class MesMenuRegistry {
         addPerms(list, "mes:codeRule:", "mes_basic_codeRule", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
         //update-end---author:ruiwancheng---date:2026-07-21  for：编码规则菜单注册-----------
 
+        //update-begin---author:ruiwancheng---date:20260731---for:【生产批次总开关】通用设置菜单注册（注意：菜单注册后需重启后端才能生效）-----------
+        list.add(MesMenuDefinition.leaf("mes_basic_commonSetting", "mes_basic", "通用设置", "/project/mes/basic/commonSetting", "project/mes/basic/commonSetting/index", "MesBasicCommonSetting").sortNo(4.0).icon("ant-design:control-outlined"));
+        addPerms(list, "mes:commonSetting:", "mes_basic_commonSetting", new String[]{"list","edit"});
+        //update-end---author:ruiwancheng---date:20260731---for:【生产批次总开关】通用设置菜单注册-----------
+
         // ==================== 商品 ====================
         list.add(MesMenuDefinition.folder("mes_product", "mes_menu_001", "商品", "/project/mes/product", "/project/mes/product/material").sortNo(20.0).icon("ant-design:shopping-outlined"));
         list.add(MesMenuDefinition.leaf("mes_basic_material", "mes_product", "物料管理", "/project/mes/basic/material", "project/mes/basic/material/index", "MesBasicMaterial").sortNo(1.0).icon("ant-design:gold-outlined"));

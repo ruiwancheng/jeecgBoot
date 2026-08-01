@@ -37,6 +37,9 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
     @Autowired private IMesBatchInventoryService batchInventoryService;
     @Autowired private MesMaterialMapper materialMapper;
     //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成依赖-----------
+    //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】注入总开关 Service-----------
+    @Autowired private org.jeecg.modules.mes.system.service.IMesGlobalSwitchService globalSwitchService;
+    //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关注入-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
 
     @Override
@@ -123,22 +126,35 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         MesProductionPicking e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("领料单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
-        for (MesProductionPickingItem item : e.getItems()) {
-            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), null, null, "生产领料", e.getCode());
-            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成（选批次出库）-----------
-            // 降级：物料 batch_enabled=1 时按 FIFO 选批次出库
-            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
-            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                batchInventoryService.stockOutFifo(
-                    item.getMaterialId(), e.getWarehouseId(), item.getQuantity(),
-                    "3", e.getId(), e.getCode()); // bizType=3 领料
-            }
-            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成-----------
-        }
+        //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】事务内仅查一次总开关状态-----------
+        // 全局总开关：关闭时跳过批次 FIFO 扣减（避免总开关关闭时还在扣批次库存造成数据漂移）
+        final boolean batchSwitchOn = globalSwitchService.isEnabled("mes_batch_enabled");
+        //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关缓存-----------
+        //update-begin---author:ruiwancheng---date:2026-07-31---for: P0-3 铁拳团-领料审核顺序调换：先状态守卫后扣库存（与销售出库对齐）-----------
+        // 1. 先原子状态守卫（防并发）
         String username = getCurrentUsername();
         Date now = new Date();
         int rows = baseMapper.auditWithGuard(id, username, now);
         if (rows == 0) throw new JeecgBootException("审核失败：领料单不存在或状态已变更，请刷新后重试");
+        // 2. 守卫成功后再扣库存（事务内回滚安全）
+        for (MesProductionPickingItem item : e.getItems()) {
+            inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getQuantity(), null, null, "生产领料", e.getCode());
+            //update-end---author:ruiwancheng---date:2026-07-31---for: P0-3 铁拳团-领料审核顺序调换-----------
+            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成（选批次出库）-----------
+            // 降级：总开关开启 + 物料 batch_enabled=1 时按 FIFO 选批次出库
+            if (batchSwitchOn) {
+                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+                if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                    //update-begin---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值（TODO批次成本落点待业务确认）-----------
+                    List<org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService.BatchOutDetail> batchCosts = batchInventoryService.stockOutFifo(
+                        item.getMaterialId(), e.getWarehouseId(), item.getQuantity(),
+                        "3", e.getId(), e.getCode()); // bizType=3 领料
+                    // TODO: 批次成本落点（待业务确认 ADR 0002）
+                    // update-end---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值-----------
+                }
+            }
+            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成-----------
+        }
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-扣库存-----------
 

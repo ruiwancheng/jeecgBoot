@@ -70,6 +70,11 @@ public class MesMaterial implements Serializable {
     @Schema(description = "是否启用批次管理(0否/1是,默认0)")
     private Integer batchEnabled;
     //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-物料启用批次标志-----------
+    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-物料保质期(天)字段-----------
+    @Excel(name = "保质期(天)", width = 12)
+    @Schema(description = "保质期(天,可空)")
+    private Integer shelfLife;
+    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-物料保质期(天)字段-----------
     @Excel(name = "最高库存", width = 10) @Schema(description = "最高库存") private java.math.BigDecimal maxStock;
     //update-end---author:ruiwancheng---date:2026-07-20---for: Phase3 库存预警-----------
     @Excel(name = "状态", width = 10, dicCode = "yn")

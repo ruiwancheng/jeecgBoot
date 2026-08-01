@@ -11,7 +11,10 @@ export const columns: BasicColumn[] = [
   { title: '初始数量', dataIndex: 'qty', width: 100 },
   { title: '批次成本', dataIndex: 'unitCost', width: 100 },
   { title: '生产日期', dataIndex: 'productionDate', width: 110 },
-  { title: '有效期', dataIndex: 'expiryDate', width: 110 },
+  //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次列表"有效期"改名+增加保质期列-----------
+  { title: '保质期(天)', dataIndex: 'shelfLife', width: 100 },
+  { title: '有效期至', dataIndex: 'expiryDate', width: 110 },
+  //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次列表"有效期"改名+增加保质期列-----------
   //update-begin---author:ruiwancheng---date:20260731---for:【批次链路黄金模板对齐】status列走statusTag槽位-----------
   // 状态列走 statusTag 槽位
   { title: '状态', dataIndex: 'status', width: 80, slots: { customRender: 'statusTag' } },
@@ -59,7 +62,10 @@ export const formSchema: FormSchema[] = [
   },
   { field: 'unitCost', label: '批次单位成本', component: 'InputNumber', colProps: { span: 8 }, componentProps: { min: 0, step: 0.01, precision: 4 } },
   { field: 'productionDate', label: '生产日期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
-  { field: 'expiryDate', label: '有效期', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
+  //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次表单"有效期"改名+增加保质期字段-----------
+  { field: 'shelfLife', label: '保质期(天)', component: 'InputNumber', colProps: { span: 8 }, componentProps: { min: 0 } },
+  { field: 'expiryDate', label: '有效期至', component: 'DatePicker', colProps: { span: 8 }, componentProps: { valueFormat: 'YYYY-MM-DD' } },
+  //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-批次表单"有效期"改名+增加保质期字段-----------
   {
     field: 'status',
     label: '状态',

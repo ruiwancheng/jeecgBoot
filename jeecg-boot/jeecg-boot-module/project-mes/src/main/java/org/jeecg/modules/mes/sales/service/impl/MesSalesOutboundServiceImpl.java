@@ -53,6 +53,9 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
     @Autowired private IMesBatchInventoryService batchInventoryService;
     @Autowired private MesMaterialMapper materialMapper;
     //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成依赖-----------
+    //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】注入总开关 Service-----------
+    @Autowired private org.jeecg.modules.mes.system.service.IMesGlobalSwitchService globalSwitchService;
+    //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关注入-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-出库扣库存-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应收-----------
     @Autowired private IMesReceivableService receivableService;
@@ -117,6 +120,10 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         MesSalesOutbound e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("出库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】事务内仅查一次总开关状态-----------
+        // 全局总开关：关闭时跳过批次 FIFO 出库（不影响主库存扣减与业财联动）
+        final boolean batchSwitchOn = globalSwitchService.isEnabled("mes_batch_enabled");
+        //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关缓存-----------
         // 1. 先原子改状态（如果失败，后续都不执行）
         String username = getUser();
         Date now = new Date();
@@ -126,13 +133,18 @@ public class MesSalesOutboundServiceImpl extends ServiceImpl<MesSalesOutboundMap
         for (MesSalesOutboundItem item : e.getItems()) {
             inventoryService.stockOut(item.getMaterialId(), e.getWarehouseId(), item.getActualQty(), null, null, "销售出库", e.getCode());
             //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成（FIFO选批次）-----------
-            // 降级：物料 batch_enabled=1 时按 FIFO 选批次出库（不影响 ADR 0001 锁定成本逻辑）
+            // 降级：总开关开启 + 物料 batch_enabled=1 时按 FIFO 选批次出库（不影响 ADR 0001 锁定成本逻辑）
             // 销售出库物料移动平均成本仍按"出库时锁定"，但批次选择走 FIFO 单独链路
-            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
-            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                batchInventoryService.stockOutFifo(
-                    item.getMaterialId(), e.getWarehouseId(), item.getActualQty(),
-                    "4", e.getId(), e.getCode()); // bizType=4 销售出库
+            if (batchSwitchOn) {
+                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+                if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                    //update-begin---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值（TODO批次成本落点待业务确认）-----------
+                    java.util.List<org.jeecg.modules.mes.batch.inventory.service.IMesBatchInventoryService.BatchOutDetail> batchCosts = batchInventoryService.stockOutFifo(
+                        item.getMaterialId(), e.getWarehouseId(), item.getActualQty(),
+                        "4", e.getId(), e.getCode()); // bizType=4 销售出库
+                    // TODO: 批次成本落点（待业务确认 ADR 0002）
+                    //update-end---author:ruiwancheng---date:2026-07-31---for: P0-5 铁拳团-接收stockOutFifo返回值-----------
+                }
             }
             //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-销售出库集成-----------
         }

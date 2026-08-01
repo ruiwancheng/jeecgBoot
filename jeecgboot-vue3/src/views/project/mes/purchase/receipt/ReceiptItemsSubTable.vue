@@ -2,7 +2,7 @@
 <template>
   <div style="padding: 4px 16px 8px 48px; background: #fafafa">
     <a-spin :spinning="loading">
-      <a-table :dataSource="items" :columns="cols" :pagination="false" size="small" rowKey="id">
+      <a-table :dataSource="items" :columns="cols" :pagination="false" size="small" rowKey="id" :scroll="{ x: 1500 }">
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'material'">
             <span>{{ materialText(record) }}</span>
@@ -37,6 +37,12 @@
     { title: '单价', dataIndex: 'unitPrice', width: 100 },
     { title: '金额', dataIndex: 'amount', width: 110 },
     { title: '质检结果', dataIndex: 'qcResult', width: 100 },
+    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细只读子表增加批次信息4列-----------
+    { title: '生产批次号', dataIndex: 'batchNo', width: 160 },
+    { title: '生产日期', dataIndex: 'productionDate', width: 130 },
+    { title: '保质期(天)', dataIndex: 'shelfLife', width: 100 },
+    { title: '有效期至', dataIndex: 'expiryDate', width: 120 },
+    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细只读子表增加批次信息4列-----------
   ];
 
   function materialText(record: any) {
