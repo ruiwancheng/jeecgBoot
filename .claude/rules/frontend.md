@@ -28,6 +28,7 @@ version: 1.0
 - 子页面懒加载 `() => import('/@/views/...')`
 - 项目页面加前缀 `/project/{项目名}/`
 - **新增 Vue 组件后必须重启 Vite**（`import.meta.glob` 缓存）
+- **改后端代码 `mvn install` 永远不用 `-q`**——必须看到 `BUILD SUCCESS` 输出（`-q` 静默失败极坑）。改完同时按"诊断：改了代码后端没生效"流程核验 class mtime + 进程 PID
 - **菜单 404 排查：** 先查 `sys_permission.is_route` 是否为 1。`is_route=0` 时前端不生成路由，直接返回 404。其次查 `parent_id` 是否指向正确的父菜单
 - **静态路由 404 排查：** permissionGuard 登录后按后端菜单权限重建可访问路由表，**没有菜单支撑的静态路由（routes/modules 里注册了的）会被移除** → 新页面 404 第一怀疑菜单注册（MesMenuRegistry），不是路由本身（实证：2026-07-29 Gallery）
 
@@ -43,6 +44,7 @@ version: 1.0
 | `Tabs` / `TabPane` | `unplugin-vue-components` 不自动导入 `TabPane`，页面白屏 | 显式 `import { Tabs } from 'ant-design-vue'`，模板用 `<Tabs.TabPane>` |
 | `Form.Item` / `a-form-item` | `unplugin-vue-components` 不自动导入子组件，**静默不渲染无报错** | 用纯 HTML `<span>`+`<a-select>` 替代，或显式 `import { Form } from 'ant-design-vue'` 用 `<Form.Item>` |
 | `Switch` | 返回 `boolean`，后端 `Integer` 字段反序列化报错 | `componentProps: { checkedValue: 1, unCheckedValue: 0 }`，`defaultValue: 0` |
+| `JSwitch` | `checkedValue/unCheckedValue` **不生效**——JSwitch 内部按 `props.options[0/1]` emit 值（默认 `['Y','N']`），传到后端 `Integer` 字段报 "Cannot deserialize String "Y"" | 用 `options: ['1','0']` + `labelOptions: ['是','否']`。同时列表 `customRender` 用 `Number(text) === 1` 防御性兼容字符串/数字（2026-08-01 物料页 batchEnabled 踩坑） |
 | `DatePicker` | 返回 dayjs 对象，JSON 序列化后后端解析失败 | `componentProps: { valueFormat: 'YYYY-MM-DD HH:mm:ss' }` |
 | `JSearchSelect` | 传 `dictTable/dictText/dictCode` 三个属性，下拉无数据 | 用 `dict: 'table,text,code'` 合写格式 |
 | `JSearchSelect` + `dict="c_mes_*,text,value"` | 平台字典原始SQL不经MyBatis-Plus → 下拉数据与列表必不一致（del_flag未过滤、数据源未路由）| 改用 `ApiSelect` + 目标Controller的`/selectPage`端点。禁止在MES项目中使用表字典模式 |
@@ -55,6 +57,54 @@ version: 1.0
 - DELETE 请求必须加 `{ joinParamsToUrl: true }`，否则参数在请求体，后端 `@RequestParam` 收不到
 - **长文本接口必须 `successMessageMode:'none'`**：defHttp 全局拦截器对 `success && message` 自动弹顶部通栏横幅，长文本（审核摘要、批量结果）会向右溢出滚动。调用时加 `{ successMessageMode: 'none' }`，由页面自行展示。判断信号：顶部出现通栏长文本横幅=拦截器弹的，去 api.ts 加 'none'（实证：2026-07-29 盘点审核滚动）
 - 路径枚举在 `.api.ts`
+
+### 标准下拉函数（ApiSelect 专用，强制）
+
+**强制要求**：新建基础模块的 `xxx.api.ts` 时，**必须**按以下模式补全 `queryXxxSelect` 函数，即使暂无页面引用。否则下游业务模块用 `ApiSelect` 引用时下拉会报 `SyntaxError: does not provide an export named 'queryXxxSelect'`。
+
+**模板代码**（照搬 customer/warehouse 标准）：
+
+```typescript
+/** 下拉选择（ApiSelect专用，替代平台字典 c_mes_xxx） */
+export async function queryXxxSelect(params?: any) {
+  const res = await defHttp.get({ url: Api.selectPage, params });
+  return res || [];
+}
+```
+
+**5 行约束**：
+
+- 函数名：`queryXxxSelect`（Xxx = 实体名 PascalCase，如 Material、Customer、Warehouse）
+- 必须 `async function`（**禁止**箭头函数，与其他模块风格不一致）
+- 参数：`params?: any`（ApiSelect 传 `keyword`/`pageNo`/`pageSize`）
+- 必须 `return res || []`（兜底空数组，避免 ApiSelect 拿到 undefined 报错）
+- 必须调用 `Api.selectPage`（已在 enum 中定义：`selectPage = '/mes/basic/xxx/selectPage'`）
+
+**完整对照表**（保持一致）：
+
+| 实体 | 函数 | 后端接口 | 前端导出位置 |
+|------|------|---------|------------|
+| 客户 | `queryCustomerSelect` | `/mes/customer/selectPage` | `basic/customer/customer.api.ts` |
+| 仓库 | `queryWarehouseSelect` | `/mes/basic/warehouse/selectPage` | `basic/warehouse/warehouse.api.ts` |
+| 供应商 | `querySupplierSelect` | `/mes/purchase/...` | `purchase/apply/apply.api.ts` |
+| 科目 | `querySubjectSelect` | `/mes/finance/...` | `finance/subject/subject.api.ts` |
+| 物料 | `queryMaterialSelect` | `/mes/basic/material/selectPage` | `basic/material/material.api.ts` |
+
+**预防清单**（新建 `xxx.api.ts` 时）：
+
+1. 复制 `customer.api.ts` 完整结构作为模板
+2. 补全 CRUD（query/list/add/edit/delete）
+3. **必须**补 `queryXxxSelect`（即使暂无页面引用）
+4. 补 `getExportUrl` / `getImportUrl`（如需 Excel 导入导出）
+5. 补 `saveOrUpdate` / `queryByIds`（批量操作辅助）
+
+**调试信号**（前端报以下错误 100% 是 api.ts 漏写）：
+
+- 控制台 `does not provide an export named 'queryXxxSelect'` → 立即补全
+- `grep -rn "queryXxxSelect" src` 找不到导出但找到引用 → 漏写
+- 后端已有 `selectPage` 接口但前端无对应函数 → 漏写
+
+**实证**：2026-07-31 批次主档打开报错根因。`material.api.ts` 漏写 `queryMaterialSelect` 函数，导致 `master.data.ts` 和 `inventory.data.ts` 编译失败。补全 +7 行（含 update-begin/end 标记）即可修复。
 
 ## 单据自动编码（编码规则接线模式）
 

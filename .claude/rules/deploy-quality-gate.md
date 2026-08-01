@@ -132,6 +132,7 @@ full 级变更时，自动运行 `business-chains.json` 中对应链路的 `chai
 | E2E 有失败 | 在报告中列出失败项，部署继续 |
 | 审计发现 P0 (影子模式) | 列入"需关注"区块 |
 | 审计发现 P0 (正式模式) | BLOCKED，必须修复 |
+| **服务端编译失败 (package does not exist / cannot find symbol)** | 优先查 `git status --short` 找 untracked 目录（V* 时代漏提交常见原因）；确认所有改动已 `git add` + commit + push。**强制 mvn clean install** 替代 mvn install（增量编译保留老 class）；失败 3 次点部署控制台"重置状态"+"强制全量"清 target/。**根因**：(1) 本地修改未推送 untracked 文件 → 客户端补 commit；(2) 服务端 m2/target 缓存 → clean install 或重置状态。来源：2026-08-02 连续 5 个 commit 修 5 个独立漏提交问题 + m2 缓存导致 1568s 排查。 |
 
 > **为什么 API/E2E 失败不阻塞？** 测试环境与生产环境可能有差异，测试失败不一定是代码问题。但必须记录，人工判断。
 

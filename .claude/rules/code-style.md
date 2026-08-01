@@ -90,6 +90,17 @@ SQL 脚本可能被多次执行（部署控制台自动扫描 `sql/` 和 `db/` �
 - [ ] status 用 `Integer` 类型（与仓库/客户/库位保持一致）
 - [ ] 审计字段完整：createBy/createTime/updateBy/updateTime/delFlag
 - [ ] update-begin/end 标记包裹
+- [ ] **commit 前对账**：`grep -c "update-begin" file.java` 应等于 `grep -c "update-end" file.java`；差异用 python 栈模拟找未闭合 begin：
+  ```python
+  import re
+  for i, line in enumerate(lines, 1):
+      for m in re.finditer(r'update-begin', line): stack.append(i)
+      for m in re.finditer(r'update-end', line):
+          if stack: stack.pop(0)
+          else: print(f'L{i}: 多余 update-end')
+  if stack: print(f'未闭合 begin: {stack}')
+  ```
+  来源：2026-08-02 `MesSalesOutboundServiceImpl.java` L336 重复 update-end（4 年历史 bug）被栈模拟 1 行定位修复。
 
 ### Controller
 - [ ] 所有方法 `@RequiresPermissions`
@@ -148,6 +159,7 @@ SQL 脚本可能被多次执行（部署控制台自动扫描 `sql/` 和 `db/` �
 ## 通用
 - 函数不超过 50 行，嵌套不超过 3 层
 - 不加无业务理由的依赖
+- **业务流水（ledger）唯一职责 = 库存变动**：创档/状态变更/冻结/解冻都不写 ledger。同一业务动作只产一条流水（含 warehouse_id + biz_id + biz_no + in_qty/out_qty + 数量变动方向），同 `biz_id + biz_type` 出现 2 条 = 重复记账 → 未来"批次追溯"会双倍扣减。代码 review 看到 `writeLedger` 立即想：warehouseId 是空吗？是空就不该写。表设计时 `warehouse_id NOT NULL` 可架构上拦截错误写入（实证：2026-08-01 修复 MesBatchServiceImpl.createBatchWithManualNo 重复写 ledger）
 
 ## 后端优先原则
 
