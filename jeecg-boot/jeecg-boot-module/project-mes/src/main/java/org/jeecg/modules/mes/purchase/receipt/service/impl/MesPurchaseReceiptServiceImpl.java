@@ -46,6 +46,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     @Autowired private IMesBatchInventoryService batchInventoryService;
     @Autowired private MesMaterialMapper materialMapper;
     //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成依赖-----------
+    //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】注入总开关 Service-----------
+    @Autowired private org.jeecg.modules.mes.system.service.IMesGlobalSwitchService globalSwitchService;
+    //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关注入-----------
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-采购入库-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step3 业财联动-生成应付-----------
     @Autowired private IMesPayableService payableService;
@@ -138,6 +141,10 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         MesPurchaseReceipt e = queryWithItems(id);
         if (e == null) throw new JeecgBootException("入库单不存在");
         if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】事务内仅查一次总开关状态-----------
+        // 全局总开关：关闭时不创建采购批次（避免总开关关闭时还在写入批次库存造成数据漂移）
+        final boolean batchSwitchOn = globalSwitchService.isEnabled("mes_batch_enabled");
+        //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关缓存-----------
 
         // ← 【P0修复-顺序调换】先改状态（原子守卫），确认成功后再执行副作用（oracle-review①）
         String username = getCurrentUsername();
@@ -153,17 +160,25 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             int ar = purchaseOrderItemMapper.atomicReceive(e.getPurchaseOrderId(), item.getMaterialId(), item.getReceiptQuantity());
             if (ar == 0) throw new JeecgBootException("物料[" + item.getMaterialId() + "]累计入库量超采购数量，请检查");
 
-            // 从采购订单行取含税单价+税率（同物料多行取第一行——后续 order_item_id 关联后再优化）
+            // 从采购订单行取单价+税率（同物料多行取第一行——后续 order_item_id 关联后再优化）
             LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
             piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
             java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
 
-            java.math.BigDecimal unitPriceWithTax = java.math.BigDecimal.ZERO;
-            java.math.BigDecimal taxRate = new java.math.BigDecimal("0.13");
-            if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
-                unitPriceWithTax = orderItems.get(0).getUnitPrice();
-                if (orderItems.get(0).getTaxRate() != null) taxRate = orderItems.get(0).getTaxRate();
+            // V10.0.1 方案1：优先用 item 自身字段（前端表单带出），缺省再反查订单行兜底
+            //   订单物料路径：onOrderSelected 把 unitPrice/taxRate 写入 item，audit 不必再反查
+            //   手动物料路径：onMaterialChange 把物料 standardPrice 写入 unitPrice，taxRate 默认 0.13
+            //   兜底路径：item 字段为空时（如历史数据/调用方未填），反查订单行取第一行
+            java.math.BigDecimal unitPriceWithTax = item.getUnitPrice();
+            java.math.BigDecimal taxRate = item.getTaxRate();
+            if (unitPriceWithTax == null || taxRate == null) {
+                if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
+                    if (unitPriceWithTax == null) unitPriceWithTax = orderItems.get(0).getUnitPrice();
+                    if (taxRate == null) taxRate = orderItems.get(0).getTaxRate();
+                }
             }
+            if (unitPriceWithTax == null) unitPriceWithTax = java.math.BigDecimal.ZERO;
+            if (taxRate == null) taxRate = new java.math.BigDecimal("0.13");
 
             // V9.7.1 修复: 采购订单 unitPrice 即不含税成本单价，不再除以(1+taxRate)
             java.math.BigDecimal unitCost = unitPriceWithTax;  // unitPrice 本身就是不含税价
@@ -175,16 +190,25 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
             // 入库（带成本参数）
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
             //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成（可选创建批次）-----------
-            // 降级：物料 batch_enabled=1 时可选创建批次（采购收货可创建采购批次）
-            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
-            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                String batchId = batchService.createBatch(
-                    item.getMaterialId(), "1", // origin_type=1 采购入库
-                    e.getId(), e.getCode(),
-                    item.getReceiptQuantity(), unitCost,
-                    null, null);
-                batchInventoryService.stockIn(batchId, e.getWarehouseId(),
-                    item.getReceiptQuantity(), "1", e.getId(), e.getCode());
+            // 降级：总开关开启 + 物料 batch_enabled=1 时可选创建批次（采购收货可创建采购批次）
+            if (batchSwitchOn) {
+                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+                if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
+                    // V10.0.0 保质期+有效期至：透传明细行数据到批次主档
+                    String batchId = batchService.createBatchWithManualNo(
+                        item.getMaterialId(),
+                        item.getBatchNo(),     // 从明细行取（为 null/空时报错）
+                        "1",                    // origin_type=1 采购入库
+                        e.getId(), e.getCode(),
+                        item.getReceiptQuantity(), unitCost,
+                        item.getProductionDate(),  // 从明细行取（可空）
+                        item.getExpiryDate(),      // V10.0.0 透传明细行"有效期至"（可空）
+                        item.getShelfLife());      // V10.0.0 透传明细行"保质期(天)"（可空）
+                    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
+                    batchInventoryService.stockIn(batchId, e.getWarehouseId(),
+                        item.getReceiptQuantity(), "1", e.getId(), e.getCode());
+                }
             }
             //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成-----------
 
