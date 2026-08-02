@@ -1,10 +1,12 @@
 ---
-description: 自有命令 — 任务委派：在当前会话上下文膨胀时，一键生成记忆卡片 + 开新终端派发给干净上下文的工人（自检测调用者身份，Claude调Claude、pi调pi）
+description: 自有命令 — 任务委派：在当前会话上下文膨胀时，一键生成记忆卡片 + 开新 pi 终端派发给干净上下文的工人（统一用 pi，不再按调用者自检测）
 ---
 
 # /delegate <任务描述>
 
-上下文膨胀时，委派任务给独立的工人终端。工人只携带压缩后的规则+状态，零历史负担。
+上下文膨胀时，委派任务给独立的 pi 工人终端。工人只携带压缩后的规则+状态，零历史负担。
+
+> **agent 策略**：2026-08 起统一用 pi，**不再按调用者身份自检测**（Claude 调 Claude / pi 调 pi 的旧规则已废弃）。质量通过 orca-review 独立评审环节兜底，不靠选 agent。
 
 ## 流程
 
@@ -14,9 +16,13 @@ description: 自有命令 — 任务委派：在当前会话上下文膨胀时�
 
 运行 `/cleanup-context` 生成记忆卡片。
 
-### 2. 选择 agent + 创建工人终端
+### 2. 创建 pi 工人终端
 
-按技能中的 **agent 选择矩阵**（任务类型→agent→命令）创建工人终端。
+统一使用 pi agent（不再区分任务类型）：
+
+```bash
+orca terminal create --command "pi" --json
+```
 
 ### 3. 等待就绪 + 注入 preamble + 任务
 
@@ -28,11 +34,15 @@ description: 自有命令 — 任务委派：在当前会话上下文膨胀时�
 
 ### 5. 强制校验（不可跳过）
 
-按技能中的**强制校验清单**逐项检查：
-- 工作流阶段完整？
-- orca-review 由独立终端完成（非降级）？
-- git diff 合理？
-- /verify 结果？
+按技能中的**强制校验清单**逐项检查（v4.0 10 步全流程）：
+- 工作流阶段完整（0 切片 → 1 brainstorm → 2 plan → 3 orca-review → 4 实现 → 5 verify → 6 分级测试 → 7 收尾自检 → 8 commit+push → 9 /done → 10 worker_done）
+- orca-review 由独立终端完成（非降级）
+- 分级测试级别与变更影响面匹配（轻量/标准/全量）
+- /quality-gate 等价自检全过（update-begin/end 对账、git diff 范围、推送前依赖）
+- git commit + push 已执行（worker_done 含 commit hash）
+- /done 完成检查清单已走完
+- git diff 合理
+- /verify 结果
 
 任何异常立即报告用户，不默默放行。
 
@@ -53,8 +63,7 @@ description: 自有命令 — 任务委派：在当前会话上下文膨胀时�
 ```
 用户：/delegate 修复采购订单审核按钮报错问题
 AI  ：📋 生成记忆卡片... ✅
-      🔍 自检测：Claude → 创建 Claude 工人
-      🚀 创建工人终端... term_xxx ✅
+      🚀 创建 pi 工人终端... term_xxx ✅
       📤 派发任务... dispatched ✅
       等待工人完成 → 回报 worker_done → 汇总结果
 ```

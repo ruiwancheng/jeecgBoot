@@ -14,6 +14,8 @@ metadata:
 | 日期 | 经验 | 核心洞察 |
 |------|------|------|
 | 2026-07-20 | [开源项目分析→Harness增强四步法](learnings/2026-07-20-opensource-harness-pattern-extraction.md) | 结构对标→代码深读→可行性过滤→降级嵌入 |
+| 2026-07-31 | [大任务垂直切片方法论](learnings/2026-07-31-vertical-slicing-page-feature.md) | 页面顶层+子功能细分，每个切片端到端可手工验证 |
+| 2026-07-31 | [MES 基础模块必须补全 queryXxxSelect](learnings/2026-07-31-mes-standard-select-pattern.md) | 新建 xxx.api.ts 时按 customer/warehouse 标准模式补全下拉函数，防漏写 |
 | 2026-07-16 | [PRD核心逻辑和操作演示必须同时阅读](learnings/2026-07-16-prd-demo-is-data-model.md) | 操作演示里的交互动词决定数据结构设计 |
 | 2026-07-09 | [Vite worker 死锁](learnings/2026-07-09-vite-worker-deadlock.md) | Less编译超时→Atomics.wait 5s→patch到60s |
 | 2026-07-05 | [参考腐烂 (Reference Rot)](learnings/2026-07-05-reference-rot.md) | HAR-REF: 硬编码外部引用随版本失效 |
@@ -24,6 +26,7 @@ metadata:
 
 | 日期 | 经验 | 核心洞察 |
 |------|------|------|
+| 2026-07-31 | [/plan→/decompose 自动衔接机制](learnings/2026-07-31-plan-decompose-auto-link.md) | plan 缓存文件 .claude/.last-plan.json + 30 分钟时效 + 显式覆盖 flag |
 | 2026-07-20 | [增量增强+降级策略模式](learnings/2026-07-20-incremental-enhance-with-degradation.md) | 每项增强=新增能力+守卫条件+文档化降级 |
 | 2026-07-05 | [命令/技能边界分离](learnings/.archived/2026-07-05-command-skill-split.md) [ARCHIVED] | 命令=工作流编排;技能=领域知识（等效: skill-command-boundary.md） |
 | 2026-07-28 | [验证器假阳性](learnings/2026-07-28-validator-false-positive.md) | 验证命令必须消费输入真实断言，无条件print恒真 |
