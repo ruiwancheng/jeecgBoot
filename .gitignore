@@ -23,6 +23,18 @@ derby.log
 
 ## harness engineering artifacts
 harness/node_modules/
+# 派工临时 inbox（轮询、API 响应、preamble 备份）
+.claude/.inbox-cache.json
+.claude/memory/inbox/
+# 临时目录（脚本中间产物）
+.tmp/
+# E2E 截图路径嵌套 bug 产物（cwd 错误）
+harness/e2e/harness/
+harness/harness/
+# JeecgBoot 在线代码生成模板（运行时生成，不入 git）
+jeecg-boot/jeecg-module-system/jeecg-system-start/config/
+# 根目录本地 settings（个人 MCP 配置）
+settings.local.json
 harness/test-results/
 ## hermes engineering artifacts
 hermes/logs/
