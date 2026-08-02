@@ -132,9 +132,11 @@ export function useMethods() {
       blobOptions['type'] = XLSX_MIME_TYPE;
       fileSuffix = XLSX_FILE_SUFFIX;
     }
-    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-      window.navigator.msSaveBlob(new Blob([data], blobOptions), name + fileSuffix);
+    // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 msSaveBlob 旧 IE API 修复（3 处）-----------
+    if (typeof (window.navigator as any).msSaveBlob !== 'undefined') {
+      (window.navigator as any).msSaveBlob(new Blob([data], blobOptions), name + fileSuffix);
     } else {
+      // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 msSaveBlob 修复-----------
       let url = window.URL.createObjectURL(new Blob([data], blobOptions));
       let link = document.createElement('a');
       link.style.display = 'none';

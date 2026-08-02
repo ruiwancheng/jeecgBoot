@@ -36,9 +36,11 @@ export function downloadByBase64(buf: string, filename: string, mime?: string, b
 export function downloadByData(data: BlobPart, filename: string, mime?: string, bom?: BlobPart) {
   const blobData = typeof bom !== 'undefined' ? [bom, data] : [data];
   const blob = new Blob(blobData, { type: mime || 'application/octet-stream' });
-  if (typeof window.navigator.msSaveBlob !== 'undefined') {
-    window.navigator.msSaveBlob(blob, filename);
+  // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 msSaveBlob 修复-----------
+  if (typeof (window.navigator as any).msSaveBlob !== 'undefined') {
+    (window.navigator as any).msSaveBlob(blob, filename);
   } else {
+    // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 msSaveBlob 修复-----------
     const blobURL = window.URL.createObjectURL(blob);
     const tempLink = document.createElement('a');
     tempLink.style.display = 'none';

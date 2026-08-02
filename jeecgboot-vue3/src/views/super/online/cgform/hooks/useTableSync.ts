@@ -6,9 +6,11 @@ import { VALIDATE_FAILED } from '../cgform.data';
 import { pick } from 'lodash-es';
 
 export function useTableSync(columns: Ref<JVxeColumn[]>) {
-  const tables = inject<CgformModal.TablesRef>('tables');
+  // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 inject 断言非空（消除 7 个 dbTable TS2339）-----------
+  const tables = inject<CgformModal.TablesRef>('tables')!;
   const fullScreenRef = inject<ComputedRef<boolean>>('fullScreenRef');
   const vxetableHeight = inject<ComputedRef<number>>('vxetableHeight');
+  // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 inject 断言-----------
   const tableRef = ref<JVxeTableInstance>();
   const loading = ref(false);
   const dataSource = ref<Recordable[]>([]);

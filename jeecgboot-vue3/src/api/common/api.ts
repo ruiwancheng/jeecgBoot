@@ -139,9 +139,11 @@ export const downloadFile = (url, fileName?, parameter?) => {
       message.warning('文件下载失败');
       return;
     }
-    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-      window.navigator.msSaveBlob(new Blob([data]), fileName);
+    // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 消除 2 个 TS2339（msSaveBlob 是旧 IE API，TS 标准库不包含）-----------
+    if (typeof (window.navigator as any).msSaveBlob !== 'undefined') {
+      (window.navigator as any).msSaveBlob(new Blob([data]), fileName);
     } else {
+      // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 2 msSaveBlob 修复-----------
       let url = window.URL.createObjectURL(new Blob([data]));
       let link = document.createElement('a');
       link.style.display = 'none';
