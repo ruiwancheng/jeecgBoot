@@ -345,3 +345,151 @@ orca orchestration send \
 ## 降级策略
 
 Orca 不可用时：退化为 `/cleanup-context`，输出卡片后提示用户手动开新终端粘贴。无空闲终端槽位时：提示用户关闭不需要的终端后重试。
+
+---
+
+## 🆕 2026-08-02 v5 优化（基于 P0 批次修复踩坑）
+
+### 坑 1：Pi worker 卡死 = 10 分钟没动手（实际信号比理论短）
+
+**现象**：Pi 工人收到详细 preamble 后，反复思考"什么是协调者 / 要不要发 decision_gate"，超过 10 分钟没有任何 tool call。
+
+**判卡死信号（任一）**：
+
+| 信号 | 阈值 |
+|---|---|
+| preview 只重复同一段思考文本（无新 tool call） | > **2 分钟**（不是 5 分钟） |
+| preview 出现"但是我需要注意""让我仔细分析"等反复合 | > **3 次** |
+| lastOutputAt 时间戳与当前时间差 | > **90 秒**（TUI 字符在动但内容没变） |
+
+**正确做法**：
+
+```bash
+# 每 30 秒轮询（不是 60-90 秒）
+for i in $(seq 1 10); do
+  sleep 30
+  LAST_TS=$(orca terminal show --terminal $HANDLE --json | python -c "import json,sys; print(json.load(sys.stdin)['result']['terminal'].get('lastOutputAt',0))")
+  NOW_TS=$(date +%s%3N)
+  GAP=$((NOW_TS - LAST_TS))
+  if [ $GAP -gt 90000 ]; then
+    echo "[卡死信号] lastOutputAt 距今 ${GAP}ms > 90s"
+    # 主动 ping
+    orca terminal send --terminal $HANDLE --text "[ping] 你卡住了吗？直接动手做，思考不要超过 1 轮。" --enter
+  fi
+  # 检查 worker_done
+  HAS=$(orca orchestration inbox --json | python -c "...")
+  [ "$HAS" != "0" ] && break
+done
+```
+
+### 坑 2：orca-review 不要让 Pi worker 发（Pi 不支持）
+
+**错误做法**（preamble v4.0 的旧规则）：
+```markdown
+# 让 Pi 工人主动发 decision_gate
+orca orchestration send --to <协调者> --type decision_gate --body "<plan>"
+```
+
+**坑**：
+- Pi 不知道"协调者"是谁 → 反复思考 → 卡死
+- Pi 不会调 orca orchestration send → 即使思考完也不发
+
+**正确做法**：**由协调者（当前 Pi/Claude）自己发 orca-review**
+
+```bash
+# 1. 协调者找到 Claude 评审终端
+CLAUDE_HANDLE=$(orca terminal list --json | python -c "
+import json,sys
+d = json.load(sys.stdin)
+for t in d['result']['terminals']:
+    if 'Claude' in t.get('title','') and t.get('writable'):
+        print(t['handle']); break
+")
+
+# 2. 协调者创建评审任务并 dispatch
+orca orchestration task-create \
+  --spec "<评审输入：背景 + 草案 + 待评审问题>" \
+  --task-title "review-<任务名>-$(date +%H%M)"
+
+# 3. 拿到 task_id 后 dispatch
+orca orchestration dispatch \
+  --task <task_id> \
+  --to $CLAUDE_HANDLE \
+  --inject
+
+# 4. 等回报（最多 5 分钟）
+# 检查 hermes/reviews/ 或 terminal preview
+```
+
+**关键认知**：
+- orca-review 是**协调者侧**机制，不是工人侧
+- Pi worker 只负责：brainstorm → plan → 实现 → verify → commit → push
+- 评审在 worker 输出 plan 后，**由协调者发起**
+
+### 坑 3：轮询节奏从 60-90s 缩到 30s
+
+**原因**：Pi worker 卡死发现晚了 10+ 分钟，等用户提示才意识到。
+
+**新节奏**：
+
+```bash
+# 30 秒轮询（不再是 60-90s）
+for i in $(seq 1 20); do
+  sleep 30
+  # 1. 查 inbox worker_done
+  # 2. 查 lastOutputAt gap（> 90s = 卡死信号）
+  # 3. 查 buffer 增长（无变化 = 卡死信号）
+done
+```
+
+### 坑 4：worker_done payload 必须含 commit hash + verify 结果
+
+**模板**（preamble 嵌入）：
+
+```bash
+orca orchestration send \
+  --type worker_done \
+  --subject "[<任务名>] 完成" \
+  --body "commit: <hash>
+filesModified: <path1, path2>
+verify: <mvn compile OK / curl 200 / test N/N pass>
+risks: <P0/P1 列表，如无写 'none'>
+phase: completed"
+```
+
+**协调者代发触发条件**（任一）：
+- 5 分钟 polling 无 worker_done
+- 但 git log 出现新 commit
+- 或终端 preview 显示完成总结但没发消息
+
+### 坑 5：派工前先 grep 代码（避免派过时任务）
+
+**新增**：派工前先用 grep/browse 验证 bug 描述与代码一致。
+
+```bash
+# 示例：派 P0 修复前先看代码
+grep -n "stockIn\|selectForUpdate" jeecg-boot/.../MesBatchInventoryServiceImpl.java
+```
+
+**避免**：
+- progress.md 写过"未修" → 代码已修 → 工人找不到 bug → 卡死思考
+- 描述与代码不符 → 工人反复对照 → 浪费时间
+
+### 决策表：派工前必查
+
+| 任务类型 | 是否要 orca-review | 评审方 | 是否要 commit+push |
+|---|---|---|---|
+| 纯文案/注释/样式 | ❌ | — | ✅ |
+| Vue/TS ≤3 文件无新 Entity | ⚠️ 协调者自评 | — | ✅ |
+| Java Service + Mapper | ✅ 必评 | Claude | ✅ |
+| SQL 改表/Entity | ✅ 必评 | Claude | ✅ |
+| 跨模块链路 | ✅ 必评 | Claude | ✅ |
+
+### 优化 checklist（派工前 30 秒）
+
+- [ ] 已 grep 代码确认 bug 描述准确（坑 5）
+- [ ] preamble ≤ 1500 字节（避免 Pi TUI 假死）
+- [ ] preamble 含完整 worker_done 命令模板（坑 4）
+- [ ] orca-review 由协调者发起，不是 worker（坑 2）
+- [ ] 30 秒轮询节奏就位（坑 3）
+- [ ] 卡死信号检测就位：lastOutputAt gap > 90s（坑 1）
