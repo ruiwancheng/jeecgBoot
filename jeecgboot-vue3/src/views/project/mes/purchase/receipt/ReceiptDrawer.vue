@@ -89,17 +89,16 @@
           @change="(e: any) => updateItem(index, 'batchNo', e.target.value)"
         />
       </template>
-      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 采购入库-生产日期a-date-picker加getPopupContainer解决弹出层被表格overflow遮挡---------->
+      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-生产日期a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
       <template v-if="isBatchOn" #productionDate="{ record, index }">
         <a-date-picker
           :value="record.productionDate"
           valueFormat="YYYY-MM-DD"
-          :getPopupContainer="(trigger) => trigger?.parentNode || document.body"
           style="width: 100%"
           @change="(v: any) => onProductionDateChange(index, v)"
         />
       </template>
-      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0 采购入库-生产日期a-date-picker加getPopupContainer解决弹出层被表格overflow遮挡---------->
+      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-生产日期a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
       <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细保质期+有效期至列编辑插槽----------->
       <template v-if="isBatchOn" #shelfLife="{ record, index }">
         <InputNumber
@@ -109,17 +108,16 @@
           @change="(v: any) => onShelfLifeChange(index, v)"
         />
       </template>
-      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 采购入库-有效期至a-date-picker加getPopupContainer解决弹出层被表格overflow遮挡---------->
+      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-有效期至a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
       <template v-if="isBatchOn" #expiryDate="{ record, index }">
         <a-date-picker
           :value="record.expiryDate"
           valueFormat="YYYY-MM-DD"
-          :getPopupContainer="(trigger) => trigger?.parentNode || document.body"
           style="width: 100%"
           @change="(v: any) => onExpiryDateChange(index, v)"
         />
       </template>
-      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0 采购入库-有效期至a-date-picker加getPopupContainer解决弹出层被表格overflow遮挡---------->
+      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-有效期至a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
       <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细保质期+有效期至列编辑插槽----------->
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
