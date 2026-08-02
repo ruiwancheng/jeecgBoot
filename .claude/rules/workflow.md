@@ -188,3 +188,30 @@ pi 终端在派工后 ~7 分钟可能 TUI 假死（buffer 被 trim、busy 字符
 - ❌ 忘记最后一步
 
 **协调者兑底**：工人 5 分钟无 worker_done + 产物到位 → 协调者手动代发（不是脚本，是人工补发）。详见 `learnings/2026-08-02-delegate-worker-done-must-emit-hard-rule.md`。
+
+### 派工第 0 步：工人现状摸底（delegate-worker-rebaseline）
+
+工人接收记忆卡片时**实际代码可能已演进**（几天/几周差异）。强制摸底：
+
+```bash
+git log --oneline | grep -E "<关键词>"  # 看是否已修
+grep -rn "<修复模式>" <相关模块>      # 看代码当前状态
+git blame <file>:<line>               # 看 P0 行号最近修改
+```
+
+**三态判定**：
+- **已修** → commit message 写"已在 V<版本> 阶段修复"
+- **需决议** → 写 ADR 引用
+- **真要改** → 按 plan 改文件 + update-begin/end + commit
+
+🚫 禁止：盲目按记忆卡片写代码。详见 `learnings/2026-08-02-delegate-worker-rebaseline-and-git-fallback.md`。
+
+### 部署控制台重置 + 强制全量（deploy-console-reset）
+
+部署控制台缓存旧 class，可能导致代码改了但运行时仍跑老逻辑。**部署前重置控制台 + 强制全量**（清 classpath + 不增量）：
+
+- 部署控制台 → 应用管理 → **强制重启**（不要软重启）
+- 部署选项 → 选**全量替换**（不勾"增量部署"）
+- 部署后 → `tail -f` 启动日志确认新 class 加载
+
+🚫 禁止：控制台"软重启"或"增量替换"——可能复用旧 class。详见 `learnings/2026-08-02-deploy-console-reset-and-force-full.md`。

@@ -167,3 +167,25 @@ phase: completed"
 - 完整逻辑见 `.claude/skills/delegate/SKILL.md`（已在 2026-08-02 修复 polling bug）
 
 **详细案例**：见 `.claude/memory/learnings/2026-08-02-delegate-worker-done-must-emit-hard-rule.md`（v4 观察）。
+
+## /evolve 增量规则（2026-08-02）
+
+### 部署前先检查 git status clean（v8-era-uncommitted-files-deployment-blocker）
+
+**铁律**：部署前必须 `git status` 干净。**有未提交修改 = 部署被阻止**。
+
+**为什么**：未提交修改包括：
+- 本地改了一半的文件（半成品）
+- 调试时留下的 console.log
+- 没保存的 IDE 编辑
+
+部署这些会导致线上/测试环境**行为不可预测**。
+
+**强制流程**：
+```bash
+git status --short  # 必须为空（除 untracked）
+# 如有修改：
+git stash  # 或 git commit，或 git checkout -- <file>
+```
+
+详见 `learnings/2026-08-02-v8-era-uncommitted-files-deployment-blocker.md`。

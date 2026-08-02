@@ -213,3 +213,65 @@ localStorage['<prefix>COMMON__LOCAL__KEY__']
 ```
 
 详见 `learnings/2026-08-02-vue-tsc-default-allowjs.md`。
+
+### Vite HMR 静默过期（vite-hmr-silent-stale）
+
+**场景**：改了 .vue 文件，浏览器没自动更新，dev 服务看似正常但跑老代码。
+
+**强制处理**：
+1. 改完 .vue 后**手动 Cmd+Shift+R / Ctrl+Shift+R 硬刷新**（不依赖 HMR）
+2. 怀疑 HMR 没生效时 → 直接 `pnpm dev` 重启 dev 服务
+3. 看到 `HMR update` 但页面没变化 → 检查 dev console 是否有 `[vite] hot updated` 错误
+
+**触发场景**：
+- 改了 script setup 内 ref/computed
+- 改了 antd 组件 props 类型
+- 改了 vxe-table 渲染逻辑
+
+详见 `learnings/2026-08-01-vite-hmr-silent-stale.md`。
+
+### vue-sfc-parser 错误位置误导（vue-sfc-parser-misleading-error-position）
+
+Vite/Vue build 报"行号 XX 列 YY"错误，**行号指向位置看起来正常**（如 `<script lang="ts" setup>` 标签）。
+
+**3 步精确二分定位**：
+1. 用 `@vue/compiler-sfc` 的 `parse()` 单独解析
+2. 从最小 hello world 模板二分加回
+3. 用 `od -c` / `cat -A` 找字节级差异（如多一个 `"` 字符 0x22）
+
+**常见根因**：`<script lang="ts" setup">` 中 `setup"` 多 1 个 `"`（HTML 解析器状态机错位）。
+
+详见 `learnings/2026-08-02-vue-sfc-parser-misleading-error-position.md`。
+
+### m2 缓存陈旧 class（server-m2-cache-stale-class）
+
+**场景**：Maven 编译通过，但运行时仍跑老代码（classpath 缓存陈旧）。
+
+**强制清理**：
+```bash
+mvn clean install -DskipTests    # 不是 clean compile
+# 或
+rm -rf ~/.m2/repository/<groupId>/<artifactId>/
+```
+
+**触发场景**：
+- 改了 Entity 字段但运行时报"找不到 getter"
+- 改了 Controller 路由但 404
+- 改了 Service 实现但行为不变
+
+详见 `learnings/2026-08-02-server-m2-cache-stale-class.md`。
+
+### 前端空数据诊断（frontend-empty-data-diagnosis）
+
+**场景**：API 返回 HTTP 200 + `code: 0` + `result: { records: [] }` —— UI 显示"暂无数据"。
+
+**5 步定位**：
+1. **确认 API 真返回空** → DevTools Network 看 Response body
+2. **看分页参数** → `pageNo=1&pageSize=10` 是否对（pageSize=0 会全空）
+3. **看查询参数** → 是否漏传 `keyword`/`status` 等导致查全表
+4. **看后端 SQL** → 跑 `select count(*) from <table> where <条件>` 是否真有数据
+5. **看是否权限/数据隔离** → 切换 admin 用户看是否看到数据（可能是租户/数据范围过滤）
+
+**反模式**：直接报告"前端没问题"或"后端接口坏了" → 跳过了真实根因（往往是参数/权限）。
+
+详见 `learnings/2026-08-01-frontend-empty-data-diagnosis.md`。

@@ -107,3 +107,58 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/jeecg-boot/sys/lo
 **常见根因**：`<script lang="ts" setup">` 中 `setup` 后多了一个 `"` 字符（0x22），HTML 解析器误判 `setup"` 为属性名 + 缺值，状态机错位。**`update-begin/end` 不对账**也常用此脚本定位（用栈模拟找未闭合 begin）。
 
 **实证**：2026-08-02 完工入库 `index.vue` 报 "Attribute name..." @ line 22 col 24——line 22 是 `<script lang="ts" setup>` 看似正常。实际是 `setup">` 多 1 个 `"`。修复 1 字符 + `@vue/compiler-sfc parse()` 4 小时排查降到 1 步定位。
+
+## /evolve 增量规则（2026-08-02）
+
+### /plan 前先验证代码事实（code-fact-verification-before-plan）
+
+**铁律**：写 /plan 之前先验证"假设的事实"是否真的存在。
+
+```bash
+# 验证"已修复"假设
+git log --all --oneline | grep -iE "<关键词>"
+
+# 验证"X 处调用"假设
+grep -rn "<函数名>" <模块>
+
+# 验证"文件存在"假设
+find . -name "<filename>"
+```
+
+**反模式**：直接基于记忆卡片/PRD 写 plan，不验证当前代码状态 → 重复造轮子或基于过时信息。
+
+详见 `learnings/2026-08-01-code-fact-verification-before-plan.md`。
+
+### 接 "X 处" 数字前先 grep（grep-call-sites-before-accepting-count）
+
+工人说"调用了 3 处"或"修改了 5 个文件" → **自己 grep 验证**，不直接相信数字。
+
+```bash
+# 验证调用次数
+grep -rn "functionName" src/ | wc -l
+
+# 验证修改范围
+git diff --name-only HEAD~1
+```
+
+**反模式**：盲目接受工人"X 处"数字 → 可能少/多，实际代码与报告不符。
+
+详见 `learnings/2026-08-01-grep-call-sites-before-accepting-count.md`。
+
+### 找孤立 update-begin/end 标记（update-begin-end-stack-trace-for-orphans）
+
+`update-begin/end` 必须**成对**出现。**孤立标记 = 编译错误**。
+
+**检测方法**：
+```bash
+# 数 begin / end 是否相等
+grep -rE "update-begin.*author" src/ | wc -l
+grep -rE "update-end.*author" src/ | wc -l
+```
+
+**修复**：
+- 缺 end → 补 end
+- 缺 begin → 删孤立 end
+- begin/end 不匹配 → 栈模拟定位（参考 vue-sfc-parser 定位法）
+
+详见 `learnings/2026-08-02-update-begin-end-stack-trace-for-orphans.md`。
