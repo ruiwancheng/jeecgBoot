@@ -171,3 +171,45 @@ localStorage['<prefix>COMMON__LOCAL__KEY__']
 ### 展示值
 - [ ] 物料列显示编码/名称，**禁止裸 ID**（testing.md 断言锚点 #4）
 - [ ] 差异/异常值红标高亮（#f5222d 加粗）
+
+## /evolve 增量规则（2026-08-02）
+
+### TS noUnusedLocals 不支持 `_` 前缀豁免（ts-no-unused-locals-vs-eslint）
+
+| 规则 | `_` 前缀豁免 | 配置 |
+|------|:--:|------|
+| TS `noUnusedLocals` | ❌ | 不支持 |
+| TS `noUnusedParameters` | ❌ | 不支持 |
+| ESLint `@typescript-eslint/no-unused-vars` | ✅ | `varsIgnorePattern: '^_'` |
+
+**触发场景**：想保留未用变量改名为 `_X` 豁免 TS6133 → **不工作**。
+
+**正确做法**：
+1. 直接删除未使用变量（最干净）
+2. 必须保留：`// @ts-expect-error — 未使用但保留`
+3. 关闭规则（最后手段）：`tsconfig.json` 设 `noUnusedLocals: false`
+
+详见 `learnings/2026-08-02-ts-no-unused-locals-vs-eslint.md`。
+
+### vue-tsc 2.x + allowJs 默认行为（vue-tsc-default-allowjs）
+
+升级 vue-tsc 到 2.2.x 后**默认行为变化**：
+- 1.x：宽松，忽略 .js exclude 错误
+- 2.x：严格，会处理未 exclude 的 .js
+
+**minified SDK 误报**（如 `src/components/onlinePreview/open-jssdk.es.js`）：
+- tsconfig `"exclude": ["**/*.js"]` 在 vue-tsc 2.x **不可靠**
+- `grep "\.js("` 错误日志可快速发现
+
+**解决**：
+```json
+// tsconfig.json
+{ "compilerOptions": { "allowJs": false } }
+```
+
+或具体文件加 exclude（可靠）：
+```json
+"exclude": ["**/*.js", "src/specific.js"]
+```
+
+详见 `learnings/2026-08-02-vue-tsc-default-allowjs.md`。

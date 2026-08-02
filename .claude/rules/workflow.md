@@ -166,3 +166,25 @@ worker_done 未发 ≠ 未完成。派工完成判定三件套：
 **反例**（连续 2 次观察到）：pi 工人完成所有工作但忘了发 worker_done → 按 git 兜底判完成。
 
 **详细落实**：见 `.claude/skills/delegate/SKILL.md`（polling 检测修复 + 协调者代发章节）。
+
+## /evolve 增量规则（2026-08-02）
+
+### 派工 polling 硬上限：7 分钟（orca-pi-terminal-tui-freeze）
+
+pi 终端在派工后 ~7 分钟可能 TUI 假死（buffer 被 trim、busy 字符循环 `⠙⠧⠇⠋⠸`）。判僵死信号：
+- [ ] `preview` 只显示 TUI busy 字符 > 5 分钟
+- [ ] `terminal read` 返回 `output=""` 几乎为空
+- [ ] 连续 2 次 ping (60s 间隔) 无回应
+
+**触发兑底**：立即 `git reset --hard <last-known-good>`，不再尝试"再修"。详见 `learnings/2026-08-02-orca-pi-terminal-tui-freeze-after-7min.md`。
+
+### worker_done 硬约束 + 协调者代发（delegate-worker-done）
+
+工人完成工作后**第一步**必须发 `worker_done`，禁止"在我自己终端打印完成就 idle"。
+
+**反模式**：
+- ❌ 打印"完成"总结就 idle（以为这就够了）
+- ❌ 觉得"任务轻量不需要回报"直接退出
+- ❌ 忘记最后一步
+
+**协调者兑底**：工人 5 分钟无 worker_done + 产物到位 → 协调者手动代发（不是脚本，是人工补发）。详见 `learnings/2026-08-02-delegate-worker-done-must-emit-hard-rule.md`。
