@@ -93,3 +93,11 @@ print(f\"  最后心跳: {s.get('lastHeartbeat','?')}\")
 print(f\"\\n  输入 /test-all --resume 恢复测试，或忽略则重新开始。\")
 " 2>/dev/null || echo "  (state.json 解析失败)"
 fi
+
+# 委托任务扫描 (2026-08-03 集成: 跨会话协调者跟踪)
+# 背景: session #10 协调者未及时发现 worker 完成
+# 原理: 派工时写 .remember/state/delegated-tasks.json，session-start 扫描历史 worker_done
+# 详见 .claude/plans/2026-08-03-fix-delegate-coordinator-detection.md
+if [ -f ".claude/scripts/check-delegated-tasks.sh" ]; then
+  bash .claude/scripts/check-delegated-tasks.sh 2>/dev/null || true
+fi

@@ -23,7 +23,7 @@ fi
 export PYTHONIOENCODING=utf-8
 
 STATE_FILE=".remember/state/delegated-tasks.json"
-INBOX_LIMIT=100
+INBOX_LIMIT=${INBOX_LIMIT:-100}
 REPORT_FILE=".remember/state/delegated-scan-$(date +%Y%m%d-%H%M%S).json"
 
 # 1. 状态文件不存在 -> 直接退出
@@ -84,7 +84,8 @@ for task in state["tasks"]:
         try:
             log = subprocess.check_output(
                 ["git", "log", "--oneline", "-10", "--", f],
-                text=True, stderr=subprocess.DEVNULL
+                text=True, stderr=subprocess.DEVNULL,
+                encoding="utf-8", errors="replace"
             )
             commits = [line.split()[0] for line in log.splitlines() if line.strip()]
             if commits:
