@@ -85,15 +85,15 @@
           Object.assign(option, cloneDeep(props.option));
         }
         //图例类型
-        let typeArr = Array.from(new Set(props.chartData.map((item) => item.type)));
+        let typeArr = Array.from(new Set(props.chartData.map((item: any) => item.type)));
         //轴数据
-        let yAxisData = Array.from(new Set(props.chartData.map((item) => item.name)));
+        let yAxisData = Array.from(new Set(props.chartData.map((item: any) => item.name)));
         let seriesData = [];
         typeArr.forEach((type) => {
           let obj = { name: type, type: props.type, stack: 'total' };
-          let chartArr = props.chartData.filter((item) => type === item.type);
+          let chartArr = props.chartData.filter((item: any) => type === item.type);
           //data数据
-          obj['data'] = chartArr.map((item) => item.value);
+          obj['data'] = chartArr.map((item: any) => item.value);
           seriesData.push(obj);
         });
         option.series = seriesData;

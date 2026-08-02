@@ -71,9 +71,9 @@
           Object.assign(option, cloneDeep(props.option));
         }
         //图例类型
-        let typeArr = Array.from(new Set(props.chartData.map((item) => item.type)));
+        let typeArr = Array.from(new Set(props.chartData.map((item: any) => item.type)));
         //轴数据
-        let xAxisData = Array.from(new Set(props.chartData.map((item) => item.name)));
+        let xAxisData = Array.from(new Set(props.chartData.map((item: any) => item.name)));
         let seriesData = [];
         typeArr.forEach((type) => {
           let obj: any = { name: type, type: props.type };
@@ -85,7 +85,7 @@
           // 代码逻辑说明: [issues/613] LineMulti 在数据不对齐时，横坐标计算错误
           let data = [];
           xAxisData.forEach((x) => {
-            let dataArr = props.chartData.filter((item) => type === item.type && item.name == x);
+            let dataArr = props.chartData.filter((item: any) => type === item.type && item.name == x);
             if (dataArr && dataArr.length > 0) {
               data.push(dataArr[0].value);
             } else {

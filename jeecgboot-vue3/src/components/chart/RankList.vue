@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, PropType } from 'vue';
   export default defineComponent({
     name: 'RankList',
     props: {
@@ -20,10 +20,12 @@
         type: String,
         default: '',
       },
+      // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 6 list propType 断言（消除 2 个 TS18046）-----------
       list: {
-        type: Array,
+        type: Array as PropType<any[]>,
         default: null,
       },
+      // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 6 list 断言-----------
       height: {
         type: Number,
         default: null,

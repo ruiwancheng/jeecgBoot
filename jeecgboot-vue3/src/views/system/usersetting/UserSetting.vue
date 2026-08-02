@@ -2,7 +2,7 @@
   <ScrollContainer>
     <div ref="wrapperRef" class="user-account-setting" :class="[prefixCls]">
       <Tabs tab-position="left" :tabBarStyle="tabBarStyle" @tabClick="componentClick" v-model:activeKey="activeKey">
-        <template v-for="item in componentList" :key="item.key">
+        <template v-for="item in (componentList as any[])" :key="item.key">
           <TabPane>
             <template #tab>
                 <span style="display:flex;align-items: center;cursor: pointer">

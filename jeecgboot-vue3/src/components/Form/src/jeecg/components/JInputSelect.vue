@@ -8,7 +8,7 @@
         v-model:value="selectVal"
         @change="handleSelectChange"
       >
-        <a-select-option v-for="item in options" :key="item.value">{{ item.label }}</a-select-option>
+        <a-select-option v-for="item in (options as any[])" :key="item.value">{{ item.label }}</a-select-option>
       </a-select>
       <a-input v-bind="$attrs" :placeholder="inputPlaceholder" v-model:value="inputVal" @change="handleInputChange" />
       <a-select
@@ -19,7 +19,7 @@
         @change="handleSelectChange"
         :style="{width:props.selectWidth}"
       >
-        <a-select-option v-for="item in options" :key="item.value">{{ item.label }}</a-select-option>
+        <a-select-option v-for="item in (options as any[])" :key="item.value">{{ item.label }}</a-select-option>
       </a-select>
     </a-input-group>
   </div>
@@ -51,7 +51,7 @@
     emits(val);
   };
   const setSelectValByInputVal = (val) => {
-    const findItem = props.options.find((item) => item.value === val);
+    const findItem = props.options.find((item: any) => item.value === val);
     if (findItem) {
       selectVal.value = val;
     } else {

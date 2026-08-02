@@ -102,7 +102,7 @@ export const formSchema: FormSchema[] = [
             if (values) {
               return new Promise((resolve, reject) => {
                 isRoleExist({ id: model.id, roleCode: value })
-                  .then((res) => {
+                  .then((res: any) => {
                     res.success ? resolve() : reject(res.message || '校验失败');
                   })
                   .catch((err) => {

@@ -61,11 +61,11 @@
           Object.assign(option, cloneDeep(props.option));
         }
         //图例类型
-        let typeArr = Array.from(new Set(props.chartData.map((item) => item.type)));
+        let typeArr = Array.from(new Set(props.chartData.map((item: any) => item.type)));
         //雷达数据
         let indicator = Array.from(
           new Set(
-            props.chartData.map((item) => {
+            props.chartData.map((item: any) => {
               let { name, max } = item;
               return { name, max };
             })
@@ -75,8 +75,8 @@
         let data = [];
         typeArr.forEach((type) => {
           let obj = { name: type };
-          let chartArr = props.chartData.filter((item) => type === item.type);
-          obj['value'] = chartArr.map((item) => item.value);
+          let chartArr = props.chartData.filter((item: any) => type === item.type);
+          obj['value'] = chartArr.map((item: any) => item.value);
           //data数据
           data.push(obj);
         });

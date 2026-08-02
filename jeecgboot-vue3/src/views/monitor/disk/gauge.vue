@@ -69,8 +69,8 @@
   });
 
   function initCharts() {
-    option.series[0].data[0].name = props.data.name;
-    option.series[0].data[0].value = props.data.restPPT;
+    option.series[0].data[0].name = (props.data as any).name;
+    option.series[0].data[0].value = (props.data as any).restPPT;
     setOptions(option);
   }
 

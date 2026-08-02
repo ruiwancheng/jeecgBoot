@@ -121,18 +121,18 @@
         //匹配popup设置的回调值
         let values = {};
         let labels = []
-        for (let item of fieldConfig) {
-          let val = rows.map((row) => row[item.source]);
+        for (let item: any of fieldConfig) {
+          let val = rows.map((row: any) => row[item.source]);
           // 代码逻辑说明: 【QQYUN-7535】数组只有一个且是number类型，join会改变值的类型为string
           val = val.length == 1 ? val[0] : val.join(',');
-          item.target.split(',').forEach((target) => {
+          item.target.split(',').forEach((target: any) => {
             values[target] = val;
           });
 
           if (props.inSearch) {
             // 处理显示值
             if (item.label) {
-              let txt = rows.map((row) => row[item.label]);
+              let txt = rows.map((row: any) => row[item.label]);
               txt = txt.length == 1 ? txt[0] : txt.join(',');
               labels.push(txt);
             } else {

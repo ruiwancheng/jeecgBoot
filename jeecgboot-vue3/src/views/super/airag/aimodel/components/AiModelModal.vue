@@ -198,7 +198,7 @@
         if (val) {
           try {
             val = JSON.stringify(JSON.parse(val), null, 2);
-          } catch (e) {}
+          } catch (e: any) {}
         }
         extraParamsTemp.value = val;
         extraParamsVisible.value = true;
@@ -212,7 +212,7 @@
         if (val) {
           try {
             JSON.parse(val);
-          } catch (e) {
+          } catch (e: any) {
             $message.error('JSON格式不正确，请检查');
             return;
           }
@@ -384,7 +384,7 @@
           if (values.extraParams) {
             try {
               params.extraParams = JSON.parse(values.extraParams);
-            } catch(e) {}
+            } catch (e: any) {}
           }
           if (Object.keys(params).length > 0) {
             values.modelParams = JSON.stringify(params);
@@ -407,7 +407,7 @@
             closeModal();
             emit('success');
           }
-        }catch(e){
+        }catch (e: any){
           if(e.hasOwnProperty('errorFields')){
             activeKey.value = 1;
           }
@@ -449,7 +449,7 @@
           if (values.extraParams) {
             try {
               params.extraParams = JSON.parse(values.extraParams);
-            } catch(e) {}
+            } catch (e: any) {}
           }
           if (Object.keys(params).length > 0) {
             values.modelParams = JSON.stringify(params);
@@ -468,7 +468,7 @@
             modelActivate.value = true;
             await save();
           });
-        } catch (e) {
+        } catch (e: any) {
           if (e.hasOwnProperty('errorFields')) {
             activeKey.value = 1;
           }

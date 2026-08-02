@@ -71,10 +71,10 @@
         if (props.option) {
           Object.assign(option, cloneDeep(props.option));
         }
-        let seriesData = props.chartData.map((item) => {
+        let seriesData = props.chartData.map((item: any) => {
           return item.value;
         });
-        let xAxisData = props.chartData.map((item) => {
+        let xAxisData = props.chartData.map((item: any) => {
           return item.name;
         });
         option.series[0].data = seriesData;

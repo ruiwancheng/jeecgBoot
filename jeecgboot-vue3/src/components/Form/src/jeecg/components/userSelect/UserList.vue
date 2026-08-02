@@ -122,7 +122,7 @@
           return;
         }
         let idList = props.selectedIdList;
-        for (let item of arr1) {
+        for (let item: any of arr1) {
           if (idList.indexOf(item.id) >= 0) {
             checkStatus[item.id] = true;
           } else {

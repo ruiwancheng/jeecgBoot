@@ -419,7 +419,7 @@
           $ls.remove(REMEMBER_USERNAME_KEY)
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       notification.error({
         message: t('sys.api.errorTip'),
         description: error.message || t('sys.login.networkExceptionMsg'),
@@ -458,7 +458,7 @@
           duration: 3,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       notification.error({
         message: t('sys.api.errorTip'),
         description: error.message || t('sys.login.networkExceptionMsg'),

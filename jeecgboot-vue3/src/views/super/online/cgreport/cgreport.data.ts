@@ -97,7 +97,7 @@ export const formSchema: FormSchema[] = [
                 dataId: model.id,
               };
               duplicateCheckDelay(params)
-                .then((res) => {
+                .then((res: any) => {
                   res.success ? resolve() : reject('报表编码已存在!');
                 })
                 .catch((err) => {

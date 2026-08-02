@@ -160,7 +160,7 @@
           duration: 3,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       notification.error({
         message: t('sys.api.errorTip'),
         description: error.message || t('sys.api.networkExceptionMsg'),

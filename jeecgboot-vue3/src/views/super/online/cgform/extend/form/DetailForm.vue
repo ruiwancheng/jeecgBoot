@@ -1,7 +1,7 @@
 <template>
   <div :class="formContainerClass">
     <a-row>
-      <a-col v-for="(item, index) in schemas" :key="index" :span="getItemSpan(item)">
+      <a-col v-for="(item, index) in (schemas as any[])" :key="index" :span="getItemSpan(item)">
         <template v-if="item.hidden"></template>
         <div v-else class="detail-item">
           <div class="item-title" :class="getLabelWidthClass(item)" :title="item.label"> {{ filterLable(item) }}： </div>

@@ -116,7 +116,7 @@ export const departRoleModalFormSchema: FormSchema[] = [
                 dataId: model.id,
               };
               duplicateCheckDelay(params)
-                .then((res) => {
+                .then((res: any) => {
                   res.success ? resolve() : reject(res.message || '校验失败');
                 })
                 .catch((err) => {

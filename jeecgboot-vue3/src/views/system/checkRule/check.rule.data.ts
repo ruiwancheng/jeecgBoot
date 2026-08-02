@@ -81,7 +81,7 @@ export const formSchema: FormSchema[] = [
                 dataId: model.id,
               };
               duplicateCheckDelay(params)
-                .then((res) => {
+                .then((res: any) => {
                   res.success ? resolve() : reject('规则编码已存在!');
                 })
                 .catch((err) => {
@@ -133,7 +133,7 @@ export const checkRuleInput: FormSchema[] = [
               if (ruleCode && value) {
                 /*console.log({ruleCode,value})*/
                 validateCheckRule(ruleCode, value)
-                  .then((res) => {
+                  .then((res: any) => {
                     //console.log(1233, res)
                     res['success'] ? resolve() : reject(res['message']);
                   })
