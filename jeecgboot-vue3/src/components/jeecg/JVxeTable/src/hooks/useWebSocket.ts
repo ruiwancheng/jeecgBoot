@@ -7,7 +7,7 @@ import { isArray } from '/@/utils/is';
 import { getToken } from '/@/utils/auth';
 
 // vxe socket
-const vs = {
+const vs: any = {
   // 页面唯一 id，用于标识同一用户，不同页面的websocket
   pageId: buildUUID(),
   // webSocket 对象
@@ -31,13 +31,13 @@ const vs = {
     timeout: 6000,
     timeoutTimer: -1,
     clear() {
-      clearTimeout(this.timeoutTimer);
+      clearTimeout(vs.heartCheck.timeoutTimer);
       return this;
     },
     start() {
       vs.sendMessage(vs.constants.TYPE_HB, '');
       // 如果超过一定时间还没重置，说明后端主动断开了
-      this.timeoutTimer = window.setTimeout(() => {
+      vs.heartCheck.timeoutTimer = window.setTimeout(() => {
         vs.reconnect();
       }, this.timeout);
       return this;

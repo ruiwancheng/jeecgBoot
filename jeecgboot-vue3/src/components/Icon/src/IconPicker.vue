@@ -109,7 +109,7 @@
     clearSelect: propTypes.bool.def(false),
     allowClear: propTypes.bool.def(false),
     iconPrefixSave: propTypes.bool.def(true),
-  });
+  } as any);
 
   const emit = defineEmits(['change', 'update:value']);
 
