@@ -40,7 +40,7 @@
         <TableAction :actions="getTableAction(record)" :dropDownActions="getDropDownAction(record)"/>
       </template>
       <!--字段回显插槽-->
-      <template v-slot:bodyCell="{ column, record, , text }">
+      <template v-slot:bodyCell="{ column, record, text }">
         <template v-if="column.dataIndex === 'requestUrl'">
           <a @click="handleCopyUrl(record)" title="点击复制完整接口地址">{{ text }}</a>
         </template>

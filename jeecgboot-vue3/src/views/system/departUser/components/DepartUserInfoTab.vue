@@ -46,7 +46,7 @@
   import { userInfoColumns, userInfoSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
 
-  const  = inject('prefixCls');
+  const _ = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -102,7 +102,7 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   watch(
     () => props.data,

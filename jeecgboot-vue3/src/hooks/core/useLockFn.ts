@@ -2,7 +2,7 @@ import { ref, unref } from 'vue';
 
 export function useLockFn<P extends any[] = any[], V extends any = any>(fn: (...args: P) => Promise<V>) {
   const lockRef = ref(false);
-  return async function (...args: P) {
+  return async function _(...args: P) {
     if (unref(lockRef)) return;
     lockRef.value = true;
     try {

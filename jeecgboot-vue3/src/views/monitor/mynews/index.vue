@@ -38,10 +38,10 @@ import {ref, onMounted, unref} from 'vue';
   import { getToken } from '/@/utils/auth';
   import { useModal } from '/@/components/Modal';
   import { useGlobSetting } from '/@/hooks/setting';
-  const  = useGlobSetting();
+  const _ = useGlobSetting();
   const { createMessage } = useMessage();
   const checkedKeys = ref<Array<string | number>>([]);
-  const  = ref({});
+  const _ = ref({});
   const searchInfo = { logType: '1' };
   const [register, { openModal: openDetail }] = useModal();
   import { useListPage } from '/@/hooks/system/useListPage';
@@ -50,7 +50,7 @@ import {ref, onMounted, unref} from 'vue';
   import { useAppStore } from '/@/store/modules/app';
   import { useMessageHref } from '/@/views/system/message/components/useSysMessage';
   const appStore = useAppStore();
-  const  = useRouter();
+  const _ = useRouter();
   const { currentRoute } = useRouter();
   const { goPage, currentModal, modalRegCache, bindParams } = useMessageHref();
   // 代码逻辑说明: 【QQYUN-13058】我的消息区分类型且支持根据url参数查询类型
@@ -137,7 +137,7 @@ import {ref, onMounted, unref} from 'vue';
 
   }
   // 日志类型
-  function (key) {
+  function _(key) {
     searchInfo.logType = key;
     reload();
   }
@@ -150,7 +150,7 @@ import {ref, onMounted, unref} from 'vue';
   /**
    * 选择事件
    */
-  function (selectedRowKeys: (string | number)[]) {
+  function _(selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
 

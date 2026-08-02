@@ -135,7 +135,7 @@
       // 初始化 WebSocket
       function initWebSocket() {
         let userId = unref(userStore.getUserInfo).id;
-        let  = getToken();
+        let _ = getToken();
         // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
         let url = glob.domainUrl?.replace('https://', 'wss://').replace('http://', 'ws://') + '/websocket/' + userId;
         connectWebSocket(url);

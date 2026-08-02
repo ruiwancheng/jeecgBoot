@@ -111,7 +111,7 @@ export function scriptErrorHandler(event: Event | string, source?: string, linen
 function registerPromiseErrorHandler() {
   window.addEventListener(
     'unhandledrejection',
-    function (event) {
+    function _(event) {
       const errorLogStore = useErrorLogStoreWithOut();
       errorLogStore.addErrorLogInfo({
         type: ErrorTypeEnum.PROMISE,
@@ -134,7 +134,7 @@ function registerResourceErrorHandler() {
   // Monitoring resource loading error(img,script,css,and jsonp)
   window.addEventListener(
     'error',
-    function (e: Event) {
+    function _(e: Event) {
       const target = e.target ? e.target : (e.srcElement as any);
       const errorLogStore = useErrorLogStoreWithOut();
       errorLogStore.addErrorLogInfo({

@@ -37,7 +37,7 @@
     },
     emits: ['options-change', 'change', 'select', 'update:value'],
     setup(props, { emit,  }) {
-      const  = ref<any[]>();
+      const _ = ref<any[]>();
       //注册model
       const [regModal, { openModal }] = useModal();
       //下拉框选项值

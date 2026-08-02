@@ -108,7 +108,7 @@
   /**
    * 详情
    */
-  async function (record: Recordable) {
+  async function _(record: Recordable) {
     openModal(true, {
       record,
       isUpdate: true,

@@ -9,7 +9,7 @@
   import { formDescSchema } from '../role.data';
   import { Description, _useDescription } from '/@/components/Description/index';
   const emit = defineEmits(['register']);
-  const  = useAttrs();
+  const _ = useAttrs();
   const roleData = ref({});
   const [registerDrawer, { setDrawerProps,  }] = useDrawerInner(async (data) => {
     setDrawerProps({ confirmLoading: false });

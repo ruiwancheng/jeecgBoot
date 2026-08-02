@@ -658,7 +658,7 @@ export function useSuperQuery(props){
   //根据字段的order重新排序
   function orderField(data){
     let arr = data.children || data;
-    arr.sort(function (a, b) {
+    arr.sort(function _(a, b) {
       return a.order - b.order
     });
   }

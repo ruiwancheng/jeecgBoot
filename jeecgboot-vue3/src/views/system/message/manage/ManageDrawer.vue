@@ -12,7 +12,7 @@
   // 声明 emits
   const emit = defineEmits(['register']);
   // 注册 form
-  const [registerForm, { resetFields, setFieldsValue, ,  }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue,  }] = useForm({
     schemas: formSchemas,
     showActionButtonGroup: false,
   });

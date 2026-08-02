@@ -103,12 +103,12 @@
   import { initDictOptions } from '/@/utils/dict';
 
   const { handleExportXls, handleImportXls } = useMethods();
-  const  = ref<boolean>(false);
+  const _ = ref<boolean>(false);
   const queryParam = ref<any>({});
   const loading = ref<boolean>(false);
   const dictOptions = ref<any>([]);
   const oneProtogenesisModal = ref();
-  const  = { 'X-Access-Token': getToken() };
+  const _ = { 'X-Access-Token': getToken() };
   //表头
   const columns = ref<any>([
     {
@@ -144,7 +144,7 @@
       title: '日期',
       align: 'center',
       dataIndex: 'riqi',
-      customRender: function ({ text }) {
+      customRender: function _({ text }) {
         return !text ? '' : text.length > 10 ? text.substr(0, 10) : text;
       },
     },
@@ -259,7 +259,7 @@
   /**
    * 导出excel
    */
-  function (title) {
+  function _(title) {
     let paramsForm = getQueryParams();
     if (selectedRowKeys.value && selectedRowKeys.value.length > 0) {
       paramsForm['selections'] = selectedRowKeys.join(',');
@@ -270,7 +270,7 @@
   /**
    * 导入excel
    */
-  function (file) {
+  function _(file) {
     handleImportXls(file, Api.importExcel, '').then(() => {
       handleSuccess();
     });
@@ -292,7 +292,7 @@
    */
   function getQueryField() {
     let str = 'id,';
-    columns.value.forEach(function (value) {
+    columns.value.forEach(function _(value) {
       str += ',' + value.dataIndex;
     });
     return str;
@@ -327,7 +327,7 @@
   }
 
   //查询
-  function () {
+  function _() {
     loadData(1);
     selectedRowKeys.value = [];
     selectionRows.value = [];
@@ -336,14 +336,14 @@
   /**
    * 查询区域展开关闭
    */
-  function () {
+  function _() {
     toggleSearchStatus.value = !toggleSearchStatus.value;
   }
 
   /**
    * 重置按钮
    */
-  function () {
+  function _() {
     queryParam.value = {};
     loadData(1);
   }

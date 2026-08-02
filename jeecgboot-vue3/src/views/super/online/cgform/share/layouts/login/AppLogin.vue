@@ -115,8 +115,8 @@
   //方式 判端登录、注册、忘记密码等
   const type = ref<string>('login');
   //手机号登录表单
-  const  = ref();
-  const  = reactive<any>({
+  const _ = ref();
+  const _ = reactive<any>({
     phone: '',
     smscode: '',
   });

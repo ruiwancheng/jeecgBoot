@@ -27,16 +27,16 @@ export function connectWebSocket(url: string) {
     },
     protocols: [token],
     // 代码逻辑说明: [issues/6662] 演示系统socket总断，换一个写法
-    onConnected: function (ws) {
+    onConnected: function _(ws) {
       console.log('[WebSocket] 连接成功', ws);
     },
-    onDisconnected: function (ws, event) {
+    onDisconnected: function _(ws, event) {
       console.log('[WebSocket] 连接断开：', ws, event);
     },
-    onError: function (ws, event) {
+    onError: function _(ws, event) {
       console.log('[WebSocket] 连接发生错误: ', ws, event);
     },
-    onMessage: function (_ws, e) {
+    onMessage: function _(_ws, e) {
       console.debug('[WebSocket] -----接收消息-------', e.data);
       try {
         // 代码逻辑说明: 【issues/1161】前端websocket因心跳导致监听不起作用---
@@ -71,19 +71,19 @@ export function connectWebSocket(url: string) {
   // }
 }
 
-function () {
+function _() {
   console.log('[WebSocket] 连接成功');
 }
 
-function (e) {
+function _(e) {
   console.log('[WebSocket] 连接断开：', e);
 }
 
-function (e) {
+function _(e) {
   console.log('[WebSocket] 连接发生错误: ', e);
 }
 
-function (e) {
+function _(e) {
   console.debug('[WebSocket] -----接收消息-------', e.data);
   try {
     // 代码逻辑说明: 【issues/1161】前端websocket因心跳导致监听不起作用---

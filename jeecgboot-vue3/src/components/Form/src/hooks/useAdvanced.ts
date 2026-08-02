@@ -18,7 +18,7 @@ interface UseAdvancedContext {
   defaultValueRef: Ref<Recordable>;
 }
 
-export default function ({ advanceState, emit, getProps, getSchema, formModel, defaultValueRef }: UseAdvancedContext) {
+export default function _({ advanceState, emit, getProps, getSchema, formModel, defaultValueRef }: UseAdvancedContext) {
   const { realWidthRef, screenEnum, screenRef } = useBreakpoint();
 
   const getEmptySpan = computed((): number => {

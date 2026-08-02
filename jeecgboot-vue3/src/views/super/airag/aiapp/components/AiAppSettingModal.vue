@@ -708,7 +708,7 @@
        */
       async function handleOk() {
         try {
-          let  = await validate();
+          let _ = await validate();
           setModalProps({ confirmLoading: true });
           formState.knowledgeIds = knowledgeIds.value;
           if(flowIds.value){

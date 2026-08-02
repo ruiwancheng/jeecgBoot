@@ -42,7 +42,7 @@
   const { createMessage } = useMessage();
   const [_registerModal, { openModal }] = useModal();
   const [registerPackMenuModal, { openModal: packModal }] = useModal();
-  const  = useUserStore();
+  const _ = useUserStore();
 
   // 列表页面公共参数、方法
   const { , tableContext } = useListPage({
@@ -118,7 +118,7 @@
   /**
    * 新增套餐包
    */
-  async function () {
+  async function _() {
     if (unref(selectedRowKeys).length > 1) {
       createMessage.warn('请选择一个');
       return;

@@ -189,7 +189,7 @@ export function mapTableTotalSummary(tableData: Recordable[], fieldKeys: string[
  */
 export function simpleDebounce(fn, delay = 100) {
   let timer: any | null = null;
-  return function () {
+  return function _() {
     let args = arguments;
     if (timer) {
       clearTimeout(timer);
@@ -337,7 +337,7 @@ export function findTree(treeList: any[], fn: Fn, childrenKey = 'children') {
 
 /** 获取 mapFormSchema 方法 */
 export function bindMapFormSchema<T>(spanMap, spanTypeDef: T) {
-  return function (s: FormSchema, spanType: T = spanTypeDef) {
+  return function _(s: FormSchema, spanType: T = spanTypeDef) {
     return merge(
       {
         disabledLabelWidth: true,

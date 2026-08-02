@@ -51,7 +51,7 @@ function hookWindowOpen() {
   // 保存原生方法引用
   const originFunc = window.open;
   // 重写window.open方法
-  window['open'] = function (url, windowName, windowFeatures) {
+  window['open'] = function _(url, windowName, windowFeatures) {
     url = typeof url === 'string' ? url.trim() : '';
     if (!url) {
       throw new Error('window.open: url is required');

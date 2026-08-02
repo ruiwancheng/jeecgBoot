@@ -22,7 +22,7 @@ export const columns: BasicColumn[] = [
     dataIndex: 'ruleDescription',
     width: 300,
     align: 'center',
-    customRender: function ({ text }) {
+    customRender: function _({ text }) {
       return render.renderTip(text, 30);
     },
   },

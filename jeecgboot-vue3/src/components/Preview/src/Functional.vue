@@ -110,7 +110,7 @@
         // 火狐浏览器没有onmousewheel事件，用DOMMouseScroll代替
         document.body.addEventListener('DOMMouseScroll', scrollFunc);
         // 禁止火狐浏览器下拖拽图片的默认事件
-        document.ondragstart = function () {
+        document.ondragstart = function _() {
           return false;
         };
       }

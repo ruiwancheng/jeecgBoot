@@ -160,7 +160,7 @@
       }
       // 全选
       function onSelectAll() {
-        const selectFun = function (arr) {
+        const selectFun = function _(arr) {
           for (let node of arr) {
             checkedKeys.value.push(node.key);
             if (node.children && node.children.length > 0) {

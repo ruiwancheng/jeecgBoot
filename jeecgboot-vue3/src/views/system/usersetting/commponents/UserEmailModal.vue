@@ -28,7 +28,7 @@ import { Form } from "ant-design-vue";
 import { _updateMobile, userEdit } from "../UserSetting.api";
 import { duplicateCheck } from "/@/views/system/user/user.api";
 
-const  = useUserStore();
+const _ = useUserStore();
 const { createMessage } = useMessage();
 const formState = reactive<Record<string, any>>({
   email:'',
@@ -38,7 +38,7 @@ const formRef = ref();
 const validatorRules: Record<string, Rule[]> = {
   email: [{...rules.duplicateCheckRule("sys_user",'email',formState,{ label:'邮箱' })[0]},{ required: true, type: 'email', message: '邮箱格式不正确' }],
 };
-const  = Form.useForm;
+const _ = Form.useForm;
 const title = ref<string>('');
 const emit = defineEmits(['register','success']);
 const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {

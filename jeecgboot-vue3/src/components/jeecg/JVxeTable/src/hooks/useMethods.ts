@@ -276,7 +276,7 @@ export function useMethods(props: JVxeTableProps, { emit }, data: JVxeDataProps,
   }
 
   // 设置 data.scrolling 防抖模式
-  const closeScrolling = simpleDebounce(function () {
+  const closeScrolling = simpleDebounce(function _() {
     data.scrolling.value = false;
   }, 100);
 

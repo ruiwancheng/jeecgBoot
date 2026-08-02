@@ -78,7 +78,7 @@
       const docType = ref<string>('');
       const showWebContent = computed(() => docType.value === 'web' && isUpdate.value && webContentText.value);
       //表单配置
-      const [registerForm, { resetFields, setFieldsValue, validate, ,  }] = useForm({
+      const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
         schemas: docTextSchema,
         showActionButtonGroup: false,
         layout: 'vertical',

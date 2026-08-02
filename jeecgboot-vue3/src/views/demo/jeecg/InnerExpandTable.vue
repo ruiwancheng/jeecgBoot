@@ -91,7 +91,7 @@
       title: '性别',
       align: 'center',
       dataIndex: 'sex',
-      customRender: function (text) {
+      customRender: function _(text) {
         //console.log(typeof  text )
         //console.log(text)
         if (text.value == '1') {

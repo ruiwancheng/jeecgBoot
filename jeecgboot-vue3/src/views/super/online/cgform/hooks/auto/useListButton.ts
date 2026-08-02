@@ -431,7 +431,7 @@ export function useListButton(onlineTableContext, extConfigJson: Ref<ExtConfigTy
       return false;
     } else {
       let idSet: any = [];
-      arr.forEach(function (val) {
+      arr.forEach(function _(val) {
         let temp = val;
         //树形列表 key后面会带有_loadChild
         if (temp && temp.endsWith('_loadChild')) {

@@ -53,7 +53,7 @@
   });
 
   // 是否显示引用知识库
-  const  = computed(() => {
+  const _ = computed(() => {
     const { loading, referenceKnowledge } = props;
     if (loading) {
       return false;
@@ -147,7 +147,7 @@
   /**
    * 图片隐藏
    */
-  function () {
+  function _() {
     amplifyImage.value = false;
     imageUrl.value = '';
   }

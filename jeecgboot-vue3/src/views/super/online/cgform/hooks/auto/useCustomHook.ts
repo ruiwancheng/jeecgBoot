@@ -66,14 +66,14 @@ export function useCustomHook(otherExports?: Recordable, context?: any) {
     
     //update-begin-author:taoyan date:2023-5-15 for: issues/516 自定义按钮_hook后的参数row未定义问题（参见#410） #516
     if(row){
-      const executeCode = `return function (row, customImport, ${exportKey}) {"use strict"; ${code}}`;
+      const executeCode = `return function _(row, customImport, ${exportKey}) {"use strict"; ${code}}`;
       console.group('executeJsEnhanced');
       console.log(executeCode);
       console.groupEnd();
       const fun = new Function(executeCode)();
       fun.call(context, row, doImport, doExport);
     }else{
-      const executeCode = `return function (customImport, ${exportKey}) {"use strict"; ${code}}`;
+      const executeCode = `return function _(customImport, ${exportKey}) {"use strict"; ${code}}`;
       console.group('executeJsEnhanced');
       console.log(executeCode);
       console.groupEnd();

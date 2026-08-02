@@ -208,7 +208,7 @@
   }
 
   // 切换父子关联
-  async function (flag) {
+  async function _(flag) {
     checkStrictly.value = flag;
     await nextTick();
     checkedKeys.value = basicTree.value.getCheckedKeys();

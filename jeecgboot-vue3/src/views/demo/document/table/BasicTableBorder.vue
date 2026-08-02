@@ -77,7 +77,7 @@
   /**
    * 操作栏
    */
-  function (record): ActionItem[] {
+  function _(record): ActionItem[] {
     return [
       {
         label: '编辑',

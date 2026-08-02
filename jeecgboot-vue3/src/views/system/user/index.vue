@@ -120,7 +120,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload, , clearSelectedRowKeys }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, clearSelectedRowKeys }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
 
   /**
    * 新增事件
@@ -245,7 +245,7 @@
   /**
    *同步钉钉和微信回调
    */
-  function ({ isToLocal }) {
+  function _({ isToLocal }) {
     // 同步到本地时刷新下数据
     if (isToLocal) {
       reload();

@@ -182,7 +182,7 @@
     printFrame.style.border = 'none';
     printFrame.style.left = '-9999px';
 
-    printFrame.onload = function () {
+    printFrame.onload = function _() {
       const frameDoc = printFrame.contentDocument || printFrame.contentWindow?.document;
       if (!frameDoc) return;
 

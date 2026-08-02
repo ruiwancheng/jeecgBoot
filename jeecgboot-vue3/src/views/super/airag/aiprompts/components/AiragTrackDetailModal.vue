@@ -77,7 +77,7 @@ const toggleFormat = () => {
 };
 
 // 复制JSON内容
-const  = async () => {
+const _ = async () => {
   try {
     const content = isFormatted.value ? formattedJson.value : trackContent.value;
     await navigator.clipboard.writeText(content);

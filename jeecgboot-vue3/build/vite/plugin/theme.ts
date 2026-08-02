@@ -43,7 +43,7 @@ export function configThemePlugin(isBuild: boolean): PluginOption[] {
     },
     colorVariables: [...getThemeColors(), ...colors],
   });
-  vite_theme_plugin.forEach(function (item) {
+  vite_theme_plugin.forEach(function _(item) {
     //对vite:theme插件特殊配置
     if ('vite:theme' === item.name) {
       // 打包时去除enforce: "post"，vite 2.6.x适配，否则生成app-theme-style为空，因为async transform(code, id) {的code没有正确获取

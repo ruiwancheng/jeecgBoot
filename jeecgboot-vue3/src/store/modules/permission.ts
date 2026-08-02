@@ -248,7 +248,7 @@ export const usePermissionStore = defineStore({
             //         title: '检测提示',
             //         content:
             //           '当前菜单表是 <b>Vue2版本</b>，导致菜单加载异常!<br>点击确认，切换到Vue3版菜单！',
-            //         onOk:function () {
+            //         onOk:function _() {
             //           switchVue3Menu();
             //           location.reload();
             //         }

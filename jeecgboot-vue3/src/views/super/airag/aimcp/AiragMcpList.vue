@@ -287,7 +287,7 @@ function getToolCount(metadata: any): number {
 }
 
 // 类型图标映射
-function (type?: string) {
+function _(type?: string) {
   switch (type) {
     case 'sse':
       return 'ant-design:thunderbolt-outlined';

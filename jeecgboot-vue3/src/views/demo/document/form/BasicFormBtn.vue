@@ -50,7 +50,7 @@
   /**
    * 重置按钮点击事件
    */
-  async function () {
+  async function _() {
     console.log('重置按钮点击事件，此处处理重置按钮的逻辑');
   }
 

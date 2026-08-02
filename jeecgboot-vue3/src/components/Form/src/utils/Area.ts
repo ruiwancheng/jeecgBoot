@@ -98,7 +98,7 @@ class Area {
 const jeecgAreaData = new Area();
 
 // 根据code找文本
-const getAreaTextByCode = function (code) {
+const getAreaTextByCode = function _(code) {
   let index = 3;
   // 代码逻辑说明: 判断code是否是多code逗号分割的字符串，是的话，获取最后一位的code ---
   if (code && code.includes(',')) {
@@ -115,7 +115,7 @@ const getAreaTextByCode = function (code) {
  * @param includeParent 是否返回父级路径。默认 false 只返回最后一级（如「长治市」），true 返回完整路径（如「山西省/长治市」）
  * @param level 层级：1=省，2=市，3=县。传入时作为 index 使用，不传则从 code 推断
  */
-const getAreaTextByCodeAnyLevel = function (code: string | number | undefined, includeParent = false, level?: 1 | 2 | 3): string {
+const getAreaTextByCodeAnyLevel = function _(code: string | number | undefined, includeParent = false, level?: 1 | 2 | 3): string {
   if (!code) return '';
   const codeStr = String(code).trim();
   if (!codeStr.length) return '';

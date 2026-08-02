@@ -14,7 +14,7 @@ export function useDragNotice() {
   //*********************************websocket配置begin******************************************
   const glob = useGlobSetting();
   const { push, currentRoute } = useRouter();
-  const  = useUserStore();
+  const _ = useUserStore();
   const : any = getCurrentInstance();
   // 初始化 WebSocket
   function initWebSocket() {

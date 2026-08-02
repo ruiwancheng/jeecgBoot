@@ -25,7 +25,7 @@ export function urlToBase64(url: string, mineType?: string): Promise<string> {
 
     const img = new Image();
     img.crossOrigin = '';
-    img.onload = function () {
+    img.onload = function _() {
       if (!canvas || !ctx) {
         return reject();
       }

@@ -56,7 +56,7 @@
       const glob = useGlobSetting();
       const dynamicNoticeProps = reactive<any>({ path: '', formData: {} });
       const [registerDetail, detailModal] = useModal();
-      const  = useRouter();
+      const _ = useRouter();
       // const listData = ref(tabListData);
       // const count = computed(() => {
       //   let count = 0;
@@ -90,7 +90,7 @@
       });
 
       const messageCount = ref<number>(0)
-      function (item) {
+      function _(item) {
         return {
           ...item,
           title: item.titile,

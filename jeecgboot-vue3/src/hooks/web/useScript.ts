@@ -16,14 +16,14 @@ export function useScript(opts: ScriptOptions) {
     onMounted(() => {
       script = document.createElement('script');
       script.type = 'text/javascript';
-      script.onload = function () {
+      script.onload = function _() {
         isLoading.value = false;
         success.value = true;
         error.value = false;
         resolve('');
       };
 
-      script.onerror = function (err) {
+      script.onerror = function _(err) {
         isLoading.value = false;
         success.value = false;
         error.value = true;

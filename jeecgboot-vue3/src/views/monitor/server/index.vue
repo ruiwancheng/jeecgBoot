@@ -45,7 +45,7 @@
   const lastUpdateTime = ref({});
   let textInfo = ref({});
   const { createMessage } = useMessage();
-  const  = ref<Array<string | number>>([]);
+  const _ = ref<Array<string | number>>([]);
 
   const searchInfo = { logType: '1' };
   const [registerTable, { reload }] = useTable({

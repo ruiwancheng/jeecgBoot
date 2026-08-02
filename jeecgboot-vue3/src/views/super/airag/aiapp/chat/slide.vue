@@ -90,7 +90,7 @@
   const props = defineProps(['dataSource', 'appData','source']);
   const emit = defineEmits(['save', 'click', 'reloadRight', 'prologue']);
   const inputRef = ref(null);
-  const  = useRouter();
+  const _ = useRouter();
   let inputValue = '';
   //新建聊天
   const handleCreate = () => {
@@ -131,7 +131,7 @@
     inputValue = item.title;
   };
   // 保存
-  const  = (item) => {
+  const _ = (item) => {
     item.isEdit = false;
     item.title = inputValue;
   };

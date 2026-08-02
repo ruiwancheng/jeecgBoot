@@ -328,7 +328,7 @@
           // update-end--author:liaozhiyang---date:20240517---for：【TV360X-98】label展示的文字必须和labelLength配置一致
         }
         // update-end--author:liaozhiyang---date:20231205---for：【QQYUN-7140】online label默认显示6个
-        arr.sort(function (a, b) {
+        arr.sort(function _(a, b) {
           return a.order - b.order;
         });
         let schemaArray = [];

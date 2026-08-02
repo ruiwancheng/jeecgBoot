@@ -39,14 +39,14 @@ const props = defineProps({
     formData: { type: Object, default: () => ({}) },
     formBpm: { type: Boolean, default: true },
   });
-  const  = Form.useForm;
+  const _ = Form.useForm;
   const emit = defineEmits(['register', 'ok']);
   const { createMessage } = useMessage();
   const confirmLoading = ref<boolean>(false);
   //认证ID
   const apiAuthId = ref<string>('');
   //表单验证
-  const  = reactive<any>({});
+  const _ = reactive<any>({});
   //api列表
   const apiList = ref<any>([]);
   //选中的值
@@ -63,7 +63,7 @@ const props = defineProps({
   const pageSizeOptions = ref<any>(['10', '20', '30']);
 
   // 表单禁用
-  const  = computed(() => {
+  const _ = computed(() => {
     if (props.formBpm === true) {
       if (props.formData.disabled === false) {
         return false;

@@ -48,7 +48,7 @@
   const loginLoading = ref<boolean>(false);
   //登录表单
   const loginPhoneRef = ref();
-  const  = reactive<any>({
+  const _ = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,
     checkKey: -1,
@@ -61,7 +61,7 @@
   const userStore = useUserStore();
   const emit = defineEmits(['login', 'login-success','bind-third-phone']);
   //记住我
-  const  = ref<boolean>(false);
+  const _ = ref<boolean>(false);
   //获取手机号的样式
   const geMobileClass = computed(() => {
     return formData.mobile != '' ? 'current-active' : '' || unref(activekey) === 'mobile' ? 'current-active' : '';

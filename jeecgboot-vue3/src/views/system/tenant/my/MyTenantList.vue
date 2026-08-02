@@ -50,7 +50,7 @@
   const [registerSelUserModal, { openModal: userOpenModal }] = useModal();
   const [registerTenUserModal, { openModal: tenUserOpenModal }] = useModal();
   const [registerPackModal, { openModal: packModal }] = useModal();
-  const  = useUserStore();
+  const _ = useUserStore();
 
   // 列表页面公共参数、方法
   const { , tableContext } = useListPage({
@@ -144,7 +144,7 @@
   /**
    * 新增产品包
    */
-  async function () {
+  async function _() {
     if (unref(selectedRowKeys).length > 1) {
       createMessage.warn('请选择一个');
       return;
@@ -159,7 +159,7 @@
   /**
    * 删除成功之后回调事件
    */
-  function () {
+  function _() {
     (selectedRowKeys.value = []) && reload();
   }
 

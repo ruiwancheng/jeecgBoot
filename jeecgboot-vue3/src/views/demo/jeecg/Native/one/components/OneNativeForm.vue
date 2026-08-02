@@ -428,7 +428,7 @@
   /**
    * popup成功回调事件
    */
-  function (values) {
+  function _(values) {
     Object.assign(formState, values);
   }
 

@@ -88,7 +88,7 @@
   const tipShow = ref<boolean>(false);
 
   // 列表页面公共参数、方法
-  const { , tableContext, ,  } = useListPage({
+  const { , tableContext,  } = useListPage({
     designScope: 'user-list',
     tableProps: {
       title: '租户用户列表',
@@ -109,7 +109,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload,  }, { rowSelection, , selectedRowKeys }] = tableContext;
+  const [registerTable, { reload,  }, { rowSelection, selectedRowKeys }] = tableContext;
 
   /**
    * 新增事件

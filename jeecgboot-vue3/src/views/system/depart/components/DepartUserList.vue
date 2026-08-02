@@ -31,7 +31,7 @@
   import { userColumns } from '@/views/system/depart/depart.data';
   import { linkDepartUserBatch } from '@/views/system/departUser/depart.user.api';
 
-  const  = inject('prefixCls');
+  const _ = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -85,7 +85,7 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   watch(
     () => props.data,
@@ -98,7 +98,7 @@
   const [registerSelUserModal, selUserModal] = useModal();
 
   // 清空选择的行
-  function () {
+  function _() {
     selectedRowKeys.value = [];
   }
 

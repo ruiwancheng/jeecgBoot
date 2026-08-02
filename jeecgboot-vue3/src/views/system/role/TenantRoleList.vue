@@ -50,7 +50,7 @@
   const [registerDesc, { openDrawer: openRoleDesc }] = useDrawer();
   
   // 列表页面公共参数、方法
-  const { , tableContext, ,  } = useListPage({
+  const { , tableContext,  } = useListPage({
     designScope: 'role-template',
     tableProps: {
       title: '租户角色列表',

@@ -95,7 +95,7 @@ export function useJvxeMethod(requestAddOrEdit, classifyIntoFormData, tableRefs,
   }
 
   /** not a array */
-  function (name) {
+  function _(name) {
     return `${name} 未定义或不是一个数组`;
   }
   return [handleChangeTabs, handleSubmit, requestSubTableData, formRef];

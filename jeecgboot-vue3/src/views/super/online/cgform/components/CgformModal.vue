@@ -212,7 +212,7 @@
       // 临时数据ID，不提交到后台
       let fieldTempIds: string[] = [];
       // 是否显示附表字段
-      let  = false;
+      let _ = false;
       // 是否已添加树表单字段
       let treeFieldAdded = false;
       // 已添加的树表单字段ID
@@ -504,7 +504,7 @@
       /** 添加树字段 */
       function addTreeNeedField() {
         if (!treeFieldAdded) {
-          let { dbTable, ,  } = tables;
+          let { dbTable,  } = tables;
           let treeFields = useTreeNeedFields();
           treeFields = treeFields.filter((item: any) => {
             let nameList = dbTable.value!.tableRef!.getTableData().map((o) => o.dbFieldName);

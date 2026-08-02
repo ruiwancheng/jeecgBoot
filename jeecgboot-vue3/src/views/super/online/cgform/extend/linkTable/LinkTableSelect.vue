@@ -66,7 +66,7 @@
   import { useDebounceFn } from '@vueuse/core';
   import placeholderImage from '/@/assets/images/placeholderImage.png';
   
-  const  = 10;
+  const _ = 10;
   
   export default {
     name: "LinkTableSelect",

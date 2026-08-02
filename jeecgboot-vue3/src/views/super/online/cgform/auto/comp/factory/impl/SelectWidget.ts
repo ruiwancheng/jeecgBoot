@@ -103,7 +103,7 @@ export default class SelectWidget extends IFormSchema {
 
   getSlots(componentProps: Recordable) {
     const {useDicColor} = componentProps;
-    return function () {
+    return function _() {
       return {
         option(option: Recordable) {
           const style: Recordable = {};

@@ -218,7 +218,7 @@
         detailData = temp;
         // 每次打开有js增强设置隐藏的，都要先置成初始化。
         detailFormSchemas.value.filter((item) => item.hidden).forEach((item) => (item.hidden = false));
-        Object.keys(fieldDisplayStatus).forEach(function (key) {
+        Object.keys(fieldDisplayStatus).forEach(function _(key) {
           delete fieldDisplayStatus[key];
         });
         handleEnhanceJS({ buttonCode: 'loaded' });

@@ -77,7 +77,7 @@
    * 创建规则
    * @param message
    */
-  function (message: string) {
+  function _(message: string) {
     return [
       {
         required: true,

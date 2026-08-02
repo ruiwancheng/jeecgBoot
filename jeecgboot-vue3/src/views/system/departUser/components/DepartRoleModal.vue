@@ -19,7 +19,7 @@
     // 当前部门ID
     departId: { require: true, type: String },
   });
-  const  = inject('prefixCls');
+  const _ = inject('prefixCls');
   // 当前是否是更新模式
   const isUpdate = ref<boolean>(true);
   // 当前的弹窗数据

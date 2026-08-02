@@ -60,9 +60,9 @@ export default defineComponent({
     //是否为vip
     const showVip = ref<boolean>(false);
     //vip编码
-    const  = ref<string>('');
+    const _ = ref<string>('');
     const router = useRouter();
-    const  = computed(()=>{
+    const _ = computed(()=>{
       if(showVip.value){
         return settingList;
       }

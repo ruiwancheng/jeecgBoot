@@ -31,7 +31,7 @@ export function useScrollTo({ el, to, duration = 500, callback }: ScrollToParams
   let currentTime = 0;
   duration = isUnDef(duration) ? 500 : duration;
 
-  const animateScroll = function () {
+  const animateScroll = function _() {
     if (!unref(isActiveRef)) {
       return;
     }

@@ -114,7 +114,7 @@
           message: '${title}不能重复',
         },
         {
-          handler({ cellValue, ,  }, callback, _target) {
+          handler({ cellValue,  }, callback, _target) {
             // cellValue 当前校验的值
             // callback(flag, message) 方法必须执行且只能执行一次
             //          flag = 是否通过了校验，不填写或者填写 null 代表不进行任何操作

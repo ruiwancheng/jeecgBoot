@@ -46,7 +46,7 @@ export function useThirdLogin() {
     thirdType.value = source;
     thirdLoginInfo.value = {};
     thirdLoginState.value = false;
-    let receiveMessage = function (event) {
+    let receiveMessage = function _(event) {
       let token = event.data;
       if (typeof token === 'string') {
         //如果是字符串类型 说明是token信息

@@ -48,7 +48,7 @@
   const { t } = useI18n();
 
   // 自定义菜单名称列渲染
-  columns[0].customRender = function ({ text, record }) {
+  columns[0].customRender = function _({ text, record }) {
     // date-begin--author:liaozhiyang---date:20250716---for：【issues/8317】默认首页菜单名称适配国际化报错
     let displayText = text;
     // 先处理国际化，避免在添加默认首页标记后影响国际化检查
@@ -142,7 +142,7 @@
   /**
    * 详情
    */
-  function (record) {
+  function _(record) {
     showFooter.value = false;
     openDrawer(true, {
       record,
@@ -190,7 +190,7 @@
     reloadDefIndex();
   }
 
-  function () {
+  function _() {
     // 演示默认展开所有表项
     nextTick(expandAll);
   }

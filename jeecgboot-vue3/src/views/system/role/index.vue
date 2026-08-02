@@ -137,7 +137,7 @@
   /**
    * 首页配置弹窗
    */
-  function (roleCode) {
+  function _(roleCode) {
     openIndexModal(true, { roleCode });
   }
   /**

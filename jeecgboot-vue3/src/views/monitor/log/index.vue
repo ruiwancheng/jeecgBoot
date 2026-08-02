@@ -100,7 +100,7 @@
   /**
    * 选择事件
    */
-  function (selectedRowKeys: (string | number)[]) {
+  function _(selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
 </script>

@@ -13,15 +13,15 @@ const PORT = 3300;
 
 const app = websockify(new Koa());
 
-app.ws.use(function (ctx, next) {
+app.ws.use(function _(ctx, next) {
   ctx.websocket.send('connection succeeded!');
   return next(ctx);
 });
 
 app.ws.use(
-  route.all('/test', function (ctx) {
+  route.all('/test', function _(ctx) {
     // ctx.websocket.send('Hello World');
-    ctx.websocket.on('message', function (message) {
+    ctx.websocket.on('message', function _(message) {
       // do something with the message from client
 
       if (message !== 'ping') {

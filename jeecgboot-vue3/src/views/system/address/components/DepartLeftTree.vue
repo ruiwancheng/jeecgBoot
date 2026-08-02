@@ -33,9 +33,9 @@
   import { Popconfirm } from 'ant-design-vue';
   import TreeIcon from "@/components/Form/src/jeecg/components/TreeIcon/TreeIcon.vue";
 
-  const  = inject('prefixCls');
+  const _ = inject('prefixCls');
   // 定义props
-  const  = defineProps({
+  const _ = defineProps({
     // 是否显示搜索框
     showSearch: {
       type: Boolean,

@@ -106,7 +106,7 @@ export async function replaceCssColors(
   let retCss = css;
   const defaultOptions = getGlobalOptions('defaultOptions');
   const colorVariables: string[] = defaultOptions ? defaultOptions.colorVariables || [] : [];
-  colorVariables.forEach(function (color, index) {
+  colorVariables.forEach(function _(color, index) {
     const reg = new RegExp(
       color.replace(/,/g, ',\\s*').replace(/\s/g, '').replace('(', `\\(`).replace(')', `\\)`) +
         '([\\da-f]{2})?(\\b|\\)|,|\\s)?',
@@ -162,16 +162,16 @@ function fetchCss(fileName: string): Promise<string> {
       return;
     }
     const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = function _() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) resolve(xhr.responseText);
         else reject(xhr.status);
       }
     };
-    xhr.onerror = function (e) {
+    xhr.onerror = function _(e) {
       reject(e);
     };
-    xhr.ontimeout = function (e) {
+    xhr.ontimeout = function _(e) {
       reject(e);
     };
     xhr.open('GET', fileName, true);
@@ -181,10 +181,10 @@ function fetchCss(fileName: string): Promise<string> {
 
 function debounce<T extends (...args: any[]) => any>(delay: number, fn: T) {
   let timer: ReturnType<typeof setTimeout> | undefined;
-  return function (this: any, ...args: any[]) {
+  return function _(this: any, ...args: any[]) {
     const ctx = this;
     if (timer) clearTimeout(timer);
-    timer = setTimeout(function () {
+    timer = setTimeout(function _() {
       fn.apply(ctx, args);
     }, delay);
   };

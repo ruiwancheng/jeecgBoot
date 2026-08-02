@@ -20,7 +20,7 @@ const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
   showActionButtonGroup: false,
 });
 const userDetail = ref<any>({});
-const  = ref<boolean>(false);
+const _ = ref<boolean>(false);
 const title = ref<string>('');
 const emit = defineEmits(['register','success']);
 const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
