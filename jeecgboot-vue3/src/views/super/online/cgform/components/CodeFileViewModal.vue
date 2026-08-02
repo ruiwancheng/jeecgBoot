@@ -80,7 +80,7 @@
         let root = list[0];
         assembleTree(root, list);
         let treeList: any[] = [];
-        const getFinalTreeData = function _(root) {
+        const getFinalTreeData = function (root) {
           if (root.children) {
             let children = root.children;
             if (children.length == 1) {
@@ -103,7 +103,7 @@
        * @param root
        */
       async function loadFirstFileContent(root){
-        const getFirstFile = function _(temp){
+        const getFirstFile = function(temp){
           if(temp.isLeaf === true){
             return temp;
           }else{
@@ -245,7 +245,7 @@
             let blob = new Blob([data]);
             let reader = new FileReader();
             reader.readAsText(blob, 'utf8');
-            reader.onload = function _() {
+            reader.onload = function () {
               let content = this.result;
               codeMap[path] = content;
               resolve(1);
@@ -272,7 +272,7 @@
         let left:any = document.getElementsByClassName('left');
         for (let i = 0; i < resize.length; i++) {
           // 鼠标按下事件
-          resize[i].onmousedown = function _(e: any) {
+          resize[i].onmousedown = function (e: any) {
             //整个div的宽度
             let boxWidth = box[i].offsetWidth;
             //左侧的宽度
@@ -280,7 +280,7 @@
             // 开始位置
             let startX = e.clientX;
             // 鼠标拖动事件
-            document.onmousemove = function _(e: any) {
+            document.onmousemove = function (e: any) {
               // 结束位置
               let endX = e.clientX;
               // 得到鼠标拖动的宽高距离：取绝对值
@@ -304,7 +304,7 @@
               }
             }
             // 鼠标松开事件
-            document.onmouseup = function _(_e: any) {
+            document.onmouseup = function (_e: any) {
               document.onmousemove = null;
               document.onmouseup = null;
               //当你不在需要继续获得鼠标消息就要应该调用ReleaseCapture()释放掉

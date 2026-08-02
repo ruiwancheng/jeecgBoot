@@ -86,7 +86,7 @@ export function useChartRender(props: PropsType, { emit }) {
         key: 'rowIndex',
         width: '10%',
         align: 'center',
-        customRender: function _({ record, index }) {
+        customRender: function ({ record, index }) {
           if (record.isTotal === true) {
             return '总计';
           } else {

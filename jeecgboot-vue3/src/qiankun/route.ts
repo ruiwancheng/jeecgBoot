@@ -1,7 +1,7 @@
 // import { router } from "@/router";
 // import { apps } from './apps';
 //
-// export const {registerQiankunRouter} = (function _() {
+// export const {registerQiankunRouter} = (function () {
 //
 //   let registered = false;
 //

@@ -69,7 +69,7 @@
       const { createMessage } = useMessage();
       const userList = ref<any>([]);
       //同步文本信息展示
-      const _ = ref<string>('');
+      const  = ref<string>('');
       //是否已绑定数据，展示不同的列表
       const izBind = ref<boolean>(false);
       const userStore = useUserStore();
@@ -91,7 +91,7 @@
       async function getUnboundData() {
         await getThirdUserByWechat().then((res) => {
           if (res.success) {
-            let _ = res.result.userList;
+            let  = res.result.userList;
             bindData.value = res.result;
             userList.value = res.result.userList;
             /*   if (userLists && userLists.length > 0) {

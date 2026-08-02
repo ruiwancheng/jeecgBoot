@@ -79,7 +79,7 @@
         return lang;
       });
       // 代码逻辑说明: VUEN-1090 markdown 无法上传
-      const _ = `${window._CONFIG['domianURL']}/sys/common/upload`;
+      const  = `${window._CONFIG['domianURL']}/sys/common/upload`;
       const token = getToken();
       const tenantId = getTenantId() ? getTenantId() : '0';
       function formatResult(files, responseText): string {

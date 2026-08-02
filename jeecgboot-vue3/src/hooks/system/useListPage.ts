@@ -338,7 +338,7 @@ export function useListTable(tableProps: TableProps): [
   // 合并方法
   Object.assign(defaultTableProps, { beforeFetch });
   if (typeof tableProps.beforeFetch === 'function') {
-    defaultTableProps.beforeFetch = function _(params) {
+    defaultTableProps.beforeFetch = function (params) {
       params = beforeFetch(params);
       // @ts-ignore
       tableProps.beforeFetch(params);

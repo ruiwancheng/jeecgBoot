@@ -345,7 +345,7 @@ export function useTableColumns(onlineTableContext, extConfigJson: Ref<ExtConfig
         href = href.trim().replace(/\${([^}]+)?}/g, (_s1, s2) => record[s2]);
         // 执行 {{...}} JS增强语句
         if (jsPattern.test(href)) {
-          href = href.replace(jsPattern, function _(text, s0) {
+          href = href.replace(jsPattern, function (text, s0) {
             try {
               // 支持 {{ ACCESS_TOKEN }} 占位符
               if (s0.trim() === 'ACCESS_TOKEN') {

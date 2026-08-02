@@ -49,7 +49,7 @@ export function getGloablEmojiIndex(){
   }
   
   window['myEmojiIndex'] = new EmojiIndex(data, {
-    function _() {
+    function() {
       return true;
     },
     exclude:['recent','people','nature','foods','activity','places','objects','symbols','flags']
@@ -264,7 +264,7 @@ export function useFileList() {
         //通过文件流将文件转换成Base64字符串
         reader.readAsDataURL(file);
         //转换成功后
-        reader.onload = function _() {
+        reader.onload = function () {
           let base = reader.result;
           console.log('base', base)
           imageSrcMap[id] = base;
@@ -422,7 +422,7 @@ export function useEmojiHtml(globalEmojiIndex){
     if(!text){
       return ''
     }
-    return text.replace(COLONS_REGEX, function _(match, p1, p2) {
+    return text.replace(COLONS_REGEX, function (match, p1, p2) {
       const before = p1 || ''
       if (endsWith(before, 'alt="') || endsWith(before, 'data-text="')) {
         return match

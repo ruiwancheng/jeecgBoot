@@ -24,17 +24,17 @@ export function mdPluginJeecgTag(md: any) {
   // 保存原始的 html_block  渲染规则
   const htmlBlockOrigin =
     md.renderer.rules.html_block ||
-    function _(tokens, idx) {
+    function (tokens, idx) {
       return tokens[idx].content;
     };
 
   // 覆盖 html_block  渲染规则
-  md.renderer.rules.html_block = function _(tokens, idx) {
+  md.renderer.rules.html_block = function (tokens, idx) {
     const token = tokens[idx];
     const content = token.content;
 
     let isJeecgTag = false;
-    let _ = '';
+    let  = '';
 
     for (const name of tagNames) {
       // 检查内容是否包含自定义标签的起始或结束标签

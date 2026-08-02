@@ -46,7 +46,7 @@
   import { departRoleColumns, departRoleSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
 
-  const _ = inject('prefixCls');
+  const  = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -103,7 +103,7 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   // 注册Form弹窗
   const [registerFormModal, formModal] = useModal();

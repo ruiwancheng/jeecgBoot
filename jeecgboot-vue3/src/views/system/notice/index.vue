@@ -49,7 +49,7 @@
   const iframeUrl = ref('');
   const { createMessage, createConfirm } = useMessage();
   // 列表页面公共参数、方法
-  const { , tableContext, doRequest } = useListPage({
+  const { , , , tableContext, doRequest } = useListPage({
     designScope: 'notice-template',
     tableProps: {
       title: '消息通知',
@@ -71,7 +71,7 @@
 
   const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
   //流程编码
-  const _ = 'dev_sys_announcement_001';
+  const  = 'dev_sys_announcement_001';
   /**
    * 新增事件
    */

@@ -11,7 +11,7 @@ import 'swagger-ui-dist/swagger-ui.css';
 import { getOpenApiJson } from './OpenApi.api';
 
 const swaggerUiRef = ref<HTMLElement | null>(null);
-const _ = import.meta.env.VITE_GLOB_DOMAIN_URL
+const  = import.meta.env.VITE_GLOB_DOMAIN_URL
 onMounted(async () => {
   try {
     const response = await getOpenApiJson();

@@ -79,7 +79,7 @@
       const treeData = ref<any>([]);
       const treeValue = ref();
       const attrs = useAttrs();
-      const [state, formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);
+      const [state, , , formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);
       watch(
         () => props.value,
         () => {
@@ -227,11 +227,11 @@
         });
       }
 
-      function _() {
+      function () {
         return treeData;
       }
 
-      function _() {
+      function () {
         let mycondition = props.condition;
         return new Promise((resolve, reject) => {
           if (!mycondition) {

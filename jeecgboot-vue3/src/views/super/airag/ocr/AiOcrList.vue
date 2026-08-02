@@ -44,7 +44,7 @@
   /**
    * 新增
    */
-  function _() {
+  function () {
     openModal(true, {});
   }
 
@@ -81,7 +81,7 @@
   /**
    * 操作栏
    */
-  function _(record) {
+  function (record) {
     return [
       {
         label: '解析',

@@ -39,7 +39,7 @@
   const [registerModal, { openModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { , tableContext } = useListPage({
+  const { , , tableContext } = useListPage({
     tableProps: {
       title: '租户职务列表',
       api: getPositionList,

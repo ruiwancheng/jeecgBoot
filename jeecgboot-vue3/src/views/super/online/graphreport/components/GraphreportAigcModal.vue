@@ -116,7 +116,7 @@ function setLoading(flag) {
   setModalProps({confirmLoading: flag});
 }
 
-const handleCgformSearch = debounce(function _(val: string) {
+const handleCgformSearch = debounce(function (val: string) {
   queryOnlineCgform(val);
 }, 500);
 

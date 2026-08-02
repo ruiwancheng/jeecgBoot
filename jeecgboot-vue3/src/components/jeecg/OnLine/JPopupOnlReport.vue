@@ -105,12 +105,14 @@
       const [
         {
           visibleChange,
+          ,
           dynamicParamHandler,
           loadData,
           loadColumnsAndData,
           handleChangeInTable,
           combineRowKey,
           clickThenCheck,
+          ,
           handleExport,
         },
         {
@@ -118,6 +120,7 @@
           visible,
           rowSelection,
           checkedKeys,
+          ,
           pagination,
           dataSource,
           columns,

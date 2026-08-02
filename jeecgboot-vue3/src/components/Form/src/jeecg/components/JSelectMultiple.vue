@@ -98,7 +98,7 @@
       );
       const dictOptions = ref<any>([]);
       const attrs = useAttrs();
-      const [state, formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);
+      const [state, , , formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);
       // update-begin--author:liaozhiyang---date:20260204---for:【issues/9307】online下拉加载表字典需滚动加载
       const scrollLoadApi = useScrollLoadDict(props, dictOptions, arrayValue);
       const { useLoadDict, loading, loadDictOptions: loadDictOptionsScroll, ensureValueInOptions, handleSearch, handleDropdownVisibleChange, handlePopupScroll, isDictTable } = scrollLoadApi;

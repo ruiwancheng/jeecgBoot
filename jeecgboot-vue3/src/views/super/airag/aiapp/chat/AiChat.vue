@@ -65,7 +65,7 @@
 
   const router = useRouter();
   const userId = useUserStore().getUserInfo?.id;
-  const _ = JEECG_CHAT_KEY + userId;
+  const  = JEECG_CHAT_KEY + userId;
   let : any = null;
   let unwatch01: any = null;
   const dataSource = ref<any>({});

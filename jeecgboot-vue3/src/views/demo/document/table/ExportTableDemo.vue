@@ -110,7 +110,7 @@
     },
   });
   //注册table数据
-  const [registerTable, { reload }, { rowSelection,  }] = tableContext;
+  const [registerTable, { reload }, { rowSelection, ,  }] = tableContext;
   /**
    * 操作栏
    */

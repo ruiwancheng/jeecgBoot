@@ -47,7 +47,7 @@
 
   const { prefixCls } = useDesign('j-user-tenant-setting-container');
 
-  const _ = useUserStore();
+  const  = useUserStore();
 
   //绑定微信的数据
   const bindWechatData = ref<any>({});
@@ -62,7 +62,7 @@
   //第三方用户UUID
   const thirdUserUuid = ref('');
   //第三方详情
-  const _ = ref<any>({});
+  const  = ref<any>({});
   const { createMessage } = useMessage();
   //windows对象，用于关闭窗口事件
   const windowsIndex = ref<any>('');
@@ -88,7 +88,7 @@
   /**
    * 企业微信绑定解绑事件
    */
-  function _() {
+  function () {
     console.log('企业微信绑定解绑事件');
     let data = unref(bindEnterpriseData);
     if (!data.sysUserId) {
@@ -144,7 +144,7 @@
       'height=500, width=500, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no'
     );
     thirdType.value = source;
-    receiveMessage.value = async function _(event) {
+    receiveMessage.value = async function (event) {
       let token = event.data;
       if (typeof token === 'string') {
         //如果是字符串类型 说明是token信息

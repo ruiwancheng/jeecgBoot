@@ -148,7 +148,7 @@ export function off(element: Element | HTMLElement | Document | Window, event: s
 
 /* istanbul ignore next */
 export function once(el: HTMLElement, event: string, fn: EventListener): void {
-  const listener = function _(this: any, ...args: unknown[]) {
+  const listener = function (this: any, ...args: unknown[]) {
     if (fn) {
       fn.apply(this, args);
     }
@@ -160,7 +160,7 @@ export function once(el: HTMLElement, event: string, fn: EventListener): void {
 export function useRafThrottle<T extends FunctionArgs>(fn: T): T {
   let locked = false;
   // @ts-ignore
-  return function _(...args: any[]) {
+  return function (...args: any[]) {
     if (locked) return;
     locked = true;
     window.requestAnimationFrame(() => {

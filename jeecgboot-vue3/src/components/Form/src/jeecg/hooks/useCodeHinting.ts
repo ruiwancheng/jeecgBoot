@@ -4,7 +4,7 @@ export const useCodeHinting = (CodeMirror, keywords, language) => {
     if (keywords.length) {
       coder.setOption('mode', language);
       setTimeout(() => {
-        coder!.on('cursorActivity', function _() {
+        coder!.on('cursorActivity', function () {
           coder?.showHint({
             completeSingle: false,
             // container: containerRef.value

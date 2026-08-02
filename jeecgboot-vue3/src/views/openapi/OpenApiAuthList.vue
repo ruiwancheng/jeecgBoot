@@ -142,7 +142,7 @@
   /**
    * 详情
    */
-  function _(record: Recordable) {
+  function (record: Recordable) {
     openAuthDrawer(true, {
       record,
       isUpdate: true,

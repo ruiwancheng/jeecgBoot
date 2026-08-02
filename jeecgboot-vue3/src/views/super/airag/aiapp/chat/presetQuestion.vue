@@ -57,7 +57,7 @@ import {ref, onMounted, onBeforeUnmount, watch} from 'vue';
   const data = ref(props.quickCommandData);
   const leftBtnStatus = ref('');
   const rightBtnStatus = ref('');
-  const _ = ref('');
+  const  = ref('');
   const ulElemRef = ref(null);
   const btnShow = ref(false);
   let timer = null;
@@ -82,7 +82,7 @@ import {ref, onMounted, onBeforeUnmount, watch} from 'vue';
       }
     }, 100);
   };
-  const _ = (flag) => {
+  const  = (flag) => {
     const offsetWidth = ulElemRef.value.offsetWidth;
     if (flag == 'prev') {
       ulElemRef.value.scrollLeft = ulElemRef.value.scrollLeft - offsetWidth;

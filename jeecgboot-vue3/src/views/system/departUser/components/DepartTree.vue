@@ -43,7 +43,7 @@
   import { useModal } from '@/components/Modal';
   import { deleteBatchDepart } from '@/views/system/depart/depart.api';
 
-  const _ = inject('prefixCls');
+  const  = inject('prefixCls');
   const emit = defineEmits(['select']);
   const { createMessage } = useMessage();
 
@@ -124,7 +124,7 @@
   }
 
   // 编辑部门
-  function _() {
+  function () {
     if (selectedKeys.value && selectedKeys.value.length === 0) {
       createMessage.warning('请先选择一个部门');
       return;

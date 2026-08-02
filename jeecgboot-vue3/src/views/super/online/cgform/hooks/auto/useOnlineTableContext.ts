@@ -135,7 +135,7 @@ export function useOnlineTableContext(params: any = {}) {
   
   let specialConfigMap: { [key: string | symbol ]: SpecialConfig } = {};
   const methods = {
-    execButtonEnhance: function _(code, record) {
+    execButtonEnhance: function (code, record) {
       if (onlineTableContext[ENHANCEJS][code]) {
         if (SETUP === code) {
           executeEnhanceJsHook(code);
@@ -162,7 +162,7 @@ export function useOnlineTableContext(params: any = {}) {
      * get 是否是树形表单
      * @param status 如果有值 则视为set方法
      */
-    isTree: function _(status?) {
+    isTree: function (status?) {
       if (typeof status === 'boolean') {
         //传了参数则设置值
         onlineTableContext['isTreeTable'] = status;
@@ -887,7 +887,7 @@ export class AopSetup {
 
   around(targetFunction, context) {
     const _that = this;
-    return async function _() {
+    return async function () {
       //console.log('this2', this)
       let res1 = await _that.before(arguments);
       console.log('before返回值', res1);

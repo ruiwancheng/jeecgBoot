@@ -23,10 +23,10 @@
   const { , getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
 
-  const _ = ref();
-  const _ = ref(false);
+  const  = ref();
+  const  = ref(false);
   const currentTab = ref(0);
-  const _ = reactive<any>({
+  const  = reactive<any>({
     account: '',
     mobile: '',
     sms: '',

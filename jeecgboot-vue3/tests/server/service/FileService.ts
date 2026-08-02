@@ -9,7 +9,7 @@ export default class UserService {
   async upload(ctx, files, isMultiple) {
     let fileReader, fileResource, writeStream;
 
-    const fileFunc = function _(file) {
+    const fileFunc = function (file) {
       fileReader = fs.createReadStream(file.path);
       fileResource = filePath + `/${file.name}`;
       console.log(fileResource);
@@ -18,7 +18,7 @@ export default class UserService {
       fileReader.pipe(writeStream);
     };
 
-    const returnFunc = function _(flag) {
+    const returnFunc = function (flag) {
       if (flag) {
         let url = '';
         for (let i = 0; i < files.length; i++) {

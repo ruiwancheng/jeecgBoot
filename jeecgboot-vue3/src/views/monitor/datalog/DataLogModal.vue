@@ -51,13 +51,13 @@
   const dataId1 = ref('');
   const dataId2 = ref('');
   const dataId = ref('');
-  const _ = ref('');
-  const _ = ref('');
+  const  = ref('');
+  const  = ref('');
   const dataTable = ref('');
   const confirmLoading = ref(false);
   const isUpdate = ref(true);
   const dataVersionList = ref<any>([]);
-  let _ = reactive<any>({});
+  let  = reactive<any>({});
   //表单赋值
   const [registerModal, { , closeModal }] = useModalInner(async (data) => {
     isUpdate.value = !!data?.isUpdate;

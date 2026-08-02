@@ -30,7 +30,7 @@
   const props = defineProps({
     rootTreeData: { type: Array, default: () => [] },
   });
-  const _ = inject('prefixCls');
+  const  = inject('prefixCls');
   // 当前是否是更新模式
   const isUpdate = ref<boolean>(false);
   // 当前的弹窗数据

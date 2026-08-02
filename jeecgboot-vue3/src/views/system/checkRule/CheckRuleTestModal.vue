@@ -23,7 +23,7 @@
   const okButtonProps = {
     style: { display: 'none' },
   };
-  const [registerForm, { resetFields, setFieldsValue,  }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, ,  }] = useForm({
     schemas: checkRuleInput,
     showActionButtonGroup: false,
     labelCol: {

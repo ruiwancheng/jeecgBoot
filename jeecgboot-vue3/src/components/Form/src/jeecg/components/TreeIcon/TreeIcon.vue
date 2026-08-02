@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
   import { defineProps } from 'vue';
-  const _ = defineProps({
+  const  = defineProps({
     orgCategory: String,
     title: String,
   });

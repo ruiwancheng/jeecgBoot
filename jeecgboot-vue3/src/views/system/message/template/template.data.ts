@@ -28,7 +28,7 @@ export const columns: BasicColumn[] = [
     title: '是否应用',
     dataIndex: 'useStatus',
     width: 90,
-    customRender: function _({ text }) {
+    customRender: function ({ text }) {
       if (text == '1') {
         return '是';
       } else {

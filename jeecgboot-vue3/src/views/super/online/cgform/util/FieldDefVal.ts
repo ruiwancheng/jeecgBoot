@@ -9,7 +9,7 @@ dayjs.extend(weekOfYear);
 dayjs.extend(quarterOfYear);
 // 获取所有用户自定义表达式的Key
 const ceKeys = Object.keys(CustomExpression);
-// 将key用逗号拼接，可以拼接成方法参数，例：a,b,c --> function _(a,b,c){}
+// 将key用逗号拼接，可以拼接成方法参数，例：a,b,c --> function(a,b,c){}
 const ceJoin = ceKeys.join(',');
 // 将用户自定义的表达式按key的顺序放到数组中，可以使用 apply 传递给方法直接调用
 const $CE$ = ceKeys.map((key) => CustomExpression[key]);
@@ -87,7 +87,7 @@ export async function loadFormFieldsDefVal(properties, callback, formData?) {
  * 日期组件(date)中设置了年，年月，年周，年季度等格式的默认值需要转化成YYYY-MM-DD
  */
 function transformDefValDate(prop, value) {
-  const { , view, fieldExtendJson } = prop;
+  const { , , view, fieldExtendJson } = prop;
   if (view == 'date' && fieldExtendJson) {
     const extendJson = JSON.parse(fieldExtendJson);
     const { picker } = extendJson;
@@ -256,7 +256,7 @@ export function checkExpressionType(defVal) {
 /** 获取所有匹配的表达式 */
 function getRegExpMap(text, exp) {
   let map = new Map();
-  text.replace(exp, function _(match, param) {
+  text.replace(exp, function (match, param) {
     map.set(match, param.trim());
     return match;
   });
@@ -346,7 +346,7 @@ function getUserInfoByExpression(expression) {
 async function executeCustomExpression(expression, origin) {
   // update-begin--author:liaozhiyang---date:20230904---for：【QQYUN-6390】eval替换成new Function，解决build警告
   // 利用 eval 生成一个方法，这个方法的参数就是用户自定义的所有的表达式
-  let fn = _eval(`(function _(${ceJoin}){ return ${expression} })`);
+  let fn = _eval(`(function (${ceJoin}){ return ${expression} })`);
   // update-end--author:liaozhiyang---date:20230904---for：【QQYUN-6390】eval替换成new Function，解决build警告
   try {
     // 然后调用这个方法，并把表达式传递进去，从而完成表达式的执行

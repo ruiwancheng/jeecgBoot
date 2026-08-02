@@ -56,7 +56,7 @@
   const [registerModal, { openModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, onExportXls, onImportXls,  } = useListPage({
+  const { prefixCls, tableContext, , onExportXls, onImportXls,  } = useListPage({
     designScope: 'check-rule',
     tableProps: {
       title: '编码校验规则管理页面',

@@ -240,7 +240,7 @@
         previewVisible.value = true;
       }
 
-      function _() {
+      function () {
         if (uploadFileList.length > 0) {
           let url = uploadFileList[0].url;
           return getFileAccessHttpUrl(url, null);

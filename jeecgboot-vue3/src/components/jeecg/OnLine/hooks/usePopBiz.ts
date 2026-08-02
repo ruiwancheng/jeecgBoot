@@ -227,7 +227,7 @@ export function usePopBiz(ob, tableRef?) {
             key: 'rowIndex',
             width: 60,
             align: 'center',
-            customRender: function _({ text }) {
+            customRender: function ({ text }) {
               // 代码逻辑说明: 【QQYUN-7584】popup有合计时序号列会出现NaN
               if (text == undefined) {
                 return '';
@@ -284,7 +284,7 @@ export function usePopBiz(ob, tableRef?) {
             key: 'rowIndex',
             width: 60,
             align: 'center',
-            customRender: function _({ text }) {
+            customRender: function ({ text }) {
               return parseInt(text) + 1;
             },
           });
@@ -349,7 +349,7 @@ export function usePopBiz(ob, tableRef?) {
         // 有合计字段时，每次最多查询原pageSize-1条记录，另外需要第一次时将查询的10条中删除最后一条
         // 删除最后一条数据 如果第一次得到的数据长度等于pageSize的话，则删除最后一条
         if (dataSource.value.length == pagination.pageSize) {
-          let _ = dataSource.value.pop();
+          let  = dataSource.value.pop();
         }
         pagination.realPageSize = pagination.pageSize - 1;
       } else {
@@ -520,7 +520,7 @@ export function usePopBiz(ob, tableRef?) {
       href = href.trim().replace(/\${([^}]+)?}/g, (_s1, s2) => record[s2]);
       // 执行 {{...}} JS增强语句
       if (jsPattern.test(href)) {
-        href = href.replace(jsPattern, function _(text, s0) {
+        href = href.replace(jsPattern, function (text, s0) {
           try {
             // 支持 {{ ACCESS_TOKEN }} 占位符
             if (s0.trim() === 'ACCESS_TOKEN') {

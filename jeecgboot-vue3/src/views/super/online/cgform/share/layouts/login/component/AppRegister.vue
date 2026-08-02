@@ -101,7 +101,7 @@
   });
 
   //获取用户名的样式
-  const _ = computed(() => {
+  const  = computed(() => {
     return formData.username != '' ? 'current-active' : '' || unref(activekey) === 'username' ? 'current-active' : '';
   });
 

@@ -73,7 +73,7 @@ const attrs = useAttrs();
 
 // 与表单校验联动
 const emitData = ref<any>([]);
-const [, formItemContext] = useRuleFormItem(props as any, 'value', 'change', emitData);
+const [, , , formItemContext] = useRuleFormItem(props as any, 'value', 'change', emitData);
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const pickerRef = ref();

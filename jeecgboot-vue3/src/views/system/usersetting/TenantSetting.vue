@@ -321,7 +321,7 @@ const userDetail = ref({
    * 获取部门文本
    * @param value
    */
-  function _(value) {
+  function (value) {
     let arr = departOptions.value.filter((item) => {
       item.value == value;
     });

@@ -158,7 +158,7 @@
     xs: { span: 24 },
     sm: { span: 16 },
   });
-  const _ = useAttrs();
+  const  = useAttrs();
   const isUpdate = ref(true);
   const inputRef = ref();
   const inputRef2 = ref();
@@ -394,7 +394,7 @@
   }
 
   //关闭弹窗
-  function _() {}
+  function () {}
 
   /**
    * 提交

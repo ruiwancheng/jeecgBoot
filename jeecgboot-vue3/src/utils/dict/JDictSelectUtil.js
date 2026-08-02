@@ -92,7 +92,7 @@ export function filterMultiDictText(dictOptions, text) {
   let re = '';
   text = text.toString();
   let arr = text.split(',');
-  dictOptions.forEach(function _(option) {
+  dictOptions.forEach(function (option) {
     if (option) {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i] === option.value) {

@@ -451,7 +451,7 @@ export function useSuperQuery() {
   //根据字段的order重新排序
   function orderField(data) {
     let arr = data.children;
-    arr.sort(function _(a, b) {
+    arr.sort(function (a, b) {
       return a.order - b.order;
     });
   }

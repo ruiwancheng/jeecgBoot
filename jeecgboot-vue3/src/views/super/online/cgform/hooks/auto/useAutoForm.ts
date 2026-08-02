@@ -187,7 +187,7 @@ export function useFormItems(props, onlineFormRef) {
       }
     });
     // 1.对arr排序
-    arr.sort(function _(a, b) {
+    arr.sort(function (a, b) {
       return a.order - b.order;
     });
     // update-begin--author:liaozhiyang---date:20230105---for：【QQYUN-7499】多列风格富文本、markdown增加独占一行功能
@@ -280,7 +280,7 @@ export function useFormItems(props, onlineFormRef) {
     formSchemas.value = formSchemaArray;
     //return formSchemaArray;
     //update-begin-author:taoyan date:2022-5-31 for: VUEN-1147 主子表 子表顺序并不是按照设置顺序排列
-    subInfo.sort(function _(a, b) {
+    subInfo.sort(function (a, b) {
       return a.order - b.order;
     });
     //update-end-author:taoyan date:2022-5-31 for: VUEN-1147 主子表 子表顺序并不是按照设置顺序排列
@@ -1037,7 +1037,7 @@ export function getDetailFormSchemas(props) {
       }
     });
     // 1.对arr排序
-    arr.sort(function _(a, b) {
+    arr.sort(function (a, b) {
       return a.order - b.order;
     });
     // update-begin--author:liaozhiyang---date:20260413---for：【QQYUN-14951】一对一他表字段详情没值
@@ -1048,7 +1048,7 @@ export function getDetailFormSchemas(props) {
     });
     // update-end--author:liaozhiyang---date:20260413---for：【QQYUN-14951】一对一他表字段详情没值
     // 2.对子表排序
-    subInfo.sort(function _(a, b) {
+    subInfo.sort(function (a, b) {
       return a.order - b.order;
     });
     subTabInfo.value = subInfo;

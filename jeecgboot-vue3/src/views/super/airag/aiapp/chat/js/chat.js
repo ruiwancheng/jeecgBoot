@@ -1,5 +1,5 @@
 // iframe-widget.js
-(function _() {
+(function () {
   let widgetInstance = null;
   const defaultConfig = {
     // 支持'top-left'左上, 'top-right'右上, 'bottom-left'左下, 'bottom-right'右下

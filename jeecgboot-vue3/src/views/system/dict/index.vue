@@ -110,7 +110,7 @@
   /**
    * 详情
    */
-  async function _(record) {
+  async function (record) {
     openModal(true, {
       record,
       isUpdate: true,

@@ -68,7 +68,7 @@
 
   const accountRef = ref();
   const codeRef = ref();
-  const _ = ref();
+  const  = ref();
   const { t } = useI18n();
   //选中值
   const activekey = ref<string>('');
@@ -94,15 +94,15 @@
   const userStore = useUserStore();
   //记住我
   const rememberMeCheck = ref<boolean>(false);
-  const _ = computed(() => {
+  const  = computed(() => {
     return formState.account != '' ? 'current-active' : '' || unref(activekey) === 'account' ? 'current-active' : '';
   });
   //获取密码的样式
-  const _ = computed(() => {
+  const  = computed(() => {
     return formState.password != '' ? 'current-active' : '' || unref(activekey) === 'password' ? 'current-active' : '';
   });
   //获取验证码的样式
-  const _ = computed(() => {
+  const  = computed(() => {
     return formState.inputCode != '' ? 'current-active' : '' || unref(activekey) === 'inputCode' ? 'current-active' : '';
   });
   const { notification,  } = useMessage();

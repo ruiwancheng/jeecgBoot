@@ -53,7 +53,7 @@ import {batchDelete, deleteOne, getExportUrl, getImportUrl, list} from './SysTab
 //注册model
 const [registerModal, {openModal}] = useModal();
 //注册table数据
-const {, tableContext, } = useListPage({
+const {, tableContext, , } = useListPage({
   tableProps: {
     title: '系统表白名单',
     api: list,

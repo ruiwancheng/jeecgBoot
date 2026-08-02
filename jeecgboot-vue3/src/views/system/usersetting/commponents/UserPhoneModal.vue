@@ -73,7 +73,7 @@ import { duplicateCheck } from "/@/views/system/user/user.api";
 import {defHttp} from "@/utils/http/axios";
 import { ExceptionEnum } from "@/enums/exceptionEnum";
 
-const _ = useUserStore();
+const  = useUserStore();
 const { createMessage } = useMessage();
 const formState = reactive<Record<string, any>>({
   phone:'',
@@ -103,7 +103,7 @@ const updateValidatorRules: Record<string, Rule[]> = {
   smscode: [{ required: true,message:'请输入验证码' }],
   newSmsCode: [{ required: true,message:'请输入验证码' }],
 };
-const _ = Form.useForm;
+const  = Form.useForm;
 const title = ref<string>('');
 const emit = defineEmits(['register','success']);
 //修改手机号还是绑定手机号

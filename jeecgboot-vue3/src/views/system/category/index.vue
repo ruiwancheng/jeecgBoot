@@ -79,7 +79,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload, updateTableDataRecord, findTableDataRecord, getDataSource }, { rowSelection, selectedRowKeys }] =
+  const [registerTable, { reload, , updateTableDataRecord, findTableDataRecord, getDataSource }, { rowSelection, selectedRowKeys }] =
     tableContext;
 
   /**
@@ -104,7 +104,7 @@
   /**
    * 详情
    */
-  async function _(record) {
+  async function (record) {
     openModal(true, {
       record,
       isUpdate: true,

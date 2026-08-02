@@ -22,7 +22,7 @@
 
   // 声明Emits
   const emit = defineEmits(['success', 'register']);
-  const _ = useAttrs();
+  const  = useAttrs();
   const isUpdate = ref(true);
   const rowId = ref('');
   const departOptions = ref<any>([]);

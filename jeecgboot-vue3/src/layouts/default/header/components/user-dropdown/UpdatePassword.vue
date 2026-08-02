@@ -18,7 +18,7 @@
   // 声明Emits
   const emit = defineEmits(['register']);
   const $message = useMessage();
-  const _ = ref();
+  const  = ref();
   const username = ref('');
   // 代码逻辑说明: 【QQYUN-7970】国际化
   const title = ref(t('layout.changePassword.changePassword'));

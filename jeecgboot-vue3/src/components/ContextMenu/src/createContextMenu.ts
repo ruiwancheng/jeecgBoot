@@ -11,7 +11,7 @@ const menuManager: {
   resolve: () => {},
 };
 
-export const createContextMenu = function _(options: CreateContextOptions) {
+export const createContextMenu = function (options: CreateContextOptions) {
   const { event } = options || {};
 
   event && event?.preventDefault();
@@ -40,13 +40,13 @@ export const createContextMenu = function _(options: CreateContextOptions) {
     const vm = createVNode(contextMenuVue, propsData);
     render(vm, container);
 
-    const handleClick = function _() {
+    const handleClick = function () {
       menuManager.resolve('');
     };
 
     menuManager.domList.push(container);
 
-    const remove = function _() {
+    const remove = function () {
       menuManager.domList.forEach((dom: Element) => {
         try {
           dom && body.removeChild(dom);
@@ -56,7 +56,7 @@ export const createContextMenu = function _(options: CreateContextOptions) {
       body.removeEventListener('scroll', handleClick);
     };
 
-    menuManager.resolve = function _(arg) {
+    menuManager.resolve = function (arg) {
       remove();
       resolve(arg);
     };
@@ -67,7 +67,7 @@ export const createContextMenu = function _(options: CreateContextOptions) {
   });
 };
 
-export const destroyContextMenu = function _() {
+export const destroyContextMenu = function () {
   if (menuManager) {
     menuManager.resolve('');
     menuManager.domList = [];

@@ -208,7 +208,7 @@
         onChange && isFunction(onChange) && onChange.call(undefined, ...args);
       }
 
-      const { getViewColumns, getColumns, setCacheColumnsByField, setColumns, getColumnsRef, getCacheColumns } = useColumns(
+      const { getViewColumns, getColumns, , setCacheColumnsByField, setColumns, getColumnsRef, getCacheColumns } = useColumns(
         getProps,
         getPaginationInfo,
         // 代码逻辑说明: 【QQYUN-5571】自封装选择列，解决数据行选择卡顿问题

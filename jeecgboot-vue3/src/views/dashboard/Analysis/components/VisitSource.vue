@@ -68,7 +68,7 @@
             ],
             animationType: 'scale',
             animationEasing: 'exponentialInOut',
-            animationDelay: function _() {
+            animationDelay: function () {
               return Math.random() * 100;
             },
           },

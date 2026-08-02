@@ -178,7 +178,7 @@
   //保存或修改
   const isUpdate = ref<boolean>(false);
   //uuid
-  const _ = ref(randomString(16));
+  const  = ref(randomString(16));
   //showTest 显示调试器
   const showTest = ref(true);
   //debugRef 调试器引用

@@ -757,7 +757,7 @@ img{max-width:100%!important;height:auto!important;display:block!important;}
     function stripBorderAndMso(styleStr: string): string {
       return styleStr
           .split(';')
-          .filter(function _(decl) {
+          .filter(function (decl) {
             const trimmed = decl.trim();
             if (!trimmed) return false;
             const colonIdx = trimmed.indexOf(':');
@@ -774,7 +774,7 @@ img{max-width:100%!important;height:auto!important;display:block!important;}
     html = html.replace(/(<table\b[^>]*?)\sborder\s*=\s*['"]?0['"]?/gi, '$1');
 
     // 4b. 处理 <table> 标签的内联样式
-    html = html.replace(/<table(\s[^>]*)>/gi, function _(fullMatch, attrs) {
+    html = html.replace(/<table(\s[^>]*)>/gi, function (fullMatch, attrs) {
       try {
         const sm = attrs.match(/\sstyle\s*=\s*(["'])([\s\S]*?)\1/i);
         if (sm) {
@@ -801,7 +801,7 @@ img{max-width:100%!important;height:auto!important;display:block!important;}
         'vertical-align:middle!important;' +
         'box-sizing:border-box!important';
 
-    html = html.replace(/<(td|th)(\s[^>]*)>/gi, function _(fullMatch, tag, attrs) {
+    html = html.replace(/<(td|th)(\s[^>]*)>/gi, function (fullMatch, tag, attrs) {
       try {
         const sm = attrs.match(/\sstyle\s*=\s*(["'])([\s\S]*?)\1/i);
         if (sm) {

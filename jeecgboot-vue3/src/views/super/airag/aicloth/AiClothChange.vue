@@ -108,7 +108,7 @@
   let pollTimer: ReturnType<typeof setTimeout> | null = null;
 
   // 表单
-  const [registerForm, { validate, resetSchema, setFieldsValue }] = useForm({
+  const [registerForm, { validate, resetSchema, , setFieldsValue }] = useForm({
     schemas: clothImageFormSchema,
     showActionButtonGroup: false,
     wrapperCol: { span: 24 },

@@ -596,7 +596,7 @@
       function onSearch(value: string) {
         keyword.value = value;
       }
-      function _(value) {
+      function (value) {
         alert(value);
       }
 

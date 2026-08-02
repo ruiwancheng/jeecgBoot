@@ -80,7 +80,7 @@ function getRangeRender(schemas: FormSchema[], fieldItem, component: any) {
   let endField = beginField + '_end';
   // 添加占位符
   schemas.push({ label: '', field: endField, component: 'Input', show: false });
-  return function _({ model }) {
+  return function ({ model }) {
     return [
       h(component, {
         value: model[beginField],

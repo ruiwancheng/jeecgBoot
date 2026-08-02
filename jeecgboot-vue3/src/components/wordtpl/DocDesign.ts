@@ -141,7 +141,7 @@ function addListener() {
   replaceInputDom.value = document.querySelector('.jeecg-menu-item-search-collapse-replace input')
   searchInputDom.value = document.querySelector('.jeecg-menu-item-search-collapse-search input')
   // 内部事件监听
-  instance.listener.rangeStyleChange = function _(payload) {
+  instance.listener.rangeStyleChange = function (payload) {
     let undoDom: any = document.querySelector('.jeecg-menu-item-undo');
     // 撤销
     if (undoDom && undoDom.classList) {
@@ -296,7 +296,7 @@ function addListener() {
  * 可见页发生改变
  */
 function addPageNoListListener() {
-  instance.listener.visiblePageNoListChange = function _(payload) {
+  instance.listener.visiblePageNoListChange = function (payload) {
     const text = payload.map(i => i + 1).join('、');
     let querySelector:any = document.querySelector('.page-no-list');
     querySelector.innerText = text
@@ -307,7 +307,7 @@ function addPageNoListListener() {
  * 当前页数发生改变
  */
 function addPageSizeListener(){
-  instance.listener.pageSizeChange = function _(payload) {
+  instance.listener.pageSizeChange = function (payload) {
     let querySelector:any = document.querySelector('.page-size');
     querySelector!.innerText = `${payload}`
   }
@@ -317,7 +317,7 @@ function addPageSizeListener(){
  * 添加当前页发生改变
  */
 function addIntersectionPageNoListener(){
-  instance.listener.intersectionPageNoChange = function _(payload) {
+  instance.listener.intersectionPageNoChange = function (payload) {
     let querySelector:any = document.querySelector('.page-no');
     querySelector.innerText = `${ payload + 1 }`
   }
@@ -327,7 +327,7 @@ function addIntersectionPageNoListener(){
  * 当前页面缩放比例发生改变
  */
 function addPageScaleListener(){
-  instance.listener.pageScaleChange = function _(payload) {
+  instance.listener.pageScaleChange = function (payload) {
     let querySelector:any = document.querySelector('.page-scale-percentage');
     querySelector.innerText = `${Math.floor(payload * 10 * 10)}%`
   }
@@ -339,7 +339,7 @@ function addPageScaleListener(){
 function addPageModeListener(){
   const pageModeDom:any = document.querySelector('.page-mode')
   const pageModeOptionsDom = pageModeDom.querySelector('.options')
-  instance.listener.pageModeChange = function _(payload) {
+  instance.listener.pageModeChange = function (payload) {
     const activeMode = pageModeOptionsDom.querySelector(
       `[data-page-mode='${payload}']`
     )
@@ -351,7 +351,7 @@ function addPageModeListener(){
 /**
  * 字数
  */
-const handleContentChange = async function _() {
+const handleContentChange = async function () {
   // 字数
   const wordCount = await instance.command.getWordCount();
   let querySelector:any = document.querySelector('.word-count');

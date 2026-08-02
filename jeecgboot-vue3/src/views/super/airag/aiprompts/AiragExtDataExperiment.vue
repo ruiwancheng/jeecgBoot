@@ -22,7 +22,7 @@ const activeKey = ref('evaluator');
 /**
  * 切换tab
  */
-function _(key) {
+function (key) {
   activeKey.value = key;
 }
 

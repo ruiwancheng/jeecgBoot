@@ -38,6 +38,9 @@ export default defineComponent({
       getContentMode,
       getShowFooter,
       getShowBreadCrumb,
+      ,
+      ,
+      ,
       getColorWeak,
       getGrayMode,
       getLockTime,
@@ -54,19 +57,24 @@ export default defineComponent({
       getMenuType,
       getTrigger,
       getCollapsedShowTitle,
+      ,
       getCollapsed,
       getCanDrag,
       getTopMenuAlign,
+      ,
       getMenuWidth,
       getMenuBgColor,
       getIsTopMenu,
       getSplit,
       getIsMixSidebar,
+      ,
+      ,
+      ,
     } = useMenuSetting();
 
     const { getShowHeader, getFixed: _getHeaderFixed, getHeaderBgColor,  } = useHeaderSetting();
 
-    const { getShowMultipleTab, getTabsTheme } = useMultipleTabSetting();
+    const { getShowMultipleTab, , , , getTabsTheme } = useMultipleTabSetting();
 
     const getShowMenuRef = computed(() => {
       return unref(getShowMenu) && !unref(getIsHorizontal);
@@ -314,7 +322,7 @@ export default defineComponent({
       );
     }
 
-    function _() {
+    function () {
       return (
         <>
           <SwitchItem title={t('layout.setting.progress')} event={HandlerEnum.OPEN_PROGRESS} def={unref(getOpenNProgress)} />

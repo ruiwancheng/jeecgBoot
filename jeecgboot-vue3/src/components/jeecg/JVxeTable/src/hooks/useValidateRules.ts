@@ -41,7 +41,7 @@ export function useValidateRules(args: HandleArgs) {
 
 /** 唯一校验器 */
 function uniqueValidator({ methods }: HandleArgs) {
-  return function _(event) {
+  return function (event) {
     const { cellValue, column, rule } = event;
     // 代码逻辑说明: 【TV360X-299】JVxetable组件中唯一校验过滤掉空字符串
     if (cellValue == '') return Promise.resolve();

@@ -117,7 +117,7 @@
         reader.readAsDataURL(file);
         src.value = '';
         previewSource.value = '';
-        reader.onload = function _(e) {
+        reader.onload = function (e) {
           src.value = (e.target?.result as string) ?? '';
           filename = file.name;
         };
