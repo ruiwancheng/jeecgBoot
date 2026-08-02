@@ -151,39 +151,55 @@ orca terminal close --terminal <handle>           # 关闭工人终端
 
 **原因**（learnings/2026-07-21-orca-coordinator-no-check-wait）：pi 终端 TUI 会**自动把编排邮件投递进会话并标记已读**，CLI `check --wait` 查的是未读消息 → 必然查空/卡死。
 
-**正确做法**（分段轮询 + 非阻塞）：
+**正确做法**（分段轮询 + 非阻塞，v5 改造：sequence 替代 timestamp）：
 
 ```bash
-# 1) 记录任务起始时间戳（任务派发后立刻执行）
-START_TS=$(date -u +"%Y-%m-%dT%H:%M:%S")
+# 1) 从状态文件初始化 LAST_SEQ（派工时状态文件已记初始 0）
+LAST_SEQ=$(python .remember/tmp/sync-state.py get-seq --id "$TASK_SLUG" 2>/dev/null || echo 0)
 
-# 2) 每 60s 看 preview + 按时间戳过滤 inbox（每段 5 min，分段 bash）
-for i in $(seq 1 5); do
-  sleep 60
+# 2) 每 30s 看 preview + 按 sequence 过滤 inbox（每段 5 min，分段 bash）
+# ⚠️ v5 改造 (2026-08-03): 换 sequence > LAST_SEQ 替代 timestamp 过滤
+#    原因: timestamp 跨会话会失效/inbox FIFO 丢失，sequence 单调递增更可靠
+#    状态文件 .remember/state/delegated-tasks.json 持久化 LAST_SEQ，跨 session 跟踪
+#    务必在派工时用 sync-state.py add 初始化任务，否则脚本 fallback 0
+TASK_KEYWORDS="<kw1>,<kw2>"  # 逗号分隔多关键词 OR 匹配
+SUBJECT_PREFIX="[$TASK_SLUG]"  # 精确前缀匹配优先级最高
+
+for i in $(seq 1 10); do
+  sleep 30
   # 看 preview（判断工人状态）
   orca terminal show --terminal $HANDLE --json > /tmp/s.json
-  # 按时间戳过滤 worker_done（避免历史消息误判）
-  # ⚠️ v4 观察 (2026-08-02)：不能只信 from_handle == 工人 handle
-  #    协调者（Claude Code）可能代发 worker_done，from_handle 是 Claude terminal
-  #    必须用：to_handle 是协调者 OR subject 含任务关键词 OR 文件产物存在
-  COORDINATOR_HANDLE="term_a55b5d20-ef82-419c-b2da-f693c50eae32"  # 协调者 handle（可配置）
-  TASK_KEYWORD="${SLICE_KEYWORD:-P0|quality-gate|deep-inspect}"  # 任务关键词
+  # 按 sequence 过滤 worker_done（避免历史消息误判）
+  # v5 改造: 删 from_handle == $COORDINATOR_HANDLE 检查（语义错误，worker 不会自己发 worker_done）
+  # v5 改造: 用 SUBJECT_PREFIX 精确 + BODY_KEYWORDS 模糊 OR 匹配
   HAS=$(orca orchestration inbox --json | python -c "
 import json, sys
 d = json.load(sys.stdin)
 msgs = d['result']['messages']
-n = sum(1 for m in msgs if isinstance(m, dict) and 
-       m.get('type')=='worker_done' and 
-       m.get('created_at','')>='$START_TS' and (
-           m.get('to_handle','') == '$COORDINATOR_HANDLE' or
-           m.get('from_handle','') == '$COORDINATOR_HANDLE' or
-           '$TASK_KEYWORD' in m.get('subject','') + m.get('body','')
-       ))
-print(n)
+matched = [m for m in msgs if isinstance(m, dict) and
+           m.get('type')=='worker_done' and
+           m.get('sequence',0) > $LAST_SEQ and (
+               m.get('subject','').startswith('$SUBJECT_PREFIX') or
+               any(kw.strip() in m.get('subject','') + m.get('body','') for kw in '$TASK_KEYWORDS'.split(','))
+           )]
+if matched:
+    max_seq = max(m.get('sequence',0) for m in matched)
+    print(f'{len(matched)} {max_seq}')
+else:
+    print('0 $LAST_SEQ')
 ")
-  [ "$HAS" != "0" ] && { echo "done"; break; }
+  COUNT=$(echo $HAS | cut -d' ' -f1)
+  NEW_SEQ=$(echo $HAS | cut -d' ' -f2)
+  if [ "$COUNT" != "0" ]; then
+    LAST_SEQ=$NEW_SEQ
+    # 持久化 LAST_SEQ 到状态文件（跨会话跟踪关键）
+    python .remember/tmp/sync-state.py update-seq --id "$TASK_SLUG" --seq $LAST_SEQ
+    break
+  fi
 done
 ```
+
+> **v5 改造背景**：session #10 session #10 worker 完成但协调者未及时发现。真实根因是 worker_done 进了已死 handle，新会话看不到。状态文件持久化 + sequence 跟踪 + 启动扫描才是可靠兑底。详见 `.claude/plans/2026-08-03-fix-delegate-coordinator-detection.md`。
 
 ### inbox 抓 payload——防御性解析
 
@@ -279,6 +295,48 @@ delegate_is_complete() {
     return 1
 }
 ```
+
+### 跨会话状态持久化（v5 核心：2026-08-03 加固）
+
+**问题**：session #10 协调者未及时发现 worker 完成。真实根因：worker_done 进了已死 handle（死信地址），新会话无法看到。
+
+**机制**：3 条排骨组合
+
+1. **状态文件** `.remember/state/delegated-tasks.json`（gitignored，跨会话）
+   - 派工时 `sync-state.py add` 初始化
+   - 收尾时 `sync-state.py complete` 标记
+   - 轮询中 `sync-state.py update-seq` 跟新
+
+2. **启动扫描** `.claude/scripts/check-delegated-tasks.sh`（session-start.sh 集成）
+   - 有状态文件 → 跨会话捡回末完成任务的 worker_done
+   - 三取二判定：inbox + git_log + output_files（任二为完）
+   - baseline_lost 自愈：last_seq < inbox_min_seq 时重置
+
+3. **轮询使用 sequence**（替代 timestamp）
+   - `LAST_SEQ` 从状态文件读
+   - 跨 session 跟踪可靠
+   - 如 inbox FIFO 丢失，git_log 仍 PRIMARY
+
+**脚本接口**：
+
+```bash
+# 派工时
+python .remember/tmp/sync-state.py add \
+  --id "vite-config-preview" \
+  --task-title "vite preview proxy 修复" \
+  --worker-handle "$WORKER_HANDLE" \
+  --coordinator-handle "$COORD_HANDLE" \
+  --match-rules '{"subject_prefix":"[vite-config-preview]","body_keywords":["vite","preview"]}' \
+  --expected-files "jeecgboot-vue3/vite.config.ts"
+
+# 轮询中
+python .remember/tmp/sync-state.py update-seq --id "$TASK_SLUG" --seq $LAST_SEQ
+
+# 收尾时
+python .remember/tmp/sync-state.py complete --id "$TASK_SLUG" --payload '{"commit":"abc1234"}'
+```
+
+详见 `.claude/plans/2026-08-03-fix-delegate-coordinator-detection.md`。
 
 ### 轮询循环里加主动 ping（不再被动等）
 

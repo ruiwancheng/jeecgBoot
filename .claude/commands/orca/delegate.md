@@ -28,6 +28,64 @@ orca terminal create --command "pi" --json
 
 调用技能中的 **preamble 模板**，传入记忆卡片和任务描述，注入工人终端。
 
+**同步写入状态文件**（跨会话跟踪关键）：
+
+```bash
+# 派工时记录任务状态
+TASK_SLUG="<任务 slug，例 vite-config-preview>"
+TASK_TITLE="<人类可读名>"
+WORKER_HANDLE="<orca terminal create 返回的 handle>"
+COORD_HANDLE="<协调者 handle，可从 orca terminal list 拿>"
+
+# 关键词三选一：subject_prefix 或 body_keywords 二者至少有一个
+MATCH_RULES="{\"subject_prefix\":\"[$TASK_SLUG]\",\"body_keywords\":[\"kw1\",\"kw2\"]}"
+
+python .remember/tmp/sync-state.py add \
+  --id "$TASK_SLUG" \
+  --task-title "$TASK_TITLE" \
+  --worker-handle "$WORKER_HANDLE" \
+  --coordinator-handle "$COORD_HANDLE" \
+  --match-rules "$MATCH_RULES" \
+  --expected-files "<file1,file2>"
+```
+
+> **为什么必要**：session 跨度场场景下，worker_done 可能进 newhandle，新会话启动时 scan 会调这个状态文件。
+
+### 4. 等待 worker_done 回报
+
+监听工人终端的编排消息（heartbeat / decision_gate / worker_done）。
+
+**轮询脚本**（替代旧 timestamp 过滤）：
+
+```bash
+START_TS=$(date -u +"%Y-%m-%dT%H:%M:%S")
+LAST_SEQ=$(python .remember/tmp/sync-state.py get-seq --id "$TASK_SLUG" 2>/dev/null || echo 0)
+
+for i in $(seq 1 20); do
+  sleep 30
+  # 1. 查 inbox worker_done (sequence > LAST_SEQ 过滤)
+  HAS=$(orca orchestration inbox --json | python -c "
+import json, sys
+d = json.load(sys.stdin)
+msgs = d['result']['messages']
+matched = [m for m in msgs if isinstance(m, dict) and
+           m.get('type')=='worker_done' and
+           m.get('sequence',0) > $LAST_SEQ and
+           (m.get('subject','').startswith('[$TASK_SLUG]') or
+            any(kw in m.get('subject','') + m.get('body','') for kw in ['<kw1>','<kw2>']))]
+new_max = max((m.get('sequence',0) for m in matched), default=$LAST_SEQ)
+print(f'{len(matched)} {new_max}')
+")
+  COUNT=$(echo $HAS | cut -d' ' -f1)
+  NEW_SEQ=$(echo $HAS | cut -d' ' -f2)
+  if [ "$COUNT" != "0" ]; then
+    LAST_SEQ=$NEW_SEQ
+    python .remember/tmp/sync-state.py update-seq --id "$TASK_SLUG" --seq $LAST_SEQ
+    break
+  fi
+done
+```
+
 ### 4. 等待 worker_done 回报
 
 监听工人终端的编排消息（heartbeat / decision_gate / worker_done）。
@@ -45,6 +103,15 @@ orca terminal create --command "pi" --json
 - /verify 结果
 
 任何异常立即报告用户，不默默放行。
+
+**收尾：标记状态文件为 completed**：
+
+```bash
+# 收到 worker_done 并走完检验后
+python .remember/tmp/sync-state.py complete \
+  --id "$TASK_SLUG" \
+  --payload "{\"sequence\":<seq>,\"commit\":\"<hash>\",\"verify\":\"<result>\"}"
+```
 
 ### 6. 关闭工人终端
 
