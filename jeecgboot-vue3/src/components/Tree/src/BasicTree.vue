@@ -50,7 +50,7 @@
         checkedKeys: props.checkedKeys || [],
       });
 
-      const searchState = reactive({
+      const searchState = reactive<any>({
         startSearch: false,
         searchText: '',
         searchData: [] as TreeItem[],

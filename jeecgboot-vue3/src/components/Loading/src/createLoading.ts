@@ -6,7 +6,7 @@ import Loading from './Loading.vue';
 
 export function createLoading(props?: Partial<LoadingProps>, target?: HTMLElement, wait = false) {
   let vm: Nullable<VNode> = null;
-  const data = reactive({
+  const data = reactive<any>({
     tip: '',
     loading: true,
     ...props,

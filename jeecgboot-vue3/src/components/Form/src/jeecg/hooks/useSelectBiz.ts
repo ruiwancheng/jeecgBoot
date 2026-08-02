@@ -6,7 +6,7 @@ export function useSelectBiz(getList, props, emit?) {
   //接收下拉框选项
   const selectOptions = inject('selectOptions', ref<Array<object>>([]));
   //接收已选择的值
-  const selectValues = <object>inject('selectValues', reactive({ value: [], change: false }));
+  const selectValues = <object>inject('selectValues', reactive<any>({ value: [], change: false }));
   // 是否正在加载回显
   const loadingEcho = inject<Ref<boolean>>('loadingEcho', ref(false));
   //数据集

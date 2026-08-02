@@ -264,17 +264,17 @@
   }
   //-----自定义查询----begin--------
   const formElRef = ref();
-  const labelCol = reactive({
+  const labelCol = reactive<any>({
     xs: { span: 24 },
     sm: { span: 7 },
   });
-  const wrapperCol = reactive({
+  const wrapperCol = reactive<any>({
     xs: { span: 24 },
     sm: { span: 16 },
   });
   const toggleSearchStatus = ref(false);
   const customSearch = ref(false);
-  const queryParam = reactive({
+  const queryParam = reactive<any>({
     name: '',
     age_begin: '',
     age_end: '',
@@ -294,7 +294,7 @@
   }
   //自定义查询----end---------
 
-  const superQueryConfig = reactive({
+  const superQueryConfig = reactive<any>({
     name:{ title: "名称", view: "text", type: "string", order: 1 },
     sex:{ title: "性别", view: "list", type: "string", dictCode:'sex', order: 2 },
   });

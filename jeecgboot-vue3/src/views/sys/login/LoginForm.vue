@@ -119,12 +119,12 @@
   const loading = ref(false);
   const rememberMe = ref(false);
 
-  const formData = reactive({
+  const formData = reactive<any>({
     account: 'admin',
     password: '123456',
     inputCode: '',
   });
-  const randCodeData = reactive({
+  const randCodeData = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,
     checkKey: null,

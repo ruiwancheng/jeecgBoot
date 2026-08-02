@@ -11,7 +11,7 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { useHideHomeDesign } from './useHideHomeDesign';
 
 export function useTabDropdown(tabContentProps: TabContentProps, getIsTabs: ComputedRef<boolean>) {
-  const state = reactive({
+  const state = reactive<any>({
     current: null as Nullable<RouteLocationNormalized>,
     currentIndex: 0,
   });

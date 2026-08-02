@@ -122,7 +122,7 @@
   //账号数据
   const accountInfo = reactive<any>({});
   //手机号表单
-  const formData = reactive({
+  const formData = reactive<any>({
     mobile: '',
     smscode: '',
   });

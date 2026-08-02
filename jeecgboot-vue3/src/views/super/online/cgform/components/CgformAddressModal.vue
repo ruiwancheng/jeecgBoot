@@ -87,7 +87,7 @@ const collapseKey = ref(['def'])
 const enableExternalLink = ref(false);
 const themeTemplate = ref('normal');
 const isTree = ref(false);
-const model = reactive({
+const model = reactive<any>({
   title: '',
   content: '',
   copyText: '',
@@ -165,7 +165,7 @@ function copyText(text: string) {
   return success
 }
 
-const dataIdProps = reactive({
+const dataIdProps = reactive<any>({
   base: '',
   value: '',
   visible: false,

@@ -46,7 +46,7 @@ const props = defineProps({
   //认证ID
   const apiAuthId = ref<string>('');
   //表单验证
-  const validatorRules = reactive({});
+  const validatorRules = reactive<any>({});
   //api列表
   const apiList = ref<any>([]);
   //选中的值

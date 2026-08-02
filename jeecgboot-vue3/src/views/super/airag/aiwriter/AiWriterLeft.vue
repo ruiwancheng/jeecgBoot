@@ -124,7 +124,7 @@
   const { createMessage } = useMessage();
   const activeMode = ref('compose');
 
-  const formData = reactive({
+  const formData = reactive<any>({
     prompt: '',
     originalContent: '',
     length: '自动',

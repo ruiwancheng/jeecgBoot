@@ -5,7 +5,7 @@ import { tryOnMounted, tryOnUnmounted } from '@vueuse/core';
 export function useNow(immediate = true) {
   let timer: IntervalHandle;
 
-  const state = reactive({
+  const state = reactive<any>({
     year: 0,
     month: 0,
     week: '',

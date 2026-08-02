@@ -57,7 +57,7 @@
       });
       watch(loading, (l) => setLoading(l));
       const [registerModal, { openModal, closeModal }] = useModal();
-      const formModalProps = reactive({
+      const formModalProps = reactive<any>({
         title: '',
         width: 800,
         confirmLoading: false,

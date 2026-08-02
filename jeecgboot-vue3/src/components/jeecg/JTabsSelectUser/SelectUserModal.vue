@@ -189,7 +189,7 @@
   const originalPositionData = ref<any>([]);
   const originalUserGroupData = ref<any>([]);
   /*-----------------部门---begin----------------*/
-  const departInfo = reactive({
+  const departInfo = reactive<any>({
     treeData: [] as any[],
     selectedKeys: [] as any[],
     currentSelectRow: {
@@ -292,7 +292,7 @@
   /*-----------------部门---end----------------*/
 
   /*-----------------岗位---begin----------------*/
-  const positionInfo = reactive({
+  const positionInfo = reactive<any>({
     treeData: [] as any[],
     selectedKeys: [] as any[],
     currentSelectRow: { title: '' } as any,
@@ -380,7 +380,7 @@
   /*-----------------岗位---end----------------*/
 
   /*-----------------用户组---begin----------------*/
-  const userGroupInfo = reactive({
+  const userGroupInfo = reactive<any>({
     data: [] as any[],
     selectedKeys: [] as string[],
     currentSelectRow: {

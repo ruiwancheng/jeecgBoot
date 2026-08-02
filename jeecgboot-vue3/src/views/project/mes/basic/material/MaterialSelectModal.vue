@@ -77,7 +77,7 @@
 
   const currentMode = computed(() => props.mode || 'single');
 
-  const pagination = reactive({
+  const pagination = reactive<any>({
     current: 1,
     pageSize: 20,
     total: 0,

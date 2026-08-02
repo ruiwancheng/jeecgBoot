@@ -117,10 +117,10 @@
 
       const appStore = useAppStore();
 
-      const tinymceContent = computed(() => props.modelValue);
+      const tinymceContent = computed(() => (props as any).modelValue);
 
       const containerWidth = computed(() => {
-        const width = props.width;
+        const width = (props as any).width;
         if (isNumber(width)) {
           return `${width}px`;
         }
@@ -366,7 +366,7 @@
         if (!editor) {
           return;
         }
-        const value = props.modelValue || '';
+        const value = (props as any).modelValue || '';
 
         editor.setContent(value);
         bindModelHandlers(editor);
@@ -384,14 +384,14 @@
         const normalizedEvents = Array.isArray(modelEvents) ? modelEvents.join(' ') : modelEvents;
 
         watch(
-          () => props.modelValue,
+          () => (props as any).modelValue,
           (val: string, prevVal: string) => {
             setValue(editor, val, prevVal);
           }
         );
 
         watch(
-          () => props.value,
+          () => (props as any).value,
           (val: string, prevVal: string) => {
             setValue(editor, val, prevVal);
           },
@@ -452,7 +452,7 @@
       // 代码逻辑说明: 【TV360X-35】富文本，图片上传遮挡其他按钮
       let executeCount = 0;
       watch(
-        () => props.showImageUpload,
+        () => (props as any).showImageUpload,
         () => {
           mountElem();
         }
@@ -464,7 +464,7 @@
         if (executeCount > 20) return;
         setTimeout(() => {
           if (targetElem.value) {
-            imgUploadShow.value = props.showImageUpload;
+            imgUploadShow.value = (props as any).showImageUpload;
           } else {
             const toxToolbar = editorRootRef.value?.querySelector('.tox-toolbar__group');
             if (toxToolbar) {
@@ -472,7 +472,7 @@
               divElem.setAttribute('style', `width:64px;height:39px;display:flex;align-items:center;`);
               toxToolbar!.appendChild(divElem);
               targetElem.value = divElem;
-              imgUploadShow.value = props.showImageUpload;
+              imgUploadShow.value = (props as any).showImageUpload;
               executeCount = 0;
             } else {
               mountElem();

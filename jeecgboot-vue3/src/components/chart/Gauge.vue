@@ -34,7 +34,7 @@
     setup(props) {
       const chartRef = ref<HTMLDivElement | null>(null);
       const { setOptions, echarts } = useECharts(chartRef as Ref<HTMLDivElement>);
-      const option = reactive({
+      const option = reactive<any>({
         series: [
           {
             type: 'gauge',

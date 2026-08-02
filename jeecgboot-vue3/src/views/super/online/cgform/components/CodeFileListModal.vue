@@ -40,7 +40,7 @@
       const { createMessage: $message } = useMessage();
       const codeList = ref<any>([]);
       const height = window.innerHeight - 150;
-      const divStyle = reactive({
+      const divStyle = reactive<any>({
         overflowY: 'auto',
         maxHeight: height + 'px',
       });

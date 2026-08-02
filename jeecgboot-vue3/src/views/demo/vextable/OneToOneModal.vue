@@ -82,18 +82,18 @@
       const isUpdate = ref(true);
       const rowId = ref('');
       const formRef = ref();
-      const labelCol = reactive({
+      const labelCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 5 },
       });
-      const wrapperCol = reactive({
+      const wrapperCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 16 },
       });
       const validatorRules = {
         orderCode: [{ required: true, message: '订单号不能为空', trigger: 'blur' }],
       };
-      const orderMainModel = reactive({
+      const orderMainModel = reactive<any>({
         id: null,
         orderCode: '',
         orderMoney: '',

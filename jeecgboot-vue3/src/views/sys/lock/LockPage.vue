@@ -79,7 +79,7 @@ import {ref, computed, onMounted, onUnmounted} from 'vue';
   const lockStore = useLockStore();
   const userStore = useUserStore();
 
-  const { hour, month, minute, meridiem, year, day, week } = useNow(true);
+  const { hour, month, minute, meridiem, year, day, week } = useNow(true) as any;
 
   const { t } = useI18n();
 

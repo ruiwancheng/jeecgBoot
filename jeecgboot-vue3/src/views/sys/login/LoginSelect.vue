@@ -97,7 +97,7 @@
       //表单
       const formRef = ref();
       //选择的租户部门信息
-      const formState: UnwrapRef<FormState> = reactive({
+      const formState: UnwrapRef<FormState> = reactive<any>({
         orgCode: undefined,
         tenantId: null,
       });

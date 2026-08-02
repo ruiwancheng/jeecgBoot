@@ -150,11 +150,11 @@
   import { DownOutlined } from '@ant-design/icons-vue';
   // 声明Emits
   const emit = defineEmits(['register', 'success']);
-  const labelCol = reactive({
+  const labelCol = reactive<any>({
     xs: { span: 24 },
     sm: { span: 5 },
   });
-  const wrapperCol = reactive({
+  const wrapperCol = reactive<any>({
     xs: { span: 24 },
     sm: { span: 16 },
   });
@@ -162,7 +162,7 @@
   const isUpdate = ref(true);
   const inputRef = ref();
   const inputRef2 = ref();
-  let state = reactive({
+  let state = reactive<any>({
     inputVisible: false,
     inputValue: '',
   });
@@ -227,7 +227,7 @@
     },
   ]);
   const formRef = ref();
-  let router = reactive({});
+  let router = reactive<any>({});
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     isUpdate.value = !!data?.isUpdate;

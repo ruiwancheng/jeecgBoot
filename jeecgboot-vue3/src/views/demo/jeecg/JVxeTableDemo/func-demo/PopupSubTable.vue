@@ -132,7 +132,7 @@
   ]);
   const selectedRows = ref<any>([]);
   // 子表的信息
-  const subTable = reactive({
+  const subTable = reactive<any>({
     currentRowId: null,
     loading: false,
     pagination: { current: 1, pageSize: 200, pageSizeOptions: ['100', '200'], total: 0 },
@@ -149,9 +149,9 @@
   });
 
   // form表单 col
-  const labelCol = reactive({ span: 4 });
-  const wrapperCol = reactive({ span: 20 });
-  const rules = reactive({
+  const labelCol = reactive<any>({ span: 4 });
+  const wrapperCol = reactive<any>({ span: 20 });
+  const rules = reactive<any>({
     num: [{ required: true, message: '必须输入序号' }],
   });
 

@@ -198,7 +198,7 @@
       }
 
       // 查询区域存储值
-      const searchParams = reactive({
+      const searchParams = reactive<any>({
         fromUser: '',
         realname: '',
         rangeDateKey: '7day',

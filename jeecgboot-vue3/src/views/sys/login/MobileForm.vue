@@ -44,7 +44,7 @@
   const userStore = useUserStore();
   const formRef = ref();
   const loading = ref(false);
-  const formData = reactive({
+  const formData = reactive<any>({
     mobile: '',
     sms: '',
   });

@@ -175,13 +175,13 @@ const queryParam = reactive<any>({});
 const formRef = ref();
 
 // 查询区域label宽度
-const labelCol = reactive({
+const labelCol = reactive<any>({
   xs: 24,
   sm: 4,
   xl: 6,
   xxl: 6,
 });
-const wrapperCol = reactive({
+const wrapperCol = reactive<any>({
   xs: 24,
   sm: 20,
 });

@@ -79,7 +79,7 @@
       const activeKey = ref('jeecgOrderCustomerForm');
       function handleChangeTabs() {}
       // 机票信息
-      const table2 = reactive({
+      const table2 = reactive<any>({
         loading: false,
         dataSource: [],
         columns: filterSubTableColnmns(jeecgOrderTicketColumns, 'order:'),

@@ -42,7 +42,7 @@
     setProps({ disabled: !data?.showFooter });
   });
   //日期个性化选择
-  const fieldPickers = reactive({});
+  const fieldPickers = reactive<any>({});
   //设置标题
   const title = computed(() => (!unref(isUpdate) ? '新增' : !unref(isDetail) ? '详情' : '编辑'));
   //表单提交事件

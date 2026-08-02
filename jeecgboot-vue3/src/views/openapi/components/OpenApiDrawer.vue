@@ -127,17 +127,17 @@
   const openApiParam = ref();
   const responseField = ref();
 
-  const openApiHeaderTable = reactive({
+  const openApiHeaderTable = reactive<any>({
     loading: false,
     dataSource: [] as any[],
     columns: openApiHeaderJVxeColumns,
   });
-  const openApiParamTable = reactive({
+  const openApiParamTable = reactive<any>({
     loading: false,
     dataSource: [] as any[],
     columns: openApiParamJVxeColumns,
   });
-  const responseFieldTable = reactive({
+  const responseFieldTable = reactive<any>({
     loading: false,
     dataSource: [] as any[],
     columns: responseFieldJVxeColumns,

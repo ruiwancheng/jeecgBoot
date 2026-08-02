@@ -168,7 +168,7 @@ const isEdit = ref(false);
 const toolIndex = ref<number>(-1); // 编辑时工具在数组中的索引
 
 // 工具表单
-const toolForm = reactive({
+const toolForm = reactive<any>({
   name: '',
   description: '',
   path: '',

@@ -5,7 +5,7 @@ import { getFileAccessHttpUrl } from "@/utils/common/compUtils";
 
 let instance: any = null;
 
-const formState = reactive({
+const formState = reactive<any>({
   family: '微软雅黑',
   size: '小四',
   name: 'word在线编辑',

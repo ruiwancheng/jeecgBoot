@@ -77,7 +77,7 @@
   const loginLoading = ref<boolean>(false);
   //登录表单
   const loginRef = ref();
-  const randCodeData = reactive({
+  const randCodeData = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,
     checkKey: -1,

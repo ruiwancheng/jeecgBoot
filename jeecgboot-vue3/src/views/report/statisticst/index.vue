@@ -43,7 +43,7 @@
   const barType = ref('year');
   const pieType = ref('year');
   const dataSource = ref<any>([]);
-  const url = reactive({
+  const url = reactive<any>({
     getYearCountInfo: '/mock/api/report/getYearCountInfo',
     getMonthCountInfo: '/mock/api/report/getMonthCountInfo',
     getCntrNoCountInfo: '/mock/api/report/getCntrNoCountInfo',

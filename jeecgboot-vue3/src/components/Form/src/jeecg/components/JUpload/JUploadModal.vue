@@ -20,7 +20,7 @@
   });
 
   const uploadRef = ref();
-  const uploadBinds = reactive({ props: {} as any });
+  const uploadBinds = reactive<any>({ props: {} as any });
   const modalTitle = computed(() => (uploadBinds.props?.fileType === UploadTypeEnum.image ? '图片上传' : '文件上传'));
 
   // 注册弹窗

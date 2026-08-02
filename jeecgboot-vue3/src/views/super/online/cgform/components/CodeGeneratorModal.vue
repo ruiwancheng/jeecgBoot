@@ -80,7 +80,7 @@
       const { prefixCls } = useDesign('code-generator-modal');
       const wrapClassName = prefixCls;
       const code = ref('');
-      const metaModel = reactive({
+      const metaModel = reactive<any>({
         projectPath: '',
         packageStyle: 'service',
         jspMode: '',
@@ -93,7 +93,7 @@
       const model = reactive<Recordable>({});
       const jspModeOptions = ref<any>([]);
       // 子表配置
-      const subTable = reactive({
+      const subTable = reactive<any>({
         dataSource: [] as Recordable[],
         columns: [
           {

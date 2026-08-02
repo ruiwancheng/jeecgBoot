@@ -353,7 +353,7 @@ export function useListTable(tableProps: TableProps): [
 
   // 表格选择列配置
   const rowSelection: any = tableProps?.rowSelection ?? {};
-  const defaultRowSelection = reactive({
+  const defaultRowSelection = reactive<any>({
     ...rowSelection,
     type: rowSelection.type ?? 'checkbox',
     // 选择列宽度，默认 50

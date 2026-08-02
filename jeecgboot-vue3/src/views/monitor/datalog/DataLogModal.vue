@@ -57,7 +57,7 @@
   const confirmLoading = ref(false);
   const isUpdate = ref(true);
   const dataVersionList = ref<any>([]);
-  let dataLog = reactive({});
+  let dataLog = reactive<any>({});
   //表单赋值
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     isUpdate.value = !!data?.isUpdate;

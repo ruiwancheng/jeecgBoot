@@ -94,12 +94,12 @@
   const onlCgreportParam = ref();
   const onlCgreportItem = ref();
   const tableRefs = { onlCgreportItem, onlCgreportParam };
-  const onlCgreportParamTable = reactive({
+  const onlCgreportParamTable = reactive<any>({
     loading: false,
     dataSource: <any[]>[],
     columns: onlCgreportParamColumns,
   });
-  const onlCgreportItemTable = reactive({
+  const onlCgreportItemTable = reactive<any>({
     loading: false,
     dataSource: <any[]>[],
     columns: onlCgreportItemColumns,

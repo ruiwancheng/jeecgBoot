@@ -92,27 +92,27 @@
       const refKeys = ref(['tableRef1', 'tableRef2']);
       const activeKey = ref('tableRef1');
       const tableRefs = { tableRef1, tableRef2 };
-      const labelCol = reactive({
+      const labelCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 5 },
       });
-      const wrapperCol = reactive({
+      const wrapperCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 16 },
       });
       // 客户信息
-      const table1 = reactive({
+      const table1 = reactive<any>({
         loading: false,
         dataSource: [],
         columns,
       });
       // 机票信息
-      const table2 = reactive({
+      const table2 = reactive<any>({
         loading: false,
         dataSource: [],
         columns: columns1,
       });
-      const orderMainModel = reactive({
+      const orderMainModel = reactive<any>({
         id: null,
         orderCode: '',
         orderMoney: '',

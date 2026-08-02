@@ -28,7 +28,7 @@
       const wrapEl = ref<ElRef>(null);
 
       const loadingRef = ref(false);
-      const compState = reactive({
+      const compState = reactive<any>({
         absolute: false,
         loading: false,
         theme: 'dark',

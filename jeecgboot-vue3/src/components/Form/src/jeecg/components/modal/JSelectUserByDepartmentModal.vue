@@ -218,7 +218,7 @@
   // 全选
   const currentDepartAllUsers = ref(false);
   // 搜索结构
-  const searchResult: any = reactive({
+  const searchResult: any = reactive<any>({
     depart: [],
     user: [],
   });

@@ -124,7 +124,7 @@
   const month = ref('*');
   const week = ref('?');
   const year = ref('*');
-  const inputValues = reactive({
+  const inputValues = reactive<any>({
     second: '',
     minute: '',
     hour: '',

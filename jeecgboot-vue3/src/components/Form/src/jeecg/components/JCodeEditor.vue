@@ -86,7 +86,7 @@
       let coder: Nullable<EditorFromTextArea> = null;
       const attrs = useAttrs();
       const height = ref(props.height);
-      const options = reactive({
+      const options = reactive<any>({
         // 缩进格式
         tabSize: 2,
         // 主题，对应主题库 JS 需要提前引入

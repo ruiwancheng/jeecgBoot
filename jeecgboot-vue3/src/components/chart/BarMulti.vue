@@ -39,7 +39,7 @@
     setup(props, { emit }) {
       const chartRef = ref<HTMLDivElement | null>(null);
       const { setOptions, getInstance } = useECharts(chartRef as Ref<HTMLDivElement>);
-      const option = reactive({
+      const option = reactive<any>({
         tooltip: {
           trigger: 'axis',
           axisPointer: {

@@ -119,7 +119,7 @@
       },
     },
     setup() {
-      const model = reactive({
+      const model = reactive<any>({
         printer: '张三',
         printTime: '2021-12-31 23:59:59',
         printContent: '打印内容：这是一个打印测试！',

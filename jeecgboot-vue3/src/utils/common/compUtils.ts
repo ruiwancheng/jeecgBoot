@@ -425,7 +425,7 @@ export function calculateFileSize(fileSize, unit?) {
  */
 export function getHeaders() {
   let tenantId = getTenantId();
-  return reactive({
+  return reactive<any>({
     'X-Access-Token': getToken(),
     'X-Tenant-Id': tenantId ? tenantId : '0',
   });

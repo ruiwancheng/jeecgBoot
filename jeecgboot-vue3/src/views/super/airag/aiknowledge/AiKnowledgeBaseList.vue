@@ -156,14 +156,14 @@
       //查询参数
       const queryParam = reactive<any>({});
       //查询区域label宽度
-      const labelCol = reactive({
+      const labelCol = reactive<any>({
         xs: 24,
         sm: 4,
         xl: 6,
         xxl: 6,
       });
       //查询区域组件宽度
-      const wrapperCol = reactive({
+      const wrapperCol = reactive<any>({
         xs: 24,
         sm: 20,
       });

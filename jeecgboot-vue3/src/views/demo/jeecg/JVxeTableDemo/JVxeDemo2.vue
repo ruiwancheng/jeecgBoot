@@ -128,7 +128,7 @@
     },
   ]);
   const dataSource = ref<any>([]);
-  const pagination = reactive({
+  const pagination = reactive<any>({
     current: 1,
     pageSize: 10,
     pageSizeOptions: ['10', '20', '30', '100', '200'],

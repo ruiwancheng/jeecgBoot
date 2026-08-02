@@ -213,7 +213,7 @@
   import { INNER_TABLE } from '../../util/constant';
   import { Loading } from '/@/components/Loading';
 
-  const innerSubTable = reactive({
+  const innerSubTable = reactive<any>({
     tabNav: [],
     tabIndex: '0',
   });

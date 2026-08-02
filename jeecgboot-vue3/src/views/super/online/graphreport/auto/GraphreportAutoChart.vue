@@ -40,14 +40,14 @@
       const code = ref<string>();
       const errorTip = ref<Nullable<string>>(null);
       // 根据不同的运行时错误显示不同的提示信息  e3e3NcxzbUiGa53YYVXxWc8ADo5ISgQGx/gaZwERF91oAryDlivjqBv3wqRArgChupi+Y/Gg/swwGEyL0PuVFg==
-      const errors = reactive({ resultIsEmpty: false });
+      const errors = reactive<any>({ resultIsEmpty: false });
       const chartsData = ref();
       // 查询条件（map根据code隔离）
-      const paramsMap = reactive({});
+      const paramsMap = reactive<any>({});
       // 用户自定义查询条件（map根据code隔离）
-      const selfParamsMap = reactive({});
+      const selfParamsMap = reactive<any>({});
       // 查询条件form（map根据code隔离）
-      const searchFormMap = reactive({});
+      const searchFormMap = reactive<any>({});
       // 多页面params缓存
       const paramsRef = getPageComputed<string>(paramsMap, '');
       // 用户自定义查询条件

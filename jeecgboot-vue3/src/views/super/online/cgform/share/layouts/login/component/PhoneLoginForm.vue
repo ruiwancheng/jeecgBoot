@@ -48,13 +48,13 @@
   const loginLoading = ref<boolean>(false);
   //登录表单
   const loginPhoneRef = ref();
-  const randCodeData = reactive({
+  const randCodeData = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,
     checkKey: -1,
   });
   //手机号表单
-  const formData = reactive({
+  const formData = reactive<any>({
     mobile: '',
     sms: '',
   });

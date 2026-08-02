@@ -4,7 +4,7 @@ import { isEmpty } from '/@/utils/is';
 import { Pagination } from 'ant-design-vue';
 
 export function usePagination(props: JVxeTableProps, methods: JVxeTableMethods) {
-  const innerPagination = reactive({
+  const innerPagination = reactive<any>({
     current: 1,
     pageSize: 10,
     pageSizeOptions: ['10', '20', '30'],

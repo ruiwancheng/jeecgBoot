@@ -84,10 +84,10 @@
       // 数据源类型
       const dbSourceOptions = ref<any>([]);
 
-      const fieldTable = reactive({
+      const fieldTable = reactive<any>({
         dataSource: [],
       });
-      const paramsTable = reactive({
+      const paramsTable = reactive<any>({
         dataSource: [],
       });
 

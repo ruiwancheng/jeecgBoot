@@ -31,7 +31,7 @@
     components: { PageWrapper, Time, CollapseContainer },
     setup() {
       const now = new Date().getTime();
-      const state = reactive({
+      const state = reactive<any>({
         time1: now - 60 * 3 * 1000,
         time2: now - 86400 * 3 * 1000,
       });

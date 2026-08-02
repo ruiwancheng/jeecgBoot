@@ -45,7 +45,7 @@
 
   const tableRef1 = ref<JVxeTableInstance>();
   const tableRef2 = ref<JVxeTableInstance>();
-  const table1 = reactive({
+  const table1 = reactive<any>({
     columns: [
       {
         title: 'ID',
@@ -82,7 +82,7 @@
     ],
   });
 
-  const table2 = reactive({
+  const table2 = reactive<any>({
     columns: [
       {
         title: 'ID',

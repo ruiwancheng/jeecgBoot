@@ -100,7 +100,7 @@
       const dataId = ref('');
       const dataTable = ref('');
       const dataVersionList = ref<any>([]);
-      const params = reactive({ dataId1: '', dataId2: '' });
+      const params = reactive<any>({ dataId1: '', dataId2: '' });
 
       const diffCount = computed(() => dataSource.value.filter((r) => r.isDiff).length);
 

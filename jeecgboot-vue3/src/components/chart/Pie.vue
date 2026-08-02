@@ -33,7 +33,7 @@
     setup(props, { emit }) {
       const chartRef = ref<HTMLDivElement | null>(null);
       const { setOptions, getInstance, resize } = useECharts(chartRef as Ref<HTMLDivElement>);
-      const option = reactive({
+      const option = reactive<any>({
         tooltip: {
           formatter: '{b} ({c})',
         },

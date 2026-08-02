@@ -62,12 +62,12 @@
   const openApiHeader = ref();
   const openApiParam = ref();
   const tableRefs = { openApiHeader, openApiParam };
-  const openApiHeaderTable = reactive({
+  const openApiHeaderTable = reactive<any>({
     loading: false,
     dataSource: [],
     columns: openApiHeaderJVxeColumns,
   });
-  const openApiParamTable = reactive({
+  const openApiParamTable = reactive<any>({
     loading: false,
     dataSource: [],
     columns: openApiParamJVxeColumns,

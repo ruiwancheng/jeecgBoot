@@ -195,7 +195,7 @@
        *  3.地址栏参数-param
        *  当表单id发生改变，config改变，列表页传入cache，param;监听status change然后重置表单的值
        */
-      const defaultValues = reactive({
+      const defaultValues = reactive<any>({
         config: {},
         cache: {},
         param: {},

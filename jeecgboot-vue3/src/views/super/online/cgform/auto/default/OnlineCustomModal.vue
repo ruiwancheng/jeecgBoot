@@ -237,7 +237,7 @@
       /*-------------------------------------自定义表单-----------------------------------------------*/
       const customFormRef = ref();
 
-      const customFormComponent = reactive({
+      const customFormComponent = reactive<any>({
         url: '',
         is: '',
         row: {},

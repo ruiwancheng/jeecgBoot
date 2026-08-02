@@ -50,7 +50,7 @@ export function usePopBiz(ob, tableRef?) {
   // 当前路由
   const route = useRoute();
   //定义请求url信息
-  const configUrl = reactive({
+  const configUrl = reactive<any>({
     //列表页加载column和data
     getColumnsAndData: '/online/cgreport/api/getColumnsAndData/',
     getColumns: '/online/cgreport/api/getRpColumns/',
@@ -89,7 +89,7 @@ export function usePopBiz(ob, tableRef?) {
   /**
    * 分页配置
    */
-  const pagination = reactive({
+  const pagination = reactive<any>({
     current: 1,
     pageSize: 10,
     pageSizeOptions: ['10', '20', '30'],

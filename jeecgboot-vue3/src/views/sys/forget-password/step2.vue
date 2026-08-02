@@ -49,7 +49,7 @@
       const { createErrorModal } = useMessage();
       const { accountInfo } = props;
       const formRef = ref();
-      const formData = reactive({
+      const formData = reactive<any>({
         username: accountInfo.obj.username || '',
         password: '',
         confirmPassword: '',

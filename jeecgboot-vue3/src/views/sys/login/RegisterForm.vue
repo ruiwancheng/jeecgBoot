@@ -57,7 +57,7 @@
   const { notification, createErrorModal } = useMessage();
   const formRef = ref();
   const loading = ref(false);
-  const formData = reactive({
+  const formData = reactive<any>({
     account: '',
     password: '',
     confirmPassword: '',

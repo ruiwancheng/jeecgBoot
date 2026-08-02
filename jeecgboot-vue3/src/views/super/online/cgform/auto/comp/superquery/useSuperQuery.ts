@@ -302,7 +302,7 @@ export function useSuperQuery(props){
   // 本地缓存
   const $ls = createLocalStorage();
   //需要保存的信息（一条）
-  const saveInfo = reactive({
+  const saveInfo = reactive<any>({
     visible: false,
     title: '',
     content: '',

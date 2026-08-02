@@ -62,23 +62,23 @@ export function useChartRender(props: PropsType, { emit }) {
   // 打印ID
   const printId = computed(() => `print-content-${headId.value}`);
   // 曲线图参数配置
-  const lineParams = reactive({
+  const lineParams = reactive<any>({
     chartData: [] as Recordable[],
   });
   // 柱状图参数配置
-  const barParams = reactive({
+  const barParams = reactive<any>({
     chartData: [] as Recordable[],
   });
   // 饼图参数配置
-  const pieParams = reactive({
+  const pieParams = reactive<any>({
     chartData: [] as Recordable[],
   });
   // 折柱图参数配置
-  const barLineParams = reactive({
+  const barLineParams = reactive<any>({
     dataSource: [] as Recordable[],
   });
   // 表格参数配置
-  const tableParams = reactive({
+  const tableParams = reactive<any>({
     // 固定的列数据
     fixedColumns: [
       {

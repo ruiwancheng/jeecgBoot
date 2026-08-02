@@ -84,12 +84,12 @@
     setup(props) {
       const instance = getCurrentInstance();
 
-      const state = reactive({
+      const state = reactive<any>({
         active: false,
         opened: false,
       });
 
-      const data = reactive({
+      const data = reactive<any>({
         timeout: null as TimeoutHandle | null,
         mouseInChild: false,
         isChild: false,

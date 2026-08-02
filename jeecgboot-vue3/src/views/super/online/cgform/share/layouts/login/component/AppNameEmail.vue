@@ -40,7 +40,7 @@
   import { register } from '/@/api/sys/user';
   import { useMessage } from "/@/hooks/web/useMessage";
 
-  const formState = reactive({
+  const formState = reactive<any>({
     realname: '',
     email: '',
   });

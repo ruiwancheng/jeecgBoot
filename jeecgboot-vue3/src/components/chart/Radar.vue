@@ -28,7 +28,7 @@
     setup(props) {
       const chartRef = ref<HTMLDivElement | null>(null);
       const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
-      const option = reactive({
+      const option = reactive<any>({
         title: {
           text: '',
           // text: '基础雷达图',

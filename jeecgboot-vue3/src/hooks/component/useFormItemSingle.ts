@@ -15,7 +15,7 @@ export function useRuleFormItem<T extends Recordable>(props: T, key: keyof T = '
   const emit = instance?.emit;
   const formItemContext = Form.useInjectFormItemContext();
 
-  const innerState = reactive({
+  const innerState = reactive<any>({
     value: props[key],
   });
 

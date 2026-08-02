@@ -36,14 +36,14 @@
 
   const { createMessage } = useMessage();
   // 工具栏的按钮配置
-  const toolbarConfig = reactive({
+  const toolbarConfig = reactive<any>({
     // add 新增按钮；remove 删除按钮；clearSelection 清空选择按钮
     btn: ['add', 'save', 'remove', 'clearSelection'],
   });
   // 是否正在加载
   const loading = ref(false);
   // 分页器参数
-  const pagination = reactive({
+  const pagination = reactive<any>({
     // 当前页码
     current: 1,
     // 每页的条数

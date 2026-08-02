@@ -33,7 +33,7 @@
   import { defHttp } from '/@/utils/http/axios';
   import { useMessage } from '/@/hooks/web/useMessage';
   //定义请求url信息
-  const configUrl = reactive({
+  const configUrl = reactive<any>({
     getColumns: '/online/cgreport/api/getRpColumns/',
     getData: '/online/cgreport/api/getData/',
   });

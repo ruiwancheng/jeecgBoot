@@ -94,11 +94,11 @@
     emits: ['ok', 'register'],
     setup(props, { emit }) {
       const { createMessage } = useMessage();
-      const labelCol = reactive({
+      const labelCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 6 },
       });
-      const wrapperCol = reactive({
+      const wrapperCol = reactive<any>({
         xs: { span: 24 },
         sm: { span: 18 },
       });

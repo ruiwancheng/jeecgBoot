@@ -35,7 +35,7 @@
     setup() {
       const current = ref(0);
 
-      const state = reactive({
+      const state = reactive<any>({
         initSetp2: false,
         initSetp3: false,
       });

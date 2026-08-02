@@ -91,7 +91,7 @@
   import DocDesign from '/src/components/wordtpl/DocDesign.vue';
   import { BasicForm } from '@/components/Form';
   //日期个性化选择
-  const fieldPickers = reactive({});
+  const fieldPickers = reactive<any>({});
   const queryParam = reactive<any>({});
   const checkedKeys = ref<Array<string | number>>([]);
   const userStore = useUserStore();
@@ -134,12 +134,12 @@
 
   const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
-  const wordDesignContent = reactive({});
+  const wordDesignContent = reactive<any>({});
 
-  const currentTpl = reactive({});
-  const genWordData = reactive({});
+  const currentTpl = reactive<any>({});
+  const genWordData = reactive<any>({});
   const tplFieldList = reactive([]);
-  const genResumeData = reactive({
+  const genResumeData = reactive<any>({
     content: '张三；电话：186xxxxxxxx；邮箱：zhangsan@ex.com',
     profile: '拥有13年开发经验，8年项目管理经验，6年系统架构经验，曾在多个平台级产品中担任核心负责人，具备从0到1搭建平台、从1到100推动演进的能力。',
   });

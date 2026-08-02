@@ -71,7 +71,7 @@ const [registerModal, {closeModal}] = useModalInner(() => reload());
 // 注册 form 弹窗
 const [registerFormModal, formModal] = useModal();
 const isUpdate = ref(false);
-const formModalProps = reactive({
+const formModalProps = reactive<any>({
   onRegister: registerFormModal,
   title: computed(() => (isUpdate?.value ? '修改' : '新增')),
   width: 600,

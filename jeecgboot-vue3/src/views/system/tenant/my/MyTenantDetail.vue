@@ -121,7 +121,7 @@
   import JDictSelectTag from "/@/components/Form/src/jeecg/components/JDictSelectTag.vue";
 
   const { createMessage } = useMessage();
-  const formState = reactive({
+  const formState = reactive<any>({
     id: '',
     name: '',
     houseNumber: '',

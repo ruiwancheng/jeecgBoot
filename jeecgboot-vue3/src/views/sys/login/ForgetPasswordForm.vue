@@ -26,13 +26,13 @@
   const formRef = ref();
   const loading = ref(false);
   const currentTab = ref(0);
-  const formData = reactive({
+  const formData = reactive<any>({
     account: '',
     mobile: '',
     sms: '',
   });
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.RESET_PASSWORD);
-  const accountInfo = reactive({
+  const accountInfo = reactive<any>({
     obj: {
       username: '',
       phone: '',

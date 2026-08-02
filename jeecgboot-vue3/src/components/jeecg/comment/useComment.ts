@@ -223,7 +223,7 @@ export function uploadMu(fileList) {
  * 显示文件列表
  */
 export function useFileList() {
-  const imageSrcMap = reactive({});
+  const imageSrcMap = reactive<any>({});
   const typeMap = {
     xls: excel,
     xlsx: excel,

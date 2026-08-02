@@ -64,7 +64,7 @@
       });
 
       //存放二维码的数据
-      const randCodeData = reactive({
+      const randCodeData = reactive<any>({
         randCodeImage: '',
         requestCodeSuccess: false,
         checkKey: -1,

@@ -11,9 +11,9 @@ export function useData(props: JVxeTableProps): JVxeDataProps {
     prefixCls: prefixCls,
     caseId: `j-vxe-${randomString(8)}`,
     vxeDataSource: ref<any>([]),
-    scroll: reactive({ top: 0, left: 0 }),
+    scroll: reactive<any>({ top: 0, left: 0 }),
     scrolling: ref(false),
-    defaultVxeProps: reactive({
+    defaultVxeProps: reactive<any>({
       // rowId: props.rowKey,
       rowConfig: {
         keyField: props.rowKey,
@@ -86,7 +86,7 @@ export function useData(props: JVxeTableProps): JVxeDataProps {
     selectedRows: ref<any>([]),
     selectedRowIds: ref<string[]>([]),
     disabledRowIds: [],
-    statistics: reactive({
+    statistics: reactive<any>({
       has: false,
       sum: [],
       average: [],
@@ -94,7 +94,7 @@ export function useData(props: JVxeTableProps): JVxeDataProps {
     authsMap: ref(null),
     innerEditRules: {},
     innerLinkageConfig: new Map<string, any>(),
-    reloadEffectRowKeysMap: reactive({}),
+    reloadEffectRowKeysMap: reactive<any>({}),
   };
 }
 

@@ -37,7 +37,7 @@
     emits: ['change', 'update:value'],
     setup(props, { emit }) {
       //input动态数据
-      const dynamicInput: UnwrapRef<{ params: Params[] }> = reactive({ params: [] });
+      const dynamicInput: UnwrapRef<{ params: Params[] }> = reactive<any>({ params: [] });
       //删除Input
       const remove = (item: Params) => {
         let index = dynamicInput.params.indexOf(item);

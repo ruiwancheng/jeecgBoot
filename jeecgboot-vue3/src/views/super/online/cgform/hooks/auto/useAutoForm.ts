@@ -903,7 +903,7 @@ function handleSubTableButtonAuth(tableName, item) {
 export function getDetailFormSchemas(props) {
   const detailFormSchemas = ref<DetailFormSchema[]>([]);
   const refMap = {};
-  const showStatus = reactive({
+  const showStatus = reactive<any>({
     
   });
   const hasSubTable = ref(false);

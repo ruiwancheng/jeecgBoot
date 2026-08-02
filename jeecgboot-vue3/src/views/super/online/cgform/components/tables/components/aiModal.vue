@@ -71,12 +71,12 @@
   const { createMessage } = useMessage();
   const [registerModal, { closeModal }] = useModalInner();
   const active = ref('one');
-  const one = reactive({
+  const one = reactive<any>({
     title: 'AI字段建议',
     qualifier: '',
     loading: false,
   });
-  const two = reactive({
+  const two = reactive<any>({
     title: '推荐字段',
     checked: false,
     indeterminate: false,

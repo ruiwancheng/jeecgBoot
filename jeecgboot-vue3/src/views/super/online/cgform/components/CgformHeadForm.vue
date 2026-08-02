@@ -192,7 +192,7 @@
     subTableStr: '',
     extConfigJson: '',
   };
-  const formModel = reactive({ ...DEFAULT_FORM_MODEL });
+  const formModel = reactive<any>({ ...DEFAULT_FORM_MODEL });
 
   function onTableTypeChange(value: number) {
     if (value === 1) {

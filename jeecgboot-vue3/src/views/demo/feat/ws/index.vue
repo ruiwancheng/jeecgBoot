@@ -60,7 +60,7 @@
       Tag,
     },
     setup() {
-      const state = reactive({
+      const state = reactive<any>({
         server: 'ws://localhost:3300/test',
         sendValue: '',
         recordList: [] as { id: number; time: number; res: string }[],

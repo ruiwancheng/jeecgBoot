@@ -36,7 +36,7 @@
   //用户名
   const username = ref<string>('')
   const formRef = ref();
-  const formState = reactive({
+  const formState = reactive<any>({
     oldpassword:'',
     password:'',
     smscode:'',

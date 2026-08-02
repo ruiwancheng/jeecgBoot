@@ -32,7 +32,7 @@ export function useSysMessage(setLocaleText) {
   const pageNo = ref(1)
   let pageSize = 10;
 
-  const searchParams = reactive({
+  const searchParams = reactive<any>({
     fromUser: '',
     rangeDateKey: '',
     rangeDate: [],

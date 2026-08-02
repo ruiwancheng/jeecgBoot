@@ -97,7 +97,7 @@
       /**
        * online表单扩展配置
        */
-      const onlineExtConfigJson = reactive({
+      const onlineExtConfigJson = reactive<any>({
         reportPrintShow: 0,
         reportPrintUrl: '',
         joinQuery: 0,

@@ -52,7 +52,7 @@
         extendConfig.displayLevel = 'all';
       }
 
-      const extendConfig = reactive({
+      const extendConfig = reactive<any>({
         uploadnum: 0,
         showLength: '',
         popupMulti: true,

@@ -99,7 +99,7 @@
       const showHistory = ref(false);
       const codeChange = ref(false);
       const tableName = ref('');
-      const enhanceValues = reactive({ form: '', list: '' });
+      const enhanceValues = reactive<any>({ form: '', list: '' });
       // 每个tab只获取一遍值
       const getFlag = { form: false, list: false };
       const reloading = ref(false);

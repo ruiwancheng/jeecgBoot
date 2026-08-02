@@ -51,7 +51,7 @@
     setup(props, { emit, refs }) {
       const emitData = ref<any>([]);
       //下拉框的选择值
-      const pca = reactive({
+      const pca = reactive<any>({
         province: '',
         city: '',
         area: '',

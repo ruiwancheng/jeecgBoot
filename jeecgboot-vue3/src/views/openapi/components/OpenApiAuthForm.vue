@@ -62,7 +62,7 @@
   const wrapperCol = ref<any>({ xs: { span: 24 }, sm: { span: 16 } });
   const confirmLoading = ref<boolean>(false);
   //表单验证
-  const validatorRules = reactive({
+  const validatorRules = reactive<any>({
     name:[{ required: true, message: '请输入授权对象!'},],
     systemUserId:[{ required: true, message: '请输入关联系统用户名!'},],
   });

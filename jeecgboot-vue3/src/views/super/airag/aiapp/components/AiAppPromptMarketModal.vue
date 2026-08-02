@@ -98,7 +98,7 @@
       const selectedPrompt = ref<any>(null);
 
       // 分页配置
-      const pagination = reactive({
+      const pagination = reactive<any>({
         current: 1,
         pageSize: 12,
         total: 0,

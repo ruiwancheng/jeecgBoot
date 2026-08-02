@@ -25,7 +25,7 @@ export function useLinkTable(props) {
   // 第一个文本列
   const mainContentField = ref('');
   //权限数据
-  const auths = reactive({
+  const auths = reactive<any>({
     add: true,
     update: true
   });

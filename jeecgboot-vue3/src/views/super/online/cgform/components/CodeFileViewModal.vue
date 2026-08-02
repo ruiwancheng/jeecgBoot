@@ -61,10 +61,10 @@
       const height = window.innerHeight - 142;
       const language = ref('java');
       const activeCodeContent = ref('');
-      let codeMap = reactive({});
+      let codeMap = reactive<any>({});
 
       const [registerModal, { closeModal }] = useModalInner(async (data) => {
-        codeMap = reactive({});
+        codeMap = reactive<any>({});
         activeCodeContent.value = '';
 
         codeList.value = data.codeList;

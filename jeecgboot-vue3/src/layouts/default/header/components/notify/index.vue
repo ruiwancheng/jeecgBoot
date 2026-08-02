@@ -54,7 +54,7 @@
       const instance: any = getCurrentInstance();
       const userStore = useUserStore();
       const glob = useGlobSetting();
-      const dynamicNoticeProps = reactive({ path: '', formData: {} });
+      const dynamicNoticeProps = reactive<any>({ path: '', formData: {} });
       const [registerDetail, detailModal] = useModal();
       const router = useRouter();
       // const listData = ref(tabListData);

@@ -86,7 +86,7 @@
     xs: { span: 24 },
     sm: { span: 16 },
   };
-  const model = reactive({
+  const model = reactive<any>({
     id: 'E0CC280',
     appVersion: '',
     versionNum: 0,

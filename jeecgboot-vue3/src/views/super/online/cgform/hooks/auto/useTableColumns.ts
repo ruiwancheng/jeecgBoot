@@ -384,7 +384,7 @@ export function useTableColumns(onlineTableContext, extConfigJson: Ref<ExtConfig
 
   // update-begin--author:liaozhiyang---date:20231218---for：【QQYUN-6366】升级到antd4.x
   // 弹窗属性配置
-  const hrefComponent = reactive({
+  const hrefComponent = reactive<any>({
     model: {
       title: '',
       okText: '关闭',

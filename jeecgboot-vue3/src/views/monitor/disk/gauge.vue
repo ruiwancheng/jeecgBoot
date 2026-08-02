@@ -15,7 +15,7 @@
   const { setOptions, echarts } = useECharts(chartRef as Ref<HTMLDivElement>);
   const loading = ref(false);
   const { createMessage } = useMessage();
-  const option = reactive({
+  const option = reactive<any>({
     series: [
       {
         type: 'gauge',

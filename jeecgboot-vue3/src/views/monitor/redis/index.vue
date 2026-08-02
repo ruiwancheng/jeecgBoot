@@ -57,7 +57,7 @@
     { label: '监听端口', value: currentPort.value, color: '#722ed1' },
   ]);
 
-  const memoryOption = reactive({
+  const memoryOption = reactive<any>({
     title: {
       text: 'Redis 内存实时占用（KB）',
       textStyle: { fontSize: 14, fontWeight: 500, color: '#333' },
@@ -114,7 +114,7 @@
     ],
   });
 
-  const keyOption = reactive({
+  const keyOption = reactive<any>({
     title: {
       text: 'Redis Key 实时数量（个）',
       textStyle: { fontSize: 14, fontWeight: 500, color: '#333' },
