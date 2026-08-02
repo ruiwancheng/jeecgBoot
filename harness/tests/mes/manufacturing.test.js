@@ -2,7 +2,7 @@
 // 测试范围: BOM管理 / 生产订单 / 生产领料 / 完工入库
 // 重点验证: 铁拳团 P0 修复（表名前缀 c_mes_、完工入库累计校验、字段对齐DDL）
 // 铁拳团遗留业务缺陷标记: #STATUS-FLOW-MISSING(订单无状态机) #BOM-RECON-MISSING(领料不对账BOM) #LEDGER-MISSING(台账未联动)
-const BASE = 'http://100.122.125.106:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
 
 let token = '';
 const TS = Date.now();

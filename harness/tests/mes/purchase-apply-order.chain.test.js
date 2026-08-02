@@ -6,6 +6,12 @@ const { createSupplier, createMaterial, safeDeleteDoc, cleanupWarehouseScope } =
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 const TS = Date.now();
+// update-begin---author:ruiwancheng---date:2026-08-02---for: P1修复-日期改为动态避免过期触发交货日期校验-----------
+// 业务约束: orderDate <= deliveryDate; 申请审核自动生成订单时 orderDate=今天, deliveryDate=requiredDate
+// 故 requiredDate 必须 >= 今天; applyDate <= requiredDate
+const TODAY = new Date().toISOString().slice(0, 10);  // 'YYYY-MM-DD'
+const TOMORROW = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+// update-end---author:ruiwancheng---date:2026-08-02---for: P1修复-日期改为动态-----------
 
 async function run() {
   await c.login();
@@ -27,8 +33,8 @@ async function run() {
     supplierId: sup.id,
     deptId: '采购部',
     applicantId: '测试员',
-    applyDate: '2026-07-29',
-    requiredDate: '2026-07-30',
+    applyDate: TODAY,
+    requiredDate: TOMORROW,
     budgetSubject: '原材料',
     items: [
       { lineNo: 1, materialId: m1.id, quantity: 50, unitPrice: 25.5, unit: 'kg', purpose: '链路测试' },
@@ -68,8 +74,8 @@ async function run() {
   r = await c.api('POST', '/mes/purchase/order/add', {
     code: 'CHAIN-AO-' + TS,
     supplierId: sup.id,
-    orderDate: '2026-07-29',
-    deliveryDate: '2026-07-30',
+    orderDate: TODAY,
+    deliveryDate: TOMORROW,
     items: [
       { lineNo: 1, materialId: m1.id, quantity: 50, unitPrice: 25.50, taxRate: 0.13 },
       { lineNo: 2, materialId: m2.id, quantity: 30, unitPrice: 10.00, taxRate: 0.06 },

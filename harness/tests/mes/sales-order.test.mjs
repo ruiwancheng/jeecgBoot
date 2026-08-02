@@ -4,7 +4,7 @@
 // 状态机：草稿1 →审核→ 已审核2 →下达→ 已下达3；关闭5/取消6 仅草稿可发起；非草稿禁删
 // Usage: node harness/tests/mes/sales-order.test.mjs
 
-const BASE = 'http://100.122.125.106:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
 const ADMIN = { username: 'admin', password: '123456' };
 let token = '', customerId = '', materialId = '';
 let passed = 0, failed = 0;

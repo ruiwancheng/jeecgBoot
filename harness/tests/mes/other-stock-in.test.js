@@ -1,5 +1,5 @@
 // MES 其它入库 B+A+ 成本联动 API 测试
-const BASE = 'http://localhost:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 
 async function api(method, path, token, body) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };

@@ -1,6 +1,6 @@
 // MES 盘点单 API 测试（全链路：快照→实盘→审核→自动生成调整单→库存校准）
 const { dbCleanup: sqlFileCleanup } = require('../helpers/fixtures');
-const BASE = 'http://localhost:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 
 async function api(method, path, token, body) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
