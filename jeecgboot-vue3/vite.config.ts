@@ -189,5 +189,30 @@ export default async ({ command, mode }: ConfigEnv): Promise<UserConfig> => {
         '@jeecg/aiflow',
       ],
     },
+    //update-begin---author:pi---date:2026-08-02---for:【preview 代理】vite preview 加 API 代理到本地后端（8080）---
+    preview: {
+      host: true,
+      port: VITE_PORT,
+      proxy: {
+        // 本地后端：localhost:8080（不是生产 100.122.125.106:8080）
+        // 两个前缀都加：bundle 里 VITE_GLOB_API_URL=/jeecgboot（无横线）+ 后端实际 /jeecg-boot
+        '/jeecg-boot': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/jeecg-boot/, '/jeecg-boot'),
+        },
+        '/jeecgboot': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/jeecgboot/, '/jeecg-boot'),
+        },
+        '/upload': {
+          target: 'http://localhost:3300',
+          changeOrigin: true,
+          rewrite: (path) => path,
+        },
+      },
+    },
+    //update-end---author:pi---date:2026-08-02---for:【preview 代理】vite preview 加 API 代理到本地后端---
   };
 };
