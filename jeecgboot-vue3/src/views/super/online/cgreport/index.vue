@@ -46,7 +46,7 @@
 
   // 列表页面公共参数、方法
   const {
-    ,
+    prefixCls,
     tableContext,
     createMessage: $message,
     createConfirm: $confirm,

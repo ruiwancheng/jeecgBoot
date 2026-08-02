@@ -17,7 +17,7 @@
   const isUpdate = ref<boolean>(false);
   // 注册 form
   // 代码逻辑说明: [VUEN-2807]消息模板加一个查看功能------------
-  const [registerForm, { resetFields, setFieldsValue, validate, , setProps }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, validate, updateSchema, setProps }] = useForm({
     schemas: formSchemas,
     showActionButtonGroup: false,
     baseRowStyle: {

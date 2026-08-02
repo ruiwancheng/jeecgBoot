@@ -100,7 +100,7 @@
   import { ExceptionEnum } from "@/enums/exceptionEnum";
 
   const { t } = useI18n();
-  const { notification, , createMessage } = useMessage();
+  const { notification, createErrorModal, createMessage } = useMessage();
   const emit = defineEmits(['go-back', 'success', 'register']);
   const formRef = ref();
   const formData = reactive<any>({

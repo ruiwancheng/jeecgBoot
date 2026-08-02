@@ -46,7 +46,7 @@
   import { userInfoColumns, userInfoSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
 
-  const  = inject('prefixCls');
+  const prefixCls = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -102,14 +102,14 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, setProps, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   watch(
     () => props.data,
     () => reload()
   );
   //注册drawer
-  const [registerDrawer, { openDrawer,  }] = useDrawer();
+  const [registerDrawer, { openDrawer, setDrawerProps }] = useDrawer();
   const [registerUserAuthDrawer, userAuthDrawer] = useDrawer();
   // 注册用户选择 modal
   const [registerSelUserModal, selUserModal] = useModal();
@@ -192,7 +192,7 @@
   }
 
   // 选择用户成功
-  async function onSelectUserOk(_options, userIdList) {
+  async function onSelectUserOk(options, userIdList) {
     if (userIdList.length > 0) {
       try {
         setLoading(true);

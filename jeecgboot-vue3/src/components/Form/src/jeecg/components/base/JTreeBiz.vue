@@ -19,7 +19,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, inject, _reactive } from 'vue';
+  import { defineComponent, ref, inject, reactive } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { useAttrs } from '/@/hooks/core/useAttrs';
 
@@ -36,7 +36,7 @@
       },
     },
     emits: ['btnOk'],
-    setup(_props, { emit,  }) {
+    setup(props, { emit, refs }) {
       //接收下拉框选项
       const options = inject('selectOptions') || ref<any>([]);
       //接收选择的值

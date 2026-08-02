@@ -87,7 +87,7 @@
       Empty,
     },
     emits: ['ok', 'register', 'select'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       // 提示词列表
       const promptList = ref<any>([]);
       // 加载状态

@@ -6,7 +6,7 @@ import { getAuthCache, setAuthCache } from '/@/utils/auth';
  * @param groupId 分组ID，如果不传或者为空则不分组
  * @param expire 过期时间，默认 半分钟
  */
-export function httpGroupRequest(getPromise, groupId, _expire = 1000 * 30) {
+export function httpGroupRequest(getPromise, groupId, expire = 1000 * 30) {
   if (groupId == null || groupId === '') {
     console.log('--------popup----------getFrom  DB-------with---no--groupId ');
     return getPromise();

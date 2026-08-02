@@ -55,7 +55,7 @@
   const [registerDesc, { openDrawer: openRoleDesc }] = useDrawer();
 
   // 列表页面公共参数、方法
-  const { , tableContext, onImportXls, onExportXls } = useListPage({
+  const { prefixCls, tableContext, onImportXls, onExportXls } = useListPage({
     designScope: 'role-template',
     tableProps: {
       title: '系统角色列表',
@@ -85,7 +85,7 @@
       url: getImportUrl,
     },
   });
-  const [registerTable, { reload }, { , selectedRowKeys }] = tableContext;
+  const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
   /**
    * 新增
@@ -137,7 +137,7 @@
   /**
    * 首页配置弹窗
    */
-  function (roleCode) {
+  function handleIndexConfig(roleCode) {
     openIndexModal(true, { roleCode });
   }
   /**

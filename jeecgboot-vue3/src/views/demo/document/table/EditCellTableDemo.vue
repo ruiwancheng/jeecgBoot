@@ -5,7 +5,7 @@
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { BasicTable, _useTable, BasicColumn } from '/@/components/Table';
+  import { BasicTable, useTable, BasicColumn } from '/@/components/Table';
   import { optionsListApi } from '/@/api/demo/select';
 
   import { demoListApi } from '/@/api/demo/table';

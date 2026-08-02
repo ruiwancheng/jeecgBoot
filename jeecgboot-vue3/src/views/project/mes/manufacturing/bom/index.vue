@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, _useTable } from '/@/components/Table';
+  import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
@@ -34,7 +34,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { , tableContext, onExportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'mes-manufacturing-bom',
     tableProps: {
       title: 'BOM管理',

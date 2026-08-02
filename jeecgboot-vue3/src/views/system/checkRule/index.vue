@@ -44,7 +44,7 @@
     importUrl,
     deleteCheckRule,
     batchDeleteCheckRule,
-    _validateCheckRule,
+    validateCheckRule,
   } from '/@/views/system/checkRule/check.rule.api';
   import { columns, searchFormSchema } from '/@/views/system/checkRule/check.rule.data';
   import { ActionItem } from '/@/components/Table';
@@ -56,7 +56,7 @@
   const [registerModal, { openModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, , onExportXls, onImportXls,  } = useListPage({
+  const { prefixCls, tableContext, createMessage, onExportXls, onImportXls, createSuccessModal } = useListPage({
     designScope: 'check-rule',
     tableProps: {
       title: '编码校验规则管理页面',

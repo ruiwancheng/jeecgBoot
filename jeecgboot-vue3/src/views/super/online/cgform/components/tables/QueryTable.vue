@@ -100,7 +100,7 @@
           defaultChecked: false,
           // update-begin--author:liaozhiyang---date:20240603---for：【TV360X-816】如果是关联记录或者没勾选数据库字段个性化查询checkbox禁用
           props: {
-            isDisabledCell({ row,  }) {
+            isDisabledCell({ row, column }) {
               let { pageTable, dbTable, fkTable } = tables;
               // 获取到 pageTable（页面属性） 中的数据
               const pageRowData = pageTable.value!.tableRef!.getTableData({ rowIds: [row.id] })[0];

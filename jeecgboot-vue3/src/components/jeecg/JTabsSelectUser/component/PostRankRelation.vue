@@ -34,7 +34,7 @@
    *
    * @param expandAll
    */
-  async function (expandAll) {
+  async function expandAll(expandAll) {
     if (!expandAll) {
       expandedKeys.value = [];
     } else {

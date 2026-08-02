@@ -37,7 +37,7 @@
   const { prefixCls } = useDesign('app-logo');
   const { getCollapsedShowTitle } = useMenuSetting();
   const userStore = useUserStore();
-  const { , shortTitle } = useGlobSetting();
+  const { title, shortTitle } = useGlobSetting();
   
   const go = useGo();
 

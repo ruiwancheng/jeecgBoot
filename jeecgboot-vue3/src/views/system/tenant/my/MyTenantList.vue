@@ -30,7 +30,7 @@
   </div>
 </template>
 <script lang="ts" name="tenant-my-tenant-list" setup>
-  import { onMounted, _ref, unref } from 'vue';
+  import { onMounted, ref, unref } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
   import { invitationUserJoin, getTenantPageListByUserId } from '../tenant.api';
@@ -46,14 +46,14 @@
   import { tenantSaasMessage } from "@/utils/common/compUtils";
 
   const { createMessage } = useMessage();
-  const [_registerModal, { openModal }] = useModal();
+  const [registerModal, { openModal }] = useModal();
   const [registerSelUserModal, { openModal: userOpenModal }] = useModal();
   const [registerTenUserModal, { openModal: tenUserOpenModal }] = useModal();
   const [registerPackModal, { openModal: packModal }] = useModal();
-  const  = useUserStore();
+  const userStore = useUserStore();
 
   // 列表页面公共参数、方法
-  const { , tableContext } = useListPage({
+  const { prefixCls, tableContext } = useListPage({
     designScope: 'tenant-template',
     tableProps: {
       title: '租户列表',
@@ -144,7 +144,7 @@
   /**
    * 新增产品包
    */
-  async function () {
+  async function handlePack() {
     if (unref(selectedRowKeys).length > 1) {
       createMessage.warn('请选择一个');
       return;
@@ -159,7 +159,7 @@
   /**
    * 删除成功之后回调事件
    */
-  function () {
+  function handleSuccess() {
     (selectedRowKeys.value = []) && reload();
   }
 

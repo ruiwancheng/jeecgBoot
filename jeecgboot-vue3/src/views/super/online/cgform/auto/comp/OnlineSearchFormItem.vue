@@ -71,7 +71,7 @@
     <template v-else-if="isEasySelect()">
       <JDictSelectTag v-if="item.config === '1'" :placeholder="'请选择' + item.label" v-model:value="innerValue" :dictCode="getDictCode()" />
       <a-select v-else :placeholder="'请选择' + item.label" v-model:value="innerValue">
-        <template v-for="(obj, _index) in dictOptions[getDictOptionKey(item)]" :key="index">
+        <template v-for="(obj, index) in dictOptions[getDictOptionKey(item)]" :key="index">
           <a-select-option :value="obj.value"> {{ obj.text }}</a-select-option>
         </template>
       </a-select>
@@ -162,11 +162,11 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, _nextTick, ref, _unref, watch, _toRaw } from 'vue';
+  import { defineComponent, nextTick, ref, unref, watch, toRaw } from 'vue';
   import {
     JDictSelectTag,
     JTreeSelect,
-    _JSearchSelect,
+    JSearchSelect,
     JCategorySelect,
     JSelectUserByDept,
     JSelectDept,
@@ -175,7 +175,7 @@
     JSelectUser,
     JSelectMultiple,
     JAreaSelect,
-    _FormActionType,
+    FormActionType,
   } from '/@/components/Form';
   import JOnlineSearchSelect from '../../auto/comp/JOnlineSearchSelect.vue';
 

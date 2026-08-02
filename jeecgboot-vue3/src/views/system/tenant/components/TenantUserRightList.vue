@@ -1,11 +1,11 @@
 <template>
   <BasicTable @register="registerTable" style="padding-top: 10px">
-    <template #departNames="{ text,  }">
+    <template #departNames="{ text, record }">
       <template v-if="text && text.length > 0">
         {{ getName(text) }}
       </template>
     </template>
-    <template #positionNames="{ text,  }">
+    <template #positionNames="{ text, record }">
       <template v-if="text && text.length > 0">
         {{ getName(text) }}
       </template>
@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, _defineEmits } from 'vue';
+  import { defineComponent, defineEmits } from 'vue';
   import { BasicModal } from '@/components/Modal';
   import { BasicTable, TableAction } from '@/components/Table';
   import TenantUserSelectModal from '@/views/system/tenant/components/TenantUserSelectModal.vue';
@@ -39,7 +39,7 @@
     name: 'TenantUserRightList',
     components: { BasicModal, BasicTable, TableAction, TenantUserSelectModal },
     emits: ['cancel'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const [registerUserModal, { openModal: openUserModal, closeModal: closeUserModal }] = useModal();
       //获取租户id
       const getTenantId = computed(() => {
@@ -68,7 +68,7 @@
         },
       });
 
-      const [registerTable, { reload }, { rowSelection,  }] = tableContext;
+      const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
       /**
        * 初始化数据

@@ -23,7 +23,7 @@
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { BasicTable, _useTable, BasicColumn, TableImg } from '/@/components/Table';
+  import { BasicTable, useTable, BasicColumn, TableImg } from '/@/components/Table';
   import { Tag, Avatar } from 'ant-design-vue';
   import { demoListApi } from '/@/api/demo/table';
   import { useListPage } from '/@/hooks/system/useListPage';

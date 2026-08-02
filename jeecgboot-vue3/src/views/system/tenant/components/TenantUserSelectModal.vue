@@ -51,7 +51,7 @@
       },
     },
     emits: ['register', 'on-select'],
-    setup(props, { emit,  }) {
+    setup(props, { emit, refs }) {
       const tableScroll = ref<any>({ x: false });
       const tableRef = ref();
       //注册弹框
@@ -104,7 +104,7 @@
       ];
 
       // 列表页面公共参数、方法
-      const { , tableContext } = useListPage({
+      const { prefixCls, tableContext } = useListPage({
         designScope: 'tenant-template',
         tableProps: {
           api: getTenantUserList,
@@ -129,7 +129,7 @@
           },
         },
       });
-      const [registerTable, { reload }, { rowSelection,  }] = tableContext;
+      const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
       /**
        * 确定选择

@@ -38,7 +38,7 @@
   </a-card>
 </template>
 <script lang="ts" setup>
-  import { _ref, computed } from 'vue';
+  import { ref, computed } from 'vue';
   import Bar from '/@/components/chart/Bar.vue';
   import RankList from '/@/components/chart/RankList.vue';
   import { useRootSetting } from '/@/hooks/setting/useRootSetting';

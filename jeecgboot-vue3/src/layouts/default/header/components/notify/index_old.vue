@@ -34,7 +34,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, ref, unref, reactive, onMounted, getCurrentInstance, _onUnmounted } from 'vue';
+  import { computed, defineComponent, ref, unref, reactive, onMounted, getCurrentInstance, onUnmounted } from 'vue';
   import { Popover, Tabs, Badge } from 'ant-design-vue';
   import { BellOutlined } from '@ant-design/icons-vue';
   import { tabListData } from './data';
@@ -46,7 +46,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useGlobSetting } from '/@/hooks/setting';
   import { useUserStore } from '/@/store/modules/user';
-  import { connectWebSocket, onWebSocket, _result } from '/@/hooks/web/useWebSocket';
+  import { connectWebSocket, onWebSocket, result } from '/@/hooks/web/useWebSocket';
   import { readAllMsg } from '/@/views/monitor/mynews/mynews.api';
   import { getToken } from '/@/utils/auth';
   export default defineComponent({
@@ -135,7 +135,7 @@
       // 初始化 WebSocket
       function initWebSocket() {
         let userId = unref(userStore.getUserInfo).id;
-        let  = getToken();
+        let token = getToken();
         // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
         let url = glob.domainUrl?.replace('https://', 'wss://').replace('http://', 'ws://') + '/websocket/' + userId;
         connectWebSocket(url);

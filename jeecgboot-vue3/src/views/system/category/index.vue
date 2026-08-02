@@ -40,8 +40,8 @@
 
 <script lang="ts" name="system-category" setup>
   //ts语法
-  import { ref, _computed, unref, _toRaw, _nextTick } from 'vue';
-  import { BasicTable, _useTable, TableAction } from '/src/components/Table';
+  import { ref, computed, unref, toRaw, nextTick } from 'vue';
+  import { BasicTable, useTable, TableAction } from '/src/components/Table';
   import { useDrawer } from '/src/components/Drawer';
   import CategoryModal from './components/CategoryModal.vue';
   import { useModal } from '/src/components/Modal';
@@ -55,7 +55,7 @@
   //字典model
   const [registerModal, { openModal }] = useModal();
   // 列表页面公共参数、方法
-  const { , onExportXls, onImportXls, tableContext } = useListPage({
+  const { prefixCls, onExportXls, onImportXls, tableContext } = useListPage({
     designScope: 'category-template',
     tableProps: {
       title: '分类字典',
@@ -79,7 +79,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload, , updateTableDataRecord, findTableDataRecord, getDataSource }, { rowSelection, selectedRowKeys }] =
+  const [registerTable, { reload, collapseAll, updateTableDataRecord, findTableDataRecord, getDataSource }, { rowSelection, selectedRowKeys }] =
     tableContext;
 
   /**
@@ -104,7 +104,7 @@
   /**
    * 详情
    */
-  async function (record) {
+  async function handleDetail(record) {
     openModal(true, {
       record,
       isUpdate: true,

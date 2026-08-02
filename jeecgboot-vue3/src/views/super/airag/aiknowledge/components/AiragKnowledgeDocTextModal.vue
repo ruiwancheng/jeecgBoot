@@ -56,7 +56,7 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const title = ref<string>('创建知识库');
       const currentStep = ref(0);
       const step1Values = ref({});
@@ -78,7 +78,7 @@
       const docType = ref<string>('');
       const showWebContent = computed(() => docType.value === 'web' && isUpdate.value && webContentText.value);
       //表单配置
-      const [registerForm, { resetFields, setFieldsValue, validate, ,  }] = useForm({
+      const [registerForm, { resetFields, setFieldsValue, validate, clearValidate, updateSchema }] = useForm({
         schemas: docTextSchema,
         showActionButtonGroup: false,
         layout: 'vertical',

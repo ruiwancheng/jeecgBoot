@@ -32,7 +32,7 @@
     },
     setup(props) {
       const chartRef = ref<HTMLDivElement | null>(null);
-      const { setOptions,  } = useECharts(chartRef as Ref<HTMLDivElement>);
+      const { setOptions, echarts } = useECharts(chartRef as Ref<HTMLDivElement>);
       const option = reactive<any>({
         tooltip: {
           trigger: 'axis',

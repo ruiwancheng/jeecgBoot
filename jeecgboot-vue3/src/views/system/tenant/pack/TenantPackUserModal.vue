@@ -1,12 +1,12 @@
 <template>
   <BasicModal @register="registerModal" destroyOnClose :title="title" :width="1000" :footer="null">
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
-      <template #departNames="{ text,  }">
+      <template #departNames="{ text, record }">
         <template v-if="text && text.length > 0">
           {{ getName(text) }}
         </template>
       </template>
-      <template #positionNames="{ text,  }">
+      <template #positionNames="{ text, record }">
         <template v-if="text && text.length > 0">
           {{ getName(text) }}
         </template>
@@ -46,7 +46,7 @@
       //套餐包信息
       const tenantPackData = reactive<any>({});
       //表单赋值
-      const [registerModal, { setModalProps,  }] = useModalInner(async (data) => {
+      const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
         setModalProps({ confirmLoading: false, showCancelBtn: true, showOkBtn: false });
         Object.assign(tenantPackData, data.record);
         await reload();
@@ -75,7 +75,7 @@
         },
       });
       const [registerUserModal, { openModal: openUserModal, closeModal: closeUserModal }] = useModal();
-      const [registerTable, { reload }, { rowSelection,  }] = tableContext;
+      const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
       /**
        * 获取部门/职务名称

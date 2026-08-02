@@ -208,7 +208,7 @@
         // editSubVxeTableData(formData);
       }
 
-      function (record) {
+      function editSubVxeTableData(record) {
         if (!record) {
           // 新增页面需要清空子表数据
           record = {};

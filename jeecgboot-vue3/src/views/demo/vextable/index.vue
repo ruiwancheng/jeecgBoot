@@ -28,7 +28,7 @@
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import TableDrawer from './drawer.vue';
   import TableModal from './modal.vue';
   import VexTableModal from './VexTableModal.vue';

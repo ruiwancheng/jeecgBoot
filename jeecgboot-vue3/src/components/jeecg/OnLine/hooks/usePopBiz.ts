@@ -349,7 +349,7 @@ export function usePopBiz(ob, tableRef?) {
         // 有合计字段时，每次最多查询原pageSize-1条记录，另外需要第一次时将查询的10条中删除最后一条
         // 删除最后一条数据 如果第一次得到的数据长度等于pageSize的话，则删除最后一条
         if (dataSource.value.length == pagination.pageSize) {
-          let  = dataSource.value.pop();
+          let remove_data = dataSource.value.pop();
         }
         pagination.realPageSize = pagination.pageSize - 1;
       } else {
@@ -517,7 +517,7 @@ export function usePopBiz(ob, tableRef?) {
     let compPattern = /\.vue(\?.*)?$/;
     let jsPattern = /{{([^}]+)}}/g; // {{ xxx }}
     if (typeof href === 'string') {
-      href = href.trim().replace(/\${([^}]+)?}/g, (_s1, s2) => record[s2]);
+      href = href.trim().replace(/\${([^}]+)?}/g, (s1, s2) => record[s2]);
       // 执行 {{...}} JS增强语句
       if (jsPattern.test(href)) {
         href = href.replace(jsPattern, function (text, s0) {

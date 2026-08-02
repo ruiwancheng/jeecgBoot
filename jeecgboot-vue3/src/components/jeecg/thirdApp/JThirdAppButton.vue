@@ -8,14 +8,14 @@
 
 <script lang="ts" setup>
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { ref, computed, createVNode, h, _resolveComponent } from 'vue';
+  import { ref, computed, createVNode, h, resolveComponent } from 'vue';
   import { defHttp } from '/@/utils/http/axios';
-  import { backEndUrl, getEnabledTypes, _doSyncThirdApp } from './jThirdApp.api';
-  import { Modal, _Input } from 'ant-design-vue';
+  import { backEndUrl, getEnabledTypes, doSyncThirdApp } from './jThirdApp.api';
+  import { Modal, Input } from 'ant-design-vue';
   import JThirdAppDropdown from './JThirdAppDropdown.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
 
-  const { createMessage,  } = useMessage();
+  const { createMessage, createWarningModal } = useMessage();
   const props = defineProps({
     // 同步类型，可以是 user、depart
     bizType: {
@@ -79,7 +79,7 @@
     } else {
       selectedRowKeys = [];
     }
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve, reject) => {
       const model = Modal.confirm({
         icon: createVNode(ExclamationCircleOutlined),
         title: '同步',

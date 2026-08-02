@@ -137,7 +137,7 @@
       });
 
       const initOptions = computed(() => {
-        const { height, options, toolbar, plugins,  } = props;
+        const { height, options, toolbar, plugins, menubar } = props;
         let publicPath = import.meta.env.VITE_PUBLIC_PATH || '/';
         // 代码逻辑说明: 【QQYUN-8571】发布路径不以/结尾资源会加载失败
         if (!publicPath.endsWith('/')) {
@@ -156,11 +156,11 @@
           paste_webkit_styles: 'all', // 保留webkit样式
           paste_merge_formats: true, // 合并格式
           paste_block_drop: true, // 允许拖放粘贴
-          paste_preprocess: (_plugin, _args) => {
+          paste_preprocess: (plugin, args) => {
             // 可以在这里对粘贴的内容进行预处理
             //console.log('粘贴的内容:', args.content);
           },
-          paste_postprocess: (_plugin, _args) => {
+          paste_postprocess: (plugin, args) => {
             // 可以在这里对粘贴的内容进行后处理
             //console.log('处理后的内容:', args.node);
           },
@@ -183,7 +183,7 @@
           // toolbar_groups: true,
           skin: skinName.value,
           skin_url: publicPath + 'resource/tinymce/skins/ui/' + skinName.value,
-          images_upload_handler: (blobInfo, _process) =>
+          images_upload_handler: (blobInfo, process) =>
             new Promise((resolve, reject) => {
             let params = {
               file: blobInfo.blob(),

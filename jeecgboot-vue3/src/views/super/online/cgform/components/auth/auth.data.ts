@@ -139,7 +139,7 @@ export function useAuthDataFormSchemas(props, methods) {
         getPopupContainer: () => document.body,
       },
       dynamicPropskey: 'options',
-      dynamicPropsVal: ({ model,  }) => {
+      dynamicPropsVal: ({ model, field }) => {
         const getFieldType = (type) => {
           if (['BigDecimal', 'double', 'int'].includes(type)) {
             return 'number';

@@ -47,7 +47,7 @@
   import DictModal from './components/DictModal.vue';
   import DictRecycleBinModal from './components/DictRecycleBinModal.vue';
   import { useMessage } from '/src/hooks/web/useMessage';
-  import { removeAuthCache, _setAuthCache } from '/src/utils/auth';
+  import { removeAuthCache, setAuthCache } from '/src/utils/auth';
   import { columns, searchFormSchema } from './dict.data';
   import { list, deleteDict, batchDeleteDict, getExportUrl, getImportUrl, refreshCache, queryAllDictItems } from './dict.api';
   import { DB_DICT_DATA_KEY } from '/src/enums/cacheEnum';
@@ -64,7 +64,7 @@
   const [registerModal1, { openModal: openRecycleModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { , tableContext, onExportXls, onImportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'dict-template',
     tableProps: {
       title: '数据字典',
@@ -110,7 +110,7 @@
   /**
    * 详情
    */
-  async function (record) {
+  async function handleDetail(record) {
     openModal(true, {
       record,
       isUpdate: true,

@@ -77,14 +77,14 @@
 </template>
 
 <script lang="ts" setup name="myapps-applogin">
-  import { ref, reactive, unref, _computed, onMounted, toRaw, nextTick } from 'vue';
+  import { ref, reactive, unref, computed, onMounted, toRaw, nextTick } from 'vue';
   import AppLoginHeader from './component/AppLoginHeader.vue';
   import AppRegister from './component/AppRegister.vue';
   import AccountLoginForm from './component/AccountLoginForm.vue';
   import PhoneLoginForm from './component/PhoneLoginForm.vue';
   import AppForgetPassword from './component/AppForgetPassword.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { _GithubFilled, WechatFilled, _DingtalkCircleFilled } from '@ant-design/icons-vue';
+  import { GithubFilled, WechatFilled, DingtalkCircleFilled } from '@ant-design/icons-vue';
   import { IconFont } from '/@/utils/iconfont2';
   import { Rule } from '/@/components/Form';
   import { useFormRules } from '/@/views/sys/login/useLogin';
@@ -115,12 +115,12 @@
   //方式 判端登录、注册、忘记密码等
   const type = ref<string>('login');
   //手机号登录表单
-  const  = ref();
-  const  = reactive<any>({
+  const loginPhoneRef = ref();
+  const formPhoneState = reactive<any>({
     phone: '',
     smscode: '',
   });
-  const { notification,  } = useMessage();
+  const { notification, createErrorModal } = useMessage();
   //中文还是英文
   const languageValue = ref<string>('zh_CN');
   //当前是否为绑定账号

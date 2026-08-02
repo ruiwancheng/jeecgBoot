@@ -261,7 +261,7 @@
     if (/^[0-7]$/.test(week)) {
       return convert(week);
     } else if (patten1.test(week)) {
-      return week.replace(patten1, (_$0, before, separator, after) => {
+      return week.replace(patten1, ($0, before, separator, after) => {
         if (separator === '/') {
           return convert(before) + separator + after;
         } else {

@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, computed, _watch, unref, reactive, UnwrapRef } from 'vue';
+  import { defineComponent, ref, computed, watch, unref, reactive, UnwrapRef } from 'vue';
   import { Avatar } from 'ant-design-vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -79,7 +79,7 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const userStore = useUserStore();
       const { notification } = useMessage();
       //租户配置
@@ -289,11 +289,11 @@
         validate_status1.value = '';
       }
 
-      function handleTenantChange(_e) {
+      function handleTenantChange(e) {
         validate_status.value = '';
       }
 
-      function handleDepartChange(_e) {
+      function handleDepartChange(e) {
         validate_status1.value = '';
       }
 

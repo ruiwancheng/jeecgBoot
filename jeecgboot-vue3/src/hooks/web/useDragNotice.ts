@@ -1,4 +1,4 @@
-import { ref, nextTick, getCurrentInstance, _watch } from 'vue';
+import { ref, nextTick, getCurrentInstance, watch } from 'vue';
 import { getToken } from '/@/utils/auth';
 import md5 from 'crypto-js/md5';
 import { connectWebSocket, onWebSocket } from '/@/hooks/web/useWebSocket';
@@ -6,7 +6,7 @@ import { useGlobSetting } from '/@/hooks/setting';
 import { useModal } from '/@/components/Modal';
 import { useUserStore } from '/@/store/modules/user';
 import { isUrl } from '@/utils/is';
-import { _getQueryVariable, getUrlParams } from '@/utils';
+import { getQueryVariable, getUrlParams } from '@/utils';
 import { useRouter } from 'vue-router';
 import { useMessage } from '@/hooks/web/useMessage';
 const { createMessage } = useMessage();
@@ -14,8 +14,8 @@ export function useDragNotice() {
   //*********************************websocket配置begin******************************************
   const glob = useGlobSetting();
   const { push, currentRoute } = useRouter();
-  const  = useUserStore();
-  const : any = getCurrentInstance();
+  const userStore = useUserStore();
+  const instance: any = getCurrentInstance();
   // 初始化 WebSocket
   function initWebSocket() {
     const token = getToken();

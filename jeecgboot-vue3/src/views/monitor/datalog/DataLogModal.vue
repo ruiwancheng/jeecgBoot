@@ -51,15 +51,15 @@
   const dataId1 = ref('');
   const dataId2 = ref('');
   const dataId = ref('');
-  const  = ref('');
-  const  = ref('');
+  const dataTable1 = ref('');
+  const dataID3 = ref('');
   const dataTable = ref('');
   const confirmLoading = ref(false);
   const isUpdate = ref(true);
   const dataVersionList = ref<any>([]);
-  let  = reactive<any>({});
+  let dataLog = reactive<any>({});
   //表单赋值
-  const [registerModal, { , closeModal }] = useModalInner(async (data) => {
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     isUpdate.value = !!data?.isUpdate;
     if (unref(isUpdate)) {
       let checkedRows = data.selectedRows;
@@ -92,7 +92,7 @@
 
   function initDataVersionList() {
     queryDataVerList({ dataTable: dataTable.value, dataId: dataId.value }).then((res) => {
-      dataVersionList.value = res.map((value, _key, arr) => {
+      dataVersionList.value = res.map((value, key, arr) => {
         arr['label'] = value;
         return arr;
       });

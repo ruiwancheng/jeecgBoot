@@ -70,14 +70,14 @@
   });
   const registerData = ref<any>({});
   const emit = defineEmits(['login-account', 'bind-third-account']);
-  const { notification,  } = useMessage();
+  const { notification, createErrorModal } = useMessage();
   const finshLoading = ref<boolean>(false);
 
   /**
    * 创建规则
    * @param message
    */
-  function (message: string) {
+  function createRule(message: string) {
     return [
       {
         required: true,

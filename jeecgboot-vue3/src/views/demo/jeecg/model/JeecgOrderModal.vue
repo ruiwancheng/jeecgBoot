@@ -76,7 +76,7 @@
   //设置标题
   const title = computed(() => (!unref(isUpdate) ? '新增订单' : '编辑订单'));
   //表单提交事件
-  async function handleSubmit(_v) {
+  async function handleSubmit(v) {
     try {
       let values = await validate();
       setModalProps({ confirmLoading: true });

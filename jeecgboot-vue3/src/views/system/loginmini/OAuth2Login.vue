@@ -110,7 +110,7 @@
         } else {
           toOldAuthLogin();
         }
-      }).catch((_err) => {
+      }).catch((err) => {
         toOldAuthLogin();
       });
   }

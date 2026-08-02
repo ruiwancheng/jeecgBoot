@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, _unref } from 'vue';
+  import { ref, unref } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
   import { useModalInner } from '@/components/Modal';
 
@@ -79,7 +79,7 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       //标题
       const title = ref<string>('嵌入网站');
       const $message = useMessage();
@@ -92,7 +92,7 @@
       //选中的key
       const activeKey = ref<number>(1);
       //注册modal
-      const [registerModal, { , setModalProps }] = useModalInner(async (data) => {
+      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
         type.value = data.type;
         appData.value = data.data;
         appData.value.menu = "/ai/chat/"+ data.data.id

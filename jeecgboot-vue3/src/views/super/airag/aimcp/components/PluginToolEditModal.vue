@@ -290,7 +290,7 @@ function onResponseTypeChange(record: any) {
   }
 }
 
-function onLocationChange(_record: any) {
+function onLocationChange(record: any) {
   // Body和Form-Data可以同时存在，不再警告
   // 同时存在时，后端默认使用Body
 }

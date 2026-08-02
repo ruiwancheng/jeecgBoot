@@ -6,7 +6,7 @@
 <script lang="ts" setup>
   import { ref, unref, toRaw } from 'vue';
   import { BasicModal, useModalInner } from '/src/components/Modal';
-  import { BasicTable, useTable, _TableAction } from '/src/components/Table';
+  import { BasicTable, useTable, TableAction } from '/src/components/Table';
   import { userColumns, searchUserFormSchema } from '../role.data';
   import { list } from '../../user/user.api';
   // 声明Emits

@@ -21,12 +21,12 @@
   </BasicModal>
 </template>
 <script lang="ts" name="user-pass-word-modal" setup>
-  import { ref, _computed, unref, reactive } from 'vue';
+  import { ref, computed, unref, reactive } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { Rule } from '/@/components/Form/index';
   import { updateUserPassword } from '../UserSetting.api';
   import { useMessage } from "/@/hooks/web/useMessage";
-  import { useUserStore, _useUserStoreWithOut } from "/@/store/modules/user";
+  import { useUserStore, useUserStoreWithOut } from "/@/store/modules/user";
   import { getCaptcha } from "@/api/sys/user";
   import { SmsEnum } from "@/views/sys/login/useLogin";
   import { CountdownInput } from '/@/components/CountDown';

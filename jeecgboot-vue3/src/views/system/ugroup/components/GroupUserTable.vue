@@ -29,7 +29,7 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, _watch, _unref } from 'vue';
+  import { ref, watch, unref } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { BasicDrawer, useDrawer, useDrawerInner } from '/@/components/Drawer';
   import { useModal } from '/@/components/Modal';
@@ -96,7 +96,7 @@
   /**
    * 选择事件
    */
-  function onSelectChange(selectedRowKeys: (string | number)[], _selectionRows) {
+  function onSelectChange(selectedRowKeys: (string | number)[], selectionRows) {
     checkedKeys.value = selectedRowKeys;
   }
 

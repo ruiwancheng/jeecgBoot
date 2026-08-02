@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" name="basic-table-demo" setup>
-  import { ActionItem, BasicColumn, BasicTable, _TableAction } from '/@/components/Table';
+  import { ActionItem, BasicColumn, BasicTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   //定义表格列
   const columns: BasicColumn[] = [
@@ -77,7 +77,7 @@
   /**
    * 操作栏
    */
-  function (record): ActionItem[] {
+  function getTableAction(record): ActionItem[] {
     return [
       {
         label: '编辑',

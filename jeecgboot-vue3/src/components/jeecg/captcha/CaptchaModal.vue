@@ -33,7 +33,7 @@
     name: 'CaptchaModal',
     components: { BasicModal, BasicForm },
     emits: ['ok','register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const title = ref<string>('验证码');
       const schemas: FormSchema[] = [
         {
@@ -55,7 +55,7 @@
       });
 
       //表单赋值
-      const [registerModal, { setModalProps, closeModal }] = useModalInner(async (_data) => {
+      const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
         setModalProps({ confirmLoading: true });
         //重置表单
         await resetFields();

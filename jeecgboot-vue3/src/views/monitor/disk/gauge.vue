@@ -10,10 +10,10 @@
   import { GaugeChart } from 'echarts/charts';
 
   const props = defineProps({ data: {} });
-  const  = ref<any>([]);
+  const dataSource = ref<any>([]);
   const chartRef = ref<HTMLDivElement | null>(null);
   const { setOptions, echarts } = useECharts(chartRef as Ref<HTMLDivElement>);
-  const  = ref(false);
+  const loading = ref(false);
   const { createMessage } = useMessage();
   const option = reactive<any>({
     series: [

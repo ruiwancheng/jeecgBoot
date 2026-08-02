@@ -26,7 +26,7 @@
           @click="!disabled && openModal(false)"
           v-bind="attrs"
         >
-          <template v-if="isCustomRenderTag" #tagRender="{ label, value, }">
+          <template v-if="isCustomRenderTag" #tagRender="{ label, value, option}">
             <a-tag class="ant-select-selection-item" style="margin-right: 4px">
               <span class="ant-select-selection-item-content" style="font-size: 14px;max-width: 300px" :title="tagRender(label, value, false)">{{ tagRender(label, value, true) }}</span>
               <span class="ant-select-selection-item-remove">
@@ -48,7 +48,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, inject, _reactive, watch } from 'vue';
+  import { defineComponent, ref, inject, reactive, watch } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { useAttrs } from '/@/hooks/core/useAttrs';
   import { LoadingOutlined } from '@ant-design/icons-vue';
@@ -84,7 +84,7 @@
       rowKey: propTypes.string.def('id'),
     },
     emits: ['handleOpen', 'change'],
-    setup(props, { emit,  }) {
+    setup(props, { emit, refs }) {
       //接收下拉框选项
       const options = inject('selectOptions') || ref<any>([]);
       //接收选择的值

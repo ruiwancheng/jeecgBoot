@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { watch, computed, _inject, ref, nextTick } from 'vue';
+  import { watch, computed, inject, ref, nextTick } from 'vue';
   import { useDrawer } from '/@/components/Drawer';
   import { BasicTree } from '/@/components/Tree/index';
   import DepartDataRuleDrawer from './DepartDataRuleDrawer.vue';
@@ -83,7 +83,7 @@
 
   // onCreated
   loadData({
-    success: (_ids) => {
+    success: (ids) => {
       // 代码逻辑说明: 【TV360X-1689】同步系统角色改法加上缓存层级关联等功能
       const localData = localStorage.getItem(DEPART_MANGE_AUTH_CONFIG_KEY);
       if (localData) {
@@ -208,7 +208,7 @@
   }
 
   // 切换父子关联
-  async function (flag) {
+  async function toggleCheckStrictly(flag) {
     checkStrictly.value = flag;
     await nextTick();
     checkedKeys.value = basicTree.value.getCheckedKeys();

@@ -52,7 +52,7 @@
   /**
    * 提交事件
    */
-  function handleSubmit(_values: any) {}
+  function handleSubmit(values: any) {}
 </script>
 
 <style scoped></style>

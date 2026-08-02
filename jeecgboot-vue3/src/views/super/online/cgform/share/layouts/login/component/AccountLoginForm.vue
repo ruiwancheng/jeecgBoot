@@ -57,7 +57,7 @@
 
 <script lang="ts" setup name="account-login-form">
   //获取手机号的样式
-  import {computed, _effect, _nextTick, onMounted, reactive, ref, toRaw, unref, _watch} from 'vue';
+  import {computed, effect, nextTick, onMounted, reactive, ref, toRaw, unref, watch} from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { useFormRules, useFormValid } from '/@/views/sys/login/useLogin';
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -68,7 +68,7 @@
 
   const accountRef = ref();
   const codeRef = ref();
-  const  = ref();
+  const passwordRef = ref();
   const { t } = useI18n();
   //选中值
   const activekey = ref<string>('');
@@ -94,18 +94,18 @@
   const userStore = useUserStore();
   //记住我
   const rememberMeCheck = ref<boolean>(false);
-  const  = computed(() => {
+  const getUsernameClass = computed(() => {
     return formState.account != '' ? 'current-active' : '' || unref(activekey) === 'account' ? 'current-active' : '';
   });
   //获取密码的样式
-  const  = computed(() => {
+  const getPwdClass = computed(() => {
     return formState.password != '' ? 'current-active' : '' || unref(activekey) === 'password' ? 'current-active' : '';
   });
   //获取验证码的样式
-  const  = computed(() => {
+  const getInputCodeClass = computed(() => {
     return formState.inputCode != '' ? 'current-active' : '' || unref(activekey) === 'inputCode' ? 'current-active' : '';
   });
-  const { notification,  } = useMessage();
+  const { notification, createErrorModal } = useMessage();
   const emit = defineEmits(['login', 'forget-pwd', 'login-success']);
 
   /**

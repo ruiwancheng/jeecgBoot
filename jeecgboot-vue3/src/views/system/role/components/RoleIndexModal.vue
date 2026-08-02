@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, _computed, unref } from 'vue';
+  import { ref, computed, unref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { roleIndexFormSchema } from '../role.data';
@@ -36,7 +36,7 @@
   });
 
   //表单提交事件
-  async function handleSubmit(_v) {
+  async function handleSubmit(v) {
     try {
       let values = await validate();
       setModalProps({ confirmLoading: true });

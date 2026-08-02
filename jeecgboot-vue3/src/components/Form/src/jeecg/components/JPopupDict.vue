@@ -140,7 +140,7 @@
               loadData({ callBack });
             }
           })
-          .catch((_err) => {
+          .catch((err) => {
             loading.value = false;
             callBack?.();
           });

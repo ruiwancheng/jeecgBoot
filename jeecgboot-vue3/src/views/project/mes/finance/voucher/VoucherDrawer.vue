@@ -56,7 +56,7 @@
 
   function removeLine(index: number) { items.splice(index, 1); }
 
-  const [registerDrawer, { , closeDrawer }] = useDrawerInner(async (data) => {
+  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     items.length = 0;
     if (data.record) {
       editId = data.record.id;

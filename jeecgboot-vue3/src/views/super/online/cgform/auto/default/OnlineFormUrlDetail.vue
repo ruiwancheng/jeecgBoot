@@ -58,7 +58,7 @@
   let { initCgEnhanceJs } = useEnhance(onlineTableContext);
   // 处理列表button
   const { registerDetailModal, openDetailModal } = useListButton(onlineTableContext, onlineExtConfigJson);
-  const getContainer = (_node) => {
+  const getContainer = (node) => {
     return document.querySelector(`.online-detail-${ID.value}`);
   };
   setTimeout(() => {

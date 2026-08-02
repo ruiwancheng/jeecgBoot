@@ -58,7 +58,7 @@
 <script lang="ts">
   import type { BasicTableProps, TableActionType, SizeType, ColumnChangeParam, BasicColumn } from './types/table';
 
-  import { defineComponent, ref, computed, unref, toRaw, inject, watchEffect, _watch, _onUnmounted, _onMounted, nextTick } from 'vue';
+  import { defineComponent, ref, computed, unref, toRaw, inject, watchEffect, watch, onUnmounted, onMounted, nextTick } from 'vue';
   import { Table } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
   import { BasicForm, useForm } from '/@/components/Form/index';
@@ -208,7 +208,7 @@
         onChange && isFunction(onChange) && onChange.call(undefined, ...args);
       }
 
-      const { getViewColumns, getColumns, , setCacheColumnsByField, setColumns, getColumnsRef, getCacheColumns } = useColumns(
+      const { getViewColumns, getColumns, getRefColumns, setCacheColumnsByField, setColumns, getColumnsRef, getCacheColumns } = useColumns(
         getProps,
         getPaginationInfo,
         // 代码逻辑说明: 【QQYUN-5571】自封装选择列，解决数据行选择卡顿问题

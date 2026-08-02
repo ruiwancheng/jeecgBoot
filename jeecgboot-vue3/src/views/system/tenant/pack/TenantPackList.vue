@@ -31,8 +31,8 @@
 <script lang="ts" setup name="tenant-pack-modal">
   import { reactive, ref, unref } from 'vue';
   import { BasicModal, useModal, useModalInner } from '/@/components/Modal';
-  import { packColumns, _userColumns, packFormSchema } from '../tenant.data';
-  import { _getTenantUserList, _leaveTenant, packList, deleteTenantPack, syncDefaultTenantPack } from '../tenant.api';
+  import { packColumns, userColumns, packFormSchema } from '../tenant.data';
+  import { getTenantUserList, leaveTenant, packList, deleteTenantPack, syncDefaultTenantPack } from '../tenant.api';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { BasicTable, TableAction } from '/@/components/Table';
   import TenantPackMenuModal from './TenantPackMenuModal.vue';
@@ -48,7 +48,7 @@
   
   const tenantId = ref<number>(0);
   // 列表页面公共参数、方法
-  const { , tableContext } = useListPage({
+  const { prefixCls, tableContext } = useListPage({
     designScope: 'tenant-template',
     tableProps: {
       api: packList,
@@ -79,7 +79,7 @@
   //是否显示新增和编辑套餐包
   const showPackAddAndEdit = ref<boolean>(false);
   //表单赋值
-  const [registerModal, { , closeModal }] = useModalInner(async (data) => {
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     tenantId.value = data.tenantId;
     showPackAddAndEdit.value = data.showPackAddAndEdit;
     success();
@@ -88,7 +88,7 @@
   const title = '租户个性化套餐包';
 
   //表单提交事件
-  async function handleSubmit(_v) {
+  async function handleSubmit(v) {
     closeModal();
   }
 

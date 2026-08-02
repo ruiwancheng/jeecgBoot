@@ -395,7 +395,7 @@ export const dataRuleFormSchema: FormSchema[] = [
       params: { code: 'rule_conditions' },
       labelField: 'text',
       valueField: 'value',
-      getPopupContainer: (_node) => document.body,
+      getPopupContainer: (node) => document.body,
     },
   },
   // 代码逻辑说明: 【TV360X-1864】添加系统变量

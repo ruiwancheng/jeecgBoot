@@ -98,7 +98,7 @@
       customTableColumns: {type: Array},
     },
     emits: ['register', 'getSelectResult', 'close'],
-    setup(props, { emit,  }) {
+    setup(props, { emit, refs }) {
       // 代码逻辑说明: VUEN-1086 【移动端】用户选择 查询按钮 效果不好 列表展示没有滚动条
       const tableScroll = ref<any>({ x: false });
       const tableRef = ref();

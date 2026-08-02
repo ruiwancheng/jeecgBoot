@@ -74,7 +74,7 @@
     name: 'VexTableModal',
     components: { BasicModal },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const isUpdate = ref(true);
       const xTable = ref({} as VxeTableInstance);
       const rowId = ref('');

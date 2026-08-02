@@ -65,12 +65,12 @@
 
 <script lang="ts" setup name="app-register">
   import AppLoginHeader from './AppLoginHeader.vue';
-  import { computed, reactive, ref, _toRaw, unref } from 'vue';
+  import { computed, reactive, ref, toRaw, unref } from 'vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Rule } from '/@/components/Form';
   import {getCaptcha, phoneVerify} from '/@/api/sys/user';
-  import { SmsEnum, _useFormRules, _useFormValid } from '/@/views/sys/login/useLogin';
+  import { SmsEnum, useFormRules, useFormValid } from '/@/views/sys/login/useLogin';
   import AppNameEmail  from './AppNameEmail.vue';
   import CaptchaModal from '@/components/jeecg/captcha/CaptchaModal.vue';
   import { useModal } from "@/components/Modal";
@@ -101,7 +101,7 @@
   });
 
   //获取用户名的样式
-  const  = computed(() => {
+  const getUsernameClass = computed(() => {
     return formData.username != '' ? 'current-active' : '' || unref(activekey) === 'username' ? 'current-active' : '';
   });
 
@@ -134,7 +134,7 @@
       regPassword: unref(getPasswordFormRule),
     };
   });
-  const { notification,  } = useMessage();
+  const { notification, createErrorModal } = useMessage();
   const loginCode = computed(() => t('component.countdown.normalText'));
   const loginDisabledCode = computed(() => t('component.countdown.sendText', [unref(timeRuning)]));
   const showType = ref<string>('register')

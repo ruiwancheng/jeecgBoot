@@ -78,7 +78,7 @@
     name: 'OneToOneModal',
     components: { BasicModal },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const isUpdate = ref(true);
       const rowId = ref('');
       const formRef = ref();

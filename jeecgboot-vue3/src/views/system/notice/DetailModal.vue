@@ -10,7 +10,7 @@
     <iframe ref="iframeRef" :src="frameSrc" class="detail-iframe" @load="onIframeLoad"></iframe>
     <template v-if="noticeFiles && noticeFiles.length > 0">
       <div class="files-title">相关附件：</div>
-      <template v-for="(file, _index) in noticeFiles" :key="index">
+      <template v-for="(file, index) in noticeFiles" :key="index">
         <div class="files-area">
           <div class="files-area-text">
             <span>

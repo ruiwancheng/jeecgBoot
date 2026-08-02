@@ -20,13 +20,13 @@
   import step1 from '../forget-password/step1.vue';
   import step2 from '../forget-password/step2.vue';
   import step3 from '../forget-password/step3.vue';
-  const { , getLoginState } = useLoginState();
+  const { handleBackLogin, getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
 
-  const  = ref();
-  const  = ref(false);
+  const formRef = ref();
+  const loading = ref(false);
   const currentTab = ref(0);
-  const  = reactive<any>({
+  const formData = reactive<any>({
     account: '',
     mobile: '',
     sms: '',

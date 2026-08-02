@@ -14,7 +14,7 @@
     components: {
       JPopupOnlReport,
     },
-    setup(_props, { emit, refs }) {
+    setup(props, { emit, refs }) {
       const { createMessage } = useMessage();
       const route = useRoute();
       const path = route.path;

@@ -105,7 +105,7 @@
     }
   }
   // 选择统计类别
-  function statisticst(_e) {
+  function statisticst(e) {
     if (unref(activeKey) === 'pie') {
       loadDate(getUrl(unref(pieType)), unref(pieType), {});
     } else {

@@ -47,7 +47,7 @@
   const isUpdate = ref(true);
 
   //表单配置
-  const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, validate, getFieldsValue }] = useForm({
     schemas: formSchema,
     showActionButtonGroup: false,
   });

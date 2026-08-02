@@ -32,7 +32,7 @@
         showActionButtonGroup: false,
       });
       //表单赋值
-      const [registerModal, { setModalProps,  }] = useModalInner(async (data) => {
+      const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
         setModalProps({ confirmLoading: false, showCancelBtn: false, showOkBtn: false });
         //重置表单
         await resetFields();

@@ -15,7 +15,7 @@
 </template>
 <script lang="ts">
   import type { PropType } from 'vue';
-  import { defineComponent, unref, computed, _toRaw, onMounted, onUnmounted, ref } from 'vue';
+  import { defineComponent, unref, computed, toRaw, onMounted, onUnmounted, ref } from 'vue';
   import { Table } from 'ant-design-vue';
   import { cloneDeep } from 'lodash-es';
   import { isFunction } from '/@/utils/is';
@@ -72,7 +72,7 @@
       const getColumns = computed(() => {
         const dataSource = unref(getDataSource);
         // 代码逻辑说明: 【issues/8502】权限列不显示后，表尾行合计栏还显示导致对不齐
-        const  = unref(getColumnsRef);
+        const allColumns = unref(getColumnsRef);
         let columns: BasicColumn[] = cloneDeep(table.getColumns({ ignoreAuth: true, ignoreIfShow: true }));
         // 代码逻辑说明: 【issues/638】表格合计，列自定义隐藏或展示时，合计栏会错位
         columns = columns.filter((item) => !item.defaultHidden);

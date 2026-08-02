@@ -263,7 +263,7 @@
     go(`/comp/jeecg/basic`);
   }
   //-----自定义查询----begin--------
-  const  = ref();
+  const formElRef = ref();
   const labelCol = reactive<any>({
     xs: { span: 24 },
     sm: { span: 7 },

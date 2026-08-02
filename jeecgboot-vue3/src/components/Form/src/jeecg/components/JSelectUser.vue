@@ -54,7 +54,7 @@
     },
     emits: ['options-change', 'change', 'update:value'],
     setup(props, { emit }) {
-      const  = ref<any[]>();
+      const emitData = ref<any[]>();
       //注册model
       const [regModal, { openModal }] = useModal();
       //表单值

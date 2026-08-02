@@ -29,11 +29,11 @@
 
 <script lang="ts" setup name="phone-login-form">
   //获取手机号的样式
-  import { computed, _onMounted, reactive, ref, toRaw, unref } from 'vue';
+  import { computed, onMounted, reactive, ref, toRaw, unref } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
-  import { SmsEnum, _useFormRules, _useFormValid } from '/@/views/sys/login/useLogin';
+  import { SmsEnum, useFormRules, useFormValid } from '/@/views/sys/login/useLogin';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { getCaptcha, _getCodeInfo } from '/@/api/sys/user';
+  import { getCaptcha, getCodeInfo } from '/@/api/sys/user';
   import { useMessage } from '/@/hooks/web/useMessage';
   import CaptchaModal from '@/components/jeecg/captcha/CaptchaModal.vue';
   import { useModal } from "@/components/Modal";
@@ -48,7 +48,7 @@
   const loginLoading = ref<boolean>(false);
   //登录表单
   const loginPhoneRef = ref();
-  const  = reactive<any>({
+  const randCodeData = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,
     checkKey: -1,
@@ -61,7 +61,7 @@
   const userStore = useUserStore();
   const emit = defineEmits(['login', 'login-success','bind-third-phone']);
   //记住我
-  const  = ref<boolean>(false);
+  const rememberMeCheck = ref<boolean>(false);
   //获取手机号的样式
   const geMobileClass = computed(() => {
     return formData.mobile != '' ? 'current-active' : '' || unref(activekey) === 'mobile' ? 'current-active' : '';
@@ -70,7 +70,7 @@
   const getSmsCodeClass = computed(() => {
     return formData.sms != '' ? 'current-active' : '' || unref(activekey) === 'sms' ? 'current-active' : '';
   });
-  const { notification,  } = useMessage();
+  const { notification, createErrorModal } = useMessage();
   //是否显示获取验证码
   const showInterval = ref<boolean>(true);
   //60s

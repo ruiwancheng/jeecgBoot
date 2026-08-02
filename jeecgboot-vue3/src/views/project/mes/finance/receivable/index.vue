@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, _useTable } from '/@/components/Table';
+  import { BasicTable, useTable } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { columns, searchFormSchema } from './receivable.data';
   import { queryReceivableList, getExportUrl } from './receivable.api';

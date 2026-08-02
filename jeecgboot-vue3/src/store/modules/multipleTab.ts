@@ -9,7 +9,7 @@ import { useGo, useRedo } from '/@/hooks/web/usePage';
 import { Persistent } from '/@/utils/cache/persistent';
 
 import { PageEnum } from '/@/enums/pageEnum';
-import { _PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 import { getRawRoute } from '/@/utils';
 import { MULTIPLE_TABS_KEY } from '/@/enums/cacheEnum';
 

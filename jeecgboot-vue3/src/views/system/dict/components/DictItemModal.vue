@@ -1,10 +1,10 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit" width="800px">
     <BasicForm @register="registerForm" >
-      <template #itemColor="{ model,  }">
+      <template #itemColor="{ model, field }">
         <div class="item-tool">
           <div
-              v-for="(item,_index) in Colors"
+              v-for="(item,index) in Colors"
               :style="{ color: item[0] }"
               :class="model.itemColor===item[0]?'item-active':''"
               class="item-color"
@@ -18,7 +18,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineProps, ref, computed, unref, _reactive } from 'vue';
+  import { defineProps, ref, computed, unref, reactive } from 'vue';
   import { BasicModal, useModalInner } from '/src/components/Modal';
   import { BasicForm, useForm } from '/src/components/Form';
   import { itemFormSchema } from '../dict.data';

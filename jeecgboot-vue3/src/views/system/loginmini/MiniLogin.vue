@@ -207,7 +207,7 @@
   const { t } = useI18n();
   const $ls = createLocalStorage();
   const localeStore = useLocaleStore();
-  const  = localeStore.getShowPicker;
+  const showLocale = localeStore.getShowPicker;
   const randCodeData = reactive<any>({
     randCodeImage: '',
     requestCodeSuccess: false,

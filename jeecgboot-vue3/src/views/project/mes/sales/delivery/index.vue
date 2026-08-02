@@ -28,7 +28,7 @@
 <script lang="ts" setup>
   import { computed, reactive } from 'vue';
   import { useRouter } from 'vue-router';
-  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './delivery.data';
@@ -64,7 +64,7 @@
   });
   //update-end---author:ruiwancheng---date:2026-07-18---for: Phase2 批量状态流转-----------
 
-  const { , tableContext, onExportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'mes-delivery',
     tableProps: {
       title: '发货单',

@@ -422,7 +422,7 @@ export function useSuperQuery(props){
           .then(() => {
             run();
           })
-          .catch((_err) => {
+          .catch((err) => {
             saveModalLoading.value = false;
           });
       } else {

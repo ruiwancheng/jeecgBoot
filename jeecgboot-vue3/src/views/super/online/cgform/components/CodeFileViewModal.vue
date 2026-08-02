@@ -36,7 +36,7 @@
   /**
    * online代码生成后支持在线预览
    */
-  import {ref, defineComponent, reactive, _onMounted} from 'vue';
+  import {ref, defineComponent, reactive, onMounted} from 'vue';
   import { defHttp } from '/@/utils/http/axios';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { InfoCircleTwoTone } from '@ant-design/icons-vue';
@@ -304,7 +304,7 @@
               }
             }
             // 鼠标松开事件
-            document.onmouseup = function (_e: any) {
+            document.onmouseup = function (e: any) {
               document.onmousemove = null;
               document.onmouseup = null;
               //当你不在需要继续获得鼠标消息就要应该调用ReleaseCapture()释放掉

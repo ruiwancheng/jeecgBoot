@@ -41,7 +41,7 @@
 
 <script lang="ts" name="tab-list" setup>
   //ts语法
-  import { _ref, computed, unref, _watch, provide } from 'vue';
+  import { ref, computed, unref, watch, provide } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useModal } from '/@/components/Modal';
@@ -78,7 +78,7 @@
     },
   });
   //注册table数据
-  const [registerTable, { reload,  }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   const orderId = computed(() => (unref(selectedRowKeys).length > 0 ? unref(selectedRowKeys)[0] : ''));
   //下发 orderId,子组件接收
@@ -108,7 +108,7 @@
   /**
    * 详情
    */
-  async function (record: Recordable) {
+  async function handleDetail(record: Recordable) {
     openModal(true, {
       record,
       isUpdate: true,

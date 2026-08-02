@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
   import draggable from 'vuedraggable';
-  import { _defineComponent, ref, unref } from 'vue';
+  import { defineComponent, ref, unref } from 'vue';
 
   const mockData = [
     { id: '000', sort: 0, filePath: 'https://static.jeecg.com/upload/test/1_1588149743473.jpg' },

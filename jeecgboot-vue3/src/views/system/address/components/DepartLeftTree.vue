@@ -27,15 +27,15 @@
 </template>
 
 <script lang="ts" setup>
-  import { inject, nextTick, ref, _unref } from 'vue';
+  import { inject, nextTick, ref, unref } from 'vue';
   import { queryDepartTreeSync } from '../address.api';
   import { searchByKeywords } from '/@/views/system/departUser/depart.user.api';
   import { Popconfirm } from 'ant-design-vue';
   import TreeIcon from "@/components/Form/src/jeecg/components/TreeIcon/TreeIcon.vue";
 
-  const  = inject('prefixCls');
+  const prefixCls = inject('prefixCls');
   // 定义props
-  const  = defineProps({
+  const props = defineProps({
     // 是否显示搜索框
     showSearch: {
       type: Boolean,

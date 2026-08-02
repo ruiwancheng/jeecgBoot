@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { _ref, unref } from 'vue';
+  import { ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { sendTestFormSchemas } from './template.data';
@@ -14,7 +14,7 @@
   // 声明 emits
   const emit = defineEmits(['register']);
   // 注册 form
-  const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
     schemas: sendTestFormSchemas,
     showActionButtonGroup: false,
   });

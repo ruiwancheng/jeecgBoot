@@ -1,7 +1,7 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" title="路由回收站" :showOkBtn="false" width="1000px" destroyOnClose>
     <BasicTable @register="registerTable">
-      <template #status="{ , text }">
+      <template #status="{ record, text }">
         <a-tag color="pink" v-if="text == 0">禁用</a-tag>
         <a-tag color="#87d068" v-if="text == 1">正常</a-tag>
       </template>

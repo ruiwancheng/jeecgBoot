@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, _useTable } from '/@/components/Table';
+  import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './warehouse.data';
-  import { queryWarehouseList, deleteWarehouse, _deleteBatchWarehouse, getExportUrl, getImportUrl, deactivateWarehouse, activateWarehouse } from './warehouse.api';
+  import { queryWarehouseList, deleteWarehouse, deleteBatchWarehouse, getExportUrl, getImportUrl, deactivateWarehouse, activateWarehouse } from './warehouse.api';
   import WarehouseDrawer from './WarehouseDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -28,7 +28,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { , tableContext, onExportXls, onImportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'mes-warehouse',
     tableProps: {
       title: '仓库管理',

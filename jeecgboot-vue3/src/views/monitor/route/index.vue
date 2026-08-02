@@ -5,7 +5,7 @@
         <a-button preIcon="ant-design:plus-outlined" type="primary" @click="handleAdd" style="margin-right: 5px">新增</a-button>
         <a-button type="primary" @click="openRecycleModal(true)" preIcon="ant-design:hdd-outlined"> 回收站</a-button>
       </template>
-      <template #status="{ , text }">
+      <template #status="{ record, text }">
         <a-tag color="pink" v-if="text == 0">禁用</a-tag>
         <a-tag color="#87d068" v-if="text == 1">正常</a-tag>
       </template>
@@ -36,7 +36,7 @@
   //回收站model
   const [registerRecycleModal, { openModal: openRecycleModal }] = useModal();
   // 列表页面公共参数、方法
-  const { , tableContext } = useListPage({
+  const { prefixCls, tableContext } = useListPage({
     designScope: 'router-template',
     tableProps: {
       title: '路由列表',
@@ -85,7 +85,7 @@
   /**
    * 选择事件
    */
-  function (selectedRowKeys: (string | number)[]) {
+  function onSelectChange(selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
 

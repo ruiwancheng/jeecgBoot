@@ -32,11 +32,11 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       let hitTextDescData = ref<any>({})
       
       //注册modal
-      const [registerModal, { , setModalProps }] = useModalInner(async (data) => {
+      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
         hitTextDescData.value.source = 'score' + ' ' + data.score.toFixed(2);
         //替换图片宽度
         data.content = replaceImageWith(data.content);
@@ -49,7 +49,7 @@
       const replaceImageWith = markdownContent => {
         // 支持图片设置width的写法 ![](/static/jimuImages/screenshot_1617252560523.png =100)
         const regex = /!\[([^\]]*)\]\(([^)]+)=([0-9]+)\)/g;
-        return markdownContent.replace(regex, (_match, alt, src, width) => {
+        return markdownContent.replace(regex, (match, alt, src, width) => {
           let reg = /#\s*{\s*domainURL\s*}/g;
           src = src.replace(reg,domainUrl);
           return `<img src='${src}' alt='${alt}' width='${width}' />`;

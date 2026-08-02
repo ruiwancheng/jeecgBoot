@@ -141,7 +141,7 @@
           defaultChecked: false,
           // update-begin--author:liaozhiyang---date:20240528---for：【TV360X-291】没勾选同步数据库禁用排序功能
           props: {
-            isDisabledCell({ row,  }) {
+            isDisabledCell({ row, column }) {
               let { dbTable } = tables;
               // 获取到 dbTable（数据库属性） 中的数据
               const dbRowData = dbTable.value!.tableRef!.getTableData({ rowIds: [row.id] })[0];
@@ -198,7 +198,7 @@
           defaultChecked: false,
           // update-begin--author:liaozhiyang---date:20240528---for：【TV360X-423】未勾选同步数据库禁用查询
           props: {
-            isDisabledCell({ row,  }) {
+            isDisabledCell({ row, column }) {
               let { dbTable } = tables;
               // 获取到 dbTable（数据库属性） 中的数据
               const dbRowData = dbTable.value!.tableRef!.getTableData({ rowIds: [row.id] })[0];

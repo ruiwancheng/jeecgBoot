@@ -19,7 +19,7 @@
     // 当前部门ID
     departId: { require: true, type: String },
   });
-  const  = inject('prefixCls');
+  const prefixCls = inject('prefixCls');
   // 当前是否是更新模式
   const isUpdate = ref<boolean>(true);
   // 当前的弹窗数据
@@ -27,7 +27,7 @@
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'));
 
   //注册表单
-  const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
     schemas: departRoleModalFormSchema,
     showActionButtonGroup: false,
   });

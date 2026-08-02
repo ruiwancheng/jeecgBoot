@@ -95,7 +95,7 @@
 <script lang="ts" name="mini-forgotpad" setup>
   import { reactive, ref, toRaw, unref } from 'vue';
   import { useI18n } from '/@/hooks/web/useI18n';
-  import { SmsEnum, _useFormRules, _useFormValid, useLoginState } from '/@/views/sys/login/useLogin';
+  import { SmsEnum, useFormRules, useFormValid, useLoginState } from '/@/views/sys/login/useLogin';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { getCaptcha, passwordChange, phoneVerify } from '/@/api/sys/user';
   import logoImg from '/@/assets/loginmini/icon/jeecg_logo.png'

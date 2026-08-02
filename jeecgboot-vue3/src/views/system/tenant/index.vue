@@ -49,7 +49,7 @@
   </div>
 </template>
 <script lang="ts" name="system-tenant" setup>
-  import { _ref, unref } from 'vue';
+  import { ref, unref } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
   import { getTenantList, deleteTenant, batchDeleteTenant, invitationUserJoin } from './tenant.api';
@@ -70,7 +70,7 @@
   const [registerRecycleBinModal, { openModal: recycleBinModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { , tableContext } = useListPage({
+  const { prefixCls, tableContext } = useListPage({
     designScope: 'tenant-template',
     tableProps: {
       title: '租户列表',
@@ -86,7 +86,7 @@
       }
     },
   });
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys,  }] = tableContext;
+  const [registerTable, { reload }, { rowSelection, selectedRowKeys, selectedRows }] = tableContext;
 
   /**
    * 操作列定义

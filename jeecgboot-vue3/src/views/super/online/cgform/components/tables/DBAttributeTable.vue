@@ -580,7 +580,7 @@
       }
       //update-end-author:taoyan date:2022-5-26 for: issues/I56ATQ Online代码功能，跨库数据库同步时报错（单库正常）：org.jeecg.modules.online.cgform.c.a:492
       // update-begin--author:liaozhiyang---date:20240522---for：【TV360X-278】设置了小数点不可设置integer类型
-      function validateFieldDbType({ , row }, callback) {
+      function validateFieldDbType({ cellValue, row }, callback) {
         if (row.dbType == 'int' && row.dbPointLength > 0) {
           callback(false, '设置了小数点不可设置integer类型');
         }

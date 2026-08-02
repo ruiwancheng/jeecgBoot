@@ -91,7 +91,7 @@
     roleId.value = data.record.id;
     departId.value = data.record.departId;
     loadData({
-      success: (_ids) => {
+      success: (ids) => {
         // 代码逻辑说明: 【TV360X-1619】同步系统角色改法加上缓存，默认层级关联修正原生层级关联bug
         const localData = localStorage.getItem(DEPART_ROLE_AUTH_CONFIG_KEY);
         if (localData) {

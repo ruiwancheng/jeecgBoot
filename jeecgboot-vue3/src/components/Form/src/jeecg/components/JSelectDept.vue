@@ -33,8 +33,8 @@
       isCustomRenderTag: propTypes.bool.def(true),
     },
     emits: ['options-change', 'change', 'select', 'update:value'],
-    setup(props, { emit,  }) {
-      const  = ref<any[]>();
+    setup(props, { emit, refs }) {
+      const emitData = ref<any[]>();
       //注册model
       const [regModal, { openModal }] = useModal();
       //表单值

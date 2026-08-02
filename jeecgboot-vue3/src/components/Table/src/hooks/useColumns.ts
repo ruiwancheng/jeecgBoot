@@ -196,7 +196,7 @@ export function useColumns(
         }
         // 代码逻辑说明: 【pull/7333】修复分组表头可编辑表格失效问题
         if (column.children?.length) {
-          formatEditColumn(column.children.filter((_item) => hasPermission(column.auth) && isIfShow(column)));
+          formatEditColumn(column.children.filter((item) => hasPermission(column.auth) && isIfShow(column)));
         }
         return reactive(column);
       });

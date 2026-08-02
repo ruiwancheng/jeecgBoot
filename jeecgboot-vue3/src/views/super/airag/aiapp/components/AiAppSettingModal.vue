@@ -509,10 +509,10 @@
 </template>
 
 <script lang="ts">
-  import { ref, reactive, _nextTick, computed, watch } from 'vue';
+  import { ref, reactive, nextTick, computed, watch } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
   import { useModal, useModalInner } from '@/components/Modal';
-  import { Form, _TimePicker, _Collapse, _CollapsePanel } from 'ant-design-vue';
+  import { Form, TimePicker, Collapse, CollapsePanel } from 'ant-design-vue';
   import { initDictOptions } from '@/utils/dict';
   import { queryKnowledgeBathById, saveApp, queryById, queryFlowById, queryFlowByIds, queryKnowledgeById, generateMemoryByAppId } from '../AiApp.api';
   import { defHttp } from '@/utils/http/axios';
@@ -562,7 +562,7 @@
       AiUserVariablesModal,
     },
     emits: ['success', 'register'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const title = ref<string>('设置');
 
       //保存或修改
@@ -708,7 +708,7 @@
        */
       async function handleOk() {
         try {
-          let  = await validate();
+          let values = await validate();
           setModalProps({ confirmLoading: true });
           formState.knowledgeIds = knowledgeIds.value;
           if(flowIds.value){
@@ -1079,7 +1079,7 @@
        *
        * @param e
        */
-      function presetQuestionAddClick(_e){
+      function presetQuestionAddClick(e){
         let find = presetQuestionList.value.find((item)=> item.descr == '');
         if(find){
           return;

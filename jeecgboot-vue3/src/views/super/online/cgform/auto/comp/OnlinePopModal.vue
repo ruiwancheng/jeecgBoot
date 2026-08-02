@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, watch, _watchEffect, _ref, computed, h } from 'vue';
+  import { defineComponent, watch, watchEffect, ref, computed, h } from 'vue';
   import { BasicModal } from '/@/components/Modal';
   import OnlinePopForm from './OnlinePopForm.vue';
   import { useAutoModal } from '../../hooks/auto/useAutoModal';

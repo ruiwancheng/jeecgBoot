@@ -35,7 +35,7 @@
   import { defineComponent, unref, ref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicTree } from '/@/components/Tree/index';
-  import { _queryTreeList, getTableList as getTableListOrigin } from '/@/api/common/api';
+  import { queryTreeList, getTableList as getTableListOrigin } from '/@/api/common/api';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
   import { useSelectBiz } from '/@/components/Form/src/jeecg/hooks/useSelectBiz';
   import { useAttrs } from '/@/hooks/core/useAttrs';
@@ -62,11 +62,11 @@
       },
     },
     emits: ['register', 'getSelectResult'],
-    setup(props, { emit,  }) {
+    setup(props, { emit, refs }) {
       const tableRef = ref();
       const treeRef = ref();
       //注册弹框
-      const [register, { closeModal }] = useModalInner(async (_data) => {
+      const [register, { closeModal }] = useModalInner(async (data) => {
         await queryDepartTree();
       });
       const attrs = useAttrs();

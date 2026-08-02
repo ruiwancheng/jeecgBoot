@@ -7,11 +7,11 @@
   import { ref, useAttrs } from 'vue';
   import { BasicDrawer, useDrawerInner } from '/src/components/Drawer';
   import { formDescSchema } from '../role.data';
-  import { Description, _useDescription } from '/@/components/Description/index';
+  import { Description, useDescription } from '/@/components/Description/index';
   const emit = defineEmits(['register']);
-  const  = useAttrs();
+  const attrs = useAttrs();
   const roleData = ref({});
-  const [registerDrawer, { setDrawerProps,  }] = useDrawerInner(async (data) => {
+  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     setDrawerProps({ confirmLoading: false });
     roleData.value = data.record;
   });

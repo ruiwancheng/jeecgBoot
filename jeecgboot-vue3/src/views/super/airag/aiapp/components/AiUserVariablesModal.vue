@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, _reactive } from 'vue';
+  import { defineComponent, ref, reactive } from 'vue';
   import { BasicModal, useModalInner } from '/src/components/Modal';
   import { Icon } from '/src/components/Icon';
   import { Button, Checkbox, Switch, Popconfirm } from 'ant-design-vue';
@@ -52,7 +52,7 @@
       APopconfirm: Popconfirm,
     },
     emits: ['register', 'ok'],
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const { createMessage } = useMessage();
       const tableRef = ref<JVxeTableInstance>();
 
@@ -95,7 +95,7 @@
 
       const dataSource = ref<any>([]);
 
-      const [registerModal, { , closeModal }] = useModalInner((data) => {
+      const [registerModal, { setModalProps, closeModal }] = useModalInner((data) => {
         // 如果传入了已有数据，进行初始化
         if (data && data.variables) {
           dataSource.value = JSON.parse(data.variables);

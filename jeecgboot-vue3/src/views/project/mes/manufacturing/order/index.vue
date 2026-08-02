@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
   import { useRouter } from 'vue-router';
-  import { BasicTable, _useTable } from '/@/components/Table';
+  import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
@@ -35,7 +35,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { , tableContext, onExportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'mes-manufacturing-order',
     tableProps: {
       title: '生产订单',

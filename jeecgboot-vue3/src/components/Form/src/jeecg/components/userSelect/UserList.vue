@@ -33,7 +33,7 @@
 
 <script lang="ts">
   import { UserOutlined } from '@ant-design/icons-vue';
-  import { computed, toRaw, reactive, watchEffect, _ref } from 'vue';
+  import { computed, toRaw, reactive, watchEffect, ref } from 'vue';
   import { getFileAccessHttpUrl } from '/@/utils/common/compUtils';
   
   export default {

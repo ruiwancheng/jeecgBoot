@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
   //引入依赖
-  import { useForm, BasicForm, _FormSchema } from '/@/components/Form';
+  import { useForm, BasicForm, FormSchema } from '/@/components/Form';
   import { schemas } from './exampleCustom.data';
 
   /**

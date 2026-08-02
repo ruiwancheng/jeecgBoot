@@ -78,8 +78,8 @@
       translate: {
         enabled: true,
         handler(value, ctx) {
-          let { , context } = ctx!;
-          let { , originColumn } = context;
+          let { props, context } = ctx!;
+          let { row, originColumn } = context;
           if (originColumn.value.picker && value) {
             return getWeekMonthQuarterYear(value)[originColumn.value.picker];
           }

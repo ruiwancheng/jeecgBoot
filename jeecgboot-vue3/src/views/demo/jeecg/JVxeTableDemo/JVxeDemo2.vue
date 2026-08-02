@@ -154,7 +154,7 @@
   }
 
   /* 随机生成分页数据 */
-  function randomPage(_current, pageSize, $loading = false) {
+  function randomPage(current, pageSize, $loading = false) {
     if ($loading) {
       loading.value = true;
     }

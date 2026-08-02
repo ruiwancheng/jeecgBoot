@@ -37,7 +37,7 @@
 </template>
 <script lang="ts" name="monitor-log" setup>
   import { ref } from 'vue';
-  import { BasicTable, _useTable, _TableAction } from '/@/components/Table';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { getLogList, getExportUrl } from './log.api';
   import {
     columns,
@@ -55,7 +55,7 @@
   const searchSchema = ref<any>(searchFormSchema);
   const searchInfo = { logType: '4' };
   // 列表页面公共参数、方法
-  const { , tableContext, onExportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'user-list',
     tableProps: {
       title: '日志列表',
@@ -100,7 +100,7 @@
   /**
    * 选择事件
    */
-  function (selectedRowKeys: (string | number)[]) {
+  function onSelectChange(selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
 </script>

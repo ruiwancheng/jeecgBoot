@@ -252,7 +252,7 @@ export function useListButton(onlineTableContext, extConfigJson: Ref<ExtConfigTy
   /**
    *  操作列[更多下拉项]
    */
-  function getDropDownActions(record, _params = {} ) {
+  function getDropDownActions(record, params = {} ) {
     let arr: any = [];
     if (toRaw(buttonSwitch.detail) === true) {
       arr.push({

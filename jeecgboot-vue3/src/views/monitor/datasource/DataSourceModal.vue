@@ -64,13 +64,13 @@
             createMessage.success('连接成功');
           }
         })
-        .catch((_error) => {})
+        .catch((error) => {})
         .finally(() => loading());
     });
   }
 
   //表单提交事件
-  async function handleSubmit(_v) {
+  async function handleSubmit(v) {
     try {
       let values = await validate();
       setModalProps({ confirmLoading: true });

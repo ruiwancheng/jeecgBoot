@@ -118,7 +118,7 @@
   /**
    * 节点选中事件
    */
-  function onSelect(selectedKeys, _info) {
+  function onSelect(selectedKeys, info) {
     for (var i = 0; i < unref(imgList).length; i++) {
       if (unref(imgList)[i].key === selectedKeys[0]) {
         sort.value = unref(imgList)[i].sort;

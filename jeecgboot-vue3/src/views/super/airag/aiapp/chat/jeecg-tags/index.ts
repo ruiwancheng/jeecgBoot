@@ -34,7 +34,7 @@ export function mdPluginJeecgTag(md: any) {
     const content = token.content;
 
     let isJeecgTag = false;
-    let  = '';
+    let tagName = '';
 
     for (const name of tagNames) {
       // 检查内容是否包含自定义标签的起始或结束标签

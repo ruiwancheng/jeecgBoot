@@ -58,7 +58,7 @@
   import { useModal } from '/@/components/Modal';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { columns, searchFormSchema } from '../user/user.data';
-  import { _list , deleteUser, _batchDeleteUser, _getImportUrl, _getExportUrl, _frozenBatch, getUserTenantPageList, updateUserTenantStatus } from '../user/user.api';
+  import { list , deleteUser, batchDeleteUser, getImportUrl, getExportUrl, frozenBatch, getUserTenantPageList, updateUserTenantStatus } from '../user/user.api';
   // import { usePermission } from '/@/hooks/web/usePermission'
   // const { hasPermission } = usePermission();
   import { userTenantColumns, userTenantFormSchema } from '../user/user.data';
@@ -72,12 +72,12 @@
   import TenantPackAllotModal from './components/TenantPackAllotModal.vue'
   import TenantInviteUserModal from "@/views/system/tenant/components/TenantInviteUserModal.vue";
 
-  const { createMessage,  } = useMessage();
+  const { createMessage, createConfirm } = useMessage();
 
   //注册drawer
   const [registerDrawer, { openDrawer }] = useDrawer();
   //离职代理人model
-  const [_registerQuitAgentModal, { openModal: openQuitAgentModal }] = useModal();
+  const [registerQuitAgentModal, { openModal: openQuitAgentModal }] = useModal();
   //离职用户列表model
   const [registerQuitModal, { openModal: openQuitModal }] = useModal();
   //分配套餐弹窗
@@ -88,7 +88,7 @@
   const tipShow = ref<boolean>(false);
 
   // 列表页面公共参数、方法
-  const { , tableContext, ,  } = useListPage({
+  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'user-list',
     tableProps: {
       title: '租户用户列表',
@@ -109,7 +109,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload,  }, { rowSelection, , selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, updateTableDataRecord }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
 
   /**
    * 新增事件
@@ -271,7 +271,7 @@
    * @param options
    * @param values
    */
-  function selectResult(_options,values) {
+  function selectResult(options,values) {
     console.log(values)
     if(values && values.length>0){
       let userId = values[0];

@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, _useTable } from '/@/components/Table';
+  import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './supplier.data';
-  import { querySupplierList, deleteSupplier, _deleteBatchSupplier, getExportUrl, getImportUrl } from './supplier.api';
+  import { querySupplierList, deleteSupplier, deleteBatchSupplier, getExportUrl, getImportUrl } from './supplier.api';
   import SupplierDrawer from './SupplierDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -28,7 +28,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { , tableContext, onExportXls, onImportXls } = useListPage({
+  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'mes-supplier',
     tableProps: {
       title: '供应商管理',

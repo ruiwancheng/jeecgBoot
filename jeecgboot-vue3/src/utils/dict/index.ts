@@ -44,7 +44,7 @@ export const getPopDictByCode = (text, codeStr) => {
 export const initDictOptions = (code) => {
   //1.优先从缓存中读取字典配置
   if (getDictItemsByCode(code)) {
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve, reject) => {
       resolve(getDictItemsByCode(code));
     });
   }

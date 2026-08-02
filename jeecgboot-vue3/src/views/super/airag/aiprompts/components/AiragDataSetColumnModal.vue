@@ -205,7 +205,7 @@
   };
 
   // 重置配置
-  const  = () => {
+  const handleReset = () => {
     columns.value = [...defaultColumns];
   };
 </script>

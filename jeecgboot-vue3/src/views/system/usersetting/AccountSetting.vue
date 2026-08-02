@@ -52,14 +52,14 @@
   const { prefixCls } = useDesign('j-user-account-setting-container');
 
   const userDetail = ref<any>([]);
-  const  = useUserStore();
+  const userStore = useUserStore();
   const [registerModal, { openModal }] = useModal();
   const [registerEmailModal, { openModal: openEmailModal }] = useModal();
   const [registerPassModal, { openModal: openPassModal }] = useModal();
   const [registerPassNotBindPhoneModal, { openModal: openPassNotBindPhoneModal }] = useModal();
   const [registerCancelModal, { openModal: openCancelModal }] = useModal();
 
-  const  = reactive<any>({
+  const wechatData = reactive<any>({
     bindWechat: false,
     name: '昵称',
   });
@@ -126,35 +126,35 @@
   /**
    * 手机号解绑
    */
-  function () {
+  function unbindPhone() {
     console.log('手机号解绑');
   }
 
   /**
    * 邮箱解绑
    */
-  function () {
+  function unbindEmail() {
     console.log('邮箱解绑');
   }
 
   /**
    * 邮箱验证
    */
-  function () {
+  function checkEmail() {
     console.log('邮箱验证');
   }
 
   /**
    * 微信绑定解绑事件
    */
-  function () {
+  function wechatBind() {
     console.log('微信绑定解绑事件');
   }
 
   /**
    * 注销事件
    */
-  function () {}
+  function cancellation() {}
 
   onMounted(() => {
     initUserDetail();

@@ -64,9 +64,9 @@
 </template>
 
 <script lang="ts">
-  import { ref, _unref, computed } from 'vue';
+  import { ref, unref, computed } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { _useModal, useModalInner } from '@/components/Modal';
+  import { useModal, useModalInner } from '@/components/Modal';
   import { Pagination } from 'ant-design-vue';
   import {JInput} from "@/components/Form";
   import { list } from '@/views/super/airag/aiknowledge/AiKnowledgeBase.api';
@@ -248,7 +248,7 @@
       }
 
       /*===========begin 流程选择支持多选 ===========*/
-      function handleChange(_e, item) {
+      function handleChange(e, item) {
         updateMultipleSelection(item);
       }
 

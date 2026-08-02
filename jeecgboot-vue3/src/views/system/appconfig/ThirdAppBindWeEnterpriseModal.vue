@@ -60,7 +60,7 @@
   export default defineComponent({
     name: 'ThirdAppBindWeEnterpriseModal',
     components: { BasicModal },
-    setup(_props, { emit }) {
+    setup(props, { emit }) {
       const title = ref<string>('企业微信绑定');
       //企业微信的绑定数据
       const bindData = ref<any>({});
@@ -69,7 +69,7 @@
       const { createMessage } = useMessage();
       const userList = ref<any>([]);
       //同步文本信息展示
-      const  = ref<string>('');
+      const syncText = ref<string>('');
       //是否已绑定数据，展示不同的列表
       const izBind = ref<boolean>(false);
       const userStore = useUserStore();
@@ -91,7 +91,7 @@
       async function getUnboundData() {
         await getThirdUserByWechat().then((res) => {
           if (res.success) {
-            let  = res.result.userList;
+            let userLists = res.result.userList;
             bindData.value = res.result;
             userList.value = res.result.userList;
             /*   if (userLists && userLists.length > 0) {
@@ -197,7 +197,7 @@
       /**
        * 下拉框选择事件
        */
-      function handleSelect(_val, option, index) {
+      function handleSelect(val, option, index) {
         bindData.value.jwUserDepartVos[index].wechatUserId = option.wechatUserId;
         bindData.value.jwUserDepartVos[index].wechatRealName = option.wechatRealName;
         bindData.value.jwUserDepartVos[index].wechatDepartId = option.wechatDepartId;

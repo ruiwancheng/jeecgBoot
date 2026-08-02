@@ -103,12 +103,12 @@
   import { initDictOptions } from '/@/utils/dict';
 
   const { handleExportXls, handleImportXls } = useMethods();
-  const  = ref<boolean>(false);
+  const modalVisible = ref<boolean>(false);
   const queryParam = ref<any>({});
   const loading = ref<boolean>(false);
   const dictOptions = ref<any>([]);
   const oneProtogenesisModal = ref();
-  const  = { 'X-Access-Token': getToken() };
+  const tokenHeader = { 'X-Access-Token': getToken() };
   //表头
   const columns = ref<any>([
     {
@@ -259,7 +259,7 @@
   /**
    * 导出excel
    */
-  function (title) {
+  function handleExportExcel(title) {
     let paramsForm = getQueryParams();
     if (selectedRowKeys.value && selectedRowKeys.value.length > 0) {
       paramsForm['selections'] = selectedRowKeys.join(',');
@@ -270,7 +270,7 @@
   /**
    * 导入excel
    */
-  function (file) {
+  function handleImportExcel(file) {
     handleImportXls(file, Api.importExcel, '').then(() => {
       handleSuccess();
     });
@@ -327,7 +327,7 @@
   }
 
   //查询
-  function () {
+  function searchQuery() {
     loadData(1);
     selectedRowKeys.value = [];
     selectionRows.value = [];
@@ -336,14 +336,14 @@
   /**
    * 查询区域展开关闭
    */
-  function () {
+  function handleToggleSearch() {
     toggleSearchStatus.value = !toggleSearchStatus.value;
   }
 
   /**
    * 重置按钮
    */
-  function () {
+  function searchReset() {
     queryParam.value = {};
     loadData(1);
   }
@@ -381,7 +381,7 @@
    * @param id
    */
   function handleDelete(id) {
-    defHttp.delete({ url: Api.delete, data: { ids: id } }, { joinParamsToUrl: true }).then((_res) => {
+    defHttp.delete({ url: Api.delete, data: { ids: id } }, { joinParamsToUrl: true }).then((res) => {
       handleSuccess();
     });
   }

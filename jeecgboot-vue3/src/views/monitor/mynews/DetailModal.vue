@@ -40,7 +40,7 @@
     </a-card>
     <template v-if="noticeFiles && noticeFiles.length > 0">
       <div class="files-title">相关附件：</div>
-      <template v-for="(file, _index) in noticeFiles" :key="index">
+      <template v-for="(file, index) in noticeFiles" :key="index">
         <div class="files-area">
           <div class="files-area-text">
             <span>
@@ -93,7 +93,7 @@
   const downLoadFiles = `${glob.domainUrl}/sys/annountCement/downLoadFiles`;
   const emit = defineEmits(['close', 'register']);
   //表单赋值
-  const [registerModal, { , closeModal }] = useModalInner(async (data) => {
+  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     isUpdate.value = !!data?.isUpdate;
     noticeFiles.value = [];
     if (unref(isUpdate)) {

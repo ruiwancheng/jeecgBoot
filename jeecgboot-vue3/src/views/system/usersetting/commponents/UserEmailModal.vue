@@ -18,17 +18,17 @@ import BasicModal from "/@/components/Modal/src/BasicModal.vue";
 import { CountdownInput } from '/@/components/CountDown';
 import { useUserStore } from "/@/store/modules/user";
 import { useMessage } from "/@/hooks/web/useMessage";
-import { defineEmits, ref, reactive, _toRaw } from "vue";
+import { defineEmits, ref, reactive, toRaw } from "vue";
 import { useModalInner } from "/@/components/Modal";
 import { getCaptcha } from "/@/api/sys/user";
 import { SmsEnum } from "/@/views/sys/login/useLogin";
 import { Rule } from "/@/components/Form";
 import { rules } from "/@/utils/helper/validator";
 import { Form } from "ant-design-vue";
-import { _updateMobile, userEdit } from "../UserSetting.api";
+import { updateMobile, userEdit } from "../UserSetting.api";
 import { duplicateCheck } from "/@/views/system/user/user.api";
 
-const  = useUserStore();
+const userStore = useUserStore();
 const { createMessage } = useMessage();
 const formState = reactive<Record<string, any>>({
   email:'',
@@ -38,7 +38,7 @@ const formRef = ref();
 const validatorRules: Record<string, Rule[]> = {
   email: [{...rules.duplicateCheckRule("sys_user",'email',formState,{ label:'邮箱' })[0]},{ required: true, type: 'email', message: '邮箱格式不正确' }],
 };
-const  = Form.useForm;
+const useForm = Form.useForm;
 const title = ref<string>('');
 const emit = defineEmits(['register','success']);
 const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {

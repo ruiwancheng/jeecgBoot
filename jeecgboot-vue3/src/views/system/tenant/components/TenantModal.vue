@@ -40,7 +40,7 @@
   //设置标题
   const title = computed(() => (!unref(isUpdate) ? '新增租户' : '编辑租户'));
   //表单提交事件
-  async function handleSubmit(_v) {
+  async function handleSubmit(v) {
     try {
       let values = await validate();
       setModalProps({ confirmLoading: true });

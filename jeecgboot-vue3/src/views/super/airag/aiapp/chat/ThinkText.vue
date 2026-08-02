@@ -53,7 +53,7 @@
   });
 
   // 是否显示引用知识库
-  const  = computed(() => {
+  const showRefKnow = computed(() => {
     const { loading, referenceKnowledge } = props;
     if (loading) {
       return false;
@@ -65,7 +65,7 @@
   const replaceImageWith = (markdownContent) => {
     // 支持图片设置width的写法 ![](/static/jimuImages/screenshot_1617252560523.png =100)
     const regex = /!\[([^\]]*)\]\(([^)]+)=([0-9]+)\)/g;
-    return markdownContent.replace(regex, (_match, alt, src, width) => {
+    return markdownContent.replace(regex, (match, alt, src, width) => {
       let reg = /#\s*{\s*domainURL\s*}/g;
       src = src.replace(reg, domainUrl);
       return `<div><img src='${src}' alt='${alt}' width='${width}' /></div>`;
@@ -147,7 +147,7 @@
   /**
    * 图片隐藏
    */
-  function () {
+  function pictureHide() {
     amplifyImage.value = false;
     imageUrl.value = '';
   }

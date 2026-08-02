@@ -298,7 +298,7 @@ export const schemas: FormSchema[] = [
       //是否禁用
       disabled: false,
       //获取预览执行时间列表的函数，格式为：remote (cron值, time时间戳, cb回调函数)
-      remote:(_cron,_time,_cb)=>{}
+      remote:(cron,time,cb)=>{}
     },
   },
   {

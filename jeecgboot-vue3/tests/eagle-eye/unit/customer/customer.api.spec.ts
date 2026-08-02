@@ -3,10 +3,10 @@ import { describe, it, expect, vi } from 'vitest';
 // 模拟 defHttp，避免真实请求
 vi.mock('/@/utils/http/axios', () => ({
   defHttp: {
-    get: vi.fn((_config: any) => Promise.resolve({ success: true, result: { records: [] } })),
-    post: vi.fn((_config: any) => Promise.resolve({ success: true, result: 'ok' })),
-    put: vi.fn((_config: any) => Promise.resolve({ success: true, result: 'ok' })),
-    delete: vi.fn((_config: any) => Promise.resolve({ success: true, result: 'ok' })),
+    get: vi.fn((config: any) => Promise.resolve({ success: true, result: { records: [] } })),
+    post: vi.fn((config: any) => Promise.resolve({ success: true, result: 'ok' })),
+    put: vi.fn((config: any) => Promise.resolve({ success: true, result: 'ok' })),
+    delete: vi.fn((config: any) => Promise.resolve({ success: true, result: 'ok' })),
   },
 }));
 

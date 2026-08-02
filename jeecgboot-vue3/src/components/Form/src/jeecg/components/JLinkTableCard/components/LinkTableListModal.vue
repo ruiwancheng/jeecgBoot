@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, watch, ref, toRaw, computed, _nextTick } from 'vue';
+  import { defineComponent, watch, ref, toRaw, computed, nextTick } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useMessage } from '/@/hooks/web/useMessage';

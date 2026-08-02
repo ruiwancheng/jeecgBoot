@@ -596,7 +596,7 @@
       function onSearch(value: string) {
         keyword.value = value;
       }
-      function (value) {
+      function areaChange(value) {
         alert(value);
       }
 

@@ -154,7 +154,7 @@ export const formSchemas = ({ redoModalHeight }): FormSchema[] => {
         iconPrefixSave: false,
       },
       // update-end--author:liaozhiyang---date:20240528---for：【TV360X-136】按钮图标改成图标组件选择
-      ifShow: ({ values,  }) => {
+      ifShow: ({ values, model }) => {
         if (values.buttonStyle == 'button' || values.buttonStyle == 'form') {
           return true;
         } else {

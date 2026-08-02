@@ -1,7 +1,7 @@
 import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
 import type { Router, RouteRecordNormalized } from 'vue-router';
 
-import { getParentLayout, LAYOUT, _EXCEPTION_COMPONENT } from '/@/router/constant';
+import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -63,7 +63,7 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
     let tenantId = getTenantId();
     // URL支持{{ window.xxx }}占位符变量
     // 代码逻辑说明: [VUEN-1638]菜单tenantId需要动态生成------------
-    item.component = (item.component || '').replace(/{{([^}}]+)?}}/g, (_s1, s2) => _eval(s2)).replace('${token}', token).replace('${tenantId}', tenantId);
+    item.component = (item.component || '').replace(/{{([^}}]+)?}}/g, (s1, s2) => _eval(s2)).replace('${token}', token).replace('${tenantId}', tenantId);
     // 适配 iframe
     if (/^\/?http(s)?/.test(item.component as string)) {
       item.component = item.component.substring(1, item.component.length);

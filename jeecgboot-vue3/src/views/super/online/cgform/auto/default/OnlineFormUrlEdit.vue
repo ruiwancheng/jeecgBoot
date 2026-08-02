@@ -60,7 +60,7 @@
   );
   // 处理列表button
   const { registerModal, handleEdit } = useListButton(onlineTableContext, onlineExtConfigJson);
-  const getContainer = (_node) => {
+  const getContainer = (node) => {
     return document.querySelector(`.online-edit-${ID.value}`);
   };
   const success = () => {
