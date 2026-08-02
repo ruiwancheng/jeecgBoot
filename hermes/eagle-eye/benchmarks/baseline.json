@@ -1,0 +1,111 @@
+{
+  "baseline_version": "1.0",
+  "module": "mes",
+  "date": "2026-08-02",
+  "git_head": "c4bc65e",
+  "environment": {
+    "backend_url": "http://localhost:8080/jeecg-boot",
+    "backend_status": "HTTP 200",
+    "frontend_url": "http://localhost:3100",
+    "frontend_status": "HTTP 200",
+    "profile": "dev",
+    "toolchain_degraded": true,
+    "tools_available": ["curl"],
+    "tools_unavailable": ["k6", "playwright", "axe-core"]
+  },
+  "sampling": {
+    "method": "curl -w time_total, 5 samples per endpoint",
+    "samples_per_endpoint": 5,
+    "auth": "X-Access-Token (admin login)"
+  },
+  "performance_thresholds": {
+    "p95_dev_ms": 2000,
+    "p95_prod_ms": 200,
+    "error_rate_p1_pct": 1,
+    "error_rate_p0_pct": 5
+  },
+  "api_endpoints": {
+    "GET /sys/getEncryptedString": {
+      "samples_ms": [2.858, 2.908, 4.243, 2.927, 2.605],
+      "sorted_ms": [2.605, 2.858, 2.908, 2.927, 4.243],
+      "min_ms": 2.605,
+      "max_ms": 4.243,
+      "avg_ms": 3.108,
+      "p50_ms": 2.908,
+      "p95_ms": 4.243,
+      "error_count": 0,
+      "error_rate_pct": 0,
+      "verdict": "PASS"
+    },
+    "GET /mes/basic/material/list": {
+      "samples_ms": [26.290, 20.209, 23.310, 18.612, 18.066],
+      "sorted_ms": [18.066, 18.612, 20.209, 23.310, 26.290],
+      "min_ms": 18.066,
+      "max_ms": 26.290,
+      "avg_ms": 21.297,
+      "p50_ms": 20.209,
+      "p95_ms": 26.290,
+      "response_rows": 10,
+      "error_count": 0,
+      "error_rate_pct": 0,
+      "verdict": "PASS"
+    },
+    "GET /mes/batch/master/list": {
+      "samples_ms": [16.200, 13.608, 12.937, 13.480, 15.077],
+      "sorted_ms": [12.937, 13.480, 13.608, 15.077, 16.200],
+      "min_ms": 12.937,
+      "max_ms": 16.200,
+      "avg_ms": 14.260,
+      "p50_ms": 13.608,
+      "p95_ms": 16.200,
+      "response_rows": 4,
+      "error_count": 0,
+      "error_rate_pct": 0,
+      "verdict": "PASS"
+    },
+    "GET /mes/batch/ledger/list": {
+      "samples_ms": [17.344, 14.176, 29.554, 15.230, 12.848],
+      "sorted_ms": [12.848, 14.176, 15.230, 17.344, 29.554],
+      "min_ms": 12.848,
+      "max_ms": 29.554,
+      "avg_ms": 17.830,
+      "p50_ms": 15.230,
+      "p95_ms": 29.554,
+      "response_rows": 4,
+      "error_count": 0,
+      "error_rate_pct": 0,
+      "verdict": "PASS"
+    },
+    "GET /mes/manufacturing/picking/list": {
+      "samples_ms": [6.966, 6.762, 7.753, 7.118, 7.338],
+      "sorted_ms": [6.762, 6.966, 7.118, 7.338, 7.753],
+      "min_ms": 6.762,
+      "max_ms": 7.753,
+      "avg_ms": 7.187,
+      "p50_ms": 7.118,
+      "p95_ms": 7.753,
+      "response_rows": 0,
+      "error_count": 0,
+      "error_rate_pct": 0,
+      "verdict": "PASS"
+    }
+  },
+  "frontend": {
+    "lcp_ms": null,
+    "fid_ms": null,
+    "cls": null,
+    "note": "未测量（Playwright 不可用，无 Core Web Vitals 工具）。占位待后续 Playwright 接入后补全。"
+  },
+  "summary": {
+    "total_endpoints": 5,
+    "total_samples": 25,
+    "all_pass": true,
+    "max_p95_ms": 29.554,
+    "min_p50_ms": 2.908,
+    "max_error_rate_pct": 0,
+    "performance_verdict": "PASS"
+  },
+  "trend_baseline": {
+    "note": "首次基线，不做趋势对比。后续 /deep-inspect 报告将以此为对照参考。"
+  }
+}
