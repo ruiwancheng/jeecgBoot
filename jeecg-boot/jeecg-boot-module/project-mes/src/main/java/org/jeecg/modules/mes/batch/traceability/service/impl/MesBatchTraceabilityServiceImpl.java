@@ -3,6 +3,7 @@ package org.jeecg.modules.mes.batch.traceability.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.mes.batch.traceability.entity.MesBatchTraceability;
 import org.jeecg.modules.mes.batch.traceability.entity.MesBatchTraceabilityVO;
