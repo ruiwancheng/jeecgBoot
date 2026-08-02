@@ -109,3 +109,11 @@ JeecgBoot 默认 `RSA` + `AES` 混合加密。**前端不能直接传明文密�
 - [ ] 前端是否依赖被过滤字段
 
 详见 `learnings/2026-07-14-api-permission-add-drops-fields.md`。
+
+#### 9. 权限注解作用域检查（permission-annotation-scope-check）
+**加 `@RequiresPermissions` 前必查**：
+- [ ] 方法是否在 `Controller`（不是 `Service` —— Service 注解无效）
+- [ ] 权限码是否在 `sys_permission` 表已注册
+- [ ] 注解是否 `@RequiresPermissions`（不是 `@RequiresRoles` —— 不同语义）
+- [ ] 多权限用 `@RequiresPermissions(value={"a","b"}, logical=Logical.OR)`
+详见 `learnings/2026-07-21-permission-annotation-scope-check.md`。
