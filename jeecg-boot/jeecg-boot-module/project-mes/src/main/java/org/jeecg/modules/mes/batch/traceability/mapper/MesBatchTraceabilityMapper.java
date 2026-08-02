@@ -43,18 +43,11 @@ public interface MesBatchTraceabilityMapper extends BaseMapper<MesBatchTraceabil
             + "LEFT JOIN c_mes_batch_ledger l "
             + "    ON l.batch_id = b.id AND l.del_flag = 0 "
             + "WHERE b.del_flag = 0 "
-            + "    <if test=\"ew != null and ew.sqlSegment != null and ew.sqlSegment != ''\">"
-            + "        AND ${ew.sqlSegment}"
-            + "    </if> "
+            + "<if test=\"ew != null and ew.sqlSegment != null and ew.sqlSegment != ''\">"
+            + "    AND ${ew.sqlSegment}"
+            + "</if> "
             + "GROUP BY b.id "
-            + "<choose>"
-            + "    <when test=\"ew != null and ew.orderBy != null and ew.orderBy != ''\">"
-            + "        ORDER BY ${ew.orderBy}"
-            + "    </when>"
-            + "    <otherwise>"
-            + "        ORDER BY last_occur_time DESC"
-            + "    </otherwise>"
-            + "</choose>"
+            + "ORDER BY last_occur_time DESC"
             + "</script>")
     IPage<MesBatchTraceabilityVO> queryBatchPage(
             Page<MesBatchTraceabilityVO> page,

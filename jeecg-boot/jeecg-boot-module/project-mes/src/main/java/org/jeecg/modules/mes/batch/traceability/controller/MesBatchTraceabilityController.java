@@ -71,6 +71,9 @@ public class MesBatchTraceabilityController
 
     /**
      * 批次级聚合列表（按 MesBatchTraceabilityVO 改造）。
+     *
+     * <p>手动构建 QueryWrapper：避免 batch_no 多表歧义（c_mes_batch 和 c_mes_batch_ledger 都有 batch_no）。
+     * 搜索条件字段名手工加 b. 前缀。预留 QueryGenerator 后续增强。</p>
      */
     @GetMapping("/list")
     @RequiresPermissions("mes:batchTraceability:list")
@@ -79,7 +82,20 @@ public class MesBatchTraceabilityController
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
             HttpServletRequest req) {
-        QueryWrapper<MesBatchTraceabilityVO> qw = QueryGenerator.initQueryWrapper(entity, req.getParameterMap());
+        QueryWrapper<MesBatchTraceabilityVO> qw = new QueryWrapper<>();
+        if (entity.getBatchNo() != null && !entity.getBatchNo().isEmpty()) {
+            qw.like("b.batch_no", entity.getBatchNo());
+        }
+        if (entity.getMaterialId() != null && !entity.getMaterialId().isEmpty()) {
+            qw.eq("b.material_id", entity.getMaterialId());
+        }
+        if (entity.getOriginType() != null && !entity.getOriginType().isEmpty()) {
+            qw.eq("b.origin_type", entity.getOriginType());
+        }
+        if (entity.getStatus() != null && !entity.getStatus().isEmpty()) {
+            qw.eq("b.status", entity.getStatus());
+        }
+        // 其他仍走 QueryGenerator（后续可手工加 b. 前缀）
         return Result.ok(service.queryBatchPage(new Page<>(pageNo, pageSize), qw));
     }
 
@@ -97,8 +113,20 @@ public class MesBatchTraceabilityController
         if (totalBatches > QUERY_ALL_MAX) {
             throw new JeecgBootException("批次追溯记录超过" + QUERY_ALL_MAX + "条，请使用分页导出");
         }
-        // 查全量
-        QueryWrapper<MesBatchTraceabilityVO> qw = QueryGenerator.initQueryWrapper(entity, req.getParameterMap());
+        // 查全量：同样手工构建 wrapper（避免 batch_no 多表歧义）
+        QueryWrapper<MesBatchTraceabilityVO> qw = new QueryWrapper<>();
+        if (entity.getBatchNo() != null && !entity.getBatchNo().isEmpty()) {
+            qw.like("b.batch_no", entity.getBatchNo());
+        }
+        if (entity.getMaterialId() != null && !entity.getMaterialId().isEmpty()) {
+            qw.eq("b.material_id", entity.getMaterialId());
+        }
+        if (entity.getOriginType() != null && !entity.getOriginType().isEmpty()) {
+            qw.eq("b.origin_type", entity.getOriginType());
+        }
+        if (entity.getStatus() != null && !entity.getStatus().isEmpty()) {
+            qw.eq("b.status", entity.getStatus());
+        }
         IPage<MesBatchTraceabilityVO> page = service.queryBatchPage(new Page<>(1, QUERY_ALL_MAX), qw);
         List<MesBatchTraceabilityVO> data = page.getRecords();
         // 导出参数
