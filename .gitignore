@@ -18,6 +18,8 @@ derby.log
 .claude/settings.local.json
 .claude/worktrees/
 .claude/.client-start-initialized
+.claude/.last-plan.json
+.claude/.decompose-state.json
 
 ## harness engineering artifacts
 harness/node_modules/
