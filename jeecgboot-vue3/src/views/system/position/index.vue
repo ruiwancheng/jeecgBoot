@@ -31,7 +31,7 @@
   import { ref } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
-  import { getPositionList, deletePosition, batchDeletePosition, customUpload, getExportUrl, getImportUrl } from './position.api';
+  import { getPositionList, deletePosition, batchDeletePosition, _customUpload, getExportUrl, getImportUrl } from './position.api';
   import { columns, searchFormSchema } from './position.data';
   import PositionModal from './PositionModal.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -40,7 +40,7 @@
   const [registerModal, { openModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { prefixCls, onExportXls, onImportXls, tableContext } = useListPage({
+  const { , onExportXls, onImportXls, tableContext } = useListPage({
     designScope: 'position-template',
     tableProps: {
       title: '职务列表',

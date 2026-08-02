@@ -8,7 +8,7 @@
   import { useBaseInfoForm } from '../depart.user.data';
   import { Description, useDescription } from '/@/components/Description/index';
 
-  const prefixCls = inject('prefixCls');
+  const  = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });

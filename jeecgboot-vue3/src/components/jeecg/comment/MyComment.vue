@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-  import {ref, watch, computed, inject} from 'vue';
+  import {ref, watch, computed, _inject} from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { UserAddOutlined, PaperClipOutlined, SmileOutlined } from '@ant-design/icons-vue';
   import { Tooltip } from 'ant-design-vue';

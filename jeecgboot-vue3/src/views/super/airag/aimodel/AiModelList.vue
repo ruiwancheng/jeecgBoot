@@ -263,7 +263,7 @@
        *
        * @param id
        */
-      function handleParamClick(id) {}
+      function handleParamClick(_id) {}
 
       return {
         handleAdd,

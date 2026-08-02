@@ -73,7 +73,7 @@
       Icon,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       const title = ref<string>('添加关联MCP');
 
       const mcpOption = ref<any>([]);

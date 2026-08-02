@@ -54,7 +54,7 @@
   import slide from './slide.vue';
   import chat from './chat.vue';
   import ConversationSettingsModal from './components/ConversationSettingsModal.vue';
-  import { Spin, message } from 'ant-design-vue';
+  import { _Spin, message } from 'ant-design-vue';
   import { ref, watch, nextTick, onUnmounted, onMounted, computed } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
   import { JEECG_CHAT_KEY } from '/@/enums/cacheEnum';
@@ -65,8 +65,8 @@
 
   const router = useRouter();
   const userId = useUserStore().getUserInfo?.id;
-  const localKey = JEECG_CHAT_KEY + userId;
-  let timer: any = null;
+  const  = JEECG_CHAT_KEY + userId;
+  let : any = null;
   let unwatch01: any = null;
   const dataSource = ref<any>({});
   const uuid = ref<string>('');

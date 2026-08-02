@@ -17,15 +17,15 @@
         </template>
       </template>
       <!-- update-end--author:liaozhiyang---date:20240612---for：【TV360X-148】权限配置加全选 -->
-      <template #switch="{ text, record }">
+      <template #switch="{ , record }">
         <a-switch size="small" :checked="record.status === 1" @change="(flag) => onUpdateStatus(flag, record)" />
       </template>
 
-      <template #list="{ text, record }">
+      <template #list="{ , record }">
         <a-checkbox :checked="record.listShow" :disabled="record.status === 0" @change="(e) => onCheckboxChange(e, record, 1)"> 可见 </a-checkbox>
       </template>
 
-      <template #form="{ text, record }">
+      <template #form="{ , record }">
         <a-checkbox :checked="record.formShow" :disabled="record.status === 0" @change="(e) => onCheckboxChange(e, record, 2)"> 可见 </a-checkbox>
         <a-checkbox :checked="record.formEditable" :disabled="record.status === 0" @change="(e) => onCheckboxChange(e, record, 3)">
           可编辑
@@ -306,7 +306,7 @@
         tableLoading.value = false;
       };
       // 监听页码变动
-      const handleTableChange = (pagination) => {
+      const handleTableChange = (_pagination) => {
         // const { current, pageSize } = pagination;
         // const dataSource = getCurrentDataSource(current, pageSize);
         // // 先置初始值

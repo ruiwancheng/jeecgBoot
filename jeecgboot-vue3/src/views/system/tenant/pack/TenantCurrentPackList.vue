@@ -21,7 +21,7 @@
   <TenantPackMenuModal @register="registerPackMenu" @success="success" />
 </template>
 <script lang="ts">
-  import { ref, unref, defineComponent, defineEmits } from 'vue';
+  import { ref, unref, defineComponent, _defineEmits } from 'vue';
   import { useModal } from '/@/components/Modal';
   import { packFormSchema, tenantPackColumns } from '../tenant.data';
   import { getLoginTenantName, packList } from '../tenant.api';
@@ -55,7 +55,7 @@
       });
 
       // 列表页面公共参数、方法
-      const { prefixCls, tableContext } = useListPage({
+      const { , tableContext } = useListPage({
         designScope: 'tenant-template',
         tableProps: {
           api: packList,
@@ -80,7 +80,7 @@
           },
         },
       });
-      const [registerTable, { reload }, { rowSelection, selectedRowKeys, selectedRows }] = tableContext;
+      const [registerTable, { reload }, { rowSelection, selectedRowKeys,  }] = tableContext;
       //当前登录的租户名称
       const loginTenantName = ref<string>('');
       const { createMessage } = useMessage();

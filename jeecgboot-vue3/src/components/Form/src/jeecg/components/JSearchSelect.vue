@@ -51,7 +51,7 @@
 
 <script lang="ts">
   import { useDebounceFn } from '@vueuse/core';
-  import { defineComponent, PropType, ref, reactive, watchEffect, computed, unref, watch, onMounted } from 'vue';
+  import { defineComponent, _PropType, ref, _reactive, _watchEffect, computed, unref, watch, _onMounted } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { useAttrs } from '/@/hooks/core/useAttrs';
   import { initDictOptions } from '/@/utils/dict/index';
@@ -99,7 +99,7 @@
       },
     },
     emits: ['change', 'update:value'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       const options = ref<any>([]);
       const loading = ref(false);
       // 代码逻辑说明: 【issues/897】JSearchSelect组件添加class/style样式不生效

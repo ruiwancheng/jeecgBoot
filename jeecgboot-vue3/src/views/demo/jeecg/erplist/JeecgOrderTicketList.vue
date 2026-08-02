@@ -33,7 +33,7 @@
 <script lang="ts" setup>
   //ts语法
   import type { ComputedRef } from 'vue';
-  import { ref, computed, unref, watch, inject } from 'vue';
+  import { _ref, computed, unref, watch, inject } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import JeecgOrderTicketModal from './components/JeecgOrderTicketModal.vue';
   import { useListPage } from '/@/hooks/system/useListPage';
@@ -53,7 +53,7 @@
   const [registerModal, { openModal }] = useModal();
   const searchInfo = {};
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     tableProps: {
       api: getTicketList,
       tableSetting:{

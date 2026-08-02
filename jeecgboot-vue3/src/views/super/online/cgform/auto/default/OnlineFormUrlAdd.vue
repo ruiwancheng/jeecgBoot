@@ -59,7 +59,7 @@
   );
   // 处理列表button
   const { registerModal, handleAdd } = useListButton(onlineTableContext, onlineExtConfigJson);
-  const getContainer = (node) => {
+  const getContainer = (_node) => {
     return document.querySelector(`.online-add-${ID.value}`);
   };
   const success = () => {

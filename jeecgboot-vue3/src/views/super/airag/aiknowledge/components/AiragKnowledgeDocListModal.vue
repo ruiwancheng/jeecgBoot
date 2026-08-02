@@ -257,18 +257,18 @@
 </template>
 
 <script lang="tsx">
-  import { onBeforeMount, computed, ref, unref, h } from 'vue';
+  import { onBeforeMount, computed, ref, _unref, h } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
   import { useModal, useModalInner } from '@/components/Modal';
-  import { knowledgeDocList, knowledgeDeleteBatchDoc, knowledgeDeleteAllDoc, knowledgeRebuildDoc, knowledgeEmbeddingHitTest } from '../AiKnowledgeBase.api';
+  import { knowledgeDocList, knowledgeDeleteBatchDoc, _knowledgeDeleteAllDoc, knowledgeRebuildDoc, knowledgeEmbeddingHitTest } from '../AiKnowledgeBase.api';
   import { doDeleteAllDoc } from '../AiKnowledgeBase.api.util';
-  import { ActionItem, BasicTable, TableAction } from '@/components/Table';
+  import { _ActionItem, BasicTable, TableAction } from '@/components/Table';
   import { useListPage } from '@/hooks/system/useListPage';
   import AiragKnowledgeDocTextModal from './AiragKnowledgeDocTextModal.vue';
   import AiTextDescModal from './AiTextDescModal.vue';
   import { useMessage } from '@/hooks/web/useMessage';
   import { LoadingOutlined } from '@ant-design/icons-vue';
-  import {Avatar, message, Modal, Pagination} from 'ant-design-vue';
+  import {Avatar, _message, Modal, Pagination} from 'ant-design-vue';
   import { useUserStore } from '@/store/modules/user';
   import { getFileAccessHttpUrl, getHeaders } from '@/utils/common/compUtils';
   import defaultImg from '/@/assets/images/header.jpg';
@@ -291,7 +291,7 @@
       Loading,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       //标题
       const title = ref<string>('知识库详情');
 
@@ -367,7 +367,7 @@
       // 知识库的分段策略 metadata
       const knowledgeMetadata = ref<string>('');
       //注册modal
-      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
+      const [registerModal, { , setModalProps }] = useModalInner(async (data) => {
         knowledgeId.value = data.id;
         selectedKeys.value = ['document'];
         selectedKey.value = 'document';

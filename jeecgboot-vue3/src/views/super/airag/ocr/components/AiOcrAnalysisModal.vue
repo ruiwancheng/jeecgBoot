@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts" name="AiOcrAnalysis" setup>
-  import { ref, watch, PropType } from 'vue';
+  import { ref, _watch, _PropType } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { analysisSchemas } from '../AiOcr.data';
   import { Api } from '../AiOcr.api';
@@ -25,7 +25,7 @@
 
   const { createMessage } = useMessage();
   const loading = ref<boolean>(false);
-  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+  const [registerForm, { , setFieldsValue, validate }] = useForm({
     schemas: analysisSchemas,
     showActionButtonGroup: false,
     layout: 'vertical',

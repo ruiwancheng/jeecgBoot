@@ -192,7 +192,7 @@ import { onMounted, ref, unref } from "vue";
 import { getTenantListByUserId, cancelApplyTenant, exitUserTenant, changeOwenUserTenant, agreeOrRefuseJoinTenant } from "./UserSetting.api";
 import { useUserStore } from "/@/store/modules/user";
 import { CollapseContainer } from "/@/components/Container";
-import { getFileAccessHttpUrl, userExitChangeLoginTenantId } from "/@/utils/common/compUtils";
+import { _getFileAccessHttpUrl, userExitChangeLoginTenantId } from "/@/utils/common/compUtils";
 import headerImg from "/@/assets/images/header.jpg";
 import {useMessage} from "/@/hooks/web/useMessage";
 import { initDictOptions } from '/@/utils/dict';
@@ -321,7 +321,7 @@ const userDetail = ref({
    * 获取部门文本
    * @param value
    */
-  function getDepartText(value) {
+  function (value) {
     let arr = departOptions.value.filter((item) => {
       item.value == value;
     });

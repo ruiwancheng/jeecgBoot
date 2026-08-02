@@ -145,9 +145,9 @@
 <script lang="ts">
   import { ref, reactive, onMounted } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { useModal, useModalInner } from '@/components/Modal';
+  import { useModal, _useModalInner } from '@/components/Modal';
   import { LoadingOutlined } from '@ant-design/icons-vue';
-  import { Avatar, Modal, Pagination } from 'ant-design-vue';
+  import { Avatar, _Modal, Pagination } from 'ant-design-vue';
   import { getFileAccessHttpUrl } from '@/utils/common/compUtils';
   import defaultImg from './img/ailogo.png';
   import AiAppModal from './components/AiAppModal.vue';
@@ -176,7 +176,7 @@
       AiAppSettingModal,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       /**
        * 创建应用的集合
        */
@@ -193,7 +193,7 @@
       const [registerModal, { openModal }] = useModal();
       const [registerSettingModal, { openModal: openAppModal }] = useModal();
       const [registerAiAppSendModal, { openModal: openAiAppSendModal }] = useModal();
-      const { createMessage, createConfirmSync } = useMessage();
+      const { , createConfirmSync } = useMessage();
       //查询参数
       const queryParam = reactive<any>({});
       //查询区域label宽度

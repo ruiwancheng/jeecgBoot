@@ -40,7 +40,7 @@
   const [registerModal, { openModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, onImportXls, onExportXls } = useListPage({
+  const { , tableContext, onImportXls, onExportXls } = useListPage({
     designScope: 'quartz-template',
     tableProps: {
       title: '任务列表',

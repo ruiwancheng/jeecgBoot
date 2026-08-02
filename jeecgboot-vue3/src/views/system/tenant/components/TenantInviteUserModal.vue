@@ -15,7 +15,7 @@ export default defineComponent({
     BasicModal,
     BasicForm,
   },
-  setup(props, { emit }) {
+  setup(_props, { emit }) {
     const title = ref<string>('邀请成员');
     const [registerForm, { resetFields, validate }] = useForm({
       schemas: [
@@ -58,7 +58,7 @@ export default defineComponent({
       showActionButtonGroup: false,
     });
     //表单赋值
-    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+    const [registerModal, { setModalProps, closeModal }] = useModalInner(async (_data) => {
       //重置表单
       await resetFields();
       setModalProps({ minHeight: 100 });

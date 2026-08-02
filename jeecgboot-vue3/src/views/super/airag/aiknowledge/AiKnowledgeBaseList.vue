@@ -291,7 +291,7 @@
           }else{
             createMessage.warning("向量化失败！");
           }
-        }).catch(err=>{
+        }).catch(_err=>{
           createMessage.warning("向量化失败！");
         });
       }

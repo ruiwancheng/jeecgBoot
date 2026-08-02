@@ -35,7 +35,7 @@
 <script lang="ts">
   import { ref, unref, computed } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { useModal, useModalInner } from '@/components/Modal';
+  import { _useModal, useModalInner } from '@/components/Modal';
 
   import BasicForm from '@/components/Form/src/BasicForm.vue';
   import { useForm } from '@/components/Form';
@@ -51,7 +51,7 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       //保存或修改
       const isUpdate = ref<boolean>(false);
 

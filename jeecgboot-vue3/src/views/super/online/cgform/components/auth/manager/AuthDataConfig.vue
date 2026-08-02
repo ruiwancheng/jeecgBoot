@@ -5,7 +5,7 @@
         <a-button @click="onAdd" type="primary" preIcon="ant-design:plus">新增</a-button>
       </template>
 
-      <template #switch="{ text, record }">
+      <template #switch="{ , record }">
         <a-switch size="small" :checked="record.status === 1" @click="() => onUpdateStatus(record)" />
       </template>
 

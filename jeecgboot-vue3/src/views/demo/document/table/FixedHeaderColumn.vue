@@ -26,7 +26,7 @@
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, BasicColumn, TableAction } from '/@/components/Table';
 
   import { demoListApi } from '/@/api/demo/table';
   import { useListPage } from '/@/hooks/system/useListPage';

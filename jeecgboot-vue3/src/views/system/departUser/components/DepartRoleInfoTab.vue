@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { inject, ref, unref, watch, computed, onMounted } from 'vue';
+  import { inject, _ref, unref, watch, computed, onMounted } from 'vue';
 
   import { ActionItem, BasicTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
@@ -46,7 +46,7 @@
   import { departRoleColumns, departRoleSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
 
-  const prefixCls = inject('prefixCls');
+  const  = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -103,7 +103,7 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, setProps, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   // 注册Form弹窗
   const [registerFormModal, formModal] = useModal();

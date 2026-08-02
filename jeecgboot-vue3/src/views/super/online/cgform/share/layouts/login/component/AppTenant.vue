@@ -97,7 +97,7 @@
 </template>
 
 <script lang="ts" setup name="app-organization">
-  import { computed, onMounted, reactive, ref, unref, watch } from 'vue';
+  import { computed, _onMounted, reactive, ref, unref, watch } from 'vue';
   import JDictSelectTag from '/@/components/Form/src/jeecg/components/JDictSelectTag.vue';
   import JSearchSelect from '/@/components/Form/src/jeecg/components/JSearchSelect.vue';
   import AppLoginHeader from './AppLoginHeader.vue';

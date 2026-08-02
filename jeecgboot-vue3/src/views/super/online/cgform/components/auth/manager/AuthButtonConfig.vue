@@ -1,7 +1,7 @@
 <template>
   <div class="auth-field-config">
     <BasicTable @register="registerTable">
-      <template #switch="{ text, record }">
+      <template #switch="{ , record }">
         <a-switch size="small" :checked="record.status === 1" @change="(flag) => onUpdateStatus(flag, record)" />
       </template>
 

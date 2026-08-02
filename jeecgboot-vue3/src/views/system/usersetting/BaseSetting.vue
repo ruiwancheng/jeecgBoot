@@ -116,8 +116,8 @@ import { useUserStore } from '/@/store/modules/user';
 import { uploadImg } from '/@/api/sys/upload';
 import { getFileAccessHttpUrl, getRandom } from '/@/utils/common/compUtils';
 import dayjs from 'dayjs';
-import { ajaxGetDictItems, getDictItemsByCode, initDictOptions } from '/@/utils/dict';
-import { userEdit, getUserData, queryNameByCodes } from './UserSetting.api';
+import { _ajaxGetDictItems, getDictItemsByCode, _initDictOptions } from '/@/utils/dict';
+import { userEdit, getUserData, _queryNameByCodes } from './UserSetting.api';
 import UserAccountModal from './commponents/UserAccountModal.vue';
 import { useModal } from '/@/components/Modal';
 import { cloneDeep } from 'lodash-es';
@@ -166,7 +166,7 @@ const previewImage = ref<string>('');
 /**
  * 更新用户头像
  */
-function updateAvatar(src: string, data: string) {
+function updateAvatar(_src: string, data: string) {
   const userinfo = userStore.getUserInfo;
   userinfo.avatar = data;
   userStore.setUserInfo(userinfo);

@@ -22,7 +22,7 @@ export default {
     BasicModal,
   },
   emits: ['ok', 'update-ok', 'register'],
-  setup(props, { emit }) {
+  setup(_props, { emit }) {
     const title = ref<string>('添加指令');
 
     //保存或修改

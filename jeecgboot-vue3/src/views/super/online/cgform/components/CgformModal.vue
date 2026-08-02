@@ -82,7 +82,7 @@
               :getPopupContainer="(n) => n?.parentElement"
               style="width: 300px; margin: 0 10px 0 0;text-align: left;"
             >
-              <template v-for="(item, index) in aiTableList" :key="index">
+              <template v-for="(item, _index) in aiTableList" :key="index">
                 <a-select-option :value="item.name">{{ item.title + '（' + item.name + '）' }}</a-select-option>
               </template>
             </a-select>
@@ -102,7 +102,7 @@
   import { ref, computed, nextTick, provide, defineComponent, toRaw } from 'vue';
   import { useResizeObserver } from '@vueuse/core';
   import { Icon } from '/@/components/Icon';
-  import { BasicModal, useModal, useModalInner } from '/@/components/Modal';
+  import { BasicModal, _useModal, useModalInner } from '/@/components/Modal';
   import { useMessage } from '/@/hooks/web/useMessage';
   import DBAttributeTable from './tables/DBAttributeTable.vue';
   import CgformHeadForm from './CgformHeadForm.vue';
@@ -140,7 +140,7 @@
         required: false,
       },
     },
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       const { createMessage: $message } = useMessage();
       const modalRef = ref();
       const spinRef = ref();
@@ -212,7 +212,7 @@
       // 临时数据ID，不提交到后台
       let fieldTempIds: string[] = [];
       // 是否显示附表字段
-      let showSubTableStr = false;
+      let  = false;
       // 是否已添加树表单字段
       let treeFieldAdded = false;
       // 已添加的树表单字段ID
@@ -504,7 +504,7 @@
       /** 添加树字段 */
       function addTreeNeedField() {
         if (!treeFieldAdded) {
-          let { dbTable, pageTable, checkTable } = tables;
+          let { dbTable, ,  } = tables;
           let treeFields = useTreeNeedFields();
           treeFields = treeFields.filter((item: any) => {
             let nameList = dbTable.value!.tableRef!.getTableData().map((o) => o.dbFieldName);

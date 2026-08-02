@@ -71,19 +71,19 @@ export function connectWebSocket(url: string) {
   // }
 }
 
-function onOpen() {
+function () {
   console.log('[WebSocket] 连接成功');
 }
 
-function onClose(e) {
+function (e) {
   console.log('[WebSocket] 连接断开：', e);
 }
 
-function onError(e) {
+function (e) {
   console.log('[WebSocket] 连接发生错误: ', e);
 }
 
-function onMessage(e) {
+function (e) {
   console.debug('[WebSocket] -----接收消息-------', e.data);
   try {
     // 代码逻辑说明: 【issues/1161】前端websocket因心跳导致监听不起作用---

@@ -17,14 +17,14 @@
   </a-tree-select>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, unref, watch, nextTick } from 'vue';
+  import { defineComponent, ref, _unref, watch, nextTick } from 'vue';
   import { useRuleFormItem } from '/@/hooks/component/useFormItem';
   import { propTypes } from '/@/utils/propTypes';
   import { useAttrs } from '/@/hooks/core/useAttrs';
   import { loadDictItem, loadTreeData } from '/@/api/common/api';
   import { useMessage } from '/@/hooks/web/useMessage';
 
-  const { createMessage, createErrorModal } = useMessage();
+  const { createMessage,  } = useMessage();
   export default defineComponent({
     name: 'JCategorySelect',
     components: {},
@@ -73,7 +73,7 @@
       },
     },
     emits: ['options-change', 'change', 'update:value'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       console.info(props);
       const emitData = ref<any>([]);
       const treeData = ref<any>([]);
@@ -227,11 +227,11 @@
         });
       }
 
-      function getCurrTreeData() {
+      function () {
         return treeData;
       }
 
-      function validateProp() {
+      function () {
         let mycondition = props.condition;
         return new Promise((resolve, reject) => {
           if (!mycondition) {

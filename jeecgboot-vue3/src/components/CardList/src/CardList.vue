@@ -153,7 +153,7 @@
     pageSize.value = pz;
     fetch();
   }
-  function pageSizeChange(current, size) {
+  function pageSizeChange(_current, size) {
     pageSize.value = size;
     fetch();
   }

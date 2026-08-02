@@ -332,7 +332,7 @@ export function useFormSchemas(_props, expandingConfig, handlers) {
         ];
       },
       // update-begin--author:liaozhiyang---date:20240604---for：【TV360X-125】选择主表和附表时隐藏树表配置
-      show({ model, values }) {
+      show({ model,  }) {
         if (model.tableType == 2 || model.tableType == 3) {
           model.isTree = 'N';
           handlers.onIsTreeChange('N');

@@ -40,7 +40,7 @@
   const { t } = useI18n();
   const { handleBackLogin, getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
-  const { notification, createErrorModal } = useMessage();
+  const { notification,  } = useMessage();
   const userStore = useUserStore();
   const formRef = ref();
   const loading = ref(false);

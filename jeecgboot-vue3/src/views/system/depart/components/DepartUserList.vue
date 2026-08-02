@@ -31,7 +31,7 @@
   import { userColumns } from '@/views/system/depart/depart.data';
   import { linkDepartUserBatch } from '@/views/system/departUser/depart.user.api';
 
-  const prefixCls = inject('prefixCls');
+  const  = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
@@ -85,20 +85,20 @@
   });
 
   // 注册 ListTable
-  const [registerTable, { reload, setProps, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, , setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   watch(
     () => props.data,
     () => reload()
   );
   //注册drawer
-  const [registerDrawer, { openDrawer, setDrawerProps }] = useDrawer();
-  const [registerUserAuthDrawer, userAuthDrawer] = useDrawer();
+  const [registerDrawer, { openDrawer,  }] = useDrawer();
+  const [_registerUserAuthDrawer, _userAuthDrawer] = useDrawer();
   // 注册用户选择 modal
   const [registerSelUserModal, selUserModal] = useModal();
 
   // 清空选择的行
-  function clearSelection() {
+  function () {
     selectedRowKeys.value = [];
   }
 
@@ -151,7 +151,7 @@
   }
 
   // 选择用户成功
-  async function onSelectUserOk(options, userIdList) {
+  async function onSelectUserOk(_options, userIdList) {
     if (userIdList.length > 0) {
       try {
         setLoading(true);

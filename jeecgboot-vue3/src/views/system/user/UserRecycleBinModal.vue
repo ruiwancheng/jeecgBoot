@@ -82,7 +82,7 @@
   setTableHeight(false);
   watch(
     checkedKeys,
-    (newValue, oldValue) => {
+    (_newValue, oldValue) => {
       if (checkedKeys.value.length && oldValue.length == 0) {
         scroll.value = {
           y: scroll.value.y - 50,

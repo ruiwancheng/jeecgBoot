@@ -9,8 +9,8 @@
 
 <script setup lang="ts">
   //图片地址
-  import {onMounted, ref, unref} from 'vue';
-  const props = defineProps(['imageUrl']);
+  import {_onMounted, ref, unref} from 'vue';
+  const  = defineProps(['imageUrl']);
   const emit = defineEmits(['register', 'hide']);
   //图片的ref
   const imageRef = ref();

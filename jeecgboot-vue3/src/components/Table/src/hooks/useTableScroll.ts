@@ -13,7 +13,7 @@ export function useTableScroll(
   propsRef: ComputedRef<BasicTableProps>,
   tableElRef: Ref<ComponentRef>,
   columnsRef: ComputedRef<BasicColumn[]>,
-  rowSelectionRef: ComputedRef<TableRowSelection<any> | null>,
+  _rowSelectionRef: ComputedRef<TableRowSelection<any> | null>,
   getDataSourceRef: ComputedRef<Recordable[]>,
   slots: Slots,
   getPaginationInfo: ComputedRef<any>

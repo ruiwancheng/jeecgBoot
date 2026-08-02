@@ -47,7 +47,7 @@
 
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
-  import { InputNumber, Divider } from 'ant-design-vue';
+  import { InputNumber, _Divider } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';

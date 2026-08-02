@@ -19,7 +19,7 @@
 <script lang="ts">
   import { ref, unref } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { useModal, useModalInner } from '@/components/Modal';
+  import { _useModal, useModalInner } from '@/components/Modal';
 
   import BasicForm from '@/components/Form/src/BasicForm.vue';
   import { useForm } from '@/components/Form';
@@ -34,14 +34,14 @@
       BasicModal,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       const title = ref<string>('创建知识库');
 
       //保存或修改
       const isUpdate = ref<boolean>(false);
 
       //表单配置
-      const [registerForm, { resetFields, setFieldsValue, validate, clearValidate, updateSchema }] = useForm({
+      const [registerForm, { resetFields, setFieldsValue, validate, ,  }] = useForm({
         schemas: formSchema,
         showActionButtonGroup: false,
         layout: 'vertical',

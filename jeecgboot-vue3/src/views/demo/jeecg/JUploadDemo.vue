@@ -54,7 +54,7 @@
 
   const [registerModel, { openModal }] = useModal();
 
-  const [register, { setProps, validate, setFieldsValue }] = useForm({
+  const [register, { setProps, ,  }] = useForm({
     labelWidth: 120,
     schemas: schemas,
     actionColOptions: {

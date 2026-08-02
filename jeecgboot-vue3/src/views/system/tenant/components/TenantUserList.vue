@@ -11,7 +11,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-import { ref, computed, unref } from 'vue';
+import { ref, _computed, unref } from 'vue';
 import { BasicModal, useModalInner } from '/@/components/Modal';
 import { BasicForm, useForm } from '/@/components/Form/index';
 import { userColumns, userSearchFormSchema } from "../tenant.data";
@@ -21,7 +21,7 @@ import { BasicTable, TableAction } from '/@/components/Table';
 
 const tenantId = ref<number>(0);
 // 列表页面公共参数、方法
-const { prefixCls, tableContext } = useListPage({
+const { , tableContext } = useListPage({
   designScope: 'tenant-template',
   tableProps: {
     api: getTenantUserList,
@@ -50,14 +50,14 @@ const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableCont
 // Emits声明
 const emit = defineEmits(['register', 'success']);
 //表单赋值
-const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+const [registerModal, { , closeModal }] = useModalInner(async (data) => {
   tenantId.value = data.id;
   success();
 });
 //设置标题
 const title = '成员';
 //表单提交事件
-async function handleSubmit(v) {
+async function handleSubmit(_v) {
   closeModal();
 }
 

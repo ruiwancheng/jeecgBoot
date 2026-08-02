@@ -15,12 +15,12 @@ import { useMessage } from "/@/hooks/web/useMessage";
 
 const userStore = useUserStore();
 const { createMessage } = useMessage();
-const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
+const [registerForm, { resetFields, setFieldsValue, validate,  }] = useForm({
   schemas: formSchema,
   showActionButtonGroup: false,
 });
 const userDetail = ref<any>({});
-const isUpdate = ref<boolean>(false);
+const  = ref<boolean>(false);
 const title = ref<string>('');
 const emit = defineEmits(['register','success']);
 const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {

@@ -36,8 +36,8 @@
       izShowDepPath: propTypes.bool.def(false),
     },
     emits: ['options-change', 'change', 'select', 'update:value'],
-    setup(props, { emit, refs }) {
-      const emitData = ref<any[]>();
+    setup(props, { emit,  }) {
+      const  = ref<any[]>();
       //注册model
       const [regModal, { openModal }] = useModal();
       //下拉框选项值

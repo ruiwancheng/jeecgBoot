@@ -119,11 +119,11 @@
   import { Modal, Popconfirm } from 'ant-design-vue';
   import TreeIcon from "@/components/Form/src/jeecg/components/TreeIcon/TreeIcon.vue";
 
-  const prefixCls = inject('prefixCls');
+  const  = inject('prefixCls');
   const emit = defineEmits(['select', 'rootTreeData']);
   const { createMessage } = useMessage();
   const { handleImportXls, handleExportXls } = useMethods();
-  const props = defineProps({
+  const  = defineProps({
     //是否为租户部门
     isTenantDepart: { default: false, type: Boolean },
     //当前登录租户

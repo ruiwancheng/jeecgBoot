@@ -4,7 +4,7 @@
       <div ref="markdownBodyRef" class="markdown-body" :class="{ 'markdown-body-generate': loading }" v-html="parsedText" />
       <template v-if="showRefKnow">
         <a-divider orientation="left">引用</a-divider>
-        <template v-for="(item, idx) in referenceKnowledge" :key="idx">
+        <template v-for="(item, _idx) in referenceKnowledge" :key="idx">
           <a-tooltip :title="item.content?.substring(0, 800)">
             <a-tag style="min-width: 80px;background: #F7F8FA;padding-inline: 0 7px">
               <a-space style="min-height: 30px;padding-left: 4px;padding-right: 4px;background-color: #F0F1F6;color: #788194">
@@ -168,7 +168,7 @@
     // 1. 支持图片设置width的写法 ![](/static/jimuImages/screenshot_1617252560523.png =100)
     // 必须有空格，避免匹配到url参数中的=
     const regex = /!\[([^\]]*)\]\(([^)]+)\s=([0-9]+)\)/g;
-    markdownContent = markdownContent.replace(regex, (match, alt, src, width) => {
+    markdownContent = markdownContent.replace(regex, (_match, alt, src, width) => {
       let reg = /#\s*{\s*domainURL\s*}/g;
       src = src.replace(reg,domainUrl);
       return `<div class="chat-image-custom"><img src='${src}' alt='${alt}' width='${width}' /></div>`;
@@ -181,7 +181,7 @@
     const count = matches ? matches.length : 0;
     
     if (count > 0) {
-      markdownContent = markdownContent.replace(regexStandard, (match, alt, src) => {
+      markdownContent = markdownContent.replace(regexStandard, (_match, alt, src) => {
         let reg = /#\s*{\s*domainURL\s*}/g;
         src = src.replace(reg, domainUrl);
         // 如果有多张图片，使用Grid布局（一行4个）

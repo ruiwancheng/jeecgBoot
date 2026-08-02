@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, unref } from 'vue';
+  import { ref, _unref } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
   import {useModal, useModalInner} from '@/components/Modal';
   import { promptGenerate } from '@/views/super/airag/aiapp/AiApp.api';
@@ -75,7 +75,7 @@
       BasicModal,
     },
     emits: ['ok', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       //提示词
       const prompt = ref<string>('');
       //加载
@@ -107,7 +107,7 @@
       //注册提示词modal
       const [registerAiPromptSelectModal, { openModal: aiPromptSelectModalOpen }] = useModal();
       //注册modal
-      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (data) => {
+      const [registerModal, { closeModal, setModalProps }] = useModalInner(async (_data) => {
         content.value = '';
         loading.value = false;
         prompt.value = '';

@@ -23,7 +23,7 @@
   const okButtonProps = {
     style: { display: 'none' },
   };
-  const [registerForm, { resetFields, setFieldsValue, validate, getFieldsValue }] = useForm({
+  const [registerForm, { resetFields, setFieldsValue, ,  }] = useForm({
     schemas: checkRuleInput,
     showActionButtonGroup: false,
     labelCol: {
@@ -35,7 +35,7 @@
   });
 
   //表单赋值
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  const [registerModal, { setModalProps,  }] = useModalInner(async (data) => {
     //重置表单
     await resetFields();
     realTestValue.value = '';

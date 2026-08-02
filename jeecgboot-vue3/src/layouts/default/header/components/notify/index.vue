@@ -13,7 +13,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, ref, unref, reactive, onMounted, getCurrentInstance } from 'vue';
+  import { _computed, defineComponent, ref, unref, reactive, onMounted, getCurrentInstance } from 'vue';
   import { Popover, Tabs, Badge } from 'ant-design-vue';
   import { BellOutlined } from '@ant-design/icons-vue';
   // import { tabListData } from './data';
@@ -56,7 +56,7 @@
       const glob = useGlobSetting();
       const dynamicNoticeProps = reactive<any>({ path: '', formData: {} });
       const [registerDetail, detailModal] = useModal();
-      const router = useRouter();
+      const  = useRouter();
       // const listData = ref(tabListData);
       // const count = computed(() => {
       //   let count = 0;
@@ -90,7 +90,7 @@
       });
 
       const messageCount = ref<number>(0)
-      function mapAnnouncement(item) {
+      function (item) {
         return {
           ...item,
           title: item.titile,

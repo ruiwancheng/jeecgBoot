@@ -67,7 +67,7 @@
         return getFileAccessHttpUrl(avatar) || headerImg;
       });
 
-      function updateAvatar(src: string, data: string) {
+      function updateAvatar(_src: string, data: string) {
         console.log('data====》', data);
         const userinfo = userStore.getUserInfo;
         userinfo.avatar = data;

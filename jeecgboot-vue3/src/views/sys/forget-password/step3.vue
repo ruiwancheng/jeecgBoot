@@ -6,7 +6,7 @@
   </Result>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, unref, onMounted, watchEffect, watch } from 'vue';
+  import { defineComponent, _ref, computed, unref, onMounted, watchEffect, _watch } from 'vue';
   import { Form, Input, Button, Result } from 'ant-design-vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState } from '../login/useLogin';

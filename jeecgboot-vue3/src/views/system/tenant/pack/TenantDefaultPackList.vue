@@ -26,7 +26,7 @@
   </div>
 </template>
 <script lang="ts" name="tenant-default-pack" setup>
-  import { ref, unref } from 'vue';
+  import { _ref, unref } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
   import { deleteTenantPack, packList } from '../tenant.api';
@@ -40,12 +40,12 @@
   import {useDrawer} from "@/components/Drawer";
 
   const { createMessage } = useMessage();
-  const [registerModal, { openModal }] = useModal();
+  const [_registerModal, { openModal }] = useModal();
   const [registerPackMenuModal, { openModal: packModal }] = useModal();
-  const userStore = useUserStore();
+  const  = useUserStore();
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     designScope: 'tenant-template',
     tableProps: {
       api: packList,
@@ -58,7 +58,7 @@
       },
     },
   });
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys, selectedRows }] = tableContext;
+  const [registerTable, { reload }, { rowSelection, selectedRowKeys,  }] = tableContext;
   const [registerPackPermDrawer, { openDrawer: openPackPermDrawer }] = useDrawer();
 
   /**
@@ -118,7 +118,7 @@
   /**
    * 新增套餐包
    */
-  async function handlePack() {
+  async function () {
     if (unref(selectedRowKeys).length > 1) {
       createMessage.warn('请选择一个');
       return;

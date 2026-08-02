@@ -23,7 +23,7 @@ import {
   getMenuTriggerOptions,
   routerTransitionOptions,
   menuTypeList,
-  mixSidebarTriggerOptions,
+  _mixSidebarTriggerOptions,
   tabsThemeOptions,
 } from './enum';
 
@@ -38,9 +38,9 @@ export default defineComponent({
       getContentMode,
       getShowFooter,
       getShowBreadCrumb,
-      getShowBreadCrumbIcon,
-      getShowLogo,
-      getFullContent,
+      ,
+      ,
+      ,
       getColorWeak,
       getGrayMode,
       getLockTime,
@@ -57,24 +57,24 @@ export default defineComponent({
       getMenuType,
       getTrigger,
       getCollapsedShowTitle,
-      getMenuFixed,
+      ,
       getCollapsed,
       getCanDrag,
       getTopMenuAlign,
-      getAccordion,
+      ,
       getMenuWidth,
       getMenuBgColor,
       getIsTopMenu,
       getSplit,
       getIsMixSidebar,
-      getCloseMixSidebarOnChange,
-      getMixSideTrigger,
-      getMixSideFixed,
+      ,
+      ,
+      ,
     } = useMenuSetting();
 
-    const { getShowHeader, getFixed: getHeaderFixed, getHeaderBgColor, getShowSearch } = useHeaderSetting();
+    const { getShowHeader, getFixed: _getHeaderFixed, getHeaderBgColor,  } = useHeaderSetting();
 
-    const { getShowMultipleTab, getShowQuick, getShowRedo, getShowFold, getTabsTheme } = useMultipleTabSetting();
+    const { getShowMultipleTab, , , , getTabsTheme } = useMultipleTabSetting();
 
     const getShowMenuRef = computed(() => {
       return unref(getShowMenu) && !unref(getIsHorizontal);
@@ -322,7 +322,7 @@ export default defineComponent({
       );
     }
 
-    function renderTransition() {
+    function () {
       return (
         <>
           <SwitchItem title={t('layout.setting.progress')} event={HandlerEnum.OPEN_PROGRESS} def={unref(getOpenNProgress)} />

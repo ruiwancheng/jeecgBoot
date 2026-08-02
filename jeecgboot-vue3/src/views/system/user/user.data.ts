@@ -377,7 +377,7 @@ export const formSchema: FormSchema[] = [
     component: 'Select',
     componentProps: {
       mode: 'multiple',
-      tagRender: ({ label, value, closable, onClose }) => {
+      tagRender: ({ label, , closable, onClose }) => {
         // 计算显示文本：前面省略号 + 后面字符
         let displayLabel = label;
         if(displayLabel && label.length >= 20) {

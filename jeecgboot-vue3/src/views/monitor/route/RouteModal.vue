@@ -158,7 +158,7 @@
     xs: { span: 24 },
     sm: { span: 16 },
   });
-  const attrs = useAttrs();
+  const  = useAttrs();
   const isUpdate = ref(true);
   const inputRef = ref();
   const inputRef2 = ref();
@@ -279,7 +279,7 @@
     item[key] = e.target.value;
   }
 
-  function editTag(item, tag, tagIndex, index) {
+  function editTag(_item, tag, tagIndex, index) {
     currentNameIndex.value = index;
     currentTagIndex.value = tagIndex;
     state.inputValue = tag;
@@ -289,7 +289,7 @@
   }
 
   //显示输入框
-  function showInput(item, index) {
+  function showInput(_item, index) {
     state.inputValue = '';
     state.inputVisible = true;
     currentNameIndex.value = index;
@@ -384,7 +384,7 @@
   }
 
   //输入框确认
-  function handleInputEditConfirm(item, tag, index) {
+  function handleInputEditConfirm(item, _tag, index) {
     const inputValue = state.inputValue;
     if (inputValue) {
       item.args[index] = state.inputValue;
@@ -394,7 +394,7 @@
   }
 
   //关闭弹窗
-  function handleCancel() {}
+  function () {}
 
   /**
    * 提交

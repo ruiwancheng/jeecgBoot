@@ -44,7 +44,7 @@
   const { createMessage: $message } = useMessage();
   const [registerModal] = useModalInner(() => {});
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, ,  } = useListPage({
     tableProps: {
       api: recycleBinPageList,
       columns: recycleColumns,
@@ -60,7 +60,7 @@
   });
   const emit = defineEmits(['success', 'register']);
   //注册table数据
-  const [registerTable, { reload, updateTableDataRecord }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload,  }, { rowSelection, , selectedRowKeys }] = tableContext;
 
   //获取操作栏事件
   function getTableAction(record) {

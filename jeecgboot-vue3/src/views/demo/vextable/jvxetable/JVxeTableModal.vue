@@ -84,7 +84,7 @@
     name: 'JVexTableModal',
     components: { BasicModal },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       const tableH = ref(300);
       const isUpdate = ref(true);
       const tableRef1 = ref();

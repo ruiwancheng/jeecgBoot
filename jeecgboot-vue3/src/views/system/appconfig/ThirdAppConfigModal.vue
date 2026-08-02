@@ -13,7 +13,7 @@
   export default defineComponent({
     name: 'ThirdAppConfigModal',
     components: { BasicModal, BasicForm },
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       const title = ref<string>('钉钉配置');
       //表单配置
       const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({

@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable, _useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './customer.data';
-  import { queryCustomerList, deleteCustomer, deleteBatchCustomer, getExportUrl, getImportUrl } from './customer.api';
+  import { queryCustomerList, deleteCustomer, _deleteBatchCustomer, getExportUrl, getImportUrl } from './customer.api';
   import CustomerDrawer from './CustomerDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -28,7 +28,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'mes-customer',
     tableProps: {
       title: '客户管理',

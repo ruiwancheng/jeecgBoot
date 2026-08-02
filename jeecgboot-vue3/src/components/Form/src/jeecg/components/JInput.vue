@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, ref, watchEffect, unref, watch, computed } from 'vue';
+  import { defineComponent, _PropType, ref, _watchEffect, unref, watch, computed } from 'vue';
   import { useAttrs } from '/@/hooks/core/useAttrs';
   import { propTypes } from '/@/utils/propTypes';
   import { JInputTypeEnum } from '/@/enums/jeecgEnum.ts';

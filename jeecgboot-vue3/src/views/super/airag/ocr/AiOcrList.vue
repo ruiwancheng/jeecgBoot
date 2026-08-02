@@ -23,11 +23,11 @@
   import AiOcrModal from './components/AiOcrModal.vue';
   import AiOcrAnalysisModal from './components/AiOcrAnalysisModal.vue';
 
-  const [registerModal, { openModal }] = useModal();
-  const [registerAnalysisModal, { openModal: openAnalysisModal }] = useModal();
+  const [_registerModal, { openModal }] = useModal();
+  const [_registerAnalysisModal, { openModal: openAnalysisModal }] = useModal();
   
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     tableProps: {
       api: list,
       columns,
@@ -39,12 +39,12 @@
       canResize: false,
     },
   });
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [_registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
 
   /**
    * 新增
    */
-  function handleCreate() {
+  function () {
     openModal(true, {});
   }
 
@@ -81,7 +81,7 @@
   /**
    * 操作栏
    */
-  function getTableAction(record) {
+  function (record) {
     return [
       {
         label: '解析',

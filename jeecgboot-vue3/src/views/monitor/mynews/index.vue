@@ -30,7 +30,7 @@
 </template>
 <script lang="ts" name="monitor-mynews" setup>
 import {ref, onMounted, unref} from 'vue';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
   import DetailModal from './DetailModal.vue';
   import { getMyNewsList, editCementSend, syncNotic, readAllMsg, getOne, deleteAnnSend, deleteBatchAnnSend } from './mynews.api';
   import { columns, searchFormSchema } from './mynews.data';
@@ -38,10 +38,10 @@ import {ref, onMounted, unref} from 'vue';
   import { getToken } from '/@/utils/auth';
   import { useModal } from '/@/components/Modal';
   import { useGlobSetting } from '/@/hooks/setting';
-  const glob = useGlobSetting();
+  const  = useGlobSetting();
   const { createMessage } = useMessage();
   const checkedKeys = ref<Array<string | number>>([]);
-  const content = ref({});
+  const  = ref({});
   const searchInfo = { logType: '1' };
   const [register, { openModal: openDetail }] = useModal();
   import { useListPage } from '/@/hooks/system/useListPage';
@@ -50,7 +50,7 @@ import {ref, onMounted, unref} from 'vue';
   import { useAppStore } from '/@/store/modules/app';
   import { useMessageHref } from '/@/views/system/message/components/useSysMessage';
   const appStore = useAppStore();
-  const router = useRouter();
+  const  = useRouter();
   const { currentRoute } = useRouter();
   const { goPage, currentModal, modalRegCache, bindParams } = useMessageHref();
   // 代码逻辑说明: 【QQYUN-13058】我的消息区分类型且支持根据url参数查询类型
@@ -65,7 +65,7 @@ import {ref, onMounted, unref} from 'vue';
       findItem.componentProps.defaultValue = null
     }
   }
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     designScope: 'mynews-list',
     tableProps: {
       title: '我的消息',
@@ -123,7 +123,7 @@ import {ref, onMounted, unref} from 'vue';
    */
   function handleDetail(record) {
     let anntId = record.anntId;
-    editCementSend({ anntId: anntId }).then((res) => {
+    editCementSend({ anntId: anntId }).then((_res) => {
       reload();
       syncNotic({ anntId: anntId });
     });
@@ -137,7 +137,7 @@ import {ref, onMounted, unref} from 'vue';
 
   }
   // 日志类型
-  function callback(key) {
+  function (key) {
     searchInfo.logType = key;
     reload();
   }
@@ -150,7 +150,7 @@ import {ref, onMounted, unref} from 'vue';
   /**
    * 选择事件
    */
-  function onSelectChange(selectedRowKeys: (string | number)[]) {
+  function (selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
 

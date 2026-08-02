@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
   //引入依赖
-  import { useForm, BasicForm, FormSchema } from '/@/components/Form';
+  import { useForm, BasicForm, _FormSchema } from '/@/components/Form';
   import { CollapseContainer } from '/@/components/Container';
 
   /**
@@ -50,7 +50,7 @@
   /**
    * 重置按钮点击事件
    */
-  async function customResetFunc() {
+  async function () {
     console.log('重置按钮点击事件，此处处理重置按钮的逻辑');
   }
 

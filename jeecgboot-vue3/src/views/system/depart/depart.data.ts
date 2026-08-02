@@ -76,7 +76,7 @@ export function useBasicFormSchema(treeData) {
       field: 'positionId',
       label: '职务级别',
       component: 'JDictSelectTag',
-      componentProps: ({ formModel, formActionType }) => {
+      componentProps: ({ formModel,  }) => {
         return {
           dictCode: "sys_position,name,id, 1=1 order by post_level asc",
           getPopupContainer: ()=> document.body,

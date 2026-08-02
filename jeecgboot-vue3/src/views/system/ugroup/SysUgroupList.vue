@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" name="system-sysUgroup" setup>
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
   import { useModal } from '/@/components/Modal';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { columns, searchFormSchema } from './ugroup.data';
@@ -49,7 +49,7 @@
   //注册model
   const [registerModal, { openModal }] = useModal();
   //注册table数据
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, onExportXls, onImportXls } = useListPage({
     tableProps: {
       title: '用户组表',
       api: list,

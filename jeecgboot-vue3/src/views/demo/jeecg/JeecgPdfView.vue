@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, unref, onMounted } from 'vue';
+  import { defineComponent, ref, unref, _onMounted } from 'vue';
   import { useGlobSetting } from '/@/hooks/setting';
   import { getToken } from '/@/utils/auth';
 

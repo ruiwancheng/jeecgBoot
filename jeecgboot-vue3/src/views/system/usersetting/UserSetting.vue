@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, onMounted, provide, computed } from "vue";
+import { ref, defineComponent, onMounted, _provide, computed } from "vue";
 import { Tabs } from "ant-design-vue";
 import { ScrollContainer } from "/@/components/Container";
 import { settingList } from "./UserSetting.data";
@@ -60,9 +60,9 @@ export default defineComponent({
     //是否为vip
     const showVip = ref<boolean>(false);
     //vip编码
-    const vipCode = ref<string>('');
+    const  = ref<string>('');
     const router = useRouter();
-    const componentList = computed(()=>{
+    const  = computed(()=>{
       if(showVip.value){
         return settingList;
       }

@@ -3,7 +3,7 @@ import { router } from '/@/router';
 import { createLocalStorage } from '/@/utils/cache';
 import { useMessage } from '/@/hooks/web/useMessage';
 
-export function useColumnsCache({ cacheColumnsKey, refs }: any) {
+export function useColumnsCache({ cacheColumnsKey,  }: any) {
   const $ls = createLocalStorage();
   const { createMessage: $message } = useMessage();
   const cacheKey = computed(() => {

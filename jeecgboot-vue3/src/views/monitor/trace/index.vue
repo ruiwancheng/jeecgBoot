@@ -19,8 +19,8 @@
   </div>
 </template>
 <script lang="ts" name="monitor-trace" setup>
-  import { onMounted, ref, reactive } from 'vue';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { onMounted, ref, _reactive } from 'vue';
+  import { BasicTable, useTable, _TableAction } from '/@/components/Table';
   import { getActuatorList } from './trace.api';
   import { columns } from './trace.data';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -49,7 +49,7 @@
     });
   }
 
-  const handlerTableChange = (args, arg1, sort, action) => {
+  const handlerTableChange = (_args, _arg1, sort, action) => {
     if ('sort' == action.action && sort.field) {
       order.value = sort.field;
       if (sort.order) {

@@ -420,7 +420,7 @@
   };
 
   // 行样式
-  const setRowClassName = (record, index) => {
+  const setRowClassName = (_record, index) => {
     return index % 2 === 0 ? 'even-row' : 'odd-row';
   };
 </script>

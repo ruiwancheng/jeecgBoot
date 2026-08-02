@@ -5,7 +5,7 @@
   <LockModal ref="modalRef" v-if="lockModalVisible" @register="register" />
 </template>
 <script lang="ts">
-  import { defineComponent, computed, ref } from 'vue';
+  import { defineComponent, _computed, ref } from 'vue';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
   import { Tooltip } from 'ant-design-vue';
   import { LockOutlined } from '@ant-design/icons-vue';

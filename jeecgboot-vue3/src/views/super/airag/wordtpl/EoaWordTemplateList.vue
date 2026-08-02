@@ -78,8 +78,8 @@
 </template>
 
 <script lang="ts" name="wordtpl-eoaWordTemplate" setup>
-  import { ref, reactive, computed, unref } from 'vue';
-  import { BasicTable, useTable, TableAction } from '/src/components/Table';
+  import { ref, reactive, _computed, _unref } from 'vue';
+  import { BasicTable, _useTable, TableAction } from '/src/components/Table';
   import { BasicModal, useModal } from '/src/components/Modal';
   import { useListPage } from '/src/hooks/system/useListPage';
   import EoaWordTemplateModal from './components/EoaWordTemplateModal.vue';
@@ -93,16 +93,16 @@
   //日期个性化选择
   const fieldPickers = reactive<any>({});
   const queryParam = reactive<any>({});
-  const checkedKeys = ref<Array<string | number>>([]);
-  const userStore = useUserStore();
+  const  = ref<Array<string | number>>([]);
+  const  = useUserStore();
   const { createMessage } = useMessage();
   //注册model
   const [registerModal, { openModal }] = useModal();
-  const [designModal, { openModal: openDesignModal, closeModal: closeDesignModal }] = useModal();
+  const [designModal, { openModal: openDesignModal, closeModal: _closeDesignModal }] = useModal();
   const [generateModal, { openModal: openGenModal, closeModal: closeGenModal }] = useModal();
   const [resumeModal, { openModal: openResumeModal, closeModal: closeResumeModal }] = useModal();
   //注册table数据
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     tableProps: {
       title: 'word模版管理',
       api: list,
@@ -358,7 +358,7 @@
   function handleDesignSave(content) {
     console.log('表单数据', content);
     saveOrUpdate(content, true)
-      .then((data) => {
+      .then((_data) => {
         // closeDesignModal();
         reload();
       })

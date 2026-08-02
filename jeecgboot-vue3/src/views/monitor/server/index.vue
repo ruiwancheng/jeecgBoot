@@ -32,7 +32,7 @@
 </template>
 <script lang="ts" name="monitor-server" setup>
   import { onMounted, ref, unref } from 'vue';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, useTable, _TableAction } from '/@/components/Table';
   import DiskInfo from '../disk/DiskInfo.vue';
   import { getServerInfo, getTextInfo, getMoreInfo } from './server.api';
   import { columns } from './server.data';
@@ -45,7 +45,7 @@
   const lastUpdateTime = ref({});
   let textInfo = ref({});
   const { createMessage } = useMessage();
-  const checkedKeys = ref<Array<string | number>>([]);
+  const  = ref<Array<string | number>>([]);
 
   const searchInfo = { logType: '1' };
   const [registerTable, { reload }] = useTable({

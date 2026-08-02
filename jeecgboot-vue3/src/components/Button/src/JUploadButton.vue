@@ -37,5 +37,5 @@
   });
 
   // get inherit binding value
-  const getBindValue = computed(() => ({ ...unref(attrs), ...props }));
+  const  = computed(() => ({ ...unref(attrs), ...props }));
 </script>

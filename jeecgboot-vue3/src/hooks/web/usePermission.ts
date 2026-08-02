@@ -110,7 +110,7 @@ export function usePermission() {
   /**
    * 是否禁用组件
    */
-  function isDisabledAuth(value?: RoleEnum | RoleEnum[] | string | string[], def = true): boolean {
+  function isDisabledAuth(value?: RoleEnum | RoleEnum[] | string | string[], _def = true): boolean {
     //=============================工作流权限判断-禁用-begin==============================================
     if (formData) {
       let code = value as string;

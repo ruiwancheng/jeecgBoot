@@ -29,9 +29,9 @@
 <script lang="ts" setup name="user-quit-modal">
   import { ref, toRaw, unref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
   import { recycleColumns } from './user.data';
-  import { getQuitList, putCancelQuit, deleteRecycleBin } from './user.api';
+  import { getQuitList, putCancelQuit, _deleteRecycleBin } from './user.api';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { Modal } from 'ant-design-vue';
@@ -45,7 +45,7 @@
     checkedKeys.value = [];
   });
   //注册table数据
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     tableProps: {
       api: getQuitList,
       columns: recycleColumns,

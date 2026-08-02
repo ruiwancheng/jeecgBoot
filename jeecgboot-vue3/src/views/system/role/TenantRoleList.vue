@@ -46,11 +46,11 @@
   const showFooter = ref(true);
   const [roleUserDrawer, { openDrawer: openRoleUserDrawer }] = useDrawer();
   const [registerDrawer, { openDrawer }] = useDrawer();
-  const [registerModal, { openModal }] = useModal();
+  const [_registerModal, { openModal }] = useModal();
   const [registerDesc, { openDrawer: openRoleDesc }] = useDrawer();
   
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, onImportXls, onExportXls } = useListPage({
+  const { , tableContext, ,  } = useListPage({
     designScope: 'role-template',
     tableProps: {
       title: '租户角色列表',
@@ -77,7 +77,7 @@
       url: getImportUrl,
     },
   });
-  const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload }, { , selectedRowKeys }] = tableContext;
 
   /**
    * 新增

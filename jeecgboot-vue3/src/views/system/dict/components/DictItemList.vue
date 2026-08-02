@@ -4,7 +4,7 @@
       <template #tableTitle>
         <a-button type="primary" @click="handleCreate"> 新增</a-button>
       </template>
-      <template v-slot:bodyCell="{column, record, index}">
+      <template v-slot:bodyCell="{column, record, }">
         <template v-if="column.dataIndex ==='action'">
           <TableAction :actions="getTableAction(record)" />
         </template>

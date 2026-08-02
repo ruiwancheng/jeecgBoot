@@ -54,7 +54,7 @@
   const InputPassword = Input.Password;
   const { t } = useI18n();
   const { handleBackLogin, getLoginState } = useLoginState();
-  const { notification, createErrorModal } = useMessage();
+  const { notification,  } = useMessage();
   const formRef = ref();
   const loading = ref(false);
   const formData = reactive<any>({

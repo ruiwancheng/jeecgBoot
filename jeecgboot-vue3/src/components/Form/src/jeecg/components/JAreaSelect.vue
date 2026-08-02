@@ -23,7 +23,7 @@
   </a-form-item-rest>
 </template>
 <script lang="ts">
-  import { defineComponent, PropType, ref, reactive, watchEffect, computed, unref, watch, onMounted, onUnmounted, toRefs } from 'vue';
+  import { defineComponent, _PropType, ref, reactive, watchEffect, computed, unref, watch, _onMounted, _onUnmounted, toRefs } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { useRuleFormItem } from '/@/hooks/component/useFormItem';
   import { provinceOptions, getDataByCode, getRealCode } from '../../utils/areaDataUtil';
@@ -48,7 +48,7 @@
       },
     },
     emits: ['change', 'update:value','update:area','update:city','update:province'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       const emitData = ref<any>([]);
       //下拉框的选择值
       const pca = reactive<any>({
@@ -76,7 +76,7 @@
       /**
        * 监听组件值变化
        */
-      watch(pca, (newVal) => {
+      watch(pca, (_newVal) => {
         if (!props.value) {
           emit('update:province', pca.province);
           emit('update:city', pca.city);

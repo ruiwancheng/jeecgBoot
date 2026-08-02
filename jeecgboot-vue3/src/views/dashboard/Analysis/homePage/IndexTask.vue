@@ -30,7 +30,7 @@
               <JEllipsis :value="text" :length="textMaxLength"></JEllipsis>
             </template>
 
-            <template #dayWarnning="{ text, record }">
+            <template #dayWarnning="{ , record }">
               <BellTwoTone style="font-size: 22px" :twoToneColor="getTipColor(record)" />
             </template>
 
@@ -70,7 +70,7 @@
               <JEllipsis :value="text" :length="textMaxLength"></JEllipsis>
             </template>
 
-            <template #dayWarnning="{ text, record }">
+            <template #dayWarnning="{ , record }">
               <BellTwoTone style="font-size: 22px" :twoToneColor="getTipColor(record)" />
             </template>
 
@@ -107,7 +107,7 @@
               <JEllipsis :value="text" :length="textMaxLength"></JEllipsis>
             </template>
 
-            <template #dayWarnning="{ text, record }">
+            <template #dayWarnning="{ , record }">
               <BellTwoTone style="font-size: 22px" :twoToneColor="getTipColor(record)" />
             </template>
 
@@ -140,7 +140,7 @@
               <JEllipsis :value="text" :length="textMaxLength"></JEllipsis>
             </template>
 
-            <template #dayWarnning="{ text, record }">
+            <template #dayWarnning="{ , record }">
               <BellTwoTone style="font-size: 22px" :twoToneColor="getTipColor(record)" />
             </template>
 
@@ -159,7 +159,7 @@
   import noDataPng from '/@/assets/images/nodata.png';
   import { useMessage } from '/@/hooks/web/useMessage';
   import JEllipsis from '/@/components/Form/src/jeecg/components/JEllipsis.vue';
-  import { BulbTwoTone, BellTwoTone } from '@ant-design/icons-vue';
+  import { _BulbTwoTone, BellTwoTone } from '@ant-design/icons-vue';
 
   const tempSs1 = [
     {

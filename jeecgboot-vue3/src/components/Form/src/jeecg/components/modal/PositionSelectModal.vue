@@ -69,7 +69,7 @@
       },
     },
     emits: ['register', 'getSelectResult'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       //注册弹框
       const [register, { closeModal }] = useModalInner();
       const attrs = useAttrs();

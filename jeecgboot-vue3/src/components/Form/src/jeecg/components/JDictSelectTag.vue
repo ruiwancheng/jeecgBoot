@@ -56,12 +56,12 @@
   </template>
 </template>
 <script lang="ts">
-  import { defineComponent, PropType, ref, reactive, watchEffect, computed, unref, watch, onMounted, nextTick } from 'vue';
+  import { defineComponent, _PropType, ref, _reactive, watchEffect, computed, unref, watch, _onMounted, nextTick } from 'vue';
   import { Form } from 'ant-design-vue';
   import { propTypes } from '/@/utils/propTypes';
   import { useAttrs } from '/@/hooks/core/useAttrs';
   import { initDictOptions } from '/@/utils/dict';
-  import { get, omit } from 'lodash-es';
+  import { _get, omit } from 'lodash-es';
   import { CompTypeEnum } from '/@/enums/CompTypeEnum';
   import { LoadingOutlined } from '@ant-design/icons-vue';
 
@@ -93,7 +93,7 @@
       onlySearchByLabel: propTypes.bool.def(false),
     },
     emits: ['options-change', 'change','update:value'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       const dictOptions = ref<any>([]);
       const attrs = useAttrs();
       const formItemContext = Form.useInjectFormItemContext();

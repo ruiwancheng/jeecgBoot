@@ -12,7 +12,7 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, unref, useAttrs } from 'vue';
+  import { _defineComponent, ref, computed, unref, useAttrs } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema } from './user.data';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
@@ -22,7 +22,7 @@
 
   // 声明Emits
   const emit = defineEmits(['success', 'register']);
-  const attrs = useAttrs();
+  const  = useAttrs();
   const isUpdate = ref(true);
   const rowId = ref('');
   const departOptions = ref<any>([]);

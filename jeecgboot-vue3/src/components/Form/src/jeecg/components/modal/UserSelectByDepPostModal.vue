@@ -65,11 +65,11 @@
       },
     },
     emits: ['register', 'getSelectResult'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       const tableRef = ref();
       const treeRef = ref();
       //注册弹框
-      const [register, { closeModal }] = useModalInner(async (data) => {
+      const [register, { closeModal }] = useModalInner(async (_data) => {
         await queryDepartTree();
       });
       const attrs = useAttrs();

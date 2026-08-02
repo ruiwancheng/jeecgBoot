@@ -79,7 +79,7 @@
             <p>暂无生成历史</p>
           </div>
           <div v-else class="history-list">
-            <div v-for="(item, index) in historyList" :key="item.id" class="history-item">
+            <div v-for="(item, _index) in historyList" :key="item.id" class="history-item">
               <div class="item-header">
                 <span class="item-title" :title="item.content">{{ item.content }}</span>
                 <span class="item-time">{{ formatTime(item) }}</span>

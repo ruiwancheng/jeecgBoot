@@ -33,7 +33,7 @@
   </div>
 </template>
 <script lang="ts" setup name="we-chat-ding-setting">
-  import { onMounted, ref, reactive, unref } from 'vue';
+  import { onMounted, ref, _reactive, unref } from 'vue';
   import { CollapseContainer } from '/@/components/Container';
   import { bindThirdAppAccount, deleteThirdAccount, getThirdAccountByUserId } from './UserSetting.api';
   import { useUserStore } from '/@/store/modules/user';
@@ -47,7 +47,7 @@
 
   const { prefixCls } = useDesign('j-user-tenant-setting-container');
 
-  const userStore = useUserStore();
+  const  = useUserStore();
 
   //绑定微信的数据
   const bindWechatData = ref<any>({});
@@ -62,7 +62,7 @@
   //第三方用户UUID
   const thirdUserUuid = ref('');
   //第三方详情
-  const thirdDetail = ref<any>({});
+  const  = ref<any>({});
   const { createMessage } = useMessage();
   //windows对象，用于关闭窗口事件
   const windowsIndex = ref<any>('');
@@ -88,7 +88,7 @@
   /**
    * 企业微信绑定解绑事件
    */
-  function wechatEnterpriseBind() {
+  function () {
     console.log('企业微信绑定解绑事件');
     let data = unref(bindEnterpriseData);
     if (!data.sysUserId) {

@@ -54,7 +54,7 @@
 
 <script lang="ts" name="system-user" setup>
   //ts语法
-  import { ref, computed, unref } from 'vue';
+  import { _ref, _computed, unref } from 'vue';
   import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
   import UserDrawer from './UserDrawer.vue';
   import UserRecycleBinModal from './UserRecycleBinModal.vue';
@@ -71,7 +71,7 @@
   import ImportExcelProgress from './components/ImportExcelProgress.vue';
 
   const { createMessage, createConfirm } = useMessage();
-  const { isDisabledAuth, hasPermission } = usePermission();
+  const { , hasPermission } = usePermission();
   
   //注册drawer
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -80,14 +80,14 @@
   //密码model
   const [registerPasswordModal, { openModal: openPasswordModal }] = useModal();
   //代理人model
-  const [registerAgentModal, { openModal: openAgentModal }] = useModal();
+  const [_registerAgentModal, { openModal: openAgentModal }] = useModal();
   //离职代理人model
-  const [registerQuitAgentModal, { openModal: openQuitAgentModal }] = useModal();
+  const [_registerQuitAgentModal, { openModal: openQuitAgentModal }] = useModal();
   //离职用户列表model
   const [registerQuitModal, { openModal: openQuitModal }] = useModal();
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, onExportXls,  } = useListPage({
     designScope: 'user-list',
     tableProps: {
       title: '用户列表',
@@ -120,7 +120,7 @@
   });
 
   //注册table数据
-  const [registerTable, { reload, updateTableDataRecord, clearSelectedRowKeys }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
+  const [registerTable, { reload, , clearSelectedRowKeys }, { rowSelection, selectedRows, selectedRowKeys }] = tableContext;
 
   /**
    * 新增事件
@@ -245,7 +245,7 @@
   /**
    *同步钉钉和微信回调
    */
-  function onSyncFinally({ isToLocal }) {
+  function ({ isToLocal }) {
     // 同步到本地时刷新下数据
     if (isToLocal) {
       reload();

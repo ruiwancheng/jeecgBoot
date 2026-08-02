@@ -30,7 +30,7 @@
 <script lang="ts" setup>
   import { computed, reactive } from 'vue';
   import { useRouter } from 'vue-router';
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable, _useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
@@ -45,7 +45,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { prefixCls, tableContext, onExportXls } = useListPage({
+  const { , tableContext, onExportXls } = useListPage({
     designScope: 'mes-purchase-order',
     tableProps: {
       title: '采购订单',

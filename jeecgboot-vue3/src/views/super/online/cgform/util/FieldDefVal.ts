@@ -87,7 +87,7 @@ export async function loadFormFieldsDefVal(properties, callback, formData?) {
  * 日期组件(date)中设置了年，年月，年周，年季度等格式的默认值需要转化成YYYY-MM-DD
  */
 function transformDefValDate(prop, value) {
-  const { type, field, view, fieldExtendJson } = prop;
+  const { , , view, fieldExtendJson } = prop;
   if (view == 'date' && fieldExtendJson) {
     const extendJson = JSON.parse(fieldExtendJson);
     const { picker } = extendJson;

@@ -98,7 +98,7 @@
     <JDictSelectTag v-if="item.config === '1'" :placeholder="'请选择' + item.label" v-model="queryParam[item.field]" :dictCode="getDictCode(item)">
     </JDictSelectTag>
     <a-select v-else :placeholder="'请选择' + item.label" v-model:value="queryParam[item.field]">
-      <template v-for="(obj, index) in dictOptions[getDictOptionKey(item)]" :key="index">
+      <template v-for="(obj, _index) in dictOptions[getDictOptionKey(item)]" :key="index">
         <a-select-option :value="obj.value"> {{ obj.text }}</a-select-option>
       </template>
     </a-select>
@@ -212,7 +212,7 @@
   import { defineComponent, ref } from 'vue';
   import { DateTypeEnum } from '/@/enums/DateTypeEnum.ts';
   import { CompTypeEnum } from '/@/enums/CompTypeEnum.ts';
-  import { JDictSelectTag, JTreeSelect, JCategorySelect, JSelectUserByDept, JSelectDept, JPopup, JAreaLinkage,JInput,JSearchSelect } from '/@/components/Form';
+  import { JDictSelectTag, JTreeSelect, JCategorySelect, JSelectUserByDept, JSelectDept, JPopup, JAreaLinkage,JInput,_JSearchSelect } from '/@/components/Form';
   export default defineComponent({
     name: 'SearchFormItem',
     components: {

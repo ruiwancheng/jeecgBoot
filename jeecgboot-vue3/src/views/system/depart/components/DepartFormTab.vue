@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { watch, computed, inject, ref, unref, onMounted } from 'vue';
+  import { watch, computed, _inject, ref, unref, onMounted } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { saveOrUpdateDepart } from '../depart.api';
   import { useBasicFormSchema, orgCategoryOptions, positionChange } from '../depart.data';
@@ -148,7 +148,7 @@
    * @param info
    * @param keys
    */
-  async function treeSelect(keys, info) {
+  async function treeSelect(_keys, info) {
     if (info.checkable) {
       orgNameMap.value[info.id] = '';
       depPostValue.value = [info.value];

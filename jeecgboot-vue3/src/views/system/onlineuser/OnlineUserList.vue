@@ -13,7 +13,7 @@ import { list, forceLogout } from './OnlineUser.api';
 import { useListPage } from '/@/hooks/system/useListPage';
 import { useMessage } from "/@/hooks/web/useMessage";
 // 列表页面公共参数、方法
-const { prefixCls, tableContext, onImportXls, onExportXls } = useListPage({
+const { , tableContext, ,  } = useListPage({
   designScope: 'online-user',
   tableProps: {
     //在线用户rowKey默认id会造成key重复，导致页面出现重复数据
@@ -30,7 +30,7 @@ const { prefixCls, tableContext, onImportXls, onExportXls } = useListPage({
     rowSelection: null,
   },
 });
-const [registerTable, { reload }, { rowSelection, selectedRowKeys }] = tableContext;
+const [registerTable, { reload }, { rowSelection,  }] = tableContext;
 const $message = useMessage();
 
 //操作栏

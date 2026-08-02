@@ -298,12 +298,12 @@
 
 <script setup lang="ts">
   import { Ref, watch } from 'vue';
-  import { computed, ref, createVNode, onUnmounted, onMounted, nextTick } from 'vue';
+  import { computed, ref, createVNode, onUnmounted, onMounted, _nextTick } from 'vue';
   import { useScroll } from './js/useScroll';
   import chatMessage from './chatMessage.vue';
   import presetQuestion from './presetQuestion.vue';
-  import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { message, Modal, Tabs } from 'ant-design-vue';
+  import { _DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import { message, Modal, _Tabs } from 'ant-design-vue';
   import './style/github-markdown.less';
   import './style/highlight.less';
   import './style/github-markdown.less';
@@ -470,10 +470,10 @@
     updateChatSome(uuid.value, chatData.value.length - 1, { loading: false });
   });
 
-  const addChat = (uuid, data) => {
+  const addChat = (_uuid, data) => {
     chatData.value.push({ ...data });
   };
-  const updateChat = async (uuid, index, data) => {
+  const updateChat = async (_uuid, index, data) => {
     let lastChatData = chatData.value[index];
     if(lastChatData.showAvatar){
       data.showAvatar = lastChatData.showAvatar;
@@ -503,7 +503,7 @@
     }
     chatData.value.unshift({ ...data });
   };
-  const updateChatSome = (uuid, index, data) => {
+  const updateChatSome = (_uuid, index, data) => {
     chatData.value[index] = { ...chatData.value[index], ...data };
   };
   const updateChatFail = (uuid, data) => {
@@ -1094,7 +1094,7 @@
         adapter: 'fetch',
         responseType: 'stream',
         timeout: 60 * 60 * 1000
-      }, { isTransformResponse: false }).catch(async (err)=>{
+      }, { isTransformResponse: false }).catch(async (_err)=>{
         loading.value = false;
         localStorage.removeItem('chat_requestId_' + uuid.value);
       });
@@ -1158,7 +1158,7 @@
   //监听开场白预制问题
   watch(
     () => props.presetQuestion,
-    (val) => {
+    (_val) => {
       topChat(props.prologue);
     }
   );

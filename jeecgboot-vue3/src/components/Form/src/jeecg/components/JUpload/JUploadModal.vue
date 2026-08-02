@@ -14,7 +14,7 @@
 
   const { createMessage } = useMessage();
   const emit = defineEmits(['change', 'update:value', 'register']);
-  const props = defineProps({
+  const  = defineProps({
     value: propTypes.oneOfType([propTypes.string, propTypes.array]),
     width: propTypes.number.def(520),
   });

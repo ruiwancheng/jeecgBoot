@@ -13,7 +13,7 @@
   import { message } from 'ant-design-vue';
 
   const [registerForm, { validate, setFieldsValue }] = useForm({ schemas: formSchema, labelWidth: 100, showActionButtonGroup: false });
-  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+  const [registerDrawer, { , closeDrawer }] = useDrawerInner(async (data) => {
     setFieldsValue(data.record || { status: '1', level: 1, isLeaf: 1 });
     isUpdate.value = !!data.isUpdate;
   });

@@ -85,7 +85,7 @@
       const textarea = ref<HTMLTextAreaElement>();
       let coder: Nullable<EditorFromTextArea> = null;
       const attrs = useAttrs();
-      const height = ref(props.height);
+      const  = ref(props.height);
       const options = reactive<any>({
         // 缩进格式
         tabSize: 2,

@@ -49,9 +49,9 @@
 </template>
 
 <script lang="ts">
-  import { ref, unref } from 'vue';
+  import { ref, _unref } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { useModal, useModalInner } from '@/components/Modal';
+  import { _useModal, useModalInner } from '@/components/Modal';
   import { Pagination } from 'ant-design-vue';
   import { list } from '@/views/super/airag/aiknowledge/AiKnowledgeBase.api';
   import knowledge from '/@/views/super/airag/aiknowledge/icon/knowledge.png';

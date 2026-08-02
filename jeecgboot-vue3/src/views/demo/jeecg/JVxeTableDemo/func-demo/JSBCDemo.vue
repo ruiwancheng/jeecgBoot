@@ -193,7 +193,7 @@
               url: Api.saveRow,
               params: row,
             })
-            .then((res) => {
+            .then((_res) => {
               createMessage.success(`"${column.title}"保存成功！`);
               // 局部更新单元格为已保存状态
               $table.reloadRow(row, null, field);

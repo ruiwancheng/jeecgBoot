@@ -5,7 +5,7 @@ import { handleRangeValue } from '../utils/formUtils';
 import { ref, onUnmounted, unref, nextTick, watch } from 'vue';
 import { isProdMode } from '/@/utils/env';
 import { error } from '/@/utils/log';
-import { getDynamicProps, getValueType, getValueTypeBySchema } from '/@/utils';
+import { getDynamicProps, _getValueType, getValueTypeBySchema } from '/@/utils';
 export declare type ValidateFields = (nameList?: NamePath[], options?: ValidateOptions) => Promise<Recordable>;
 
 type Props = Partial<DynamicProps<FormProps>>;

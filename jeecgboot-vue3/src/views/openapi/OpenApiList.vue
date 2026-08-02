@@ -40,7 +40,7 @@
         <TableAction :actions="getTableAction(record)" :dropDownActions="getDropDownAction(record)"/>
       </template>
       <!--字段回显插槽-->
-      <template v-slot:bodyCell="{ column, record, index, text }">
+      <template v-slot:bodyCell="{ column, record, , text }">
         <template v-if="column.dataIndex === 'requestUrl'">
           <a @click="handleCopyUrl(record)" title="点击复制完整接口地址">{{ text }}</a>
         </template>
@@ -66,7 +66,7 @@
   const API_DOMAIN = import.meta.env.VITE_GLOB_DOMAIN_URL;
   const [registerDrawer, { openDrawer }] = useDrawer();
    //注册table数据
-  const { prefixCls,tableContext,onExportXls,onImportXls } = useListPage({
+  const { ,tableContext,onExportXls,onImportXls } = useListPage({
       tableProps:{
            title: '接口管理',
            api: list,

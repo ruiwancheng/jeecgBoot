@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onUnmounted, ref, computed, watch } from 'vue';
+  import { defineComponent, onUnmounted, ref, computed, _watch } from 'vue';
   import { getTenantId, getToken } from '@/utils/auth';
   import { randomString } from '@/utils/common/compUtils';
   import { useMessage } from '@/hooks/web/useMessage';

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="hasFile" v-for="(file, fileKey) of [innerFile || {}]" :key="fileKey">
+    <template v-if="hasFile" v-for="(file, _fileKey) of [innerFile || {}]" :key="fileKey">
       <div class="j-vxe-image-list">
         <template v-if="!file || !(file['url'] || file['path'] || file['message'])">
           <a-tooltip :title="'请稍后: ' + JSON.stringify(file) + (file['url'] || file['path'] || file['message'])">

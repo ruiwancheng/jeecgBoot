@@ -38,7 +38,7 @@
   const oldPassword = ref('');
 
   // 判断密码是否为连续的数字或字母
-  function lxStr (password) {
+  function  (password) {
     let arr = password.split('');
     let flag = true;
     for (let i = 1; i < arr.length - 1; i++) {
@@ -58,7 +58,7 @@
   }
   
   // 表单配置
-  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+  const [registerForm, { resetFields, , validate }] = useForm({
     labelWidth: 100,
     schemas: [
       {

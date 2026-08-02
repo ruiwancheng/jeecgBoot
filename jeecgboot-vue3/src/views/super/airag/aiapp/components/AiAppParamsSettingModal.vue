@@ -23,7 +23,7 @@ export default {
     AiModelSeniorForm,
   },
   emits: ['ok', 'register'],
-  setup(props, { emit }) {
+  setup(_props, { emit }) {
     let aiModelSeniorFormRef = ref()
     //类型
     const type = ref<string>('');

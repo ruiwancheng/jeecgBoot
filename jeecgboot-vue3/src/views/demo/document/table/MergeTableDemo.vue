@@ -18,17 +18,17 @@
     {
       title: '名称',
       dataIndex: 'name',
-      customCell: (record, index, column) => ({
+      customCell: (_record, index, _column) => ({
         colSpan: index < 4 ? 1 : 5,
       }),
-      customRender: ({ text, record, index, column }) => {
+      customRender: ({ text, record, index,  }) => {
         return index < 4 ? text : `${record.name}/${record.age}/${record.address}/${record.phone}`;
       },
     },
     {
       title: '年龄',
       dataIndex: 'age',
-      customCell: (record, index, column) => {
+      customCell: (_record, index, _column) => {
         if (index == 4) {
           return { colSpan: 0 };
         }
@@ -37,7 +37,7 @@
     {
       title: '家庭住址',
       dataIndex: 'address',
-      customCell: (record, index, column) => {
+      customCell: (_record, index, _column) => {
         if (index == 4) {
           return { colSpan: 0 };
         }
@@ -47,7 +47,7 @@
       title: '联系电话',
       colSpan: 2,
       dataIndex: 'tel',
-      customCell: (record, index, column) => {
+      customCell: (_record, index, _column) => {
         if (index === 2) {
           return { rowSpan: 2 };
         }
@@ -63,7 +63,7 @@
       title: 'Phone',
       colSpan: 0,
       dataIndex: 'phone',
-      customCell: (record, index, column) => {
+      customCell: (_record, index, _column) => {
         if (index === 4) {
           return { colSpan: 0 };
         }

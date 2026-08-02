@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './voucher.data';

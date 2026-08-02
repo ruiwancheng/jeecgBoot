@@ -33,7 +33,7 @@
 </template>
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { BasicTable, useTable, TableAction, BasicColumn } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction, BasicColumn } from '/@/components/Table';
   import { PageWrapper } from '/@/components/Page';
   import { demoListApi } from '/@/api/demo/table';
   import { useListPage } from '/@/hooks/system/useListPage';

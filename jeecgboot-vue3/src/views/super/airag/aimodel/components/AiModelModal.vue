@@ -74,7 +74,7 @@
 
               <template #modelName="{ model, field }">
                 <AutoComplete v-model:value="model[field]" :options="modelNameAddOption" :filter-option="filterOption">
-                  <template #option="{ value, label, descr, type }">
+                  <template #option="{ , label, descr, type }">
                     <a-tooltip placement="right" color="#ffffff" :overlayInnerStyle="{ color:'#646a73' }">
                       <template #title>
                         <div v-html="getTitle(descr)"></div>
@@ -124,9 +124,9 @@
 </template>
 
 <script lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref, _reactive } from 'vue';
   import BasicModal from '@/components/Modal/src/BasicModal.vue';
-  import { useModal, useModalInner } from '@/components/Modal';
+  import { _useModal, useModalInner } from '@/components/Modal';
   import { initDictOptions } from '@/utils/dict';
   import model from './model.json';
   import { AutoComplete } from 'ant-design-vue';
@@ -136,7 +136,7 @@
   import { formSchema, imageList } from '../model.data';
   import { editModel, queryById, saveModel, testConn } from '../model.api';
   import { useMessage } from '/@/hooks/web/useMessage';
-  const {createMessage: $message, createConfirm} = useMessage();
+  const {createMessage: $message, } = useMessage();
   import { FullscreenOutlined } from '@ant-design/icons-vue';
   import AiModelSeniorForm from './AiModelSeniorForm.vue';
   import JCodeEditor from '/@/components/Form/src/jeecg/components/JCodeEditor.vue';
@@ -152,7 +152,7 @@
       FullscreenOutlined,
     },
     emits: ['success', 'register'],
-    setup(props, { emit }) {
+    setup(_props, { emit }) {
       //ai类型数据
       const modelTypeData = ref<any>([]);
       //模型类型下拉框
@@ -460,7 +460,7 @@
             values.provider = modelData.value.value;
           }
           //测试
-          await testConn(values).then(async (result) => {
+          await testConn(values).then(async (_result) => {
             if(onlyTest){
               $message.success('测试连接成功');
               return true;

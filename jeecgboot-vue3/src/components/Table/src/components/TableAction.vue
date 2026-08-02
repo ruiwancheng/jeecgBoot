@@ -29,7 +29,7 @@
     >
       <slot name="more"></slot>
       <!--  设置插槽   -->
-      <template v-slot:[item.slot] v-for="(item, index) in getDropdownSlotList" :key="`${index}-${item.label}`">
+      <template v-slot:[item.slot] v-for="(item, _index) in getDropdownSlotList" :key="`${index}-${item.label}`">
         <slot :name="item.slot"></slot>
       </template>
 

@@ -36,7 +36,7 @@ export function usePagination(props: JVxeTableProps, methods: JVxeTableMethods) 
     methods.trigger('pageChange', { current, pageSize });
   }
 
-  function handleShowSizeChange(current, pageSize) {
+  function handleShowSizeChange(_current, pageSize) {
     innerPagination.pageSize = pageSize;
     // -update-begin--author:liaozhiyang---date:20251209---for:【issues/9169】切换页码时，pageChange事件加载了两次
     // 因为 handleShowSizeChange先触发，紧接着会触发 handleChange，所以可以注释掉。

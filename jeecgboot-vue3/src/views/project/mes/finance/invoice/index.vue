@@ -13,7 +13,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { BasicTable, useTable, TableAction } from '/@/components/Table'; import { useListPage } from '/@/hooks/system/useListPage'; import { useDrawer } from '/@/components/Drawer';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table'; import { useListPage } from '/@/hooks/system/useListPage'; import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './invoice.data'; import { queryInvoiceList, deleteInvoice, getExportUrl } from './invoice.api';
   import SalesInvoiceDrawer from './InvoiceDrawer.vue'; import { message } from 'ant-design-vue';
   defineOptions({ name: 'MesSalesInvoice' });

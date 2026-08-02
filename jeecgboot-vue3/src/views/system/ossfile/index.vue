@@ -28,7 +28,7 @@
 
 <script lang="ts" name="system-ossfile" setup>
   //ts语法
-  import { ref, computed, unref } from 'vue';
+  import { _ref, computed, _unref } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { columns, searchFormSchema } from './ossfile.data';

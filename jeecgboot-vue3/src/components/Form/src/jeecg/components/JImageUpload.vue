@@ -31,7 +31,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, PropType, ref, reactive, watchEffect, computed, unref, watch, onMounted, nextTick } from 'vue';
+  import { defineComponent, _PropType, ref, _reactive, _watchEffect, computed, _unref, watch, _onMounted, nextTick } from 'vue';
   import { LoadingOutlined, UploadOutlined } from '@ant-design/icons-vue';
   import { useRuleFormItem } from '/@/hooks/component/useFormItem';
   import { propTypes } from '/@/utils/propTypes';
@@ -41,7 +41,7 @@
   import { uploadUrl as systemUploadUrl } from '/@/api/common/api';
   import { getToken } from '/@/utils/auth';
 
-  const { createMessage, createErrorModal } = useMessage();
+  const { createMessage,  } = useMessage();
   export default defineComponent({
     name: 'JImageUpload',
     components: { LoadingOutlined, UploadOutlined },
@@ -90,7 +90,7 @@
       },
     },
     emits: ['options-change', 'change', 'update:value'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit,  }) {
       const emitData = ref<any>([]);
       const attrs = useAttrs();
       const [state] = useRuleFormItem(props, 'value', 'change', emitData);
@@ -133,7 +133,7 @@
        */
       watch(
         () => props.value,
-        (val, prevCount) => {
+        (val, _prevCount) => {
          // 代码逻辑说明: 【issues/556】JImageUpload组件value赋初始值没显示图片------------
             if (val && val instanceof Array) {
             val = val.join(',');
@@ -184,7 +184,7 @@
       /**
        * 文件上传结果回调
        */
-      function handleChange({ file, fileList, event }) {
+      function handleChange({ file, fileList,  }) {
         initTag.value = false;
         // uploadFileList.value = fileList;
         if (file.status === 'error') {
@@ -240,7 +240,7 @@
         previewVisible.value = true;
       }
 
-      function getAvatarView() {
+      function () {
         if (uploadFileList.length > 0) {
           let url = uploadFileList[0].url;
           return getFileAccessHttpUrl(url, null);

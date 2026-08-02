@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { watch, computed, inject, ref, unref, onMounted } from 'vue';
+  import { _watch, computed, inject, ref, unref, _onMounted } from 'vue';
 
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicModal, useModalInner } from '/@/components/Modal';
@@ -30,7 +30,7 @@
   const props = defineProps({
     rootTreeData: { type: Array, default: () => [] },
   });
-  const prefixCls = inject('prefixCls');
+  const  = inject('prefixCls');
   // 当前是否是更新模式
   const isUpdate = ref<boolean>(false);
   // 当前的弹窗数据
@@ -133,7 +133,7 @@
    * @param info
    * @param keys
    */
-  async function treeSelect(keys,info) {
+  async function treeSelect(_keys,info) {
     if (info.checkable) {
       //解决闪动问题
       orgNameMap.value[info.id] = "";

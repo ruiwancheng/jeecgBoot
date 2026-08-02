@@ -47,7 +47,7 @@
   //设置标题
   const title = computed(() => (unref(isUpdate) ? '编辑 租户套餐' : '新增 租户套餐'));
   //表单提交事件
-  async function handleSubmit(v) {
+  async function handleSubmit(_v) {
     const values = await validate();
     
     setModalProps({ confirmLoading: true });

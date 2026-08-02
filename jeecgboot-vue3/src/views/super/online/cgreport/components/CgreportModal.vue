@@ -105,7 +105,7 @@
     columns: onlCgreportItemColumns,
   });
   //表单配置
-  const [registerForm, { setProps, resetFields, setFieldsValue, validate, validateFields }] = useForm({
+  const [registerForm, { setProps, resetFields, setFieldsValue, , validateFields }] = useForm({
     // labelWidth: 150,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -276,7 +276,7 @@
   }
 
   // 手动设置table的数据 解析后调用
-  async function setDataSource(tableRef, data) {
+  async function (tableRef, data) {
     await nextTick();
     await tableRef.value!.getXTable().insert(data);
     await nextTick();

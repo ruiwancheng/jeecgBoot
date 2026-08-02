@@ -108,7 +108,7 @@
 <script lang="ts" name="tenant-my-tenant-list" setup>
   import { onMounted, reactive, ref } from 'vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import {getFileAccessHttpUrl, tenantSaasMessage} from '@/utils/common/compUtils';
+  import {_getFileAccessHttpUrl, tenantSaasMessage} from '@/utils/common/compUtils';
   import { getTenantById, saveOrUpdateTenant } from '@/views/system/tenant/tenant.api';
   import { getTenantId } from '@/utils/auth';
   import { getDataByCode, getRealCode, provinceOptions } from '@/components/Form/src/utils/areaDataUtil';

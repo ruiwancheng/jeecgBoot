@@ -31,7 +31,7 @@
 </template>
 <script lang="ts" name="system-menu" setup>
   import { nextTick, ref } from 'vue';
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { BasicTable, _useTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import MenuDrawer from './MenuDrawer.vue';
@@ -71,7 +71,7 @@
   };
 
   // 列表页面公共参数、方法
-  const { prefixCls, tableContext } = useListPage({
+  const { , tableContext } = useListPage({
     tableProps: {
       title: '菜单列表',
       api: list,
@@ -142,7 +142,7 @@
   /**
    * 详情
    */
-  function handleDetail(record) {
+  function (record) {
     showFooter.value = false;
     openDrawer(true, {
       record,
@@ -190,7 +190,7 @@
     reloadDefIndex();
   }
 
-  function onFetchSuccess() {
+  function () {
     // 演示默认展开所有表项
     nextTick(expandAll);
   }

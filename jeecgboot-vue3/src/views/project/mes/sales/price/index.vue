@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable, _useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
@@ -28,7 +28,7 @@
 
   const [registerDrawer, { openDrawer }] = useDrawer();
 
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, onExportXls, onImportXls } = useListPage({
     designScope: 'mes-price',
     tableProps: {
       title: '价格管理',

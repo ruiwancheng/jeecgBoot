@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, h, inject, onMounted, reactive, ref, watch } from 'vue';
+  import { defineComponent, h, _inject, onMounted, _reactive, ref, _watch } from 'vue';
   import { getThirdConfigByTenantId, syncDingTalkDepartUserToLocal, deleteThirdAppConfig } from './ThirdApp.api';
   import { useModal } from '/@/components/Modal';
   import ThirdAppConfigModal from './ThirdAppConfigModal.vue';

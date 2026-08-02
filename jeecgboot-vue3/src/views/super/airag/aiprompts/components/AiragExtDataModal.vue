@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed, unref, reactive } from 'vue';
+  import { ref, computed, unref, _reactive } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formSchema } from '../AiragExtData.data';
@@ -18,7 +18,7 @@
   const isUpdate = ref(true);
   const isDetail = ref(false);
   //表单配置
-  const [registerForm, { setProps, resetFields, setFieldsValue, validate, scrollToField }] = useForm({
+  const [registerForm, { setProps, resetFields, setFieldsValue, validate,  }] = useForm({
     labelWidth: 150,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -44,7 +44,7 @@
   //设置标题
   const title = computed(() => (!unref(isUpdate) ? '新增' : !unref(isDetail) ? '详情' : '编辑'));
   //表单提交事件
-  async function handleSubmit(v) {
+  async function handleSubmit(_v) {
     try {
       let values = await validate();
       setModalProps({ confirmLoading: true });

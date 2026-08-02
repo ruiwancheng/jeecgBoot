@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="hasFile" v-for="(file, fileKey) of [innerFile || {}]" :key="fileKey">
+    <template v-if="hasFile" v-for="(file, _fileKey) of [innerFile || {}]" :key="fileKey">
       <div style="position: relative">
         <a-tooltip v-if="file.status === 'uploading'" :title="`上传中(${Math.floor(file.percent)}%)`">
           <LoadingOutlined />

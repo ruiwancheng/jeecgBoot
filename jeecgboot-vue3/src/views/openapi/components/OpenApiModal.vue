@@ -48,7 +48,7 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { useJvxeMethod } from '/@/hooks/system/useJvxeMethods.ts';
   import { formSchema, openApiHeaderJVxeColumns, openApiParamJVxeColumns } from '../OpenApi.data';
-  import { saveOrUpdate, queryOpenApiHeader, queryOpenApiParam, getGenPath } from '../OpenApi.api';
+  import { saveOrUpdate, _queryOpenApiHeader, _queryOpenApiParam, getGenPath } from '../OpenApi.api';
   import { VALIDATE_FAILED } from '/@/utils/common/vxeUtils';
   import { useMessage } from "@/hooks/web/useMessage";
 
@@ -73,7 +73,7 @@
     columns: openApiParamJVxeColumns,
   });
   //表单配置
-  const [registerForm, { setProps, resetFields, setFieldsValue, validate }] = useForm({
+  const [registerForm, { setProps, resetFields, setFieldsValue,  }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -109,7 +109,7 @@
     setProps({ disabled: !data?.showFooter });
   });
   //方法配置
-  const [handleChangeTabs, handleSubmit, requestSubTableData, formRef] = useJvxeMethod(
+  const [_handleChangeTabs, handleSubmit, _requestSubTableData, formRef] = useJvxeMethod(
     requestAddOrEdit,
     classifyIntoFormData,
     tableRefs,

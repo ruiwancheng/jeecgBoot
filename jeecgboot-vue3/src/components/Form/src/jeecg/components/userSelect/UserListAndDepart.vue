@@ -12,7 +12,7 @@
           v-model:expandedKeys="expandedKeys"
           @select="onSelect"
         >
-          <template #title="{ title, key }">
+          <template #title="{ title,  }">
             <FolderFilled style="color: #9e9e9e"/><span style="margin-left: 5px">{{ title }}</span>
           </template>
         </a-tree>

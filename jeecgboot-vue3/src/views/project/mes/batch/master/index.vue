@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable, useTable } from '/@/components/Table';
+  import { BasicTable, _useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';

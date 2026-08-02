@@ -4,7 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts" name="AiOcrModal" setup>
-  import { ref, computed, unref } from 'vue';
+  import { ref, _computed, unref } from 'vue';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { schemas } from '../AiOcr.data';

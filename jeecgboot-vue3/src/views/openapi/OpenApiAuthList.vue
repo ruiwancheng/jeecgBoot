@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" name="openapi-openApiAuth" setup>
-  import { ref, reactive } from 'vue';
+  import { _ref, reactive } from 'vue';
   import { BasicTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
@@ -54,7 +54,7 @@
   const [registerPermDrawer, { openDrawer: openPermDrawer }] = useDrawer();
 
   //注册table数据
-  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+  const { , tableContext, onExportXls, onImportXls } = useListPage({
     tableProps: {
       title: '授权管理',
       api: list,
@@ -142,7 +142,7 @@
   /**
    * 详情
    */
-  function handleDetail(record: Recordable) {
+  function (record: Recordable) {
     openAuthDrawer(true, {
       record,
       isUpdate: true,

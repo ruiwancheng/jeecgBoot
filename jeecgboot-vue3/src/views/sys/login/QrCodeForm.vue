@@ -11,7 +11,7 @@
   </template>
 </template>
 <script lang="ts" setup>
-  import { computed, onMounted, unref, ref, watch } from 'vue';
+  import { computed, _onMounted, unref, ref, watch } from 'vue';
   import LoginFormTitle from './LoginFormTitle.vue';
   import { Button, Divider } from 'ant-design-vue';
   import { QrCode } from '/@/components/Qrcode/index';

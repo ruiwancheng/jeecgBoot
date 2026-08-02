@@ -140,7 +140,7 @@ function createRegisterAccountRule(type) {
   ];
 }
 
-function checkUsername(rule, value, callback) {
+function checkUsername(_rule, value, _callback) {
   const { t } = useI18n();
   if (!value) {
     return Promise.reject(t('sys.login.accountPlaceholder'));
@@ -152,7 +152,7 @@ function checkUsername(rule, value, callback) {
     });
   }
 }
-async function checkPhone(rule, value, callback) {
+async function checkPhone(_rule, value, _callback) {
   const { t } = useI18n();
   var reg = /^1[3456789]\d{9}$/;
   if (!reg.test(value)) {

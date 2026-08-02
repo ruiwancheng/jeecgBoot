@@ -227,7 +227,7 @@
   // 映射部门和人员的关系
   const cacheDepartUser = {};
   //注册弹框
-  const [register, { closeModal }] = useModalInner(async (data) => {
+  const [register, { closeModal }] = useModalInner(async (_data) => {
     // 初始化
     if (props.selectedUser.length) {
       // 编辑时，传进来已选中的数据

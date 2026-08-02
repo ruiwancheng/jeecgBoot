@@ -844,7 +844,7 @@ export const schemas: FormSchema[] = [
     label: '课程',
     dynamicPropskey: 'options',
     dynamicPropsVal: ({ model }) => {
-      let options;
+      let ;
       if (model.sex == 1) {
         return [
           { value: '0', label: 'java - 男' },

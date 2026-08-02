@@ -1,4 +1,4 @@
-import { test, expect, type Locator, type Page } from '@playwright/test';
+import { _test, expect, type _Locator, type Page } from '@playwright/test';
 
 /**
  * 鹰眼团 MES 基础资料 UI 测试模板
