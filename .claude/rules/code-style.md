@@ -226,3 +226,173 @@ overrides:
 - 不执行 `git push --force`、`DROP TABLE`、无 WHERE 的 DELETE
 - SQL 用 MyBatis-Plus 参数化，不拼字符串
 - 敏感配置通过环境变量注入
+
+## 数据库/SQL 规范沉淀（2026-07 / 8 月 learnings 合并）
+
+//update-begin---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月数据库/SQL 9 条 learnings 到 code-style.md---
+
+### 字典项幂等 INSERT 模式（dict-item-insert-ignore-duplicates）
+
+**铁律**：`sys_dict_item` 缺少 `(dict_id, item_value)` 唯一约束。`INSERT IGNORE + SELECT + UUID()` 每次部署生成新 UUID → 新记录 → 字典项越积越多（物料模块 4 次部署膨胀到 117 条）。
+
+**正确写法**：先 `DELETE` 后 `INSERT VALUES`，无论部署多少次都只有 N 条：
+```sql
+DELETE FROM sys_dict_item WHERE dict_id = (SELECT id FROM sys_dict WHERE dict_code = 'xxx');
+INSERT INTO sys_dict_item (...) VALUES (...), (...), (...);
+```
+
+详见 `learnings/2026-07-15-dict-item-insert-ignore-duplicates.md`。
+
+### JSearchSelect 表字典配置格式（jsearchselect-dict-format）
+
+**铁律**：`JSearchSelect` 只认合写 `dict` 属性（`table,text,code`），不认分立的 `dictTable`/`dictText`/`dictCode`。
+
+```ts
+// ✅ 正确
+{ component: 'JSearchSelect', componentProps: { dict: 'c_mes_material,name,id' } }
+// ❌ 错误 — 下拉无数据
+{ component: 'JSearchSelect', componentProps: { dictTable: 'c_mes_material', dictText: 'name', dictCode: 'id' } }
+```
+
+| 表 | 配置 |
+|---|---|
+| 物料 | `dict: 'c_mes_material,name,id'` |
+| 客户 | `dict: 'c_mes_customer,name,id'` |
+| 仓库 | `dict: 'c_mes_warehouse,name,id'` |
+
+详见 `learnings/2026-07-15-jsearchselect-dict-format.md`。
+
+### MySQL HEX() 诊断 UTF-8 编码（mysql-hex-encoding-check）
+
+中文乱码时先用 `HEX()` 看原始字节定位是数据库存储还是应用层问题：
+
+| 编码状态 | HEX 示例（"管理员"） | 字节数 |
+|---------|---------|:--:|
+| ✅ 正确 UTF-8 | `E7AEA1 E79086 E59198` | 9（每字 3 字节） |
+| ❌ 双重编码 | `C3A7C2AE C2A1C3A7 C290E280A0 C3A5E28098 CB9C` | 21（每字节 2-3 字节） |
+
+**判断**：字符数×3 = 正常；远超 = 双重编码（UTF-8 字节被当 Latin-1 再编码为 UTF-8）。
+
+详见 `learnings/2026-07-06-mysql-hex-encoding-check.md`。
+
+### new-project 流程 SQL 执行缺口（new-project-sql-gap）
+
+`/new-project` 技能只生成 `init-role-user.sql` 文件，**不会自动执行到数据库**。用户期望"创建项目"= 可用项目，所以必须自动执行：
+
+```bash
+# /new-project 生成 SQL 后，检测 MySQL 可用性 → 自动执行
+docker exec jeecg-boot-mysql mysql -uroot -proot `jeecg-boot` < init-role-user.sql
+```
+
+详见 `learnings/2026-07-06-new-project-sql-gap.md`。
+
+### Docker MySQL 连字符库名用反引号（docker-mysql-backtick）
+
+含连字符的库名（如 `jeecg-boot`）在 `docker exec mysql ...` 中必须用反引号包裹，且 shell 中需转义：
+
+```bash
+# ❌ 错误 — 连字符被解析为减法
+docker exec jeecg-boot-mysql mysql -uroot -proot -e "SELECT * FROM jeecg-boot.sys_user;"
+# → ERROR 1064
+
+# ✅ 正确 — shell 转义反引号
+docker exec jeecg-boot-mysql mysql -uroot -proot -e "SELECT * FROM \`jeecg-boot\`.sys_user;"
+```
+
+详见 `learnings/2026-07-06-docker-mysql-backtick.md`。
+
+### WSL MySQL 与 Windows mysqld 抢 3306（wsl-mysql-port-fight）
+
+**现象**：DB 幻影根因。WSL Ubuntu 装了 MySQL 且 systemd enabled，wslrelay.exe 转发 WSL 3306 → 127.0.0.1:3306，与 Windows mysqld 同时应答。连接被随机路由到两个不同 server_uuid 的库，`service mysql stop` 后 systemd 自动拉起。
+
+**诊断**：
+```bash
+for i in 1 2 3; do mysql -uroot -proot --host=127.0.0.1 -N -e "SELECT @@server_uuid;"; done
+# 出现两个不同 uuid = 两个库在抢端口
+netstat -ano | grep ":3306" | grep LISTEN   # wslrelay.exe + mysqld.exe 双监听
+```
+
+**根治**（stop 不够，**必须 disable** 防 systemd 复活）：
+```bash
+wsl -d Ubuntu -- sudo systemctl disable mysql
+wsl -d Ubuntu -- sudo service mysql stop
+```
+
+**项目约定**：本地开发库以 Windows 手动 mysqld 为准（`"C:\Program Files\MySQL\MySQL Server 8.4\bin\mysqld.exe" --console`），WSL 内禁止跑 MySQL。
+
+详见 `learnings/2026-07-29-wsl-mysql-port-fight.md`。
+
+### 软删除 + 唯一索引"借尸还魂"模式（tablelogic-resurrection）
+
+数据库 `UNIQUE(code)` + MyBatis-Plus `@TableLogic`。场景：新建 ck001 → 软删除 → 重建 ck001 → 再删 → ❌ 唯一索引冲突。
+
+**根因**：`@TableLogic` 自动追加 `AND del_flag=0`：
+- `selectOne(qw)` 找不到软删除记录
+- `updateById(entity)` 改不了软删除记录
+
+**解决方案**：新增时复用软删除旧记录（保留 ID/创建人/创建时间，历史关联数据不中断）：
+
+```java
+// 1. 查活跃记录 → @TableLogic 自动过滤，正常
+if (baseMapper.selectCount(activeQw) > 0) throw exception("已存在");
+
+// 2. 查软删除记录 → 必须原始 SQL 绕过
+MesWarehouse old = baseMapper.selectDeletedByCode(code);
+
+// 3. 有则复活 → 必须原始 SQL 绕过
+if (old != null) {
+    entity.setId(old.getId());
+    entity.setCreateBy(old.getCreateBy());
+    entity.setCreateTime(old.getCreateTime());
+    baseMapper.resurrect(entity);  // UPDATE ... SET del_flag=0
+    return true;
+}
+
+// 4. 没有 → 正常新增
+return super.save(entity);
+```
+
+**Mapper 原始 SQL**：
+```java
+@Select("SELECT * FROM c_mes_warehouse WHERE code = #{code} AND del_flag = 1 LIMIT 1")
+MesWarehouse selectDeletedByCode(String code);
+
+@Update("UPDATE c_mes_warehouse SET code=#{code}, name=#{name}, ..., del_flag=0 WHERE id=#{id}")
+void resurrect(MesWarehouse entity);
+```
+
+详见 `learnings/2026-07-06-tablelogic-resurrection.md`。
+
+### 跨链路 @Dict 注解一致性扫描（dict-annotation-parity-check）
+
+**黄金模板对齐前必做的跨链路扫描**：后端实体的 `@Dict(dictTable, dicText, dicCode)` 是手动添加的，跨模块同语义字段（purchaseApplyId / salesOrderId）独立维护。黄金模板对齐只改前端，但前端依赖后端 `@Dict` 才能让 list 接口带 `_dictText`。
+
+```bash
+# 黄金模板对齐前必做
+grep -E "@Dict\(dictTable" jeecg-boot/jeecg-boot-module/project-mes/src/main/java/.../entity/*.java
+```
+
+**判断信号**：
+- Claude 评审反复提醒"前端依赖后端" → 往往是 `@Dict` 不一致
+- 看到 `_dictText` 在 list 接口有但 queryById 没有 → 关联 learning dict-text-only-on-list
+
+**实证**：2026-07-30 采购链路黄金模板对齐，2 字段 5 分钟修复（1 行注解 × 2 文件）。不评审直接改前端会出现"代码看起来都对，文案却显示 UUID"的诡异 bug。
+
+详见 `learnings/2026-07-30-dict-annotation-parity-check.md`。
+
+### @Dict 字段 _dictText 只在 list 接口返回（dict-text-only-on-list）
+
+**陷阱**：JeecgBoot 平台的 `DictAspect` 字典填充切面**只对 `*Controller.list` 分页查询生效**。自定义 `*Service.queryWithItems`（含 `selectById` + 关联子查询）走 MyBatis Plus 直接 mapper，**绕过了切面**——`queryById` 返回的 `_dictText` 为 None。
+
+**前端 fallback 必须**：
+```ts
+// 不要相信"@Dict 自动带" — 所有响应式关联文案必须实测 list 和 queryById 两个接口
+const orderRef = delivery.salesOrderId_dictText || delivery.salesOrderId;
+if (orderRef) {
+  alertText.value = `由订单 ${orderRef} 创建。出库后订单自动置已发货。`;
+}
+```
+
+详见 `learnings/2026-07-30-dict-text-only-on-list.md`。
+
+//update-end---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月数据库/SQL 9 条 learnings 到 code-style.md---
