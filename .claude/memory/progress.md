@@ -240,3 +240,22 @@
 - v5 优化首跑成功：22 分钟端到端
 - learning：`.claude/memory/learnings/2026-08-02-delegate-v5-end-to-end.md`
 - 教训：轮询脚本 grep false alarm（应匹配 commit hash 而非 message）/ 协调者必须 /verify 兜底（worker 误读"可选"为"应该加"）
+
+## 2026-08-02 22:00-23:00 采购入库页 Bug 修复 + 本地环境调试
+
+### 本次完成
+- 修复采购入库页 2 个 Bug（选订单回填供应商 + 子表列宽）—— commit 17c9de7
+- 回退冗余 DTO orderNo 字段 —— commit d71d03f
+- /delegate v5 优化首次端到端跑通 —— learning: 2026-08-02-delegate-v5-end-to-end
+- 日期控件修复（先 a-date-picker getPopupContainer 3 次失败，5a142cb 改 input，28a7ed0 revert 回到 CompletionReceiptDrawer 一致写法）
+- 本地环境调试：Vite 7 dev 模式日期 bug → pnpm build + preview 绕过；preview 加 proxy 到 localhost:8080
+- 当前状态：所有日期控件正常
+
+### 关键决策
+- 保留 worker 修复（17c9de7）—— 用户确认选订单回填 + 列宽有效
+- 5a142cb 改 input type="date" 用户实测失败（v-if isBatchOn 渲染问题）—— 28a7ed0 revert 回到 a-date-picker 写法（与 CompletionReceiptDrawer 一致）
+- vite.config.ts preview proxy 配置保留 —— 本地开发必备
+
+### 待手工操作
+- commit vite.config.ts preview proxy 修复（待用户决定 commit message）
+- /evolve 批 4（7 月剩余 ~17 条 learnings 诊断/审计/E2E 域）
