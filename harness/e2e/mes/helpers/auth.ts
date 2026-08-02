@@ -17,7 +17,9 @@ async function fetchToken(): Promise<string> {
   const res = await fetch(`${API_BASE}/sys/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'mes_admin', password: '123456' }),
+    // update-begin---author:ruiwancheng---date:2026-08-02---for: P2-4/5 改用 admin 登录（mes_admin 权限不足跳登录页导致选择器找不到）-----------
+    body: JSON.stringify({ username: 'admin', password: '123456' }),
+    // update-end---author:ruiwancheng---date:2026-08-02---for: P2-4/5 改用 admin 登录-----------
   });
   const data = await res.json();
   if (data.code !== 200) throw new Error('登录失败: ' + data.message);
