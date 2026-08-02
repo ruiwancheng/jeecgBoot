@@ -89,16 +89,16 @@
           @change="(e: any) => updateItem(index, 'batchNo', e.target.value)"
         />
       </template>
-      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-生产日期a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
+      <!--update-begin---author:pi ---date:2026-08-02  for：【采购入库日期控件修复】换原生input type=date（antd-vue 4 表格内嵌有兼容问题）----------->
       <template v-if="isBatchOn" #productionDate="{ record, index }">
-        <a-date-picker
-          :value="record.productionDate"
-          valueFormat="YYYY-MM-DD"
-          style="width: 100%"
-          @change="(v: any) => onProductionDateChange(index, v)"
+        <input
+          type="date"
+          :value="record.productionDate || ''"
+          style="width: 100%; height: 24px; padding: 0 4px; border: 1px solid #d9d9d9; border-radius: 2px"
+          @change="(e: any) => onProductionDateChange(index, e.target.value)"
         />
       </template>
-      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-生产日期a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
+      <!--update-end---author:pi ---date:2026-08-02  for：【采购入库日期控件修复】换原生input type=date----------->
       <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细保质期+有效期至列编辑插槽----------->
       <template v-if="isBatchOn" #shelfLife="{ record, index }">
         <InputNumber
@@ -108,16 +108,16 @@
           @change="(v: any) => onShelfLifeChange(index, v)"
         />
       </template>
-      <!--update-begin---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-有效期至a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
+      <!--update-begin---author:pi ---date:2026-08-02  for：【采购入库日期控件修复】换原生input type=date（antd-vue 4 表格内嵌有兼容问题）----------->
       <template v-if="isBatchOn" #expiryDate="{ record, index }">
-        <a-date-picker
-          :value="record.expiryDate"
-          valueFormat="YYYY-MM-DD"
-          style="width: 100%"
-          @change="(v: any) => onExpiryDateChange(index, v)"
+        <input
+          type="date"
+          :value="record.expiryDate || ''"
+          style="width: 100%; height: 24px; padding: 0 4px; border: 1px solid #d9d9d9; border-radius: 2px"
+          @change="(e: any) => onExpiryDateChange(index, e.target.value)"
         />
       </template>
-      <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0.2 采购入库-有效期至a-date-picker回退getPopupContainer（与CompletionReceiptDrawer一致）---------->
+      <!--update-end---author:pi ---date:2026-08-02  for：【采购入库日期控件修复】换原生input type=date----------->
       <!--update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-入库明细保质期+有效期至列编辑插槽----------->
       <template #action="{ index }">
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
