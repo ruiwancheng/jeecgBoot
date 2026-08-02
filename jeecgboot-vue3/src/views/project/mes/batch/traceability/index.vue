@@ -18,12 +18,13 @@
 </template>
 
 <script lang="ts" setup>
+  // update-begin---author:ruiwancheng---date:20260803---for: V10.0.3 批次追溯-切换到 queryTraceabilityList + getTraceabilityExportUrl-----------
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './traceability.data';
   import { getStatusColor } from '../shared/statusColor';
-  import { queryBatchList, getExportUrl } from './traceability.api';
+  import { queryTraceabilityList, getTraceabilityExportUrl } from './traceability.api';
   import TraceabilityDrawer from './TraceabilityDrawer.vue';
 
   defineOptions({ name: 'MesBatchTraceability' });
@@ -34,12 +35,12 @@
     designScope: 'mes-batch-traceability',
     tableProps: {
       title: '批次追溯',
-      api: queryBatchList,
+      api: queryTraceabilityList,
       columns: columns,
       rowKey: 'id',
       formConfig: { labelWidth: 120, schemas: searchFormSchema },
     },
-    exportConfig: { name: '批次追溯', url: getExportUrl },
+    exportConfig: { name: '批次追溯', url: getTraceabilityExportUrl },
   });
 
   const [registerTable] = tableContext;
@@ -49,4 +50,5 @@
       { label: '查看追溯', onClick: () => openDrawer(true, { batchId: record.id }) },
     ];
   }
+  // update-end---author:ruiwancheng---date:20260803---for: V10.0.3 批次追溯-切换到 queryTraceabilityList + getTraceabilityExportUrl-----------
 </script>

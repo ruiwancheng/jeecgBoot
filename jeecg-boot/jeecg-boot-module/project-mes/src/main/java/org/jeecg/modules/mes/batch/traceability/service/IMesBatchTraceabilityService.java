@@ -1,17 +1,38 @@
-//update-begin---author:ruiwancheng---date:20260803---for: V10.0.2 MES批次追溯-Service接口（复用 c_mes_batch_ledger）-----------
+//update-begin---author:ruiwancheng---date:20260803---for: V10.0.3 MES批次追溯-Service接口加批次级聚合查询方法-----------
 package org.jeecg.modules.mes.batch.traceability.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.mes.batch.traceability.entity.MesBatchTraceability;
+import org.jeecg.modules.mes.batch.traceability.entity.MesBatchTraceabilityVO;
 
 /**
  * 批次追溯视图 Service 接口。
  *
- * <p>当前切片（trace-1-list）只暴露基础 CRUD（继承自 IService），
- * 后续切片（trace-2-detail / trace-3-export）按需补充追溯专有方法。Service 接口本身
- * 不写业务方法——列表搜索走 Controller 层 QueryGenerator + BaseMapper 组合（与
- * ledger/inventory 模块的列表查询保持一致）。</p>
+ * <p>V10.0.3 改造：新增批次级聚合查询方法 {@link #queryBatchPage}。
+ * 旧方法（继承自 IService 的基础 CRUD）保留——后续 detail/export 端点可能用到。</p>
  */
 public interface IMesBatchTraceabilityService extends IService<MesBatchTraceability> {
+
+    /**
+     * 批次级聚合分页查询（V10.0.3 列表改造）。
+     *
+     * <p>聚合自 c_mes_batch + c_mes_batch_ledger，详见
+     * {@link org.jeecg.modules.mes.batch.traceability.mapper.MesBatchTraceabilityMapper#queryBatchPage}。</p>
+     *
+     * @param page    分页对象（pageSize=Integer.MAX_VALUE 时全表聚合）
+     * @param wrapper 搜索条件（QueryGenerator.initQueryWrapper 转出）
+     * @return 批次级汇总列表
+     */
+    IPage<MesBatchTraceabilityVO> queryBatchPage(
+            Page<MesBatchTraceabilityVO> page,
+            QueryWrapper<MesBatchTraceabilityVO> wrapper);
+
+    /**
+     * 批次级总数（导出阈值检查）。
+     */
+    long countBatchMasters();
 }
-//update-end---author:ruiwancheng---date:20260803---for: V10.0.2 MES批次追溯-Service接口（复用 c_mes_batch_ledger）-----------
+//update-end---author:ruiwancheng---date:20260803---for: V10.0.3 MES批次追溯-Service接口加批次级聚合查询方法-----------
