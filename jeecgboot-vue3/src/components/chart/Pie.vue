@@ -73,7 +73,7 @@
           Object.assign(option, cloneDeep(props.option));
         }
         option.series[0].data = props.chartData;
-        setOptions(option);
+        (setOptions as any)(option);
         resize();
         getInstance()?.off('click', onClick);
         getInstance()?.on('click', onClick);

@@ -98,7 +98,7 @@
         });
         option.series = seriesData;
         option.yAxis.data = yAxisData;
-        setOptions(option);
+        (setOptions as any)(option);
       }
 
       return { chartRef };

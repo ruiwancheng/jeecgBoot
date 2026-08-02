@@ -99,7 +99,7 @@
         option.series = seriesData;
         option.xAxis.data = xAxisData;
         console.log('option', option);
-        setOptions(option);
+        (setOptions as any)(option);
         getInstance()?.off('click', onClick);
         getInstance()?.on('click', onClick);
       }

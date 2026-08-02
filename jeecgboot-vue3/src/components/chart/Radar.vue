@@ -84,7 +84,7 @@
         // option.radar.axisName = indicator;
         option.radar.indicator = indicator;
         option.series[0]['data'] = data;
-        setOptions(option);
+        (setOptions as any)(option);
       }
       return { chartRef };
     },

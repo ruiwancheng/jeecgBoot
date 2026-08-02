@@ -100,7 +100,7 @@
         option.series[0].data[0].value = props.chartData.value;
         // 代码逻辑说明: 【QQYUN-8762】首页默认及echars颜色调整
         option.series[0].color = props.seriesColor;
-        setOptions(option);
+        (setOptions as any)(option);
       }
       return { chartRef };
     },

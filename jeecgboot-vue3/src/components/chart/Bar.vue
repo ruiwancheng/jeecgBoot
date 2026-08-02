@@ -69,17 +69,17 @@
         if (props.option) {
           Object.assign(option, cloneDeep(props.option));
         }
-        let seriesData = props.chartData.map((item: any) => {
+        let seriesData: any[] = props.chartData.map((item: any) => {
           return item.value;
         });
-        let xAxisData = props.chartData.map((item: any) => {
+        let xAxisData: any[] = props.chartData.map((item: any) => {
           return item.name;
         });
         option.series[0].data = seriesData;
         // 代码逻辑说明: 【QQYUN-8762】首页默认及echars颜色调整
         option.series[0].color = props.seriesColor;
         option.xAxis.data = xAxisData;
-        setOptions(option);
+        (setOptions as any)(option);
       }
       return { chartRef };
     },
