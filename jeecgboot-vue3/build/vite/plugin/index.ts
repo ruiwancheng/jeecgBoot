@@ -1,5 +1,7 @@
 import { PluginOption } from 'vite';
+// @ts-ignore - vite-plugin-vue 6.x ESM-only, TS moduleResolution:node 不识别 .d.mts
 import vue from '@vitejs/plugin-vue';
+// @ts-ignore - 同上
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import purgeIcons from 'vite-plugin-purge-icons';
 // unplugin-icons 为 ESM-only，用动态 import 避免 CJS 配置加载时 require 报错

@@ -33,6 +33,9 @@
       "/#/*": ["types/*"],
       "@/*": ["src/*"],
       "#/*": ["types/*"],
+      // update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 5 消除 40+ 个 TS2307（添加 /src/* 路径映射）-----------
+      "/src/*": ["src/*"],
+      // update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 5 /src/* 路径映射-----------
       "~icons/*": ["node_modules/unplugin-icons/types/*"]
     }
   },

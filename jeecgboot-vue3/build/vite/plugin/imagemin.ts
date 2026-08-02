@@ -1,6 +1,7 @@
 // 【图片压缩插件】
 // Image resource files used to compress the output of the production environment
 // https://github.com/anncwb/vite-plugin-imagemin
+// @ts-ignore - vite-plugin-imagemin 包未装类型声明
 import viteImagemin from 'vite-plugin-imagemin';
 
 export function configImageminPlugin() {

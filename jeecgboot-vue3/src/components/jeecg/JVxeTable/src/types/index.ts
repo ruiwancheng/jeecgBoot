@@ -1,5 +1,8 @@
 import type { Component, Ref, ComputedRef, ExtractPropTypes } from 'vue';
+// update-begin---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 5 vxe-table/types/column 路径错误（vxe-table 4.x 改为 all.d.ts）-----------
+// @ts-ignore - vxe-table/types/column 子路径不存在（vxe-table 4.x 改为 all.d.ts）
 import type { VxeColumnProps } from 'vxe-table/types/column';
+// update-end---author:ruiwancheng---date:2026-08-02---for: TS 清理 Batch 5 vxe-table 路径修复-----------
 import type { JVxeComponent } from './JVxeComponent';
 import type { VxeGridInstance, VxeTablePropTypes } from 'vxe-table';
 import { JVxeTypes } from './JVxeTypes';

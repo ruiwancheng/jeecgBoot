@@ -3,6 +3,7 @@
  *  Introduces component library styles on demand.
  * https://github.com/anncwb/vite-plugin-style-import
  */
+// @ts-ignore - vite-plugin-style-import 包未装类型声明
 import { createStyleImportPlugin } from 'vite-plugin-style-import';
 
 export function configStyleImportPlugin(_isBuild: boolean) {
