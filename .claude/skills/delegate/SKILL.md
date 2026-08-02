@@ -163,11 +163,22 @@ for i in $(seq 1 5); do
   # 看 preview（判断工人状态）
   orca terminal show --terminal $HANDLE --json > /tmp/s.json
   # 按时间戳过滤 worker_done（避免历史消息误判）
+  # ⚠️ v4 观察 (2026-08-02)：不能只信 from_handle == 工人 handle
+  #    协调者（Claude Code）可能代发 worker_done，from_handle 是 Claude terminal
+  #    必须用：to_handle 是协调者 OR subject 含任务关键词 OR 文件产物存在
+  COORDINATOR_HANDLE="term_a55b5d20-ef82-419c-b2da-f693c50eae32"  # 协调者 handle（可配置）
+  TASK_KEYWORD="${SLICE_KEYWORD:-P0|quality-gate|deep-inspect}"  # 任务关键词
   HAS=$(orca orchestration inbox --json | python -c "
 import json, sys
 d = json.load(sys.stdin)
 msgs = d['result']['messages']
-n = sum(1 for m in msgs if isinstance(m, dict) and m.get('type')=='worker_done' and m.get('createdAt','')>='$START_TS')
+n = sum(1 for m in msgs if isinstance(m, dict) and 
+       m.get('type')=='worker_done' and 
+       m.get('created_at','')>='$START_TS' and (
+           m.get('to_handle','') == '$COORDINATOR_HANDLE' or
+           m.get('from_handle','') == '$COORDINATOR_HANDLE' or
+           '$TASK_KEYWORD' in m.get('subject','') + m.get('body','')
+       ))
 print(n)
 ")
   [ "$HAS" != "0" ] && { echo "done"; break; }
@@ -235,6 +246,101 @@ orca terminal create --command "pi" --json
 - 即使 worker_done 未到，协调者也可走 git 兑底：`git log --oneline -5 | grep <slice-id>` 看是否出现新 commit
 - 新 commit 出现 → 判完成（不严格依赖 worker_done 消息）
 - 出现 commit + 超 5 分钟无 worker_done → 判僵死 + 兑底重派
+
+## 🚨 worker_done 硬约束（2026-08-02 强化）
+
+> **连续 2 次派工中观察到工人完成所有工作但忘了发 worker_done → 必须升级为硬约束。**
+
+### 工人端反模式（禁踩）
+
+| 反模式 | 现象 |
+|------|------|
+| **"我完成了"陷阱** | 工人在自己终端打印"完成"总结，**以为这就够了**，实际没调 `orca orchestration send --type worker_done` |
+| **"无需发送"陷阱** | 工人判断"任务轻量不需要回报"，直接进入 idle |
+| **"protocol 略读"陷阱** | preamble 末尾的编排消息协议被工人忽略（特别是最后一条 worker_done） |
+
+### 协调者侧主动补救（新增）
+
+工人超时无 worker_done 但有产物时（5 分钟 polling 后触发）：
+
+```bash
+# Step 1：主动 ping 提醒
+orca terminal send --terminal $HANDLE --text "你已完成任务吗？如有产物，请立即发 worker_done（含产物路径）。" --enter
+sleep 30
+
+# Step 2：仍无 worker_done → 看产物是否存在
+#   - 产物存在 → 手动从终端 buffer 提取 worker_done 内容 → 补发
+#   - 产物不存在 → 判真正卡住 → 重派
+
+# Step 3：产物路径校验作为完成信号（不要求 commit 的任务）
+delegate_is_complete() {
+    local product_path="$1"
+    [ -f "$product_path" ] && return 0
+    return 1
+}
+```
+
+### 轮询循环里加主动 ping（不再被动等）
+
+```bash
+for i in $(seq 1 5); do
+  sleep 60
+  # ... 现有 inbox 检测 ...
+  # 新增：每 2 段（120s）主动 ping
+  if [ $((i % 2)) -eq 0 ]; then
+    orca terminal send --terminal $HANDLE --text "[ping] 你在吗？完成后请发 worker_done。" --enter
+  fi
+done
+```
+
+### preamble 模板必须 🚨🚨🚨 视觉警告（已在 2026-08-02 补充）
+
+```markdown
+## 🚨🚨🚨 必须发 worker_done（硬约束，非可选）🚨🚨🚨
+
+完成任何工作（commit / 报告生成 / 命令跑完）后，**第一步**就调：
+\`orca orchestration send --to <协调者handle> --type worker_done --subject "<任务名>" --body "<产物路径 + 关键结果>"\`
+
+🚫 禁止：在自己终端打印"完成"就 idle（这是最大反模式）
+🚫 禁止：认为"任务轻量不需要回报"
+🚫 禁止：忘记最后一步就退出
+```
+
+### worker_done 完整命令模板（v4 观察：减少工人写错）
+
+**问题**：连续 3 次 pi 工人看完警告后仍未发 worker_done。
+
+**解决**：preamble 里**嵌入完整可复制命令字串**，工人只需复制粘贴：
+
+```bash
+# 任务完成后，**复制并修改下面这条命令后执行**：
+orca orchestration send \
+  --to term_a55b5d20-ef82-419c-b2da-f693c50eae32 \
+  --type worker_done \
+  --subject "[<任务名>] 完成" \
+  --body "产物路径：<path1, path2>
+关键结果：<p95=29ms / 0 P0 / PASS>
+
+filesModified: <相对路径列表>
+reportPath: <主报告路径>
+phase: completed"
+```
+
+### 协调者代发兑底动作（v4 验证有效）
+
+如 pi 工人 5 分钟未发 worker_done，但产物到位 → 协调者手动代发（不是脚本，是人工/Claude 代为补发）：
+
+```bash
+# 协调者侧手动补发
+orca orchestration send \
+  --to <协调者自己或主终端> \
+  --type worker_done \
+  --subject "[<任务名>] 协调者代发·产物到位" \
+  --body "工人未发 worker_done，但产物已确认存在：<path1, path2>
+关键结果：<从产物提取>"
+```
+
+**已知会工作的场景**（v4 实证）：Claude Code 协调者检测到产物后 → 自动代发。
 
 ## 降级策略
 

@@ -130,3 +130,39 @@ version: 4.0
 **自动衔接**：`/decompose` 自动读取 `/plan` 输出（30 分钟内），无需重新描述任务。缓存文件 `.claude/.last-plan.json`（已 gitignore）。显式覆盖用 `--no-cache` 或 `--restart`。
 
 **详细方法论 + 完整 8 反模式 + 切片模板**：见 `.claude/skills/decompose/SKILL.md`
+
+## /delegate 派工场景规范（2026-08-02 沉淀）
+
+> 派工到 pi 工人终端的场景，包含 2 项原则。
+
+### 原则 1：工人必须现状摸底（第 0 步）
+
+记忆卡片基于派发时刻的信息（可能是几天/几周前），工人接收时实际代码可能已演进。
+
+**工人端必做**（不要跳）：
+
+1. **读记忆卡片 + 任务背景** — 理解任务需求
+2. **现状摸底（强制）**：
+   - `git log --oneline | grep -E "<关键词>"` — 看是否已修
+   - `grep -rn "<修复模式>" <相关模块>` — 看代码当前状态
+   - `git blame <file>:<line>` — 看 P0 行号的最近修改
+3. **判定修复方向**（三态）：
+   - **已修** → commit message 写清"已在 V<版本> 阶段修复，不重复造轮子"
+   - **需决议** → 写 ADR 引用（如"ADR 0002 拍板前保留现状"）
+   - **真要改** → 按 plan 改文件 + update-begin/end + commit
+
+**🚫 禁止**：盲目按记忆卡片写代码——卡片是输入不是答案。
+
+### 原则 2：git 兜底判完成（不依赖 worker_done）
+
+worker_done 未发 ≠ 未完成。派工完成判定三件套：
+
+1. **git commit + push 已执行** — 任务范围产物落入 git
+2. **产物文件存在** — 不要求 commit 的任务（如跑命令生成报告），看产物路径
+3. **协调者代发可能** — Claude 协调者（`term_924cd402`）会检测产物到位后手动代发 worker_done
+
+**判定优先级**：commit hash > 产物路径 > inbox worker_done（最后者不严谨，仅作为补充信号）。
+
+**反例**（连续 2 次观察到）：pi 工人完成所有工作但忘了发 worker_done → 按 git 兜底判完成。
+
+**详细落实**：见 `.claude/skills/delegate/SKILL.md`（polling 检测修复 + 协调者代发章节）。

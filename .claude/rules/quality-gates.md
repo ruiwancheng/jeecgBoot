@@ -128,3 +128,42 @@ version: 1.1.0
 
 - `deploy-quality-gate.md` — 部署后自动质量门控
 - `workflow.md` — 开发流程（分级测试 + 防失忆触发）
+
+## 协调者代发机制（2026-08-02 沉淀）
+
+> 适用于 /delegate 派工场景：当 pi 工人完成所有工作但忘了发 worker_done 时，协调者（Claude Code）可手动代发。
+
+### 代发判定条件（同时满足）
+
+1. 产物文件已确认存在（任务范围路径下）
+2. pi 工人 5+ 分钟未发 worker_done（polling 检测确认）
+3. 协调者（Claude Code 终端）可访问终端 buffer，能从 buffer 提取任务结果
+
+### 代发命令模板
+
+```bash
+orca orchestration send \
+  --to <协调者自己或主终端> \
+  --type worker_done \
+  --subject "[<任务名>] 协调者代发·产物到位" \
+  --body "工人未发 worker_done，但产物已确认存在：<path1, path2>
+关键结果：<从产物提取>
+phase: completed"
+```
+
+### 与正常 worker_done 的区别
+
+| 维度 | 工人发 | 协调者代发 |
+|---|---|---|
+| from_handle | pi 工人 handle | Claude Code handle |
+| 适用场景 | 工人按 v4.0 preamble 正常发 | 工人忘了发但产物到位 |
+| 内容来源 | 工人从自己工作结果提取 | 协调者从终端 buffer + 产物提取 |
+| 可靠性 | 高（工人报告） | 中（需协调者判定产物完整性） |
+
+### polling 检测兼容性
+
+代发的 worker_done 仍能被 polling 检测到，但**不能只信 `from_handle == 工人 handle`**：
+- 必须同时检查 `to_handle == 协调者 handle` + 关键词匹配
+- 完整逻辑见 `.claude/skills/delegate/SKILL.md`（已在 2026-08-02 修复 polling bug）
+
+**详细案例**：见 `.claude/memory/learnings/2026-08-02-delegate-worker-done-must-emit-hard-rule.md`（v4 观察）。
