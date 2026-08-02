@@ -21,6 +21,10 @@ public class MesPurchaseOrderItemForReceipt implements Serializable {
     @Schema(description = "订单行ID")
     private String itemId;
 
+    //update-begin---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】回传采购订单号-----------
+    private String orderNo;
+    //update-end---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】回传采购订单号-----------
+
     @Schema(description = "物料ID")
     private String materialId;
 

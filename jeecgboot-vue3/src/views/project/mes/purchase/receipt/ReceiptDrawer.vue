@@ -16,7 +16,17 @@
         >已勾选 <strong>{{ selectedCount }}</strong> 行 / 共 {{ items.length }} 行</span
       >
     </div>
-    <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo" :rowSelection="rowSelection">
+    <!--update-begin---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】入库明细表格支持横向滚动----------->
+    <a-table
+      :dataSource="items"
+      :columns="itemColumns"
+      :pagination="false"
+      size="small"
+      rowKey="lineNo"
+      :rowSelection="rowSelection"
+      :scroll="{ x: 1500 }"
+    >
+      <!--update-end---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】入库明细表格支持横向滚动----------->
       <template #materialId="{ record, index }">
         <JMaterialSelect
           v-model:modelValue="record.materialId"
@@ -154,7 +164,9 @@
   //update-begin---author:ruiwancheng---date:20260801---for: V8.0.3 手工录入模式——itemColumns 改 computed（总开关开启时插入批次号/生产日期两列）-----------
   //update-begin---author:ruiwancheng---date:20260803---for: V10.0.1 入库明细列增加 unitPrice/taxRate（订单物料自动带出/手动物料手动填）-----------
   const baseItemColumns = [
-    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 180 },
+    //update-begin---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】优化物料列宽-----------
+    { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 220 },
+    //update-end---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】优化物料列宽-----------
     { title: '采购数量', dataIndex: 'orderQuantity', slots: { customRender: 'orderQuantity' }, width: 100 },
     { title: '已入库', dataIndex: 'receivedQty', width: 80 },
     { title: '可入库', dataIndex: 'remainQty', width: 80 },
@@ -290,6 +302,10 @@
       items.value = [];
       selectedRowKeys.value = [];
     }
+    //update-begin---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】选择订单后回填供应商并更新提示-----------
+    setFieldsValue({ supplierId: selected.record?.supplierId });
+    alertText.value = `由订单 ${selected.label} 入库。审核后增加库存、重算物料移动平均成本。`;
+    //update-end---author:pi ---date:2026-08-02  for：【采购入库 Bug 修复】选择订单后回填供应商并更新提示-----------
   }
   function removeLine(index: number) {
     if (items.value.length > 1) items.value.splice(index, 1);
