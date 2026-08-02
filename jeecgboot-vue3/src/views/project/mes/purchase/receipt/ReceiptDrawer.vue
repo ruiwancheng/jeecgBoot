@@ -94,7 +94,7 @@
         <a-date-picker
           :value="record.productionDate"
           valueFormat="YYYY-MM-DD"
-          :getPopupContainer="(trigger) => trigger.parentNode"
+          :getPopupContainer="(trigger) => trigger?.parentNode || document.body"
           style="width: 100%"
           @change="(v: any) => onProductionDateChange(index, v)"
         />
@@ -114,7 +114,7 @@
         <a-date-picker
           :value="record.expiryDate"
           valueFormat="YYYY-MM-DD"
-          :getPopupContainer="(trigger) => trigger.parentNode"
+          :getPopupContainer="(trigger) => trigger?.parentNode || document.body"
           style="width: 100%"
           @change="(v: any) => onExpiryDateChange(index, v)"
         />
