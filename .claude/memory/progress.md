@@ -194,9 +194,18 @@
 - 报告范围：66 文件，+2415/-62
 
 ## P0 必修（跨 sprint 处理）
-- P0-1: c_mes_batch_ledger.warehouse_id NOT NULL 冲突（MesBatchServiceImpl:53 传 null）
-- P0-2: MesBatchInventoryServiceImpl.stockIn 无 selectForUpdate 行锁（lost update）
-- P0-3: FIFO 扣减无行锁（并发超扣风险，stockOutFifo:60）
+//update-begin---author:pi---date:2026-08-02---for: 校正 P0 状态——三条实际全部已修，progress.md 描述与代码不符---
+- ~~P0-1: c_mes_batch_ledger.warehouse_id NULL 冲突~~ → ✅ 已修（V8.0.0 MesBatchServiceImpl createBatchWithManualNo 不再写 warehouse_id='' ledger，update-end L107-113 注释）
+- ~~P0-2: MesBatchInventoryServiceImpl.stockIn 无 selectForUpdate~~ → ✅ 已修（V8.0.0.2 MesBatchInventoryServiceImpl:30 baseMapper.selectForUpdate(batchId, warehouseId)）
+- ~~P0-3: FIFO 扣减无行锁~~ → ✅ 已修（V8.0.0.3 MesBatchInventoryServiceImpl:61 baseMapper.selectFifoByMaterialForUpdate(materialId, warehouseId)）
+
+## P0 真实状态（commit c4bc65e 共识 5/5）
+- ✅ P0-1：批次号并发 → MesMaterialMapper.selectByIdForUpdate 物料行锁 + 当日 LIKE+ORDER BY DESC+1
+- ✅ P0-2：LedgerMapper 缺 SQL → @Select 注解补 selectByBatchId / selectByBiz
+- ✅ P0-3：生产领料幻扣 → auditWithGuard 先状态后 stockOut
+- ✅ P0-4：批次 4 页面缺 getExportUrl → 4 个 *.api.ts 已补，3 个 Controller 已加 /exportXls
+- ✅ P0-5：批次成本落 c_mes_batch_ledger 决议（不再双源）
+//update-end---author:pi---date:2026-08-02---for: 校正 P0 状态---
 
 ## P1 警告（下次迭代）
 - P1-1: 批次号 count(*)+1 并发撞 uk_batch_no_del
@@ -212,7 +221,7 @@
 ## 待办 (pending-items)
 - 2026-07-31 批次管理前端 4 页面 UI 视觉确认（orca 卡 loading 重新截图）
 - 2026-07-31 Phase 3 完整回归测试
-- **2026-07-31 [P0 必修] 批次库存行锁 + FIFO 行锁 + warehouse_id NULL 冲突（5-8h 估时）**
+- **2026-07-31 [P0 必修] 批次库存行锁 + FIFO 行锁 + warehouse_id NULL 冲突（5-8h 估时）** ← **2026-08-02 校正：3 项全部已在 V8.0.0 阶段修完（commit c4bc65e），无未完 P0**
 - **2026-07-31 [P1 警告] 批次号并发安全 + 应收治本 + 销售 cancel 回滚（8-12h 估时）**
 
 ## 2026-08-02 session #10 /evolve 批 3（数据库/SQL 11 条 learnings）
