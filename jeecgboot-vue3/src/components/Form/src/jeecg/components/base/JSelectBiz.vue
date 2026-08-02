@@ -14,7 +14,7 @@
         <a-select
           v-else
           ref="select"
-          v-model:value="selectValues.value"
+          v-model:value="(selectValues as any).value"
           :placeholder="placeholder"
           :mode="multiple"
           :open="false"
@@ -111,8 +111,8 @@
        * 下拉框值改变事件
        */
       function handleChange(value) {
-        selectValues.value = value;
-        selectValues.change = true;
+        (selectValues as any).value = value;
+        (selectValues as any).change = true;
         emit('change', value);
       }
       
@@ -168,7 +168,7 @@
         [selectValues, options],
         () => {
           if (props.isDetailsMode) {
-            if (Array.isArray(selectValues.value) && Array.isArray(options.value)) {
+            if (Array.isArray((selectValues as any).value) && Array.isArray(options.value)) {
               const result = options.value.map((item) => item.label);
               detailStr.value = result.join(',');
             }

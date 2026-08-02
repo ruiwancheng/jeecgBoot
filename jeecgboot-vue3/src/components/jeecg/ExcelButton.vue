@@ -1,6 +1,6 @@
 <template>
-  <a-button type="primary" v-if="hasExportAuth() && config.export" preIcon="ant-design:export-outlined" @click="onExportXls()"> 导出</a-button>
-  <a-upload name="file" :showUploadList="false" v-if="hasImportAuth() && config.import" :customRequest="(file) => onImportXls(file)">
+  <a-button type="primary" v-if="hasExportAuth() && (config as any).export" preIcon="ant-design:export-outlined" @click="onExportXls()"> 导出</a-button>
+  <a-upload name="file" :showUploadList="false" v-if="hasImportAuth() && (config as any).import" :customRequest="(file) => onImportXls(file)">
     <a-button type="primary" preIcon="ant-design:import-outlined">导入</a-button>
   </a-upload>
 </template>
@@ -47,7 +47,7 @@
   const $message = useMessage();
   // 导出 excel
   function onExportXls() {
-    let { url, name } = props.config?.export ?? {};
+    let { url, name } = (props.config as any)?.export ?? {};
     if (url) {
       let title = typeof name === 'function' ? name() : name;
       return handleExportXls(title as string, url);
@@ -59,7 +59,7 @@
 
   // 导入 excel
   function onImportXls(file) {
-    let { url, success } = props.config?.import ?? {};
+    let { url, success } = (props.config as any)?.import ?? {};
     if (url) {
       return handleImportXls(file, url, success);
     } else {
@@ -70,13 +70,13 @@
 
   // 导入按钮权限
   function hasImportAuth() {
-    let auth = props.config?.import?.auth;
+    let auth = (props.config as any)?.import?.auth;
     return auth && auth.length > 0 ? hasPermission(auth) : true;
   }
 
   // 导出按钮权限
   function hasExportAuth() {
-    let auth = props.config?.export?.auth;
+    let auth = (props.config as any)?.export?.auth;
     return auth && auth.length > 0 ? hasPermission(auth) : true;
   }
 </script>
