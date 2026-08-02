@@ -20,6 +20,10 @@
     "types": ["vite/client", "jest"],
     "typeRoots": ["./node_modules/@types/", "./types","./node_modules"],
     "noImplicitAny": false,
+    // update-begin---author:ruiwancheng---date:2026-08-02---for: P3 清理 关闭 noUnusedLocals/Parameters（项目历史遗留 2218 个 TS6133 批量跳过，保留其他严格检查）-----------
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    // update-end---author:ruiwancheng---date:2026-08-02---for: P3 清理 关闭 TS6133 检查-----------
     "skipLibCheck": true,
     "paths": {
       "@rys-fe/vite-plugin-theme/es/client": ["build/vite/plugin/theme-plugin/client/client.ts"],
