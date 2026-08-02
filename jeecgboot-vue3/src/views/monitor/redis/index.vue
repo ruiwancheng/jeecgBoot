@@ -181,8 +181,8 @@
   });
 
   function initCharts() {
-    setOptions(memoryOption);
-    setOptions2(keyOption);
+    (setOptions as any)(memoryOption);
+    (setOptions2 as any)(keyOption);
   }
 
   /** 开启定时器 */
@@ -205,12 +205,12 @@
       const dbSizes = res.dbSize;
       const memories = res.memory;
       dbSizes.forEach((dbSize) => {
-        keyOption.xAxis.data.push(dayjs(dbSize.create_time).format('HH:mm:ss'));
-        keyOption.series[0].data.push(dbSize.dbSize);
+        (keyOption.xAxis.data as any[]).push(dayjs(dbSize.create_time).format('HH:mm:ss'));
+        (keyOption.series[0].data as any[]).push(dbSize.dbSize);
       });
       memories.forEach((memoryData) => {
-        memoryOption.xAxis.data.push(dayjs(memoryData.create_time).format('HH:mm:ss'));
-        memoryOption.series[0].data.push(memoryData.used_memory / 1000);
+        (memoryOption.xAxis.data as any[]).push(dayjs(memoryData.create_time).format('HH:mm:ss'));
+        (memoryOption.series[0].data as any[]).push(memoryData.used_memory / 1000);
       });
       // 更新概览卡片
       if (memories.length > 0) {
@@ -220,8 +220,8 @@
       if (dbSizes.length > 0) {
         currentKeys.value = dbSizes[dbSizes.length - 1].dbSize + '';
       }
-      setOptions(memoryOption, false);
-      setOptions2(keyOption, false);
+      (setOptions as any)(memoryOption, false);
+      (setOptions2 as any)(keyOption, false);
     });
     // 加载详细信息获取端口和运行时间
     getInfo().then((res) => {
@@ -242,10 +242,10 @@
         const [{ dbSize: curSize }, memInfo] = res;
         const curMem = memInfo.used_memory / 1000;
 
-        keyOption.xAxis.data.push(time);
-        keyOption.series[0].data.push(curSize);
-        memoryOption.xAxis.data.push(time);
-        memoryOption.series[0].data.push(curMem);
+        (keyOption.xAxis.data as any[]).push(time);
+        (keyOption.series[0].data as any[]).push(curSize);
+        (memoryOption.xAxis.data as any[]).push(time);
+        (memoryOption.series[0].data as any[]).push(curMem);
 
         // 更新概览
         currentMemory.value = curMem.toFixed(0) + ' KB';
@@ -258,8 +258,8 @@
           memoryOption.xAxis.data.splice(0, 1);
           memoryOption.series[0].data.splice(0, 1);
         }
-        setOptions(memoryOption, false);
-        setOptions2(keyOption, false);
+        (setOptions as any)(memoryOption, false);
+        (setOptions2 as any)(keyOption, false);
       })
       .catch(() => {});
   }
