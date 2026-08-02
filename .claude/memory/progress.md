@@ -1,5 +1,28 @@
 # Harness 工程进度
 
+## 会话收尾（2026-08-02 session-wrap #10）
+
+**本次主要工作**：
+- P0 清理（TS6133 1025 处）→ 脚本 bug 破坏 297 文件 → **安全回退到 ee3bc37**（Batch 1-11 稳定点）
+- 3 条 learnings 沉淀（脚本安全 / TS noUnusedLocals / vue-tsc allowJs）
+- `/evolve` 跨多批：8 月 17 条 + 7 月 17 条 learnings 合并到规则（16 个规则文件，63% 引用率）
+- Revert 远程的 P0 清理 commits（ddd3f21 + eaafe98）
+
+**关键决策**：
+- **P0 清理回退**：脚本破坏文件 > 修复收益，立即 git reset --hard 是安全网
+- **`_` 前缀无效**：TS noUnusedLocals 不支持（仅 ESLint 支持），直接删除或 `@ts-expect-error`
+- **`/evolve` 分批**：每批 ≤20 条，避免单次 commit 太大
+
+**累计修复**（保留）：
+- 综合质量 100/100 GO
+- TS 错误 1810 → 742（净修 408 个，开启 strict 检查后）
+- API 测试 12/12 PASS，E2E 17/20，冒烟 4/4
+
+**遗留**（暂缓）：
+- 1025 个 TS6133 历史遗留（按 learnings 暂不做）
+- 38 条 7 月 learnings 未进规则（DB/SQL、Java、前端、工作流、环境、其他）
+- P0 批次管理（行锁 + FIFO + warehouse_id 冲突）：5-8h 估时
+
 ## 工作流阶段追踪
 
 | 字段 | 值 | 说明 |
@@ -191,3 +214,12 @@
 - 2026-07-31 Phase 3 完整回归测试
 - **2026-07-31 [P0 必修] 批次库存行锁 + FIFO 行锁 + warehouse_id NULL 冲突（5-8h 估时）**
 - **2026-07-31 [P1 警告] 批次号并发安全 + 应收治本 + 销售 cancel 回滚（8-12h 估时）**
+
+## 2026-08-02 session #10 /evolve 批 3（数据库/SQL 11 条 learnings）
+
+- 合并到 `code-style.md`（9 条）：dict-annotation-parity-check, dict-item-insert-ignore-duplicates, dict-text-only-on-list, jsearchselect-dict-format, mysql-hex-encoding-check, new-project-sql-gap, tablelogic-resurrection, docker-mysql-backtick, wsl-mysql-port-fight
+- 合并到 `design.md`（1 条）：table-dict-bypasses-tablelogic
+- 合并到 `boundary.md`（1 条）：claude-code-sandbox-git-push
+- commit: 2934082
+- 验证：`mvn compile` SUCCESS（9 模块），basic.test.js 14/14 通过
+- /evolve 累计：批 1（12 条 8 月）+ 批 2（8 月 5 条）+ 批 3（11 条 7 月 DB/SQL）= 已合并 28 条 learnings 到规则
