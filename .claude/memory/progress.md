@@ -232,3 +232,11 @@
 - commit: 2934082
 - 验证：`mvn compile` SUCCESS（9 模块），basic.test.js 14/14 通过
 - /evolve 累计：批 1（12 条 8 月）+ 批 2（8 月 5 条）+ 批 3（11 条 7 月 DB/SQL）= 已合并 28 条 learnings 到规则
+
+## 2026-08-02 22:11-22:33 /delegate v5 端到端首跑
+
+- 任务：采购入库 Bug#1（选订单回填供应商）+ Bug#2（子表列宽）
+- commit 链：17c9de7（worker 修）+ d71d03f（协调者回退冗余字段）
+- v5 优化首跑成功：22 分钟端到端
+- learning：`.claude/memory/learnings/2026-08-02-delegate-v5-end-to-end.md`
+- 教训：轮询脚本 grep false alarm（应匹配 commit hash 而非 message）/ 协调者必须 /verify 兜底（worker 误读"可选"为"应该加"）
