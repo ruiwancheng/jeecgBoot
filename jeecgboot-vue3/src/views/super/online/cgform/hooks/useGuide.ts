@@ -24,7 +24,7 @@ export const useGuide = () => {
       steps: [
         {
           title: '第一步',
-          element: document.querySelector(`.${newAddBtn.value}`)!,
+          element: document.querySelector(`.${newAddBtn.value}`) as HTMLElement,
           intro: '点击<strong>新增</strong>按钮，新建一个表。',
         },
         {
@@ -37,37 +37,37 @@ export const useGuide = () => {
         },
         {
           title: 'AI建表',
-          element: document.querySelector(`.${aiCreateTable.value}`)!,
+          element: document.querySelector(`.${aiCreateTable.value}`) as HTMLElement,
           intro: `输入修饰词即可通过AI创建工作表`,
         },
         {
           title: '代码生成',
-          element: document.querySelector(`.${codeGeneratorBtn.value}`)!,
+          element: document.querySelector(`.${codeGeneratorBtn.value}`) as HTMLElement,
           intro: `选中一条记录，通过代码生成可将已配置好的表单，一键生成前后端代码，复杂需求可在此基础上进行二次开发。`,
         },
         {
           title: '自定义按钮',
-          element: document.querySelector(`.${customBtn.value}`)!,
+          element: document.querySelector(`.${customBtn.value}`) as HTMLElement,
           intro: `选中一条记录，点击自定义按钮，配置按钮相关信息即可在当前记录的<strong>"功能测试"</strong>页面新增一个按钮`,
         },
         {
           title: 'JS强增',
-          element: document.querySelector(`.${enhanceJsBtn.value}`)!,
+          element: document.querySelector(`.${enhanceJsBtn.value}`) as HTMLElement,
           intro: `选中一条记录，通过js增强可为<strong>"自定义按钮"</strong>添加不同操作，可操作列表和表单数据等，也可以添加表单前置事件。`,
         },
         {
           title: 'SQL增强',
-          element: document.querySelector(`.${enhanceSqlBtn.value}`)!,
+          element: document.querySelector(`.${enhanceSqlBtn.value}`) as HTMLElement,
           intro: `选中一条记录，通过增强SQL，可以关联修改业务数据。`,
         },
         {
           title: 'java增强',
-          element: document.querySelector(`.${enhanceJavaBtn.value}`)!,
+          element: document.querySelector(`.${enhanceJavaBtn.value}`) as HTMLElement,
           intro: `选中一条记录，通过Java增强可在表单的增加、修改、和删除数据时实现额外的功能，类似spring中的AOP切面编程。`,
         },
         {
           title: '导入数据库表',
-          element: document.querySelector(`.${exportDbBtn.value}`)!,
+          element: document.querySelector(`.${exportDbBtn.value}`) as HTMLElement,
           intro: `可将已有数据库中的表，直接导入生成表单。`,
         },
       ],
