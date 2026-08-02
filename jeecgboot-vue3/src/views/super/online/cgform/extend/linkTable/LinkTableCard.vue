@@ -88,8 +88,8 @@
       const popFormModalShow = ref(false);
       // update-begin--author:liaozhiyang---date:20260317---for:【QQYUN-9441】online一对多加上关联记录和他表字段
       
-      const selectValue = ref([]);
-      const selectRecords = ref([]);
+      const selectValue = ref<any>([]);
+      const selectRecords = ref<any>([]);
       const tableLinkCardRef = ref(null);
       const fixedSpan = ref(0);
 

@@ -33,7 +33,7 @@
   }, 500);
 
   const loginfo = ref({});
-  const lineMultiData = ref([]);
+  const lineMultiData = ref<any>([]);
 
   function initLogInfo() {
     getLoginfo(null).then((res) => {

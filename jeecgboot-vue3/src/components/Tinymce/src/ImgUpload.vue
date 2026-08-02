@@ -54,7 +54,7 @@
       const { domainUrl } = useGlobSetting();
       const uploadUrl = domainUrl + '/sys/common/upload';
       //文件列表
-      let uploadFileList = ref<any[]>([]);
+      let uploadFileList = ref<any>([]);
       const { t } = useI18n();
       const { prefixCls } = useDesign('tinymce-img-upload');
 

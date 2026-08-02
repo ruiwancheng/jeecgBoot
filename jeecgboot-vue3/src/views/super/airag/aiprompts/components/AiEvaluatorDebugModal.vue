@@ -235,13 +235,13 @@
     pageSize: 10,
   });
   // 提示词选项数据
-  const promptOptions = ref<any[]>([]);
+  const promptOptions = ref<any>([]);
   // 数据集列
-  const datasetColumns = ref<any[]>([]);
+  const datasetColumns = ref<any>([]);
   // 提示词参数
-  const promptParams = ref<any[]>([]);
+  const promptParams = ref<any>([]);
   // 调试结果
-  const debugResult = ref<any[]>([]);
+  const debugResult = ref<any>([]);
   // 结果表格列
   const resultColumns = ref<any[]>([
     { title: '问题', dataIndex: 'userQuery', key: 'userQuery',fixed: 'left' },

@@ -49,17 +49,17 @@
 
   let loading = ref<boolean>(false);
   // 负责部门ID
-  let myDepIds = ref<any[]>([]);
+  let myDepIds = ref<any>([]);
   // 部门树列表数据
-  let treeData = ref<any[]>([]);
+  let treeData = ref<any>([]);
   // 当前展开的项
-  let expandedKeys = ref<any[]>([]);
+  let expandedKeys = ref<any>([]);
   // 当前选中的项
-  let selectedKeys = ref<any[]>([]);
+  let selectedKeys = ref<any>([]);
   // 当前选中的项
   let selectedNode = ref<any>({});
   // 当前选中的项
-  let checkedKeys = ref<any[]>([]);
+  let checkedKeys = ref<any>([]);
   // 是否自动展开父级
   let autoExpandParent = ref<boolean>(true);
   // 用户身份(1:普通员工  2:上级)

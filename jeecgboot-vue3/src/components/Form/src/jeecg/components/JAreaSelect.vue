@@ -49,7 +49,7 @@
     },
     emits: ['change', 'update:value','update:area','update:city','update:province'],
     setup(props, { emit, refs }) {
-      const emitData = ref<any[]>([]);
+      const emitData = ref<any>([]);
       //下拉框的选择值
       const pca = reactive({
         province: '',

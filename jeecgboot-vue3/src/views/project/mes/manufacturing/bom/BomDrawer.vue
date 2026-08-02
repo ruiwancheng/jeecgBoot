@@ -56,7 +56,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // BOM 口径提示：默认文案。BOM 生效后才能被生产订单引用。
   const alertText = ref('BOM 生效后才能被生产订单引用。状态：草稿 → 生效 → 失效。');

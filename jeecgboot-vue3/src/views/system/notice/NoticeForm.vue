@@ -32,7 +32,7 @@
     }
     return true;
   });
-  const templateOption = ref([]);
+  const templateOption = ref<any>([]);
   //表单配置
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: getBpmFormSchema(props.formData),

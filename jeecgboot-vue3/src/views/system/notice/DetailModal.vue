@@ -59,7 +59,7 @@
   const downLoadFiles = `${glob.domainUrl}/sys/annountCement/downLoadFiles`;
 
   //附件内容
-  const noticeFiles = ref([]);
+  const noticeFiles = ref<any>([]);
   //数据ID
   const noticeId = ref('');
   //表单赋值

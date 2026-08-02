@@ -12,8 +12,8 @@
   // 获取emit
   const emit = defineEmits(['register', 'success']);
   const isUpdate = ref(true);
-  const expandedRowKeys = ref([]);
-  const treeData = ref([]);
+  const expandedRowKeys = ref<any>([]);
+  const treeData = ref<any>([]);
   const isSubAdd = ref(false);
   //表单配置
   const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({

@@ -60,7 +60,7 @@
   const isUpdate = ref(false);
   const takeType = ref('1');
   const snapshotTime = ref('');
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   const materialMap = ref<Record<string, any>>({});
   const currentWarehouseId = ref('');
   const currentDocId = ref('');

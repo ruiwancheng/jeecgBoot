@@ -57,7 +57,7 @@
     emits: ['register'],
     setup() {
       const code = ref('');
-      const btnList = ref<any[]>([]);
+      const btnList = ref<any>([]);
       const { columns } = useJavaColumns(btnList);
       // 列表页面公共参数、方法
       const { doRequest, doDeleteRecord, tableContext } = useListPage({

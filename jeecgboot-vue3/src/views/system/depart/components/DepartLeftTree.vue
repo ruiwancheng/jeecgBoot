@@ -132,13 +132,13 @@
 
   const loading = ref<boolean>(false);
   // 部门树列表数据
-  const treeData = ref<any[]>([]);
+  const treeData = ref<any>([]);
   // 当前选中的项
-  const checkedKeys = ref<any[]>([]);
+  const checkedKeys = ref<any>([]);
   // 当前展开的项
-  const expandedKeys = ref<any[]>([]);
+  const expandedKeys = ref<any>([]);
   // 当前选中的项
-  const selectedKeys = ref<any[]>([]);
+  const selectedKeys = ref<any>([]);
   // 树组件重新加载
   const treeReloading = ref<boolean>(false);
   // 树父子是否关联

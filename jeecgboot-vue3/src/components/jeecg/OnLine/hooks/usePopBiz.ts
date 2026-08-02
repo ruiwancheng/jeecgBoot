@@ -36,7 +36,7 @@ export function usePopBiz(ob, tableRef?) {
   // 排序字段，默认无排序
   const iSorter = ref<any>('');
   // 查询对象
-  const queryInfo = ref([]);
+  const queryInfo = ref<any>([]);
   // 查询参数
   const queryParam = ref<any>({});
   // 动态参数

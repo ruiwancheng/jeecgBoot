@@ -100,7 +100,7 @@
 
       initRoot();
 
-      const treeData = ref<any[]>([]);
+      const treeData = ref<any>([]);
       const selectedKeys = ref<string[]>([]);
       const expandedKeys = ref<string[]>([]);
       const selectedDepartId = ref('');
@@ -139,7 +139,7 @@
         };
       });
 
-      const userDataList = ref<any[]>([]);
+      const userDataList = ref<any>([]);
       async function loadUserList() {
         const url = '/sys/user/selectUserList';
         let params = {

@@ -14,7 +14,7 @@ export function useAutoModal(isBpm?: boolean, { emit } = {} as any, callback?:an
   //表单风格 1列 2列 3列 决定了弹框的宽度
   const formTemplate = ref(1);
   // 自定义按钮
-  const cgButtonList = ref([]);
+  const cgButtonList = ref<any>([]);
   // js增强
   //const enhanceJsObject = ref<any>('')
   // 表单是否渲染完成

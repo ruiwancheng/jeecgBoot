@@ -114,7 +114,7 @@
         console.error('onChangeChecked', e);
       }
 
-     // const showDataList = ref<any[]>([])
+     // const showDataList = ref<any>([])
       const checkStatus = reactive<any>({});
       watchEffect(() => {
         let arr1 = props.dataList;

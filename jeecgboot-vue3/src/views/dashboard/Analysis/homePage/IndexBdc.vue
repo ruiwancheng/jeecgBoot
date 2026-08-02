@@ -77,8 +77,8 @@
 
   const indexBottomTab = ref('1');
   const indexRegisterType = ref('转移登记');
-  const dataSource = ref([]);
-  const dataSource1 = ref([]);
+  const dataSource = ref<any>([]);
+  const dataSource1 = ref<any>([]);
   const ipagination = ref(table.ipagination);
   const ipagination1 = ref(table1.ipagination);
 

@@ -56,7 +56,7 @@
   const { createMessage } = useMessage();
   const confirmLoading = ref(false);
   const apiAuthId = ref('');
-  const apiList = ref<any[]>([]);
+  const apiList = ref<any>([]);
   const selectedRowKeys = ref<string[]>([]);
   const pageNo = ref(1);
   const pageSize = ref(10);

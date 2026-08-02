@@ -114,7 +114,7 @@
           orderMainModel.orderCode = data.record.orderCode;
         }
       });
-      const tableData = ref([]);
+      const tableData = ref<any>([]);
       const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
 
       //动态添加行

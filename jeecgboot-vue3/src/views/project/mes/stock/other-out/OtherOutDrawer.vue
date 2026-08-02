@@ -59,7 +59,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【MES其它出入库】黄金模板对齐-模式8口径提示Alert-----------
   // 模式 8：出库业务口径提示——库存减少，防误操作
   const alertText = ref('成本按移动平均预填，可手工修改。确认后库存减少。');

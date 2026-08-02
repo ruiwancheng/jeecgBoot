@@ -24,7 +24,7 @@
   })
 
   const loading = ref(false);
-  const dataSource = ref([]);
+  const dataSource = ref<any>([]);
 
   watchEffect(() => {
       props.id && loadData(props.id);

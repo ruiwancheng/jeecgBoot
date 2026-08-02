@@ -25,7 +25,7 @@
   import { columns } from './trace.data';
   import { useMessage } from '/@/hooks/web/useMessage';
 
-  const dataSource = ref([]);
+  const dataSource = ref<any>([]);
   const { createMessage } = useMessage();
   const query = ref('all');
   const order = ref('');

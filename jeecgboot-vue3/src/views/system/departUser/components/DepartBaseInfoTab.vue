@@ -12,7 +12,7 @@
   const props = defineProps({
     data: { require: true, type: Object },
   });
-  const treeData = ref([]);
+  const treeData = ref<any>([]);
   const { descItems } = useBaseInfoForm(treeData);
 
   const [registerDesc, { setDescProps }] = useDescription({

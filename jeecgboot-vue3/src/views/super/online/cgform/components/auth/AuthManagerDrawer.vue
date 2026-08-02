@@ -43,7 +43,7 @@
     setup(props) {
       const cgformId = ref('');
       const headId = ref('');
-      const authFields = ref([]);
+      const authFields = ref<any>([]);
       const activeKey = ref('field');
       const curTableType = ref(1);
       const hasDataAuth = computed(() => props.tableType == 1 || props.tableType == 2);

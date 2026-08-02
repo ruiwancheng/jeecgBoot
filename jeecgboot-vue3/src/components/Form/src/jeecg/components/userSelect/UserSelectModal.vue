@@ -132,7 +132,7 @@
     emits: ['selected', 'register'],
     setup(props, { emit }) {
       const myActiveKey = ref('1');
-      const selectedUserList = ref<any[]>([]);
+      const selectedUserList = ref<any>([]);
       const userStore = useUserStore();
       const selectedIdList = computed(() => {
         let arr = selectedUserList.value;
@@ -143,7 +143,7 @@
         }
       });
       // QQYUN-4152【应用】已经存在的用户，添加的时候还可以重复选择
-      const excludeUserIdList = ref<any[]>([]);
+      const excludeUserIdList = ref<any>([]);
 
       // 弹窗事件
       const [register] = useModalInner((data) => {
@@ -174,7 +174,7 @@
 
       /*--------------部门下拉框，用于筛选用户---------------*/
       const selectedDepart = ref('');
-      const departOptions = ref<any[]>([]);
+      const departOptions = ref<any>([]);
       function initDepartOptions(options) {
         departOptions.value = [{ value: '', label: '全部用户' }, ...options];
         selectedDepart.value = '';
@@ -211,7 +211,7 @@
       /*--------------加载数据---------------*/
       const pageNo = ref(1);
       const totalRecord = ref(0);
-      const userDataList = ref<any[]>([]);
+      const userDataList = ref<any>([]);
       async function onPageChange() {
         console.log('onPageChange', pageNo.value);
         await loadUserList();

@@ -58,7 +58,7 @@
       const options = ref<OptionsItem[]>([]);
       const loading = ref(false);
       const isFirstLoad = ref(true);
-      const emitData = ref<any[]>([]);
+      const emitData = ref<any>([]);
       const attrs = useAttrs();
       const { t } = useI18n();
       // Embedded in the form, just use the hook binding to perform form verification

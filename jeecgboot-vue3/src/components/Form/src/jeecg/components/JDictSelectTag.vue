@@ -94,7 +94,7 @@
     },
     emits: ['options-change', 'change','update:value'],
     setup(props, { emit, refs }) {
-      const dictOptions = ref<any[]>([]);
+      const dictOptions = ref<any>([]);
       const attrs = useAttrs();
       const formItemContext = Form.useInjectFormItemContext();
       const state = ref<any>(props.value);

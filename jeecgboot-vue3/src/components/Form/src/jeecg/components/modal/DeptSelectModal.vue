@@ -107,7 +107,7 @@
       const [{ visibleChange, checkedKeys, getCheckStrictly, getSelectTreeData, onCheck, onLoadData, treeData, checkALL, expandAll, onSelect, onSearch, expandedKeys, checkStrictly }] =
         useTreeBiz(treeRef, queryUrl, getBindValue, props, emit);
       const searchInfo = ref(props.params || {});
-      const tree = ref([]);
+      const tree = ref<any>([]);
       //替换treeNode中key字段为treeData中对应的字段
       const fieldNames = {
         key: props.rowKey,

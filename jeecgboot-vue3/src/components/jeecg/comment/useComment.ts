@@ -299,7 +299,7 @@ export function useFileList() {
     return temp + ' KB';
   }
 
-  const selectFileList = ref<any[]>([]);
+  const selectFileList = ref<any>([]);
   function beforeUpload(file) {
     handleImageSrc(file);
     selectFileList.value = [...selectFileList.value, file];

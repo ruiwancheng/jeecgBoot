@@ -15,7 +15,7 @@
   const url = '/mock/api/asynTreeList';
 
   const loading = ref<boolean>(false);
-  const dataSource = ref<any[]>([]);
+  const dataSource = ref<any>([]);
   const [registerTable, { setLoading }] = useTable({
     rowKey: 'id',
     bordered: true,

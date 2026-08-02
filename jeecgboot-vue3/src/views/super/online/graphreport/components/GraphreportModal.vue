@@ -82,7 +82,7 @@
       // 当前是否正在加载中
       const confirmLoading = ref(false);
       // 数据源类型
-      const dbSourceOptions = ref<any[]>([]);
+      const dbSourceOptions = ref<any>([]);
 
       const fieldTable = reactive({
         dataSource: [],

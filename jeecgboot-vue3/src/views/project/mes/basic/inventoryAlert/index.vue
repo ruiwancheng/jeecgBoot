@@ -18,6 +18,6 @@
     { title: '当前库存', dataIndex: 'currentQty', width: 100 }, { title: '安全库存', dataIndex: 'safetyStock', width: 100 },
     { title: '最高库存', dataIndex: 'maxStock', width: 100 }, { title: '缺口', dataIndex: 'shortage', width: 100 },
   ];
-  const data = ref([]); const loading = ref(false);
+  const data = ref<any>([]); const loading = ref(false);
   onMounted(async () => { loading.value = true; const res = await queryInventoryAlerts(); data.value = res || []; loading.value = false; });
 </script>

@@ -43,7 +43,7 @@
       const cellAttrs = computed(() => cellProps.value as Record<string, any>);
 
       // 树形节点列表
-      const treeData = ref<any[]>([]);
+      const treeData = ref<any>([]);
       // 当前选中的带 label 的值（labelInValue 格式，多选为数组）
       const treeValue = ref<any>(null);
 

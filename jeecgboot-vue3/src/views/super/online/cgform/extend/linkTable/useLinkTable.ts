@@ -37,7 +37,7 @@ export function useLinkTable(props) {
     }
     return []
   });
-  const otherColumns = ref<any[]>([]);
+  const otherColumns = ref<any>([]);
   // 展示的列 配置的很多列，但是只展示三行
   const realShowColumns = computed(()=>{
     let columns = otherColumns.value;
@@ -96,8 +96,8 @@ export function useLinkTable(props) {
   });
 
   // 选项
-  const selectOptions = ref<any[]>([]);
-  const tableColumns = ref<any[]>([]);
+  const selectOptions = ref<any>([]);
+  const tableColumns = ref<any>([]);
   const dictOptions = ref<any>({});
   //const tableTitle = ref('')
 

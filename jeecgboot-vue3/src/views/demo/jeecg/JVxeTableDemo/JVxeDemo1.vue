@@ -261,7 +261,7 @@
       slotName: 'myAction',
     },
   ]);
-  const dataSource = ref<any[]>([]);
+  const dataSource = ref<any>([]);
 
   /* 随机生成数据 */
   function randomPage(current, pageSize, isLoading = false) {

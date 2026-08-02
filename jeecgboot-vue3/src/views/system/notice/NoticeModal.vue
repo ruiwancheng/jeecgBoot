@@ -26,7 +26,7 @@
   const emit = defineEmits(['register', 'success']);
   const isUpdate = ref(true);
   const record = ref<any>({});
-  const templateOption = ref([]);
+  const templateOption = ref<any>([]);
   //表单配置
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: formSchema,

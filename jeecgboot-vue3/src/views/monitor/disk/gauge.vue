@@ -10,7 +10,7 @@
   import { GaugeChart } from 'echarts/charts';
 
   const props = defineProps({ data: {} });
-  const dataSource = ref([]);
+  const dataSource = ref<any>([]);
   const chartRef = ref<HTMLDivElement | null>(null);
   const { setOptions, echarts } = useECharts(chartRef as Ref<HTMLDivElement>);
   const loading = ref(false);

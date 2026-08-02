@@ -21,7 +21,7 @@
   const props = defineProps<{ materialId?: string; warehouseId?: string }>();
 
   const loading = ref(false);
-  const rows = ref<any[]>([]);
+  const rows = ref<any>([]);
   const cols = [
     { title: '业务类型', dataIndex: 'bizType', width: 100 },
     { title: '入库', dataIndex: 'inQty', width: 70 },

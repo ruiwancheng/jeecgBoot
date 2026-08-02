@@ -127,7 +127,7 @@
       minWidth: 320,
     },
   ]);
-  const dataSource = ref<any[]>([]);
+  const dataSource = ref<any>([]);
   const pagination = reactive({
     current: 1,
     pageSize: 10,

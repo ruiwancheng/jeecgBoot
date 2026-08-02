@@ -62,12 +62,12 @@
   //树的信息
   const treeData = ref<TreeItem[]>([]);
   //树的全部节点信息
-  const allTreeKeys = ref([]);
+  const allTreeKeys = ref<any>([]);
   //树的选择节点信息
   const checkedKeys = ref<any>([]);
-  const defaultCheckedKeys = ref([]);
+  const defaultCheckedKeys = ref<any>([]);
   //树的选中的节点信息
-  const selectedKeys = ref([]);
+  const selectedKeys = ref<any>([]);
   const roleId = ref('');
   //树的实例
   const treeRef = ref(null);

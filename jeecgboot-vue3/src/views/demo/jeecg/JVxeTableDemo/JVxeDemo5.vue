@@ -92,7 +92,7 @@
           defaultChecked: false,
         },
       ]);
-      const dataSource = ref([]);
+      const dataSource = ref<any>([]);
 
       function handleView(props) {
         // 参数介绍：

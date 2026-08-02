@@ -49,7 +49,7 @@
     },
     emits: ['selected', 'unSelect'],
     setup(props, { emit }) {
-      const treeData = ref<any[]>([]);
+      const treeData = ref<any>([]);
       async function loadRoleList() {
         const url = '/sys/role/listByTenant';
         let params = {
@@ -74,7 +74,7 @@
       }
       loadRoleList();
 
-      const selectedKeys = ref<any[]>([]);
+      const selectedKeys = ref<any>([]);
       const selectedRoleId = ref('');
       function onSelect(ids, e) {
         let record = e.node.dataRef;
@@ -85,7 +85,7 @@
         loadUserList();
       }
 
-      const userDataList = ref<any[]>([]);
+      const userDataList = ref<any>([]);
       async function loadUserList() {
         const url = '/sys/user/selectUserList';
         let params = {

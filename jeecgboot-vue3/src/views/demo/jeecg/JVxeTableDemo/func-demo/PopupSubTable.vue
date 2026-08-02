@@ -110,7 +110,7 @@
 
   const { createMessage } = useMessage();
   const loading = ref(false);
-  const dataSource = ref([]);
+  const dataSource = ref<any>([]);
   const columns = ref<JVxeColumn[]>([
     { key: 'num', title: '序号', width: '80px' },
     { key: 'ship_name', title: '船名', width: '180px', type: JVxeTypes.input },
@@ -130,7 +130,7 @@
     },
     { key: 'trend', title: '动向', width: '120px' },
   ]);
-  const selectedRows = ref([]);
+  const selectedRows = ref<any>([]);
   // 子表的信息
   const subTable = reactive({
     currentRowId: null,

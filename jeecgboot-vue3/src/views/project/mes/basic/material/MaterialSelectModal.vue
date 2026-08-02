@@ -70,9 +70,9 @@
 
   const searchKeyword = ref('');
   const selectedRow = ref<any>(null);
-  const selectedRows = ref<any[]>([]);
+  const selectedRows = ref<any>([]);
   const selectedRowKeys = ref<string[]>([]);
-  const dataSource = ref<any[]>([]);
+  const dataSource = ref<any>([]);
   const loading = ref(false);
 
   const currentMode = computed(() => props.mode || 'single');

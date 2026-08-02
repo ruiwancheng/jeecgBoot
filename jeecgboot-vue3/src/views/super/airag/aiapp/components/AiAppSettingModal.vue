@@ -643,7 +643,7 @@
       //对话设置弹窗ref
       const settingsModalRef = ref();
       //工作流入参列表
-      const flowInputs = ref<any[]>([]);
+      const flowInputs = ref<any>([]);
       //对话设置（用于调试模式）
       const conversationSettings = ref<Record<string, any>>({});
       //流程数据集合

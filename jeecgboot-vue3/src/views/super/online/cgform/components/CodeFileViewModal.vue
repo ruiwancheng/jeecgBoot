@@ -54,9 +54,9 @@
     },
     emits: ['download', 'register', 'close'],
     setup(_p, { emit }) {
-      const codeList = ref([]);
+      const codeList = ref<any>([]);
       const pathKey = ref('');
-      const treeData = ref<any[]>([]);
+      const treeData = ref<any>([]);
       const expandStatus = ref(false);
       const height = window.innerHeight - 142;
       const language = ref('java');

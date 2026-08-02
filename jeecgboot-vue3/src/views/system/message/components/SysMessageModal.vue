@@ -296,7 +296,7 @@
         }
         return false;
       });
-      const searchRangeDate = ref([]);
+      const searchRangeDate = ref<any>([]);
       function handleChangeSearchDate(_value, dateStringArray) {
         searchParams.rangeDate = [...dateStringArray]
         loadData();

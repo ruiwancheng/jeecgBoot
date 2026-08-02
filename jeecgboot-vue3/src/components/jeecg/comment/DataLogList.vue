@@ -56,7 +56,7 @@
       const height = ref(300);
       height.value = winHeight - 46 - 57 -53 - 30;
 
-      const dataList = ref([]);
+      const dataList = ref<any>([]);
       const lastIndex = ref(0);
       /**
        * 加载数据

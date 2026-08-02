@@ -27,9 +27,9 @@
     setup(props, { emit }) {
       const attrs = useAttrs();
       //checkbox选项
-      const checkOptions = ref<any[]>([]);
+      const checkOptions = ref<any>([]);
       //checkbox数值
-      const checkboxArray = ref<any[]>([]);
+      const checkboxArray = ref<any>([]);
       /**
        * 监听value
        */

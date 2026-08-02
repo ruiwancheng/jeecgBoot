@@ -72,7 +72,7 @@
       const options = ref<OptionsItem[]>([]);
       const loading = ref(false);
       const isFirstLoad = ref(true);
-      const emitData = ref<any[]>([]);
+      const emitData = ref<any>([]);
       const attrs = useAttrs();
       const { t } = useI18n();
       // 代码逻辑说明: 【QQYUN-11831】ApiSelect 分页下拉方案 #7883

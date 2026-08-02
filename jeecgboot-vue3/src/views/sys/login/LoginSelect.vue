@@ -84,11 +84,11 @@
       const { notification } = useMessage();
       //租户配置
       const isMultiTenant = ref(false);
-      const tenantList = ref([]);
+      const tenantList = ref<any>([]);
       const validate_status = ref('');
       //部门配置
       const isMultiDepart = ref(false);
-      const departList = ref([]);
+      const departList = ref<any>([]);
       const validate_status1 = ref('');
       //弹窗显隐
       const visible = ref(false);

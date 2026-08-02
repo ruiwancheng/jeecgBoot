@@ -92,7 +92,7 @@
   //暴露内部方法
   const emit = defineEmits(['getMethod', 'delete']);
   //数据
-  const data = ref([]);
+  const data = ref<any>([]);
   // 切换每行个数
   // cover图片自适应高度
   //修改pageSize并重新请求数据

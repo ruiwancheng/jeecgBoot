@@ -66,7 +66,7 @@
       const attrs = useAttrs();
       const uploading = ref(false);
       //文件集合
-      const fileList = ref([]);
+      const fileList = ref<any>([]);
       //上传url
       const uploadAction = ref('');
       const foreignKeys = ref('');

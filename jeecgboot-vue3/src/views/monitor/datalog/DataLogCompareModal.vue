@@ -93,13 +93,13 @@
     emits: ['register', 'btnOk'],
     setup() {
       const { createMessage } = useMessage();
-      const dataSource = ref<any[]>([]);
+      const dataSource = ref<any>([]);
       const dataVersion1Num = ref('');
       const dataVersion2Num = ref('');
       const isUpdate = ref(true);
       const dataId = ref('');
       const dataTable = ref('');
-      const dataVersionList = ref<any[]>([]);
+      const dataVersionList = ref<any>([]);
       const params = reactive({ dataId1: '', dataId2: '' });
 
       const diffCount = computed(() => dataSource.value.filter((r) => r.isDiff).length);

@@ -52,7 +52,7 @@
       const enhanceStore = useEnhanceStore();
       const codeEditorRef = ref<InstanceType<typeof JCodeEditor>>();
       const confirmLoading = ref(false);
-      const dataList = ref<any[]>([]);
+      const dataList = ref<any>([]);
       const jsStr = ref('');
       const activeIndex = ref(0);
 

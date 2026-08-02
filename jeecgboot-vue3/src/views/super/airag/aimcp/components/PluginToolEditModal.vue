@@ -176,9 +176,9 @@ const toolForm = reactive({
 });
 
 // 请求参数列表
-const requestParams = ref<any[]>([]);
+const requestParams = ref<any>([]);
 // 输出参数列表
-const responseParams = ref<any[]>([]);
+const responseParams = ref<any>([]);
 
 // 请求参数表格列
 const requestParamsColumns = [

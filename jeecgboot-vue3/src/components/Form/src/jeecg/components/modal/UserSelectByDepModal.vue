@@ -70,9 +70,9 @@
         await queryDepartTree();
       });
       const attrs = useAttrs();
-      const departTree = ref([]);
-      const selectedDepIds = ref([]);
-      const expandedKeys = ref([]);
+      const departTree = ref<any>([]);
+      const selectedDepIds = ref<any>([]);
+      const expandedKeys = ref<any>([]);
       const searchInfo = {};
       /**
        *表格配置

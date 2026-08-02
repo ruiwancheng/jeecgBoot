@@ -86,7 +86,7 @@
     emits: ['handleOpen', 'change'],
     setup(props, { emit, refs }) {
       //接收下拉框选项
-      const options = inject('selectOptions') || ref([]);
+      const options = inject('selectOptions') || ref<any>([]);
       //接收选择的值
       const selectValues = inject('selectValues') || ref({});
       const attrs = useAttrs();

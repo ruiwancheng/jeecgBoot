@@ -114,7 +114,7 @@
         emit('selected', arr);
       }
       
-      const dataList = ref<any[]>([]);
+      const dataList = ref<any>([]);
       const showDataList = computed(()=>{
         let list = dataList.value;
         if(!list || list.length ==0 ){

@@ -50,7 +50,7 @@
   import { list, deleteCategory, batchDeleteCategory, getExportUrl, getImportUrl, getChildList, getChildListBatch } from './category.api';
   import { useListPage } from '/@/hooks/system/useListPage';
 
-  const expandedRowKeys = ref([]);
+  const expandedRowKeys = ref<any>([]);
   const { handleExportXls, handleImportXls } = useMethods();
   //字典model
   const [registerModal, { openModal }] = useModal();

@@ -52,7 +52,7 @@ export function useTableColumns(onlineTableContext, extConfigJson: Ref<ExtConfig
   // 字典信息
   const dictOptionInfo = ref<any>({});
   //已选择的值
-  const selectedKeys = ref<any[]>([]);
+  const selectedKeys = ref<any>([]);
   //选择的行记录
   //const selectRows = ref<Array<any>>([]);
   // 选择列配置 --computed有问题

@@ -86,7 +86,7 @@
   const glob = useGlobSetting();
   const isUpdate = ref(true);
   const content = ref<any>({});
-  const noticeFiles = ref([]);
+  const noticeFiles = ref<any>([]);
   /**
    * 下载文件路径
    */

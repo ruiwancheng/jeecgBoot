@@ -237,10 +237,10 @@
   const textMaxLength = 8;
   const $message = useMessage();
 
-  const dataSource1 = ref([]);
-  const dataSource2 = ref([]);
-  const dataSource3 = ref([]);
-  const dataSource4 = ref([]);
+  const dataSource1 = ref<any>([]);
+  const dataSource2 = ref<any>([]);
+  const dataSource3 = ref<any>([]);
+  const dataSource4 = ref<any>([]);
   const columns = [
     {
       title: '',

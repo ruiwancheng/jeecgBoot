@@ -51,7 +51,7 @@
   defineEmits(['register']);
   const loading = ref(false);
   const batch = ref<any>(null);
-  const ledgerItems = ref<any[]>([]);
+  const ledgerItems = ref<any>([]);
   const batchNo = computed(() => batch.value?.batchNo);
 
   //update-begin---author:ruiwancheng---date:20260803---for: V10.0.2 trace-2-detail 批次追溯Drawer详情接入-流水列定义-----------

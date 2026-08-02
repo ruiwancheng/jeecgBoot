@@ -75,8 +75,8 @@
     emits: ['options-change', 'change', 'update:value'],
     setup(props, { emit, refs }) {
       console.info(props);
-      const emitData = ref<any[]>([]);
-      const treeData = ref<any[]>([]);
+      const emitData = ref<any>([]);
+      const treeData = ref<any>([]);
       const treeValue = ref();
       const attrs = useAttrs();
       const [state, , , formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);

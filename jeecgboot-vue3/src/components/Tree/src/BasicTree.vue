@@ -296,15 +296,15 @@
       });
 
       watchEffect(() => {
-        state.expandedKeys = props.expandedKeys;
+        state.expandedKeys = props.expandedKeys as any;
       });
 
       watchEffect(() => {
-        state.selectedKeys = props.selectedKeys;
+        state.selectedKeys = props.selectedKeys as any;
       });
 
       watchEffect(() => {
-        state.checkedKeys = props.checkedKeys;
+        state.checkedKeys = props.checkedKeys as any;
       });
 
       watch(
@@ -445,7 +445,7 @@
                 expandAll={expandAll}
                 title={title}
                 search={search}
-                toolbar={toolbar}
+                toolbar={(toolbar as any)}
                 helpMessage={helpMessage}
                 onStrictlyChange={onStrictlyChange}
                 onSearch={handleSearch}

@@ -89,7 +89,7 @@
     emits: ['ok', 'register', 'select'],
     setup(props, { emit }) {
       // 提示词列表
-      const promptList = ref<any[]>([]);
+      const promptList = ref<any>([]);
       // 加载状态
       const loading = ref<boolean>(false);
       // 搜索文本

@@ -32,11 +32,11 @@
   const basicTree = ref();
   const loading = ref<boolean>(false);
   //树的全部节点信息
-  const treeData = ref<any[]>([]);
+  const treeData = ref<any>([]);
   //选中的key
-  const expandedKeys = ref<any[]>([]);
+  const expandedKeys = ref<any>([]);
   //所有的部门id
-  const departIds = ref<any[]>([]);
+  const departIds = ref<any>([]);
 
   watch(departId, (val) => loadData(val), { immediate: true });
 

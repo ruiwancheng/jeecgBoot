@@ -133,7 +133,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // 采购收货口径提示：默认文案。审核后增加库存、重算物料移动平均成本。
   const alertText = ref('由采购订单入库。审核后增加库存、重算物料移动平均成本。');

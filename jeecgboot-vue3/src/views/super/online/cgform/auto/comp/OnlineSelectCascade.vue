@@ -36,7 +36,7 @@
       // 选中值
       const selectedValue = ref<any>('');
       // 选项数组
-      const dictOptions = ref<any[]>([]);
+      const dictOptions = ref<any>([]);
       const optionsLoad = ref(true);
       // 选项改变事件
       function handleChange(value) {

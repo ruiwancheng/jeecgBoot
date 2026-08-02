@@ -10,7 +10,7 @@ export function useData(props: JVxeTableProps): JVxeDataProps {
   return {
     prefixCls: prefixCls,
     caseId: `j-vxe-${randomString(8)}`,
-    vxeDataSource: ref([]),
+    vxeDataSource: ref<any>([]),
     scroll: reactive({ top: 0, left: 0 }),
     scrolling: ref(false),
     defaultVxeProps: reactive({
@@ -83,7 +83,7 @@ export function useData(props: JVxeTableProps): JVxeDataProps {
         isChecked: true,
       },
     }),
-    selectedRows: ref<any[]>([]),
+    selectedRows: ref<any>([]),
     selectedRowIds: ref<string[]>([]),
     disabledRowIds: [],
     statistics: reactive({

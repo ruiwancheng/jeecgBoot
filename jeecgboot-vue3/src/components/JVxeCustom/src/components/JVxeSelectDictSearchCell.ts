@@ -171,7 +171,7 @@ function useSelectDictSearch(props) {
   // 内部选择值
   const innerSelectValue = ref(null);
   // 内部 options
-  const innerOptions = ref<any[]>([]);
+  const innerOptions = ref<any>([]);
 
   const dict = computed(() => originColumn.value.dict);
   // 是否是异步模式

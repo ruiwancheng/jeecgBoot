@@ -261,7 +261,7 @@
   });
  //**********************查询部门逻辑begin**********************************************
   //用户部门
-  const departList = ref([]);
+  const departList = ref<any>([]);
   //部门显示
   const showDepart = computed(()=>{
     return departList.value.length > 1

@@ -79,7 +79,7 @@
   // 总开关开启 = 显示批次号/生产日期两列 + 必填
   const isBatchOn = computed(() => mesGlobalSwitchStore.isBatchEnabled);
   //update-end---author:ruiwancheng---date:20260801---for: V8.0.3 手工录入模式-----------
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
 
   //update-begin---author:ruiwancheng---date:20260801---for: V8.0.3 手工录入模式——itemColumns 改 computed（总开关开启时插入批次号/生产日期两列）-----------
   const baseItemColumns = [

@@ -79,7 +79,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // 销售订单口径提示：审核后自动生成发货单，无需手工创建
   const alertText = ref('审核后将自动生成发货单。状态流转：草稿 → 已审核 → 已下达 → 已发货。');

@@ -31,11 +31,11 @@
     customerListByMainId: '/test/order/listOrderCustomerByMainId',
   };
   // 展开key
-  const expandedRowKeys = ref<any[]>([]);
+  const expandedRowKeys = ref<any>([]);
   // 选择key
-  const checkedKeys = ref<any[]>([]);
+  const checkedKeys = ref<any>([]);
   // 子表数据
-  const innerData = ref<any[]>([]);
+  const innerData = ref<any>([]);
   // 主表表头
   const columns = [
     {

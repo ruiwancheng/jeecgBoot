@@ -68,7 +68,7 @@
     emits: ['update:value', 'change'],
     setup(props, { emit }) {
       const formItemContext = Form.useInjectFormItemContext();
-      const selectedList = ref<any[]>([]);
+      const selectedList = ref<any>([]);
       const loading = ref(true);
 
       const [registerRoleModal, { openModal: openRoleModal, closeModal: closeRoleModal }] = useModal();

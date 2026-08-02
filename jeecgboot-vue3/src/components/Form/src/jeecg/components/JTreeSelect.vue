@@ -69,7 +69,7 @@
   const slots = defineSlots();
   const { createMessage } = useMessage();
   //树形下拉数据
-  const treeData = ref<any[]>([]);
+  const treeData = ref<any>([]);
   //选择数据
   const treeValue = ref<any>(null);
   const tableName = ref<any>('');

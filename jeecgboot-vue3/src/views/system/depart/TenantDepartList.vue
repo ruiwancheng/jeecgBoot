@@ -45,7 +45,7 @@
 
   // 当前选中的部门信息
   const departData = ref({});
-  const rootTreeData = ref<any[]>([]);
+  const rootTreeData = ref<any>([]);
   const loginTenantName = ref<string>('');
 
   /**

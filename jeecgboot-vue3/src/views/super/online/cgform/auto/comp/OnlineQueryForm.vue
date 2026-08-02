@@ -174,7 +174,7 @@
       // 表单ref
       const onlineQueryFormRef = ref(null);
       // 表单渲染用到的配置
-      const formSchemas = ref([]);
+      const formSchemas = ref<any>([]);
       // 表单栅格 VUEN-2493【优化】online默认查询条件太宽了，参考online报表
       const baseColProps = ref({ xs:24, sm: 24, md: 12, lg:6, xl:6 });
       // 切换字段显示隐藏按钮是否显示
@@ -184,7 +184,7 @@
       // 查询条件
       const queryParams = ref({});
       // 需要隐藏的字段
-      const hideList = ref([]);
+      const hideList = ref<any>([]);
       const { createMessage: $message } = useMessage();
       const { linkTableCard2Select } = useExtendComponent();
       const formLabelWidth = ref(80);

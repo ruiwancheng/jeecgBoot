@@ -26,9 +26,9 @@
   const basicTree = ref();
   const loading = ref<boolean>(false);
   //选中的key
-  const expandedKeys = ref<any[]>([]);
+  const expandedKeys = ref<any>([]);
   //所有的部门id
-  const departIds = ref<any[]>([]);
+  const departIds = ref<any>([]);
   /**
    * 折叠全部
    *

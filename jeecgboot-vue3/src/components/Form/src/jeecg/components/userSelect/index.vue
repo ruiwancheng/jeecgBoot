@@ -86,7 +86,7 @@
     setup(props, { emit }) {
       const formItemContext = Form.useInjectFormItemContext();
       const loading = ref(true);
-      const selectedUserList = ref<any[]>([]);
+      const selectedUserList = ref<any>([]);
       const showUserList = computed(()=>{
         let list = selectedUserList.value
         let max = props.maxCount;

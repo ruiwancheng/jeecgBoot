@@ -24,7 +24,7 @@
     emits: ['select', 'register'],
     setup(_, { emit }) {
       const loading = ref(true);
-      const treeData = ref<any[]>([]);
+      const treeData = ref<any>([]);
       const selectedKey = ref('');
       const directoryTreeShow = ref(false);
 

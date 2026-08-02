@@ -34,7 +34,7 @@ export function useTabSetup(props, context, options) {
   const defaultValue = ref(options?.defaultValue ?? '?');
   // 类型
   const type = ref(options.defaultType ?? TypeEnum.every);
-  const valueList = ref<any[]>([]);
+  const valueList = ref<any>([]);
   // 对于不同的类型，所定义的值也有所不同
   const valueRange = reactive(options.valueRange);
   const valueLoop = reactive(options.valueLoop);

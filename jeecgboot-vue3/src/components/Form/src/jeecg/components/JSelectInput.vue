@@ -15,7 +15,7 @@
     emits: ['change', 'update:value'],
     setup(props, { emit, attrs }) {
       // 内部 options 选项
-      const options = ref<any[]>([]);
+      const options = ref<any>([]);
       // 监听外部 options 变化，并覆盖内部 options
       watch(
         () => props.options,

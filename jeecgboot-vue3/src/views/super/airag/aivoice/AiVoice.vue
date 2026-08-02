@@ -136,7 +136,7 @@
   const currentAudioUrl = ref<string>('');
   const currentText = ref<string>('');
   const formText = ref<string>(''); // 文案输入框的独立状态
-  const historyList = ref<any[]>([]);
+  const historyList = ref<any>([]);
   const isPresetApplying = ref(false); // 防抖标志
   let pollTimer: ReturnType<typeof setTimeout> | null = null;
 

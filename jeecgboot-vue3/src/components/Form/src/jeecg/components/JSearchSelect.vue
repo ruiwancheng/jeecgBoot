@@ -100,12 +100,12 @@
     },
     emits: ['change', 'update:value'],
     setup(props, { emit, refs }) {
-      const options = ref<any[]>([]);
+      const options = ref<any>([]);
       const loading = ref(false);
       // 代码逻辑说明: 【issues/897】JSearchSelect组件添加class/style样式不生效
       const attrs = useAttrs({'excludeDefaultKeys': false});
-      const selectedValue = ref([]);
-      const selectedAsyncValue = ref([]);
+      const selectedValue = ref<any>([]);
+      const selectedAsyncValue = ref<any>([]);
       const lastLoad = ref(0);
       // 是否根据value加载text
       const loadSelectText = ref(true);

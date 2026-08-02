@@ -100,7 +100,7 @@
   //对话设置弹窗ref
   const settingsModalRef = ref();
   //工作流入参列表
-  const flowInputs = ref<any[]>([]);
+  const flowInputs = ref<any>([]);
   //当前会话的设置
   const conversationSettings = ref<Record<string, Record<string, any>>>({});
 

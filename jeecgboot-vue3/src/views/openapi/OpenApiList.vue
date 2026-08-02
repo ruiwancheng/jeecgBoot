@@ -61,7 +61,7 @@
   import { columns, searchFormSchema, superQuerySchema } from './OpenApi.data';
   import { list, deleteOne, batchDelete, getImportUrl, getExportUrl } from './OpenApi.api';
   const queryParam = reactive<any>({});
-  const expandedRowKeys = ref<any[]>([]);
+  const expandedRowKeys = ref<any>([]);
   const { createMessage } = useMessage();
   const API_DOMAIN = import.meta.env.VITE_GLOB_DOMAIN_URL;
   const [registerDrawer, { openDrawer }] = useDrawer();

@@ -91,7 +91,7 @@
         codeTypes: 'controller,service,dao,mapper,entity,vue',
       });
       const model = reactive<Recordable>({});
-      const jspModeOptions = ref<any[]>([]);
+      const jspModeOptions = ref<any>([]);
       // 子表配置
       const subTable = reactive({
         dataSource: [] as Recordable[],

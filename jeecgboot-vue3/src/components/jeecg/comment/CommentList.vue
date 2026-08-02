@@ -114,7 +114,7 @@
     },
     setup(props) {
       const { createMessage } = useMessage();
-      const dataList = ref([]);
+      const dataList = ref<any>([]);
       const { userInfo } = useUserStore();
       const dayjs = inject('$dayjs')
       const listRef = ref(null);

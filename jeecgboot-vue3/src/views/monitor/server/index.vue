@@ -39,7 +39,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import dayjs from 'dayjs';
 
-  const dataSource = ref([]);
+  const dataSource = ref<any>([]);
   const activeKey = ref('1');
   const moreInfo = ref({});
   const lastUpdateTime = ref({});

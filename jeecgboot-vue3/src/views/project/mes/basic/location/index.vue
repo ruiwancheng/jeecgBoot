@@ -52,7 +52,7 @@
   defineOptions({ name: 'MesLocation' });
 
   const searchText = ref('');
-  const treeData = ref<any[]>([]);
+  const treeData = ref<any>([]);
   const treeLoading = ref(false);
   const selectedWarehouseId = ref('');
 

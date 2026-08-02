@@ -82,8 +82,8 @@
       });
       //注册model
       const [registerListModal, { openModal: openListModal }] = useModal();
-      const selectValue = ref([]);
-      const selectRecords = ref([]);
+      const selectValue = ref<any>([]);
+      const selectRecords = ref<any>([]);
       const tableLinkCardRef = ref(null);
       const fixedSpan = ref(0);
 

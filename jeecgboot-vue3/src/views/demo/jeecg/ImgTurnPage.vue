@@ -84,16 +84,16 @@
    */
   const treeData = ref(mockdata);
   //选中的key
-  const selectedKeys = ref([]);
+  const selectedKeys = ref<any>([]);
   //展开的key
-  const expandedKeys = ref([]);
+  const expandedKeys = ref<any>([]);
   const sort = ref(0);
   //图片链接
   const imgUrl = ref('');
   //页码标题
   const navName = ref('');
   //图片集合
-  const imgList = ref([]);
+  const imgList = ref<any>([]);
 
   onMounted(getImgList);
 

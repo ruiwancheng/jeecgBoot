@@ -28,7 +28,7 @@ export function useSysMessage(setLocaleText) {
   console.log('rangeDateArray', rangeDateArray);
   console.log('+++++++++++++++++++++');
 
-  const messageList = ref<any[]>([]);
+  const messageList = ref<any>([]);
   const pageNo = ref(1)
   let pageSize = 10;
 

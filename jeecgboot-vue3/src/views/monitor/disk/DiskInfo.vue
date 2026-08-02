@@ -16,7 +16,7 @@
   import { queryDiskInfo } from './disk.api';
   import gauge from './gauge.vue';
 
-  const diskInfo = ref([]);
+  const diskInfo = ref<any>([]);
   const spinning = ref(true);
 
   function loadRedisInfo() {

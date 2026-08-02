@@ -43,7 +43,7 @@
   // 领料单口径提示：默认文案。Phase 2/3 将增加批次选择（FIFO 默认）。
   const alertText = ref('领料从仓库扣减库存。状态：草稿 → 已审核。');
   //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 250 },

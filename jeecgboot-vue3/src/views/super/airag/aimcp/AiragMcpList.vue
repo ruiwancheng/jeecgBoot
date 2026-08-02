@@ -163,7 +163,7 @@ import JInput from '@/components/Form/src/jeecg/components/JInput.vue';
 import defaultLogo from './imgs/mcpLogo.png'
 
 // 列表数据
-const mcpList = ref<any[]>([]);
+const mcpList = ref<any>([]);
 // 分页
 const pageNo = ref<number>(1);
 const pageSize = ref<number>(10);

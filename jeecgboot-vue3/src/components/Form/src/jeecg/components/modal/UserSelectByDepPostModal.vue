@@ -74,8 +74,8 @@
       });
       const attrs = useAttrs();
       const departTree = ref<any>([]);
-      const selectedDepIds = ref([]);
-      const expandedKeys = ref([]);
+      const selectedDepIds = ref<any>([]);
+      const expandedKeys = ref<any>([]);
       const searchInfo = {};
       //树加载的key
       const reloadKey = ref(Math.random());

@@ -38,7 +38,7 @@
     emits: ['register'],
     setup() {
       const { createMessage: $message } = useMessage();
-      const codeList = ref([]);
+      const codeList = ref<any>([]);
       const height = window.innerHeight - 150;
       const divStyle = reactive({
         overflowY: 'auto',

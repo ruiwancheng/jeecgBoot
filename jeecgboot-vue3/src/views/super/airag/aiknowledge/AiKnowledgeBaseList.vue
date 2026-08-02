@@ -139,7 +139,7 @@
     },
     setup() {
       //模型列表
-      const knowledgeList = ref([]);
+      const knowledgeList = ref<any>([]);
 
       //注册modal
       const [registerModal, { openModal }] = useModal();

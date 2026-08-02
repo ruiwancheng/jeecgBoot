@@ -30,8 +30,8 @@
     },
     setup(props, { emit }) {
       const spinningLoading = ref(false);
-      const linkTableOptions = ref([]);
-      const fieldOptions = ref([]);
+      const linkTableOptions = ref<any>([]);
+      const fieldOptions = ref<any>([]);
       let tableAndFieldsMap = {};
       let oldValue = {}
       const { createMessage: $message } = useMessage();

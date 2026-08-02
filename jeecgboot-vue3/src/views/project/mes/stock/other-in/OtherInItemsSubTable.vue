@@ -22,7 +22,7 @@
   const props = defineProps<{ docId: string }>();
 
   const loading = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   const materialMap = ref<Record<string, any>>({});
 
   const cols = [

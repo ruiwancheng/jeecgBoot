@@ -65,7 +65,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // 采购订单口径提示：默认文案。状态流转：草稿→待确认→已确认→已到货/已关闭
   const alertText = ref('收货后订单自动置已到货。状态：草稿 → 待确认 → 已确认 → 部分到货 → 已到货。');

@@ -45,7 +45,7 @@
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【销售链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // 销售出库口径提示：默认文案。编辑时根据 queryById 返回的 _dictText 动态更新
   const alertText = ref('由发货单创建。审核后扣减库存、自动生成应收单。');

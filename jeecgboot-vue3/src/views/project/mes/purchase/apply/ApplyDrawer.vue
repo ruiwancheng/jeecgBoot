@@ -70,7 +70,7 @@
   const userStore = useUserStore();
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
-  const items = ref<any[]>([]);
+  const items = ref<any>([]);
   //update-begin---author:ruiwancheng---date:20260730---for:【采购链路黄金模板对齐】模式8口径提示Alert（响应式）-----------
   // 采购申请口径提示：默认文案。状态流转：草稿→已提交→已通过/已驳回。
   const alertText = ref('审核通过后自动生成采购订单。状态：草稿 → 已提交 → 已通过/已驳回。');

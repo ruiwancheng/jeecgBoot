@@ -139,7 +139,7 @@
   const currentVideoUrl = ref<string>('');
   const currentText = ref<string>('');
   const formText = ref<string>('');
-  const historyList = ref<any[]>([]);
+  const historyList = ref<any>([]);
   const isPresetApplying = ref(false);
   const elapsedSeconds = ref(0);
   const statusText = ref('任务已提交，排队中...');

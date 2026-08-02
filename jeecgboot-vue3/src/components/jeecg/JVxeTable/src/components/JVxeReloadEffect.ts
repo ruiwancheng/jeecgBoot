@@ -15,7 +15,7 @@ export default defineComponent({
     const innerEffect = ref(props.effect);
     // 应付同时多个特效
     const effectIdx = ref(0);
-    const effectList = ref<any[]>([]);
+    const effectList = ref<any>([]);
 
     watch(
       () => props.effect,

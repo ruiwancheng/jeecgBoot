@@ -73,7 +73,7 @@
   });
 
   const headers = getHeaders();
-  const fileList = ref<any[]>([]);
+  const fileList = ref<any>([]);
   const uploadGoOn = ref<boolean>(true);
   // refs
   const containerRef = ref();

@@ -129,7 +129,7 @@
     },
     setup() {
       //模型列表
-      const modalList = ref([]);
+      const modalList = ref<any>([]);
 
       const [registerModal, { openModal }] = useModal();
 

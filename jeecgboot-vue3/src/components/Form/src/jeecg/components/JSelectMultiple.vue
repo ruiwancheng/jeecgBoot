@@ -92,11 +92,11 @@
     emits: ['options-change', 'change', 'input', 'update:value'],
     setup(props, { emit }) {
       //console.info(props);
-      const emitData = ref<any[]>([]);
+      const emitData = ref<any>([]);
       const arrayValue = ref<any[]>(
         !props.value ? [] : Array.isArray(props.value) ? props.value : (props.value as string).split(props.spliter)
       );
-      const dictOptions = ref<any[]>([]);
+      const dictOptions = ref<any>([]);
       const attrs = useAttrs();
       const [state, , , formItemContext] = useRuleFormItem(props, 'value', 'change', emitData);
       // update-begin--author:liaozhiyang---date:20260204---for:【issues/9307】online下拉加载表字典需滚动加载

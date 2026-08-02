@@ -56,7 +56,7 @@
   const dataTable = ref('');
   const confirmLoading = ref(false);
   const isUpdate = ref(true);
-  const dataVersionList = ref([]);
+  const dataVersionList = ref<any>([]);
   let dataLog = reactive({});
   //表单赋值
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {

@@ -41,7 +41,7 @@
   //原始数据
   const oldDateSource = ref(mockData);
   //更改后的数据
-  const newDateSource = ref([]);
+  const newDateSource = ref<any>([]);
 
   /**
    * 拖动结束事件

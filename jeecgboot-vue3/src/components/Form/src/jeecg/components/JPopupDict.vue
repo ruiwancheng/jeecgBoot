@@ -72,7 +72,7 @@
       const code = props.dictCode.split(',')[0];
       const labelFiled = props.dictCode.split(',')[1];
       const valueFiled = props.dictCode.split(',')[2];
-      const selected = ref([]);
+      const selected = ref<any>([]);
       if (!code || !valueFiled || !labelFiled) {
         createMessage.error('popupDict参数未正确配置!');
       }

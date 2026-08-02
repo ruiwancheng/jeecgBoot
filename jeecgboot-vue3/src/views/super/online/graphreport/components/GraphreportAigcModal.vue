@@ -120,7 +120,7 @@ const handleCgformSearch = debounce(function (val: string) {
   queryOnlineCgform(val);
 }, 500);
 
-const cgformList = ref<any[]>([]);
+const cgformList = ref<any>([]);
 
 function queryOnlineCgform(keywords: string = '') {
   const queryWhere = keywords ? `table_txt like '%25${keywords}%25' and ` : '';

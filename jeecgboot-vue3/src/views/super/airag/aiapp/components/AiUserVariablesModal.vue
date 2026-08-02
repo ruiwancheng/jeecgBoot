@@ -93,7 +93,7 @@
         },
       ]);
 
-      const dataSource = ref<any[]>([]);
+      const dataSource = ref<any>([]);
 
       const [registerModal, { setModalProps, closeModal }] = useModalInner((data) => {
         // 如果传入了已有数据，进行初始化

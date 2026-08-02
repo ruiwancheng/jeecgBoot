@@ -199,22 +199,22 @@
   const { createMessage } = useMessage();
   // 搜索文本
   const searchText = ref('');
-  const breadcrumb = ref<any[]>([]);
+  const breadcrumb = ref<any>([]);
   // 部门树(整颗树)
-  const departTree = ref([]);
+  const departTree = ref<any>([]);
   // 当前部门树
-  const currentDepartTree = ref<any[]>([]);
+  const currentDepartTree = ref<any>([]);
   // 选中的部门节点
   const checkedDepartIds = ref<string[]>([]);
   // 当前部门用户
-  const currentDepartUsers = ref([]);
+  const currentDepartUsers = ref<any>([]);
   // 当前叶子部门分页状态
   const currentDeptId = ref('');
   const currentDeptPageNo = ref(1);
   const currentDeptPageSize = ref(50);
   const currentDeptTotal = ref(0);
   // 已选用户
-  const selectedUsers = ref<any[]>([]);
+  const selectedUsers = ref<any>([]);
   // 全选
   const currentDepartAllUsers = ref(false);
   // 搜索结构

@@ -69,8 +69,8 @@
   const basicTree = ref();
   const loading = ref<boolean>(false);
   //树的全部节点信息
-  const allTreeKeys = ref([]);
-  const treeData = ref<any[]>([]);
+  const allTreeKeys = ref<any>([]);
+  const treeData = ref<any>([]);
   const expandedKeys = ref<Array<any>>([]);
   const selectedKeys = ref<Array<any>>([]);
   const checkedKeys = ref<Array<any>>([]);

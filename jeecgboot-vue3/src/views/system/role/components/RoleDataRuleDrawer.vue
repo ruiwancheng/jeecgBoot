@@ -31,8 +31,8 @@
   // 声明数据
   const functionId = ref('');
   const roleId = ref('');
-  const dataRuleList = ref([]);
-  const dataRuleChecked = ref([]);
+  const dataRuleList = ref<any>([]);
+  const dataRuleChecked = ref<any>([]);
 
   /**
    * 数据

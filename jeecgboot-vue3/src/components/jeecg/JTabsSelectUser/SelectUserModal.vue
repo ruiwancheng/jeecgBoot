@@ -185,9 +185,9 @@
   const userGroupSearchText = ref('');
 
   // 原始数据缓存
-  const originalDepartData = ref<any[]>([]);
-  const originalPositionData = ref<any[]>([]);
-  const originalUserGroupData = ref<any[]>([]);
+  const originalDepartData = ref<any>([]);
+  const originalPositionData = ref<any>([]);
+  const originalUserGroupData = ref<any>([]);
   /*-----------------部门---begin----------------*/
   const departInfo = reactive({
     treeData: [] as any[],
@@ -208,7 +208,7 @@
     reload();
   }
   // 部门树展开的keys
-  const expandedDepartKeys = ref<any[]>([]);
+  const expandedDepartKeys = ref<any>([]);
 
   // 部门树展开事件
   function onDepartExpand(expandedKeys) {
@@ -511,7 +511,7 @@
   );
 
   /*-----------------用户列表--end-----------------*/
-  const selectedUserList = ref<any[]>([]);
+  const selectedUserList = ref<any>([]);
   //update-begin-author:liusq---date:2024-06-11--for: TV360X-1047 指定下一步操作人/抄送给，选人组件无法多选。
   watch(
     selectedRows,

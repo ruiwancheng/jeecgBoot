@@ -4,8 +4,8 @@ import { ref } from 'vue';
 export function useOnlineTest(data, methods, form: Nullable<FormActionType>) {
   // Online单元测试开关
   const aiTestMode = ref(false);
-  const aiTestTable = ref([]);
-  const aiTableList = ref([]);
+  const aiTestTable = ref<any>([]);
+  const aiTableList = ref<any>([]);
 
   function initVirtualData() {
   }

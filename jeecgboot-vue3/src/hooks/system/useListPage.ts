@@ -347,7 +347,7 @@ export function useListTable(tableProps: TableProps): [
   }
 
   // 当前选择的行
-  const selectedRowKeys = ref<any[]>([]);
+  const selectedRowKeys = ref<any>([]);
   // 选择的行记录
   const selectedRows = ref<Recordable[]>([]);
 

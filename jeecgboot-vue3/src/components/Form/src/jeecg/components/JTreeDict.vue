@@ -39,7 +39,7 @@
   const attrs = useAttrs();
   const emit = defineEmits(['change', 'update:value']);
 
-  const treeData = ref<any[]>([]);
+  const treeData = ref<any>([]);
   const treeValue = ref<any>(null);
 
   watch(

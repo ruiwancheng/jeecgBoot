@@ -25,7 +25,7 @@
   const attrs = useAttrs();
   const isUpdate = ref(true);
   const rowId = ref('');
-  const departOptions = ref([]);
+  const departOptions = ref<any>([]);
   let isFormDepartUser = false;
   //表单配置
   const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({

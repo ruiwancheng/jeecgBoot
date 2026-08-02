@@ -91,7 +91,7 @@
     },
     emits: ['options-change', 'change', 'update:value'],
     setup(props, { emit, refs }) {
-      const emitData = ref<any[]>([]);
+      const emitData = ref<any>([]);
       const attrs = useAttrs();
       const [state] = useRuleFormItem(props, 'value', 'change', emitData);
       //获取文件名
@@ -109,7 +109,7 @@
       //是否是初始化加载
       const initTag = ref<boolean>(true);
       //文件列表
-      let uploadFileList = ref<any[]>([]);
+      let uploadFileList = ref<any>([]);
       //预览图
       const previewImage = ref<string | undefined>('');
       //预览框状态
