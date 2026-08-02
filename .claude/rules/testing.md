@@ -65,3 +65,53 @@ Bug修复 → /debug 分析根因 → 判断gen-tests是否漏了此类场景
 ```
 
 规则存储：`.claude/rules/gen-tests-rules.json`，内置规则 + 自定义规则合并，自定义优先。
+
+## /evolve 增量规则（2026-07）
+
+### API 自动化测试关闭验证码（api-test-auth）
+
+**前置条件**（CI/API 测试）：`application-dev.yml` 设 `jeecg.login.enableLoginCaptcha: false`。
+
+**强制流程**：
+1. 跑测试前确认 dev 配置已关
+2. 测试完成后恢复（生产部署前）
+3. 不在测试环境禁用密码加密/Token 校验（只关验证码）
+
+详见 `learnings/2026-07-05-api-test-auth.md`。
+
+### E2E 登录流程（e2e-login）
+
+**强制**：
+- 登录接口用 `/sys/login` + 加密（不是 mock）
+- 登录后从响应或 `sys/getUserInfo` 拿 token
+- 用 `loginViaApi(page, path?)` helper（已封装，含竞态重试）
+- Token 注入到 `localStorage[<prefix>COMMON__LOCAL__KEY__].value.TOKEN__`（双层包装）
+
+详见 `learnings/2026-07-05-e2e-login.md` + `frontend.md`（JeecgBoot token 双层包装章节）。
+
+### E2E 登录闸门原则（e2e-login-gate-first）
+
+**铁律**：登录是 E2E 闸门。**登录注入不通 → 所有用例死在第一步 → 下游漂移被掩盖**。
+
+**修复顺序**：
+1. 先修通公共登录（`harness/e2e/mes/helpers/auth.ts`）
+2. 全量跑暴露真失败（**失败数"变多"是好转**——之前被登录失败掩盖）
+3. 失败全在同一步 → 查登录/导航
+4. 失败分散 → 内容漂移
+
+详见 `learnings/2026-07-28-e2e-login-gate-first.md` + `frontend.md` 存量 E2E 修复章节。
+
+### 登录超时诊断（login-timeout-diagnosis）
+
+**症状**：登录接口返回 200 但前端跳登录页。
+
+**5 步定位**：
+1. **检查 dev tools Network 响应**：`code: 0` vs `code: 500`？
+2. **检查响应 token 字段**：`result.token` 还是 `result.TOKEN__`？
+3. **检查 token 注入路径**：`localStorage[<prefix>COMMON__LOCAL__KEY__].value.TOKEN__.value`（双层包装）
+4. **检查路由守卫读取**：`getLocal` 读 `.value`，不是直接读
+5. **检查 token 过期时间**：`expire` 字段 < 当前时间 → 重新登录
+
+**反模式**：直接报"后端问题"或"前端问题"——跳过了真正的根因（中间层 wrapper 错误）。
+
+详见 `learnings/2026-07-06-login-timeout-diagnosis.md`。
