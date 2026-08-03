@@ -47,6 +47,9 @@ rules:
         - "**/*Test.java"
         - "**/target/**"
         - "**/jmreport/**"
+        # 2026-08-04: 排除标品 + customer-demo 模块（customer-demo 缺权限注解为已知遗留,标品禁改）
+        - "jeecg-module-demo/**"
+        - "customer-demo/**"
 
   - id: mes-menu-registry-duplicate-addperms
     languages: [java]
