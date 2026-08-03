@@ -105,8 +105,14 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_production_order", "mes_manufacturing", "生产订单", "/project/mes/manufacturing/order", "project/mes/manufacturing/order/index", "MesProductionOrder").sortNo(2.0).icon("ant-design:file-text-outlined"));
         addPerms(list, "mes:productionOrder:", "mes_production_order", new String[]{"list","add","edit","delete","deleteBatch","export"});
         list.add(MesMenuDefinition.leaf("mes_production_picking", "mes_manufacturing", "生产领料", "/project/mes/manufacturing/picking", "project/mes/manufacturing/picking/index", "MesProductionPicking").sortNo(3.0).icon("ant-design:export-outlined"));
+        //update-begin---author:patch-2026-08-04---for: 补齐生产领料权限码（修复 P1）-----------
+        addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:patch-2026-08-04---for: 补齐生产领料权限码-----------
         addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
         list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
+        //update-begin---author:patch-2026-08-04---for: 补齐完工入库权限码（修复 P1）-----------
+        addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:patch-2026-08-04---for: 补齐完工入库权限码-----------
         addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
         //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-菜单注册-----------

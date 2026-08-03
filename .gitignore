@@ -45,3 +45,6 @@ hermes/sessions/
 deploy-server/node_modules/
 .last-deploy-commit
 .last-verify
+
+# Windows reserved filename / accidental redirection artifact
+nul

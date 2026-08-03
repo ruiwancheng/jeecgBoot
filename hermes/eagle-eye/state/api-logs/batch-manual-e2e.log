@@ -1,0 +1,31 @@
+
+===== E2 端到端：createBatchWithManualNo =====
+
+matA: MAT-0062 matB: MAT-0052
+  ✅ S1 手工录入 batchNo: 添加成功
+  ✅ S2a 第一次创建: 添加成功
+  ✅ S2b 同物料同 batchNo 重复: 批次号 DUP-1785698398852 在物料 MAT-0062 下已存在，请更换批次号
+  ✅ S3a A 物料 同号: 添加成功
+  ✅ S3b B 物料 同号(允许): 添加成功
+  ✅ S4 batchNo 为空(自动生成兜底): 添加成功
+  ✅ S5 batchNo 超长(51字符): 生产批次号长度不能超过50个字符
+  ✅ S6 batchNo 空串(自动生成兜底): 添加成功
+  ✅ S7 测试批次记录可见: 找到 16 条测试记录
+  - batchNo=DUP-1785698398852 materialId=a6cf2b qty=5
+  - batchNo=TEST-A-1785698398852 materialId=a6cf2b qty=10
+  - batchNo=SHARED-1785698398852 materialId=a6cf2b qty=5
+  - batchNo=SHARED-1785698398852 materialId=876ed3 qty=5
+  - batchNo=SHARED-1785675932302 materialId=876ed3 qty=5
+  - batchNo=DUP-1785675932302 materialId=a6cf2b qty=5
+  - batchNo=TEST-A-1785675932302 materialId=a6cf2b qty=10
+  - batchNo=SHARED-1785675932302 materialId=a6cf2b qty=5
+  - batchNo=TEST-A-1785675834617 materialId=a6cf2b qty=10
+  - batchNo=SHARED-1785675834617 materialId=876ed3 qty=5
+  - batchNo=DUP-1785675834617 materialId=a6cf2b qty=5
+  - batchNo=SHARED-1785675834617 materialId=a6cf2b qty=5
+  - batchNo=TEST-A-1785675517708 materialId=a6cf2b qty=10
+  - batchNo=DUP-1785675517708 materialId=a6cf2b qty=5
+  - batchNo=SHARED-1785675517708 materialId=a6cf2b qty=5
+  - batchNo=SHARED-1785675517708 materialId=876ed3 qty=5
+
+===== E2 createBatchWithManualNo: 9 通过, 0 失败 =====

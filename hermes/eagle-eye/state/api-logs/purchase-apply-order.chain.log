@@ -1,0 +1,58 @@
+✅ 登录成功
+
+━━━ 链路测试: 采购申请 → 采购订单 ━━━
+
+✅ fixture: 供应商=SUP_T_1785698409834 物料=MAT_T_1785698409834a/MAT_T_1785698409834b
+
+Step 1: 创建申请
+  ✅ 创建申请: 添加成功
+  ✅ 申请已出现在列表: 
+  ✅ [链路] 新申请状态=草稿(1): 实际=1
+
+Step 2: 草稿申请不可用于生成订单
+  ✅ [链路] 草稿申请被拦截: 仅已审核的申请可生成订单
+
+Step 3: 审核申请
+  ❌ 审核申请: 交货日期不能早于订单日期
+     请求: PUT /mes/purchase/apply/audit?id=2083996294153543681
+     响应: {"success":false,"message":"交货日期不能早于订单日期","code":500,"result":null,"timestamp":1785698410002}
+  ❌ [链路] 审核后状态=已审核(3): 实际=1
+     请求: GET /mes/purchase/apply/queryById?id=2083996294153543681
+     响应: {"success":true,"message":"","code":200,"result":{"id":"2083996294153543681","code":"CHAIN-A-1785698409834","deptId":"采购部","supplierId":"2083996293914468353","purchaseType":null,"applicantId":"测试员","applyDate":"2026-08-02","requiredDate":"2026-08-03"
+
+Step 4: 已审核申请加载到订单
+  ❌ 加载明细: code=500
+     请求: GET /mes/purchase/order/loadApplyItemsForOrder?applyId=2083996294153543681
+     响应: {"success":false,"message":"仅已审核的申请可生成订单","code":500,"result":null,"timestamp":1785698410014}
+  ❌ [链路] 返回2行明细: 实际=undefined
+     请求: GET /mes/purchase/order/loadApplyItemsForOrder?applyId=2083996294153543681
+     响应: {"success":false,"message":"仅已审核的申请可生成订单","code":500,"result":null,"timestamp":1785698410014}
+  ❌ [链路] 第1行物料=m1: 
+     请求: GET /mes/purchase/order/loadApplyItemsForOrder?applyId=2083996294153543681
+     响应: {"success":false,"message":"仅已审核的申请可生成订单","code":500,"result":null,"timestamp":1785698410014}
+  ❌ [链路] 第1行数量=50: 实际=undefined
+     请求: GET /mes/purchase/order/loadApplyItemsForOrder?applyId=2083996294153543681
+     响应: {"success":false,"message":"仅已审核的申请可生成订单","code":500,"result":null,"timestamp":1785698410014}
+  ❌ [链路] 第2行物料=m2: 
+     请求: GET /mes/purchase/order/loadApplyItemsForOrder?applyId=2083996294153543681
+     响应: {"success":false,"message":"仅已审核的申请可生成订单","code":500,"result":null,"timestamp":1785698410014}
+
+Step 5: 用申请明细创建订单
+  ✅ 从申请明细创建订单: 添加成功
+  ✅ 订单已创建: 
+
+Step 6: 审核订单
+  ✅ 审核订单: 审核成功
+  ✅ [链路] 订单状态=已确认(3): 实际=3
+  ❌ [链路] 申请状态仍为已审核(3)，未被订单联动: 实际=1
+     请求: GET /mes/purchase/apply/queryById?id=2083996294153543681
+     响应: {"success":true,"message":"","code":200,"result":{"id":"2083996294153543681","code":"CHAIN-A-1785698409834","deptId":"采购部","supplierId":"2083996293914468353","purchaseType":null,"applicantId":"测试员","applyDate":"2026-08-02","requiredDate":"2026-08-03"
+
+Step 7: 订单反审核
+  ✅ 反审核订单: 反审核成功
+  ✅ [链路] 反审核后订单状态=草稿(1): 实际=1
+
+━━━ 清理 ━━━
+✅ 清理完成
+
+===== 链路: 申请→订单: 10 通过, 8 失败 =====

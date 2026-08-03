@@ -1,0 +1,60 @@
+
+===== 业务链路测试: 采购→入库→付款 =====
+
+--- 0. Setup ---
+  ✅ ✅ 0.1 创建仓库: id=2084000290230542337 code=WH_T_699362693237
+  ✅ ✅ 0.2 创建物料: id=2084000290293456898 code=MAT_T_699362693237
+  ✅ ✅ 0.3 创建供应商: id=2084000290352177153 code=SUP_T_699362693237
+  ✅ ✅ 0.4 创建并审核期初入库（100 个）: id=2084000290410897409
+  ✅ ✅ 0.5 记录期初库存: qty=100
+
+--- 1. 创建采购申请 ---
+  ✅ ✅ 1.1 创建采购申请: id=2084000290528337922
+
+--- 2. 审核采购申请 ---
+  ✅ ✅ 2.1 审核申请: msg=审核成功，已自动生成采购订单
+  ✅ ✅ 2.2 申请状态=已审核(3): status=3
+
+--- 3. 加载申请明细 + 创建采购订单 ---
+  ✅ ✅ 3.1 加载申请明细: items=1
+  ✅ ✅ 3.2 创建采购订单: id=2084000290700304385
+
+--- 4. 审核采购订单 ---
+  ✅ ✅ 4.1 审核订单: msg=审核成功
+  ✅ ✅ 4.2 订单已审核: status=3
+
+--- 5. 加载订单明细 + 创建采购入库 ---
+  ✅ ✅ 5.1 加载订单明细: items=1
+  ✅ ✅ 5.2 创建采购入库: id=2084000290821939201
+
+--- 6. 审核采购入库（库存增加）---
+  ❌ ❌ 6.1 审核入库: code=500 msg=
+### Error updating database.  Cause: java.sql.SQLException: Field 'supplier_id
+     请求: PUT /mes/purchase/receipt/audit?id=2084000290821939201
+     响应: {"success":false,"message":"\r\n### Error updating database.  Cause: java.sql.SQLException: Field 'supplier_id' doesn't have a default value\r\n### The error may exist in org/jeecg/modules/mes/finance/payable/mapper/MesPayableMapper.java (best guess)
+
+--- 7. 数据完整性校验 ---
+  ❌ ❌ 7.1 库存增加: 期望 110 (期初100+入库10), 实际 100
+     请求: GET /mes/warehouse/inventory/list?warehouseId=2084000290230542337&materialId=2084000290293456898&pageSize=1
+     响应: {"success":true,"message":"","code":200,"result":{"records":[{"warehouse_name":"测试仓库","inventory_amount":1000,"moving_avg_cost":10,"material_id":"2084000290293456898","id":"047196f2d7c94593b96838b5f499bb98","current_qty":100,"material_name":"测试物料","w
+  ✅ ✅ 7.2 库存台账有入库记录: 总入库=100
+  ❌ ❌ 7.3 库存台账入库不足: 期望 110, 台账入库=100
+     请求: GET /mes/warehouse/ledger/list?warehouseId=2084000290230542337&materialId=2084000290293456898&pageSize=50
+     响应: {"success":true,"message":"","code":200,"result":{"records":[{"id":"2084000290478006274","materialId":"2084000290293456898","warehouseId":"2084000290230542337","beginningQty":0,"inQty":100,"outQty":0,"endingQty":100,"unitCost":10,"inAmount":1000,"out
+
+--- 8. 查询应付单 ---
+  ⚠️ 未找到与 SUFFIX=699362693237 关联的应付单，最近 3 条: AP-CHAIN-R4-1785698410334/2085, AP-CHAIN-R2-1785698410334/965, AP-PR20260802-0006/2000
+  ✅ ✅ 8.1 应付单查询接口可达: total=33
+
+--- 9. 创建付款单 ---
+  ✅ ✅ 9.1 创建付款单: id=2084000297365053441 amount=120
+
+--- 10. 付款后续校验 ---
+  ✅ ✅ 10.1 付款单存在: code=PAY-699362693237
+
+--- 11. Cleanup ---
+  ✅ ✅ 11.1 清理测试数据: 全部完成
+
+===== 采购链路：19 通过, 3 失败 =====
+===== 通过率：86.4% =====
+

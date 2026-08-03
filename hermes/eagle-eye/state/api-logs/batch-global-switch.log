@@ -1,0 +1,8 @@
+
+===== 切片 D：4 个 Service 集成总开关测试 =====
+
+  ❌ 准备：找 status=4 采购订单: 无可用订单，请先 seed
+     请求: GET /mes/purchase/order/list?pageNo=1&pageSize=10&status=4
+     响应: {"success":true,"message":"","code":200,"result":{"records":[],"total":0,"size":10,"current":1,"pages":0},"timestamp":1785698398523}
+
+===== 切片 D: 0 通过, 1 失败 =====
