@@ -44,7 +44,7 @@ public class MesAccountSubjectController extends JeecgController<MesAccountSubje
     public Result<MesAccountSubject> queryById(@RequestParam String id) { MesAccountSubject e = service.getById(id); return e != null ? Result.ok(e) : Result.error("科目不存在"); }
 
     @PostMapping("/add") @RequiresPermissions("mes:subject:add")
-    public Result<String> add(@RequestBody MesAccountSubject entity) { service.save(entity); return Result.ok("添加成功"); }
+    public Result<String> add(@RequestBody MesAccountSubject entity) { if (entity == null) return Result.error("请求体不能为空"); service.save(entity); return Result.ok("添加成功"); }
 
     @PutMapping("/edit") @RequiresPermissions("mes:subject:edit")
     public Result<String> edit(@RequestBody MesAccountSubject entity) { service.updateById(entity); return Result.ok("编辑成功"); }
