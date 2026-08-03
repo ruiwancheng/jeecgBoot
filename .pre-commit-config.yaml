@@ -3,22 +3,17 @@
 # 安装: pip install pre-commit && pre-commit install
 # 手动跑: pre-commit run --all-files
 #
-# 注意: trivy(依赖 CVE 扫描)不在此文件中 - 它的数据库下载会让 commit hook 慢到不可用
-# trivy 在 GitHub Actions security-regression.yml 的 static-security job 中跑
+# 本地 hook 故意精简:
+#   - 只跑纯 Python 的 semgrep(快,无网络依赖)
+#   - gitleaks 留给 GitHub Actions(下载 Go 依赖太慢)
+#   - trivy 留给 GitHub Actions(数据库下载太慢)
+#
+# 完整检查在 .github/workflows/security-regression.yml 中跑
 
 repos:
   # ============================================================
-  # gitleaks: 拦截真实凭据提交
-  # ============================================================
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
-    hooks:
-      - id: gitleaks
-        args: ['--redact']
-
-  # ============================================================
   # semgrep: 项目特定 SAST 规则
-  # 防御 CWE-862 授权绕过 + 硬编码密钥
+  # 防御 CWE-862 授权绕过 + 硬编码密钥 + 注入
   # ============================================================
   - repo: https://github.com/semgrep/semgrep
     rev: v1.172.0
