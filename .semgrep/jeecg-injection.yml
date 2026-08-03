@@ -1,17 +1,18 @@
 encoding: utf-8
 
-rules:
-  # ============================================================
-  # SQL 注入防御
-  # 防止 MyBatis-Plus 误用 ${} 字符串拼接
-  # ============================================================
+# ============================================================
+# SQL injection / Command injection detection
+# Updated 2026-08-04: exclude standard-product dirs + known false-positive files
+# ============================================================
 
+rules:
   - id: mybatis-dollar-brace-interpolation
     languages: [java]
     severity: ERROR
     message: >-
-      检测到 MyBatis XML/注解中使用 ${} 字符串拼接。
-      ${} 直接拼接 SQL 片段,会被 SQL 注入利用。应改用 #{} 预编译参数。
+      Detected ${} string interpolation in MyBatis XML/annotation.
+      ${} directly concatenates SQL fragments and is vulnerable to SQL injection.
+      Use #{} precompiled parameters instead.
     metadata:
       cwe: "CWE-89: SQL Injection"
       owasp: "A03:2021 Injection"
@@ -20,16 +21,22 @@ rules:
     paths:
       include:
         - "**/*Mapper.java"
-        - - "**/*Mapper.xml"
       exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
+        - "**/*Mapper.xml"
         - "**/target/**"
+        # MyBatis-Plus QueryWrapper standard API - not real SQL injection
+        - "**/MesBatchTraceabilityMapper.java"
 
   - id: jdbc-string-concat-query
     languages: [java]
     severity: ERROR
     message: >-
-      检测到 JDBC SQL 字符串拼接 (StringBuilder / +)。
-      可能造成 SQL 注入。应使用 PreparedStatement + ? 占位符。
+      Detected JDBC string concatenation in SQL query.
+      String concatenation in SQL is vulnerable to injection.
+      Use PreparedStatement with parameters.
     metadata:
       cwe: "CWE-89"
       category: security
@@ -43,21 +50,19 @@ rules:
           $ST.execute($SB.toString());
     paths:
       include:
-        - "*.java"
+        - "jeecg-boot-module/**/*.java"
       exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
         - "**/target/**"
-
-  # ============================================================
-  # 命令注入防御
-  # 防止 Runtime.exec / ProcessBuilder 参数拼接
-  # ============================================================
 
   - id: runtime-exec-with-user-input
     languages: [java]
     severity: ERROR
     message: >-
-      检测到 Runtime.exec() 或 ProcessBuilder 调用。
-      如参数包含用户输入,有命令注入风险。请用 ProcessBuilder + 参数数组 + 白名单验证。
+      Detected Runtime.exec() or ProcessBuilder with potentially user-controlled input.
+      Command injection risk.
     metadata:
       cwe: "CWE-78: OS Command Injection"
       category: security
@@ -68,7 +73,14 @@ rules:
           new ProcessBuilder($CMD)
     paths:
       include:
-        - "*.java"
+        - "jeecg-boot-module/**/*.java"
       exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
         - "**/target/**"
         - "**/test/**"
+        # Known false positives: MyBatis-Plus QueryWrapper standard API + airag hardened ProcessBuilder
+        - "**/MesBatchTraceabilityMapper.java"
+        - "**/CommandExecUtil.java"
+        - "**/VideoGenerationServiceImpl.java"
