@@ -3,38 +3,33 @@
 # 安装: pip install pre-commit && pre-commit install
 # 手动跑: pre-commit run --all-files
 #
-# 本地 hook 故意精简:
-#   - 只跑纯 Python 的 semgrep(快,无网络依赖)
-#   - gitleaks 留给 GitHub Actions(下载 Go 依赖太慢)
-#   - trivy 留给 GitHub Actions(数据库下载太慢)
-#
-# 完整检查在 .github/workflows/security-regression.yml 中跑
+# 设计原则:本地只跑纯 Python 的 semgrep,无网络依赖、无 Go toolchain
+# gitleaks / trivy 留给 GitHub Actions(数据库下载太慢)
+
+default_language_version:
+  python: python3
 
 repos:
   # ============================================================
   # semgrep: 项目特定 SAST 规则
-  # 防御 CWE-862 授权绕过 + 硬编码密钥 + 注入
+  # 使用 repo: local 直接调本地 semgrep,避免 pre-commit 下载完整 Python 环境
+  # 安装要求: semgrep 已通过 'uv tool install semgrep' 或 'pip install semgrep' 装好
   # ============================================================
-  - repo: https://github.com/semgrep/semgrep
-    rev: v1.172.0
+  - repo: local
     hooks:
-      - id: semgrep
-        name: semgrep-jeecg-authorization
-        entry: semgrep --config .semgrep/jeecg-authorization.yml --error --metrics=off --quiet
-        language: python
+      - id: semgrep-jeecg-authorization
+        name: semgrep-jeecg-authorization (CWE-862)
+        entry: bash -c 'semgrep --config .semgrep/jeecg-authorization.yml --error --metrics=off --quiet'
+        language: system
         types_or: [java]
         pass_filenames: false
-        files: '\.java$'
-      - id: semgrep
-        name: semgrep-jeecg-secrets
-        entry: semgrep --config .semgrep/jeecg-secrets.yml --error --metrics=off --quiet
-        language: python
+      - id: semgrep-jeecg-secrets
+        name: semgrep-jeecg-secrets (hardcoded creds)
+        entry: bash -c 'semgrep --config .semgrep/jeecg-secrets.yml --error --metrics=off --quiet'
+        language: system
         pass_filenames: false
-        files: '\.(yml|yaml|properties)$'
-      - id: semgrep
-        name: semgrep-jeecg-injection
-        entry: semgrep --config .semgrep/jeecg-injection.yml --error --metrics=off --quiet
-        language: python
-        types_or: [java]
+      - id: semgrep-jeecg-injection
+        name: semgrep-jeecg-injection (SQLi / cmd injection)
+        entry: bash -c 'semgrep --config .semgrep/jeecg-injection.yml --error --metrics=off --quiet'
+        language: system
         pass_filenames: false
-        files: '\.java$'
