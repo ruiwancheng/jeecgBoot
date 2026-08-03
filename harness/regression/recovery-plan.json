@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "name": "MES regression recovery 2026-08-04",
+  "report_path": "hermes/eagle-eye/reports/2026-08-04/resilient-regression-recovery.md",
+  "environment": {
+    "HARNESS_BASE": "http://127.0.0.1:8080/jeecg-boot",
+    "E2E_API_BASE": "http://127.0.0.1:8080/jeecg-boot",
+    "E2E_UI_BASE": "http://127.0.0.1:3100",
+    "PLAYWRIGHT_BASE_URL": "http://127.0.0.1:3100"
+  },
+  "health": {
+    "backend": {
+      "url": "http://127.0.0.1:8080/jeecg-boot/sys/getEncryptedString",
+      "timeout_seconds": 5,
+      "contains": "success"
+    },
+    "frontend": {
+      "url": "http://127.0.0.1:3100/",
+      "timeout_seconds": 5,
+      "contains": "<"
+    }
+  },
+  "services": [
+    {
+      "id": "backend",
+      "max_restarts": 2,
+      "startup_timeout_seconds": 180,
+      "start": {
+        "cwd": ".",
+        "command": [
+          "java",
+          "-jar",
+          "jeecg-boot/jeecg-module-system/jeecg-system-start/target/jeecg-system-start-3.9.2.jar",
+          "--spring.profiles.active=dev",
+          "--spring.flyway.enabled=false"
+        ]
+      }
+    },
+    {
+      "id": "frontend",
+      "max_restarts": 2,
+      "startup_timeout_seconds": 60,
+      "start": {
+        "cwd": "jeecgboot-vue3",
+        "command": ["pnpm", "dev", "--host", "127.0.0.1"]
+      }
+    }
+  ],
+  "slices": [
+    {
+      "id": "0-build",
+      "name": "完整构建后端并安装本地依赖",
+      "kind": "build",
+      "cwd": "jeecg-boot",
+      "command": ["C:/Users/Administrator/apache-maven-3.9.16/bin/mvn.cmd", "clean", "install", "-DskipTests"],
+      "timeout_seconds": 1800,
+      "requires": [],
+      "continue_on_failure": false
+    },
+    {
+      "id": "1.1",
+      "name": "采购申请到订单",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/purchase-apply-order.chain.test.js"],
+      "timeout_seconds": 240,
+      "requires": ["backend"]
+    },
+    {
+      "id": "1.2",
+      "name": "采购订单到入库",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/purchase-order-receipt.chain.test.js"],
+      "timeout_seconds": 240,
+      "requires": ["backend"]
+    },
+    {
+      "id": "1.3",
+      "name": "采购入库到付款",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/purchase-payment-flow.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "2.1",
+      "name": "销售收发货基础链路",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/sales-receipt-flow.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "3.2",
+      "name": "生产链路编排",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/manufacturing-chain.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "4.2",
+      "name": "财务链路编排",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/finance-chain.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "5.3",
+      "name": "库存链路编排",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/warehouse-chain.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "6.2",
+      "name": "批次链路编排",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": ["node", "tests/chains/batch-chain.test.js"],
+      "timeout_seconds": 300,
+      "requires": ["backend"]
+    },
+    {
+      "id": "7.2-global-switch",
+      "name": "批次总开关模块",
+      "kind": "module",
+      "cwd": "harness",
+      "command": ["node", "tests/modules/batch-global-switch.test.js"],
+      "timeout_seconds": 240,
+      "requires": ["backend"]
+    },
+    {
+      "id": "7.2-manual",
+      "name": "批次手工录入模块",
+      "kind": "module",
+      "cwd": "harness",
+      "command": ["node", "tests/modules/batch-manual-e2e.test.js"],
+      "timeout_seconds": 240,
+      "requires": ["backend"]
+    },
+    {
+      "id": "8.1",
+      "name": "核心三页面 E2E",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "e2e/mes/basic.spec.ts",
+        "e2e/mes/purchase.spec.ts",
+        "e2e/mes/sales-order.spec.ts",
+        "--workers=1"
+      ],
+      "timeout_seconds": 600,
+      "requires": ["backend", "frontend"]
+    },
+    {
+      "id": "8.2",
+      "name": "生产财务盘点三页面 E2E",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "e2e/mes/manufacturing.spec.ts",
+        "e2e/mes/finance.spec.ts",
+        "e2e/mes/stocktake.spec.ts",
+        "--workers=1"
+      ],
+      "timeout_seconds": 600,
+      "requires": ["backend", "frontend"]
+    },
+    {
+      "id": "8.3",
+      "name": "批次六页面 E2E",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "e2e/mes/materialBatch.spec.ts",
+        "e2e/mes/materialBatchEnabledSave.spec.ts",
+        "e2e/mes/purchaseReceiptBatch.spec.ts",
+        "e2e/mes/other-stock-in.spec.ts",
+        "e2e/mes/commonSetting.spec.ts",
+        "e2e/mes/traceabilityBatch.spec.ts",
+        "--workers=1"
+      ],
+      "timeout_seconds": 900,
+      "requires": ["backend", "frontend"]
+    }
+  ]
+}

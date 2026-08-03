@@ -36,6 +36,7 @@ jeecg-boot/jeecg-module-system/jeecg-system-start/config/
 # 根目录本地 settings（个人 MCP 配置）
 settings.local.json
 harness/test-results/
+harness/.regression-runs/
 ## hermes engineering artifacts
 hermes/logs/
 hermes/sessions/
