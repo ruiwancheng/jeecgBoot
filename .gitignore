@@ -48,3 +48,8 @@ deploy-server/node_modules/
 
 # Windows reserved filename / accidental redirection artifact
 nul
+
+# Python test artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
