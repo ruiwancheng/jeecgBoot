@@ -74,6 +74,16 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         //update-begin---author:ruisuyun---date:2026-07-22---for: P0修复-saveWithItems补充delFlag防护(与updateWithItems对齐)-----------
         entity.setDelFlag(null);
         //update-end---author:ruisuyun---date:2026-07-22---for: P0修复-saveWithItems补充delFlag防护-----------
+        // 【P0修复-slice-1.3】入库单 supplierId 兜底
+        // 测试/历史数据可能不传 supplierId; 从关联的 purchaseOrderId 反查订单的 supplierId。
+        // 此兜底是后续 audit() 路径生成 MesPayable 必须 supplier_id NOT NULL 的前置条件。
+        if (!org.springframework.util.StringUtils.hasText(entity.getSupplierId())
+                && org.springframework.util.StringUtils.hasText(entity.getPurchaseOrderId())) {
+            MesPurchaseOrder po = purchaseOrderMapper.selectById(entity.getPurchaseOrderId());
+            if (po != null && org.springframework.util.StringUtils.hasText(po.getSupplierId())) {
+                entity.setSupplierId(po.getSupplierId());
+            }
+        }
         validateReceipt(entity);
         if (entity.getStatus() == null) entity.setStatus("1");
         QueryWrapper<MesPurchaseReceipt> activeQw = new QueryWrapper<>();
@@ -230,7 +240,20 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         // 应付（税额取订单行税率，不再硬编码）
         MesPayable ap = new MesPayable();
         ap.setCode("AP-" + e.getCode());
+        // 【P0修复-slice-1.3】应付单 supplier_id NOT NULL 兜底
+        // 测试或历史数据可能让 receipt.getSupplierId() 为 null;
+        // 从关联的 purchaseOrderId 反查 c_mes_purchase_order.supplier_id。
+        if (!org.springframework.util.StringUtils.hasText(e.getSupplierId())
+                && org.springframework.util.StringUtils.hasText(e.getPurchaseOrderId())) {
+            MesPurchaseOrder po = purchaseOrderMapper.selectById(e.getPurchaseOrderId());
+            if (po != null && org.springframework.util.StringUtils.hasText(po.getSupplierId())) {
+                e.setSupplierId(po.getSupplierId());
+            }
+        }
         ap.setSupplierId(e.getSupplierId());
+        if (!org.springframework.util.StringUtils.hasText(ap.getSupplierId())) {
+            throw new JeecgBootException("入库单缺少供应商，请检查上游采购订单是否已保存");
+        }
         ap.setSourceType("采购入库");
         ap.setSourceBillId(e.getId());
         ap.setSourceBillNo(e.getCode());
