@@ -477,7 +477,23 @@ python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
     write_text_atomic(local_report, content)
     configured = ctx.manifest.get("report_path")
     if configured:
-        write_text_atomic((REPO_ROOT / configured).resolve(), content)
+        target = (REPO_ROOT / configured).resolve()
+        try:
+            write_text_atomic(target, content)
+        except OSError as error:
+            # Shared report delivery is best-effort. Never let a locked report file
+            # terminate the runner after the durable run-local checkpoint is safe.
+            delivery_error = (
+                f"{now_iso()} shared report write failed: {type(error).__name__}: {error}\n"
+                f"local report: {local_report}\n"
+            )
+            try:
+                with (ctx.run_dir / "report-delivery-error.log").open("a", encoding="utf-8") as stream:
+                    stream.write(delivery_error)
+                ctx.state["report_delivery_error"] = delivery_error.strip()
+                ctx.save()
+            except OSError:
+                pass
     return content
 
 
