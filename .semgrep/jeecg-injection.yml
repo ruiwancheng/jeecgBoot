@@ -1,0 +1,74 @@
+encoding: utf-8
+
+rules:
+  # ============================================================
+  # SQL 注入防御
+  # 防止 MyBatis-Plus 误用 ${} 字符串拼接
+  # ============================================================
+
+  - id: mybatis-dollar-brace-interpolation
+    languages: [java]
+    severity: ERROR
+    message: >-
+      检测到 MyBatis XML/注解中使用 ${} 字符串拼接。
+      ${} 直接拼接 SQL 片段,会被 SQL 注入利用。应改用 #{} 预编译参数。
+    metadata:
+      cwe: "CWE-89: SQL Injection"
+      owasp: "A03:2021 Injection"
+      category: security
+    pattern-regex: '\$\{[^}]+\}'
+    paths:
+      include:
+        - "**/*Mapper.java"
+        - - "**/*Mapper.xml"
+      exclude:
+        - "**/target/**"
+
+  - id: jdbc-string-concat-query
+    languages: [java]
+    severity: ERROR
+    message: >-
+      检测到 JDBC SQL 字符串拼接 (StringBuilder / +)。
+      可能造成 SQL 注入。应使用 PreparedStatement + ? 占位符。
+    metadata:
+      cwe: "CWE-89"
+      category: security
+    pattern-either:
+      - pattern: |
+          String $Q = $P1 + $P2;
+          $ST.execute($Q);
+      - pattern: |
+          StringBuilder $SB = new StringBuilder();
+          $SB.append($X);
+          $ST.execute($SB.toString());
+    paths:
+      include:
+        - "*.java"
+      exclude:
+        - "**/target/**"
+
+  # ============================================================
+  # 命令注入防御
+  # 防止 Runtime.exec / ProcessBuilder 参数拼接
+  # ============================================================
+
+  - id: runtime-exec-with-user-input
+    languages: [java]
+    severity: ERROR
+    message: >-
+      检测到 Runtime.exec() 或 ProcessBuilder 调用。
+      如参数包含用户输入,有命令注入风险。请用 ProcessBuilder + 参数数组 + 白名单验证。
+    metadata:
+      cwe: "CWE-78: OS Command Injection"
+      category: security
+    pattern-either:
+      - pattern: |
+          Runtime.getRuntime().exec($CMD)
+      - pattern: |
+          new ProcessBuilder($CMD)
+    paths:
+      include:
+        - "*.java"
+      exclude:
+        - "**/target/**"
+        - "**/test/**"

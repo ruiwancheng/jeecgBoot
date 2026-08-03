@@ -1,0 +1,53 @@
+# Pre-commit hooks for JeecgBoot
+# 由 2026-08-03 渗透测试复盘后沉淀
+# 安装: pip install pre-commit && pre-commit install
+# 手动跑: pre-commit run --all-files
+
+repos:
+  # ============================================================
+  # gitleaks: 拦截真实凭据提交
+  # ============================================================
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args: ['--redact']
+
+  # ============================================================
+  # semgrep: 项目特定 SAST 规则
+  # 防御 CWE-862 授权绕过 + 硬编码密钥
+  # ============================================================
+  - repo: https://github.com/semgrep/semgrep
+    rev: v1.172.0
+    hooks:
+      - id: semgrep
+        name: semgrep-jeecg-authorization
+        entry: semgrep --config .semgrep/jeecg-authorization.yml --error --metrics=off
+        language: python
+        types_or: [java]
+        pass_filenames: false
+        files: '\.java$'
+      - id: semgrep
+        name: semgrep-jeecg-secrets
+        entry: semgrep --config .semgrep/jeecg-secrets.yml --error --metrics=off
+        language: python
+        pass_filenames: false
+        files: '\.(yml|yaml|properties)$'
+      - id: semgrep
+        name: semgrep-jeecg-injection
+        entry: semgrep --config .semgrep/jeecg-injection.yml --error --metrics=off
+        language: python
+        types_or: [java]
+        pass_filenames: false
+        files: '\.java$'
+
+  # ============================================================
+  # trivy: 依赖 CVE 扫描
+  # ============================================================
+  - repo: https://github.com/aquasecurity/trivy
+    rev: 0.50.0
+    hooks:
+      - id: trivy-fs
+        name: trivy-fs-sca
+        args: ['fs', '--scanners=vuln', '--severity=CRITICAL,HIGH', '--exit-code=1', '--no-progress', '.']
+        pass_filenames: false

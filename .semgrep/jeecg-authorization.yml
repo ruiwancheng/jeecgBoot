@@ -1,0 +1,76 @@
+encoding: utf-8
+rules:
+  # ============================================================
+  # JeecgBoot 项目特定 SAST 规则
+  # 由 2026-08-03 渗透测试复盘后沉淀
+  # 防御 CWE-862 Missing Authorization
+  # ============================================================
+
+  # 规则 1: 写方法(@PostMapping / @PutMapping / @DeleteMapping) 缺少 @RequiresPermissions
+  - id: mes-restcontroller-write-method-needs-permission
+    languages: [java]
+    severity: ERROR
+    message: >-
+      写操作方法 (@PostMapping / @PutMapping / @DeleteMapping) 缺少 @RequiresPermissions 注解。
+      该 endpoint 任何已登录用户都可调用,导致 CWE-862 授权绕过。
+      参考:2026-08-03 渗透测试 H-1~H-4 (MesCustomer*Controller)。
+    metadata:
+      cwe: "CWE-862: Missing Authorization"
+      owasp: "A01:2021 Broken Access Control"
+      category: security
+    pattern-either:
+      - patterns:
+          - pattern: |
+              @PostMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @PostMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+      - patterns:
+          - pattern: |
+              @PutMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @PutMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+      - patterns:
+          - pattern: |
+              @DeleteMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @DeleteMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+    paths:
+      include:
+        - "**/controller/**/*.java"
+        - "**/controllers/**/*.java"
+        - "**/*Controller.java"
+      exclude:
+        - "**/test/**"
+        - "**/Test*.java"
+        - "**/*Test.java"
+        - "**/target/**"
+        - "**/jmreport/**"
+
+  # 规则 2: MesMenuRegistry 重复 addPerms 防御
+  - id: mes-menu-registry-duplicate-addperms
+    languages: [java]
+    severity: WARNING
+    message: >-
+      MesMenuRegistry 中出现重复的 addPerms 调用(同一 prefix)。
+      可能由 Hermes 2026-08-04 补丁合入方式不当导致,产生 sys_permission 重复行。
+      参考:2026-08-03 渗透测试 M-1。
+    metadata:
+      cwe: "CWE-1188: Insecure Default Initialization of Resource"
+      category: security
+    pattern-regex: 'addPerms\s*\(\s*list\s*,\s*"mes:[^"]+:[^"]+"\s*,'
+    paths:
+      include:
+        - "**/MesMenuRegistry.java"
+        - "**/MesMenuDefinition.java"
+        - "**/config/init/*.java"
+      exclude:
+        - "**/target/**"

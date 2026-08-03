@@ -1,0 +1,215 @@
+# GitHub Actions workflow: 安全回归测试
+# 由 2026-08-03 渗透测试复盘后沉淀
+# 触发: 每次 push / pull_request
+# 内容: semgrep(SAST) + gitleaks(secret) + trivy(SCA) + 动态授权 PoC
+#
+# 本工作流设计:
+# 1. 静态层 (semgrep + gitleaks) - 秒级 - 任何 PR
+# 2. 动态层 (pytest 权限回归) - 分钟级 - 合并前必跑
+# 3. 深度层 (Strix quick,周度) - release tag 触发
+
+name: Security Regression
+
+on:
+  push:
+    branches: [main, fix/**]
+  pull_request:
+    branches: [main]
+  schedule:
+    # 每周日凌晨 2 点跑深度审计
+    - cron: '0 2 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ============================================================
+  # Job 1: 静态层 - SAST + Secret + SCA
+  # ============================================================
+  static-security:
+    name: Static Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install semgrep
+        run: pip install semgrep==1.172.0
+
+      - name: Run semgrep - Authorization (CWE-862)
+        run: |
+          semgrep ci \
+            --config .semgrep/jeecg-authorization.yml \
+            --error \
+            --metrics=off
+
+      - name: Run semgrep - Hardcoded secrets
+        run: |
+          semgrep ci \
+            --config .semgrep/jeecg-secrets.yml \
+            --error \
+            --metrics=off
+
+      - name: Run semgrep - Injection patterns
+        run: |
+          semgrep ci \
+            --config .semgrep/jeecg-injection.yml \
+            --error \
+            --metrics=off
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          format: sarif
+          output: trivy-fs.sarif
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+
+  # ============================================================
+  # Job 2: 动态层 - 授权 PoC 回归
+  # 依赖: Java + Maven + MySQL + Redis + 后端构建
+  # ============================================================
+  authorization-poc:
+    name: Authorization POC Regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'pull_request'
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: --health-cmd="redis-cli ping" --health-interval=10s
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build backend
+        run: |
+          cd jeecg-boot/jeecg-module-system/jeecg-system-start
+          mvn clean install -DskipTests -q
+
+      - name: Start backend
+        run: |
+          cd jeecg-boot/jeecg-module-system/jeecg-system-start
+          nohup java -jar target/jeecg-system-start-3.9.2.jar \
+            --spring.profiles.active=dev \
+            --spring.flyway.enabled=false \
+            > /tmp/jeecg.log 2>&1 &
+          echo "Backend PID: $!"
+          # 等待后端就绪
+          for i in {1..60}; do
+            if curl -sf http://127.0.0.1:8080/jeecg-boot/sys/randomImage/123 > /dev/null 2>&1; then
+              echo "Backend ready after ${i} attempts"
+              break
+            fi
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:8080/jeecg-boot/sys/randomImage/123 > /dev/null || (
+            echo "Backend failed to start"
+            tail -100 /tmp/jeecg.log
+            exit 1
+          )
+
+      - name: Setup Python (for PoC)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytest requests
+
+      - name: Run authorization PoC tests
+        env:
+          JEECG_BASE: http://127.0.0.1:8080/jeecg-boot
+        run: |
+          cd tests/security
+          # 使用 pytest 跑测试
+          pytest test_mes_customer_authorization.py -v --tb=short
+        continue-on-error: false
+
+      - name: Upload PoC logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: poc-logs
+          path: |
+            /tmp/jeecg.log
+            tests/security/poc-output/
+          if-no-files-found: ignore
+
+      - name: Stop backend
+        if: always()
+        run: |
+          pkill -f "jeecg-system-start" || true
+
+  # ============================================================
+  # Job 3: 深度层 - Strix quick 周度扫描 (仅 main 分支)
+  # ============================================================
+  strix-deep-scan:
+    name: Strix Deep Scan (Weekly)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    steps:
+      - name: Checkout (submodule)
+        uses: actions/checkout@v4
+
+      - name: Install Strix
+        run: pip install strix
+
+      - name: Run Strix standard scan
+        env:
+          # Strix 需要 LLM API key;在 GitHub repo settings 配置 secret
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          STRIX_LLM: 'openai/<your-model-name>'
+        run: |
+          mkdir -p /tmp/strix-out
+          strix --target ./jeecg-boot/jeecg-boot-module/project-mes \
+            --scan-mode standard \
+            --max-turns 100 \
+            --instruction-file .strix/instruction-weekly.md \
+            -n 2>&1 | tee /tmp/strix-out/scan.log
+
+      - name: Upload Strix report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strix-report
+          path: strix_runs/
+          if-no-files-found: ignore
