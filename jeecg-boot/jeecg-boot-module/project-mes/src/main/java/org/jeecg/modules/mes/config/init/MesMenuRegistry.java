@@ -28,6 +28,10 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_basic_customer", "mes_basic", "客户管理", "/project/mes/basic/customer", "project/mes/basic/customer/index", "MesBasicCustomer").sortNo(1.0).icon("ant-design:user-outlined"));
         list.add(MesMenuDefinition.leaf("mes_basic_supplier", "mes_basic", "供应商管理", "/project/mes/basic/supplier", "project/mes/basic/supplier/index", "MesBasicSupplier").sortNo(2.0).icon("ant-design:shop-outlined"));
         addPerms(list, "mes:supplier:", "mes_basic_supplier", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+addPerms(list, "mes:customerAddress:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        addPerms(list, "mes:customerContact:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        addPerms(list, "mes:customerFollowUp:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        addPerms(list, "mes:customerPrice:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-begin---author:ruiwancheng---date:2026-07-21  for：编码规则菜单注册-----------
         list.add(MesMenuDefinition.leaf("mes_basic_codeRule", "mes_basic", "编码规则", "/project/mes/basic/codeRule", "project/mes/basic/codeRule/index", "MesBasicCodeRule").sortNo(3.0).icon("ant-design:number-outlined"));
         addPerms(list, "mes:codeRule:", "mes_basic_codeRule", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
@@ -108,12 +112,12 @@ public final class MesMenuRegistry {
         //update-begin---author:patch-2026-08-04---for: 补齐生产领料权限码（修复 P1）-----------
         addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-end---author:patch-2026-08-04---for: 补齐生产领料权限码-----------
-        addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
+
         list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
         //update-begin---author:patch-2026-08-04---for: 补齐完工入库权限码（修复 P1）-----------
         addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-end---author:patch-2026-08-04---for: 补齐完工入库权限码-----------
-        addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
+
 
         //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-菜单注册-----------
         list.add(MesMenuDefinition.folder("mes_batch", "mes_warehouse", "批次管理", "/project/mes/batch", "/project/mes/batch/master").sortNo(4.5).icon("ant-design:barcode-outlined"));
