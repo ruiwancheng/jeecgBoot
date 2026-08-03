@@ -11,6 +11,9 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
+
+from harness.scripts import resilient_regression as runner
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -195,7 +198,22 @@ class ResilientRegressionCliTest(unittest.TestCase):
             self.assertEqual("blocked_environment", state["slices"]["api"]["status"])
             self.assertFalse(should_not_exist.exists())
 
-    def test_failure_exit_code_and_timeout_are_preserved(self) -> None:
+    def test_state_checkpoint_falls_back_when_windows_replace_is_locked(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            run_dir = Path(temp)
+            state_path = run_dir / "state.json"
+            payload = {"status": "running", "checkpoint": 3}
+
+            with (
+                patch.object(runner.os, "replace", side_effect=PermissionError("locked")),
+                patch.object(runner.time, "sleep", return_value=None),
+            ):
+                runner.atomic_write_json(state_path, payload)
+
+            self.assertFalse(state_path.exists())
+            self.assertEqual(payload, runner.read_state(run_dir))
+
+
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             run_dir = root / "run"

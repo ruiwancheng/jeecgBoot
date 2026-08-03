@@ -48,6 +48,22 @@ def read_json(path: Path) -> dict[str, Any]:
         return json.load(stream)
 
 
+def read_state(run_dir: Path) -> dict[str, Any]:
+    primary = run_dir / "state.json"
+    fallback = run_dir / "state.json.fallback"
+    candidates = [path for path in (primary, fallback) if path.exists()]
+    if not candidates:
+        raise FileNotFoundError(f"state.json not found under {run_dir}")
+    candidates.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    errors = []
+    for path in candidates:
+        try:
+            return read_json(path)
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"{path}: {error}")
+    raise RuntimeError("no valid state checkpoint: " + "; ".join(errors))
+
+
 def atomic_write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
@@ -57,10 +73,31 @@ def atomic_write_json(path: Path, data: dict[str, Any]) -> None:
             stream.write("\n")
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temp_name, path)
+        last_error: OSError | None = None
+        for attempt in range(8):
+            try:
+                os.replace(temp_name, path)
+                path.with_name(path.name + ".fallback").unlink(missing_ok=True)
+                return
+            except PermissionError as error:
+                last_error = error
+                time.sleep(0.25 * (attempt + 1))
+        fallback = path.with_name(path.name + ".fallback")
+        try:
+            with fallback.open("w", encoding="utf-8", newline="\n") as stream:
+                json.dump(data, stream, ensure_ascii=False, indent=2)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            return
+        except OSError:
+            if last_error:
+                raise last_error
+            raise
     finally:
         if os.path.exists(temp_name):
             os.unlink(temp_name)
+
 
 
 def write_text_atomic(path: Path, content: str) -> None:
@@ -503,7 +540,11 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
         raise FileNotFoundError(f"manifest snapshot not found: {manifest_path}")
     manifest = read_json(manifest_path)
     state_path = run_dir / "state.json"
-    state = read_json(state_path) if state_path.exists() else initial_state(manifest, run_dir)
+    state = (
+        read_state(run_dir)
+        if state_path.exists() or state_path.with_name(state_path.name + ".fallback").exists()
+        else initial_state(manifest, run_dir)
+    )
     ctx = RunContext(run_dir, manifest, state)
 
     with RunLock(run_dir / "runner.lock"):
@@ -663,13 +704,13 @@ def resolve_run_dir(value: str | None) -> Path:
 
 
 def print_status(run_dir: Path) -> None:
-    state = read_json(run_dir / "state.json")
+    state = read_state(run_dir)
     print(json.dumps(state, ensure_ascii=False, indent=2))
 
 
 def stop_run(run_dir: Path, stop_services: bool) -> None:
     state_path = run_dir / "state.json"
-    state = read_json(state_path)
+    state = read_state(run_dir)
     runner_pid = state.get("runner_pid")
     if runner_pid:
         terminate_process_tree(int(runner_pid))
@@ -755,7 +796,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "report":
         run_dir = resolve_run_dir(args.run_dir)
         manifest = read_json(run_dir / "manifest.json")
-        state = read_json(run_dir / "state.json")
+        state = read_state(run_dir)
         print(generate_report(RunContext(run_dir, manifest, state)))
         return 0
     if args.command == "_worker":
