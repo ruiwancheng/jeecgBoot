@@ -47,21 +47,21 @@ jobs:
 
       - name: Run semgrep - Authorization (CWE-862)
         run: |
-          semgrep ci \
+          semgrep scan \
             --config .semgrep/jeecg-authorization.yml \
             --error \
             --metrics=off
 
       - name: Run semgrep - Hardcoded secrets
         run: |
-          semgrep ci \
+          semgrep scan \
             --config .semgrep/jeecg-secrets.yml \
             --error \
             --metrics=off
 
       - name: Run semgrep - Injection patterns
         run: |
-          semgrep ci \
+          semgrep scan \
             --config .semgrep/jeecg-injection.yml \
             --error \
             --metrics=off
