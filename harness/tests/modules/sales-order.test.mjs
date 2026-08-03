@@ -2,7 +2,7 @@
 // MES 销售订单 API 测试 — /gen-tests 生成（2026-07-21）
 // 推导来源：MesSalesOrderController 13 端点 + gen-tests-rules.json 自定义规则（R001空值/R002越权/R003边界）
 // 状态机：草稿1 →审核→ 已审核2 →下达→ 已下达3；关闭5/取消6 仅草稿可发起；非草稿禁删
-// Usage: node harness/tests/mes/sales-order.test.mjs
+// Usage: node harness/tests/modules/sales-order.test.mjs
 
 const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
 const ADMIN = { username: 'admin', password: '123456' };

@@ -337,7 +337,7 @@ hermes/eagle-eye/reports/YYYY-MM-DD/
       "message": { "text": "API测试失败: mes-sales-add" },
       "locations": [{
         "physicalLocation": {
-          "artifactLocation": { "uri": "harness/tests/mes/sales.spec.ts" },
+          "artifactLocation": { "uri": "harness/e2e/mes/sales.spec.ts" },
           "region": { "startLine": 42 }
         }
       }],

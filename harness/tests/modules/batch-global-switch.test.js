@@ -92,6 +92,26 @@ function q(sql) { return sqlFileCleanup(sql); }
     const batchListAll = (await c.api('GET', `/mes/batch/master/list?pageNo=1&pageSize=20&originBillNo=PR_D_ON_`)).result;
     const allCnt = batchListAll.total || batchListAll.records?.length || 0;
     c.check('B：批次主档>=1（总开关开启时创建）', onCnt >= 1 || allCnt >= 1, `本次=${onCnt} 全部PR_D_ON=${allCnt}`);
+
+    // ============================================================
+    // R009 语义断言（B 场景：批次字段值 + 状态流转）
+    // ============================================================
+    // 取本次创建的批次记录，验证字段值
+    const targetBatchB = batchListOn.records?.find(r => r.originBillNo === rcptOnCode) || batchListAll.records?.find(r => r.originBillNo === rcptOnCode);
+    if (targetBatchB) {
+      // (a) 字段值断言：originBillNo 等于源单据编码（追溯正确）
+      c.check('B：R009.1 批次 originBillNo 字段追溯', targetBatchB.originBillNo === rcptOnCode, `got=${targetBatchB.originBillNo} expected=${rcptOnCode}`);
+      // (b) 状态流转断言：sourceBillType 标识源单据类型
+      const billTypeOk = targetBatchB.sourceBillType === 'purchase_receipt' || targetBatchB.sourceBillType === 'PR' || targetBatchB.billType === 'purchase_receipt';
+      c.check('B：R009.2 批次 sourceBillType 标识源单类型', billTypeOk, `got=${targetBatchB.sourceBillType || targetBatchB.billType}`);
+      // (a) 字段值断言：materialId 等于收货物料
+      c.check('B：R009.3 批次 materialId 关联正确', targetBatchB.materialId === item.materialId, `got=${targetBatchB.materialId?.slice(-12)} expected=${item.materialId?.slice(-12)}`);
+      // (d) 数据传递断言：批次数量 = 收货数量 1
+      const batchQty = targetBatchB.quantity ?? targetBatchB.batchQuantity ?? targetBatchB.qty;
+      c.check('B：R009.4 批次数量 = 收货数量', batchQty === 1 || batchQty === '1', `qty=${batchQty}`);
+    } else {
+      c.check('B：R009 批次字段值验证', false, '未找到 targetBatchB 记录');
+    }
   } else if (rcptOnAdd.message?.includes('累计入库量')) {
     c.check('B：累计超量拦截（重复跑保护）', true, rcptOnAdd.message);
     // 间接证明：之前 B 跑过且创建了批次（list 全查中确认）
@@ -175,6 +195,25 @@ function q(sql) { return sqlFileCleanup(sql); }
       const batchAllList = (await c.api('GET', '/mes/batch/master/list?pageNo=1&pageSize=50')).result;
       const cmpOnCnt = (batchAllList.records || []).filter(r => r.originBillNo && r.originBillNo.includes('CMP_D_ON')).length;
       c.check('C.2：批次主档=1（开）', (bl.total || bl.records?.length) === 1 || cmpOnCnt >= 1, `本次=${bl.total} 全部CMP_D_ON=${cmpOnCnt}`);
+
+      // ============================================================
+      // R009 语义断言（C.2 场景：完工入库批次字段值 + 状态流转）
+      // ============================================================
+      const targetBatchC = bl.records?.find(r => r.originBillNo === cmpOnCodeC);
+      if (targetBatchC) {
+        // (a) 字段值断言：originBillNo 追溯
+        c.check('C.2：R009.1 批次 originBillNo 字段追溯', targetBatchC.originBillNo === cmpOnCodeC, `got=${targetBatchC.originBillNo} expected=${cmpOnCodeC}`);
+        // (b) 状态流转断言：sourceBillType = manufacturing_completion
+        const billTypeOk = targetBatchC.sourceBillType === 'manufacturing_completion' || targetBatchC.sourceBillType === 'MC' || targetBatchC.billType === 'manufacturing_completion';
+        c.check('C.2：R009.2 批次 sourceBillType = manufacturing_completion', billTypeOk, `got=${targetBatchC.sourceBillType || targetBatchC.billType}`);
+        // (a) 字段值断言：materialId 等于产成品
+        c.check('C.2：R009.3 批次 materialId = 产成品', targetBatchC.materialId === productMat.id, `got=${targetBatchC.materialId?.slice(-12)} expected=${productMat.id?.slice(-12)}`);
+        // (d) 数据传递断言：批次数量 = 完工数量 1
+        const batchQty = targetBatchC.quantity ?? targetBatchC.batchQuantity ?? targetBatchC.qty;
+        c.check('C.2：R009.4 批次数量 = 完工数量', batchQty === 1 || batchQty === '1', `qty=${batchQty}`);
+      } else {
+        c.check('C.2：R009 批次字段值验证', false, '未找到 targetBatchC 记录');
+      }
     } else if (cmpOnC.message?.includes('已存在')) {
       c.check('C.2：完工入库(开)单据（重复跑）', true, '前次已建');
       const batchAllList = (await c.api('GET', '/mes/batch/master/list?pageNo=1&pageSize=50')).result;

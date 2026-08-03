@@ -38,9 +38,9 @@ version: 1.0.0
   │   未命中 → 仅跑通用 smoke test
   │
   ├─ Step 4: 执行验证
-  │   ├─ 鹰眼团 API 回归: node harness/tests/mes/<chain>.test.js
+  │   ├─ 鹰眼团 API 回归: node harness/tests/modules/<chain>.test.js
   │   ├─ 鹰眼团 E2E 回归: npx playwright test harness/e2e/mes/<chain>.spec.ts
-  │   ├─ 鹰眼团 链路测试: node harness/tests/mes/<chain>-*.chain.test.js (full级)
+  │   ├─ 鹰眼团 链路测试: node harness/tests/chains/<chain>-*.chain.test.js (full级)
   │   ├─ 铁拳团模块审计: 10 Agent 并行审计 (仅 full 级, 约10min)
   │   └─ 链路审计: 变更涉及 ≥2 模块时自动触发 (链路人1号, 约5min)
   │       详见 .claude/skills/jeecg-chain-audit/SKILL.md
@@ -92,7 +92,7 @@ full 级变更时，自动运行 `business-chains.json` 中对应链路的 `chai
 - 触发条件: full 级变更 + 链路有 chainTests 配置
 - 测试类型: 2-3步微链路端到端测试（不重复单端点已有的输入校验）
 - 配置位置: `hermes/business-chains.json` → `chains.<name>.chainTests`
-- 命名规范: `harness/tests/mes/<模块A>-<模块B>.chain.test.js`
+- 命名规范: `harness/tests/chains/<模块A>-<模块B>.chain.test.js`
 
 链路测试与模块测试互补：
 - 模块测试：单端点输入校验、边界值、权限

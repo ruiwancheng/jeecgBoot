@@ -20,12 +20,12 @@ version: 1.0.0
     "segments": [
       {
         "name": "申请→订单",
-        "file": "harness/tests/mes/purchase-apply-order.chain.test.js",
+        "file": "harness/tests/chains/purchase-apply-order.chain.test.js",
         "covers": ["创建申请→审核→加载到订单→创建订单→审核→反审核"]
       },
       {
         "name": "订单→入库",
-        "file": "harness/tests/mes/purchase-order-receipt.chain.test.js",
+        "file": "harness/tests/chains/purchase-order-receipt.chain.test.js",
         "covers": ["创建订单→审核→入库→超量拦截→全部到货→库存台账"]
       }
     ]

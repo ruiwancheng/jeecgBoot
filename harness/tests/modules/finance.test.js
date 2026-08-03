@@ -156,6 +156,58 @@ async function run() {
       if (ok) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 13.特殊字符"${sc.slice(0, 12)}..." 200`, true); }
       else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 13.特殊字符"${sc.slice(0, 12)}..." 200`, false, `code=${r.code}`); }
     }
+
+    // ============================================================
+    // 14. R009 语义断言（验证字段值，非仅 code===200）
+    // ============================================================
+    if (r1.result?.records?.length > 0) {
+      const sample = r1.result.records[0];
+
+      // (a) 字段值断言：主键 id 非空
+      if (sample.id) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 14.1 字段值: id 非空`, true, `id=${sample.id.slice(-12)}`); }
+      else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 14.1 字段值: id 非空`, false, 'records[0].id 为空'); }
+
+      // (a) 字段值断言：列表第一条记录的某业务字段非空（按模块区分）
+      const fieldCheck = (() => {
+        if (ep.mod === 'subject' && sample.code) return { ok: true, detail: `subject.code=${sample.code}` };
+        if (ep.mod === 'voucher' && (sample.voucherNo || sample.code)) return { ok: true, detail: `voucher.code=${sample.voucherNo || sample.code}` };
+        if (ep.mod === 'collection' && (collectionHasAmount = sample.amount !== undefined)) return { ok: true, detail: `collection.amount=${sample.amount}` };
+        if (ep.mod === 'payment' && (sample.amount !== undefined || sample.code)) return { ok: true, detail: `payment.amount=${sample.amount}` };
+        if (ep.mod === 'receivable' && sample.amount !== undefined) return { ok: true, detail: `receivable.amount=${sample.amount}` };
+        if (ep.mod === 'payable' && sample.amount !== undefined) return { ok: true, detail: `payable.amount=${sample.amount}` };
+        if (ep.mod === 'salesInvoice' && (sample.invoiceNo || sample.code)) return { ok: true, detail: `salesInvoice.invoiceNo=${sample.invoiceNo || sample.code}` };
+        if (ep.mod === 'purchaseInvoice' && (sample.invoiceNo || sample.code)) return { ok: true, detail: `purchaseInvoice.invoiceNo=${sample.invoiceNo || sample.code}` };
+        return { ok: false, detail: '未匹配业务字段' };
+      })();
+      if (fieldCheck.ok) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 14.2 字段值: 业务字段非空`, true, fieldCheck.detail); }
+      else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 14.2 字段值: 业务字段非空`, false, fieldCheck.detail); }
+
+      // (b) 状态流转断言：list 返回 status 字段类型正确（数字或字符串）
+      if ('status' in sample || 'auditStatus' in sample || 'delFlag' in sample) {
+        const statusField = sample.status ?? sample.auditStatus ?? sample.delFlag;
+        const typeOk = typeof statusField === 'number' || typeof statusField === 'string';
+        if (typeOk) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 14.3 状态字段类型`, true, `type=${typeof statusField} value=${statusField}`); }
+        else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 14.3 状态字段类型`, false, `type=${typeof statusField}`); }
+      }
+
+      // (d) 数据传递断言：queryAll vs list records 一致性（同表同字段）
+      if (r3.code === 200 && Array.isArray(r3.result) && r3.result.length > 0) {
+        const listIds = new Set(r1.result.records.slice(0, 5).map(r => r.id));
+        const allIds = new Set(r3.result.slice(0, 5).map(r => r.id));
+        const overlap = [...listIds].filter(id => allIds.has(id)).length;
+        if (overlap >= 1) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 14.4 数据传递: list/queryAll id 一致`, true, `overlap=${overlap}/5`); }
+        else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 14.4 数据传递: list/queryAll id 一致`, false, `overlap=${overlap}/5 listIds=${listIds.size} allIds=${allIds.size}`); }
+      }
+    }
+
+    // 15. R009 显示值断言（list 接口字段名规范，避免裸 ID）
+    if (r1.result?.records?.length > 0) {
+      const sample = r1.result.records[0];
+      // 至少有一个 display 友好的字段（code/name/title 三者之一）
+      const hasDisplayField = sample.code || sample.name || sample.title || sample.subjectName || sample.customerName || sample.supplierName;
+      if (hasDisplayField) { passed++; perMod[ep.mod].p++; c.check(`${ep.mod} 15.1 显示值: 友好字段存在（非裸 ID）`, true, `field=${Object.keys(hasDisplayField)[0]}=${Object.values(hasDisplayField)[0]}`); }
+      else { failed++; perMod[ep.mod].f++; c.check(`${ep.mod} 15.1 显示值: 友好字段存在（非裸 ID）`, false, '只有 id 字段，前端会显示裸 ID'); }
+    }
   }
 
   // ============================================================

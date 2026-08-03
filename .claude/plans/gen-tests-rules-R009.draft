@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "id": "R009",
+      "bugType": "0断言文件/稀疏断言",
+      "trigger": "gen-tests 生成的所有 .test.js",
+      "httpMethod": ["*"],
+      "missingScenario": "仅生成测试骨架未填实断言，文件存在但无验证价值（2026-08-04 基线：6 个文件 0 断言）",
+      "addCase": {
+        "rule": "每个 it()/场景() 必须 ≥ 1 个 expect/assert/✓ 断言",
+        "validation": "gen-tests 写入文件前扫描 it()/场景() 块统计断言数；总断言数 < 文件场景数 × 0.5 → 拒绝写入并提示",
+        "enforcement": "测试三件套硬下限（创建/状态流转/数据传递/显示值/清理 5 锚点）作为补齐目标"
+      },
+      "source": "2026-08-04 测试体系评估",
+      "created": "2026-08-04"
+    }
+  ]
+}

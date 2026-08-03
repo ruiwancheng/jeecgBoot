@@ -43,8 +43,8 @@ version: 2.0
 
 ## L1：模板
 
-- API 测试模板：参考 `harness/tests/mes/stocktake.test.js`（14 场景：快照/盘亏/盘盈/守卫/回写）
-- 链路测试模板：参考 `harness/tests/mes/purchase-apply-order.chain.test.js`（helper 版）
+- API 测试模板：参考 `harness/tests/modules/stocktake.test.js`（14 场景：快照/盘亏/盘盈/守卫/回写）
+- 链路测试模板：参考 `harness/tests/chains/purchase-apply-order.chain.test.js`（helper 版）
 - E2E 模板：参考 `harness/e2e/mes/other-stock-in.spec.ts`
 
 ## L2：实践案例（4 bug × 4 盲区，2026-07-28）
