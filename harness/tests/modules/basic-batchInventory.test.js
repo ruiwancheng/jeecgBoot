@@ -7,7 +7,9 @@ const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 
-async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
+// update-begin---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper，签名改为 (method, path, body) 直接转发 c.api（token 由 createClient 闭包管理，调用方无需传）-----------
+async function api(method, path, body) { return c.api(method, path, body); }
+// update-end---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper-----------
 
 async function login() { const token = await c.login(); return token; }
 
@@ -41,13 +43,13 @@ async function run() {
   const batchNo = `BAT_T_${SUFFIX}`;
 
   // 仓库
-  const whR = await api('POST', '/mes/basic/warehouse/add', token, { code: whCode, name: '批次库存测试仓', status: 1 });
-  const whDoc = whR.code === 200 ? (await api('GET', `/mes/basic/warehouse/list?code=${whCode}&pageSize=1`, token)).result.records[0] : null;
+  const whR = await api('POST', '/mes/basic/warehouse/add', { code: whCode, name: '批次库存测试仓', status: 1 });
+  const whDoc = whR.code === 200 ? (await api('GET', `/mes/basic/warehouse/list?code=${whCode}&pageSize=1`)).result.records[0] : null;
   console.log(`  📋 仓库: ${whDoc?.id}`);
 
   // 物料
-  const matR = await api('POST', '/mes/basic/material/add', token, { code: matCode, name: '批次物料', type: '1', movingAvgCost: 10 });
-  const matDoc = matR.code === 200 ? (await api('GET', `/mes/basic/material/list?code=${matCode}&pageSize=1`, token)).result.records[0] : null;
+  const matR = await api('POST', '/mes/basic/material/add', { code: matCode, name: '批次物料', type: '1', movingAvgCost: 10 });
+  const matDoc = matR.code === 200 ? (await api('GET', `/mes/basic/material/list?code=${matCode}&pageSize=1`)).result.records[0] : null;
   console.log(`  📋 物料: ${matDoc?.id}`);
 
   // ============================================================
@@ -56,19 +58,19 @@ async function run() {
   console.log('--- 1. 只读端点主流程 ---');
 
   // 1.1 list 端点可达（即使无数据也应返回空分页）
-  const listR = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=10', token);
+  const listR = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=10');
   check('1.1 list 端点可达', listR.code === 200, `total=${listR.result?.total}（接受历史残留）`);
 
   // 1.2 list 过滤：按物料 ID
-  const listByMat = await api('GET', `/mes/batch/inventory/list?materialId=${matDoc?.id}&pageSize=10`, token);
+  const listByMat = await api('GET', `/mes/batch/inventory/list?materialId=${matDoc?.id}&pageSize=10`);
   check('1.2 list 按物料过滤', listByMat.code === 200, `total=${listByMat.result.total}`);
 
   // 1.3 list 过滤：按仓库 ID
-  const listByWh = await api('GET', `/mes/batch/inventory/list?warehouseId=${whDoc?.id}&pageSize=10`, token);
+  const listByWh = await api('GET', `/mes/batch/inventory/list?warehouseId=${whDoc?.id}&pageSize=10`);
   check('1.3 list 按仓库过滤', listByWh.code === 200, `total=${listByWh.result.total}`);
 
   // 1.4 queryById 不存在的 ID（应返回 null 但 HTTP 200）
-  const query404 = await api('GET', '/mes/batch/inventory/queryById?id=nonexistent_id_999', token);
+  const query404 = await api('GET', '/mes/batch/inventory/queryById?id=nonexistent_id_999');
   check('1.4 queryById 不存在 ID', query404.code === 200, `code=${query404.code} result=${query404.result?.id || 'null'}`);
 
   // ============================================================
@@ -77,19 +79,19 @@ async function run() {
   console.log('\n--- 2. 边界条件 ---');
 
   // 2.1 超大页码
-  const listBigPage = await api('GET', '/mes/batch/inventory/list?pageNo=999&pageSize=10', token);
+  const listBigPage = await api('GET', '/mes/batch/inventory/list?pageNo=999&pageSize=10');
   check('2.1 list 超大页码', listBigPage.code === 200, `code=${listBigPage.code}`);
 
   // 2.2 超大 pageSize
-  const listBigSize = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=999999', token);
+  const listBigSize = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=999999');
   check('2.2 list 超大 pageSize', listBigSize.code === 200, `code=${listBigSize.code}`);
 
   // 2.3 pageSize=0
-  const listZero = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=0', token);
+  const listZero = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=0');
   check('2.3 list pageSize=0', listZero.code === 200, `code=${listZero.code}`);
 
   // 2.4 负数 pageNo
-  const listNeg = await api('GET', '/mes/batch/inventory/list?pageNo=-1&pageSize=10', token);
+  const listNeg = await api('GET', '/mes/batch/inventory/list?pageNo=-1&pageSize=10');
   check('2.4 list 负数 pageNo', listNeg.code === 200, `code=${listNeg.code}`);
 
   // ============================================================

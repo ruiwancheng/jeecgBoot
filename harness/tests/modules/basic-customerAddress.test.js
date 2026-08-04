@@ -7,18 +7,20 @@ const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 
-async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
+// update-begin---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper，签名改为 (method, path, body) 直接转发 c.api（token 由 createClient 闭包管理，调用方无需传）-----------
+async function api(method, path, body) { return c.api(method, path, body); }
+// update-end---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper-----------
 
 async function login() { const token = await c.login(); return token; }
 
 async function createCustomer(token, code, name) {
-  const r = await api('POST', '/mes/basic/customer/add', token, { code, name, status: 1 });
-  const list = await api('GET', `/mes/basic/customer/list?code=${code}&pageSize=1`, token);
+  const r = await api('POST', '/mes/basic/customer/add', { code, name, status: 1 });
+  const list = await api('GET', `/mes/basic/customer/list?code=${code}&pageSize=1`);
   return list.result.records[0];
 }
 
 async function findAddress(token, customerId, addressType) {
-  const r = await api('GET', `/mes/basic/customer/address/list?customerId=${customerId}&pageSize=20`, token);
+  const r = await api('GET', `/mes/basic/customer/address/list?customerId=${customerId}&pageSize=20`);
   return r.result.records.find((a) => a.addressType === addressType) || null;
 }
 
@@ -59,7 +61,7 @@ async function run() {
   console.log('--- 1. CRUD 主流程 ---');
 
   // 1.1 新增地址（必填字段齐全）
-  const addR1 = await api('POST', '/mes/basic/customer/address/add', token, {
+  const addR1 = await api('POST', '/mes/basic/customer/address/add', {
     customerId: customer.id,
     addressType: '1', contact: '张三', phone: '13800138000',
     province: '广东省', city: '深圳市', district: '南山区',
@@ -70,7 +72,7 @@ async function run() {
   check('1.1.1 新增地址落库', addr1 != null, `id=${addr1?.id}`);
 
   // 1.2 新增第二个地址（非默认）
-  const addR2 = await api('POST', '/mes/basic/customer/address/add', token, {
+  const addR2 = await api('POST', '/mes/basic/customer/address/add', {
     customerId: customer.id,
     addressType: '2', contact: '李四', phone: '13900139000',
     province: '广东省', city: '广州市', district: '天河区',
@@ -81,7 +83,7 @@ async function run() {
   check('1.2.1 第二个地址落库', addr2 != null, `id=${addr2?.id}`);
 
   // 1.3 列表查询（按 customerId 过滤）
-  const listR = await api('GET', `/mes/basic/customer/address/list?customerId=${customer.id}&pageSize=10`, token);
+  const listR = await api('GET', `/mes/basic/customer/address/list?customerId=${customer.id}&pageSize=10`);
   check('1.3 列表查询(过滤客户)', listR.code === 200 && listR.result.total >= 2, `total=${listR.result.total}`);
   // 验证：默认地址排第一（orderByDesc is_default）
   if (listR.result.records.length >= 2) {
@@ -89,7 +91,7 @@ async function run() {
   }
 
   // 1.4 编辑地址
-  const editR = await api('PUT', '/mes/basic/customer/address/edit', token, {
+  const editR = await api('PUT', '/mes/basic/customer/address/edit', {
     id: addr1.id, customerId: customer.id,
     addressType: '1', contact: '张三-改', phone: '13800138001',
     province: '广东省', city: '深圳市', district: '宝安区',
@@ -100,19 +102,19 @@ async function run() {
   check('1.4.1 编辑后字段更新', addr1Edited?.contact === '张三-改', `contact=${addr1Edited?.contact}`);
 
   // 1.5 删除地址
-  const delR = await api('DELETE', `/mes/basic/customer/address/delete?id=${addr2.id}`, token);
+  const delR = await api('DELETE', `/mes/basic/customer/address/delete?id=${addr2.id}`);
   check('1.5 删除地址', delR.code === 200, delR.message);
   const addr2After = await findAddress(token, customer.id, '2');
   check('1.5.1 删除后查询不到', addr2After == null, `仍存在=${addr2After != null}`);
 
   // 1.6 批量删除
-  const addR3 = await api('POST', '/mes/basic/customer/address/add', token, {
+  const addR3 = await api('POST', '/mes/basic/customer/address/add', {
     customerId: customer.id, addressType: '3', contact: '王五', phone: '13700137000',
     province: '北京', city: '北京', district: '朝阳区',
     detail: '国贸路', isDefault: 0,
   });
   const addr3 = await findAddress(token, customer.id, '3');
-  const batchR = await api('DELETE', `/mes/basic/customer/address/deleteBatch?ids=${addr3?.id}`, token);
+  const batchR = await api('DELETE', `/mes/basic/customer/address/deleteBatch?ids=${addr3?.id}`);
   check('1.6 批量删除', batchR.code === 200, batchR.message);
   const addr3After = await findAddress(token, customer.id, '3');
   check('1.6.1 批量删除后查询不到', addr3After == null, `仍存在=${addr3After != null}`);
@@ -125,7 +127,7 @@ async function run() {
   // 2.1 缺 customerId - 应能添加（customerId 不是必填，看 controller）
   // 实际 controller 不校验 customerId 必填，service 层由 Schema 决定
   // 这里跳过验证必填（JeecgBoot 框架可能允许），只验证 customerId 过滤生效
-  const noCust = await api('POST', '/mes/basic/customer/address/add', token, {
+  const noCust = await api('POST', '/mes/basic/customer/address/add', {
     addressType: '1', contact: '无客户', phone: '13000130000',
     detail: '某地址', isDefault: 0,
   });
@@ -137,22 +139,22 @@ async function run() {
   console.log('\n--- 3. 错误路径 ---');
 
   // 3.1 编辑不存在的 ID
-  const edit404 = await api('PUT', '/mes/basic/customer/address/edit', token, {
+  const edit404 = await api('PUT', '/mes/basic/customer/address/edit', {
     id: 'nonexistent_id_999', customerId: customer.id,
     addressType: '1', contact: 'X', phone: 'X', detail: 'X', isDefault: 0,
   });
   check('3.1 编辑不存在ID', edit404.code === 200, `code=${edit404.code} (mybatis-plus updateById 静默成功 0 行)`);
 
   // 3.2 删除不存在的 ID
-  const del404 = await api('DELETE', `/mes/basic/customer/address/delete?id=nonexistent_id_999`, token);
+  const del404 = await api('DELETE', `/mes/basic/customer/address/delete?id=nonexistent_id_999`);
   check('3.2 删除不存在ID', del404.code === 200, `code=${del404.code}`);
 
   // 3.3 批量删除空字符串
-  const batchEmpty = await api('DELETE', `/mes/basic/customer/address/deleteBatch?ids=`, token);
+  const batchEmpty = await api('DELETE', `/mes/basic/customer/address/deleteBatch?ids=`);
   check('3.3 批量删除空字符串', batchEmpty.code === 500 || batchEmpty.code === 200, `code=${batchEmpty.code} msg=${batchEmpty.message?.slice(0, 40)}`);
 
   // 3.4 列表查询异常分页
-  const listBig = await api('GET', `/mes/basic/customer/address/list?customerId=${customer.id}&pageNo=999&pageSize=999999`, token);
+  const listBig = await api('GET', `/mes/basic/customer/address/list?customerId=${customer.id}&pageNo=999&pageSize=999999`);
   check('3.4 列表查询超大分页', listBig.code === 200, `code=${listBig.code}`);
 
   // ============================================================
@@ -171,7 +173,7 @@ async function run() {
   }
 
   // 4.2 importExcel (POST 无文件时应 400 或 500)
-  const importR = await api('POST', '/mes/basic/customer/address/importExcel', token, {});
+  const importR = await api('POST', '/mes/basic/customer/address/importExcel', {});
   check('4.2 importExcel 端点可达(空请求)', importR.code === 200 || importR.code === 500, `code=${importR.code} msg=${importR.message?.slice(0, 40)}`);
 
   // ============================================================

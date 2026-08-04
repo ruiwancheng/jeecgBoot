@@ -7,7 +7,9 @@ const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 
-async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
+// update-begin---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper，签名改为 (method, path, body) 直接转发 c.api（token 由 createClient 闭包管理，调用方无需传）-----------
+async function api(method, path, body) { return c.api(method, path, body); }
+// update-end---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper-----------
 
 async function login() { const token = await c.login(); return token; }
 
@@ -36,23 +38,23 @@ async function run() {
   console.log('--- 1. 列表端点主流程 ---');
 
   // 1.1 list 端点可达
-  const listR = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=10', token);
+  const listR = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=10');
   check('1.1 list 端点可达', listR.code === 200, `total=${listR.result?.total}（接受历史残留）`);
 
   // 1.2 list 按 batchNo 过滤（模糊匹配）
-  const listByBatchNo = await api('GET', '/mes/batch/traceability/list?batchNo=NONEXISTENT&pageSize=10', token);
+  const listByBatchNo = await api('GET', '/mes/batch/traceability/list?batchNo=NONEXISTENT&pageSize=10');
   check('1.2 list 按 batchNo 过滤', listByBatchNo.code === 200, `total=${listByBatchNo.result.total}`);
 
   // 1.3 list 按 materialId 过滤
-  const listByMat = await api('GET', '/mes/batch/traceability/list?materialId=nonexistent_mat&pageSize=10', token);
+  const listByMat = await api('GET', '/mes/batch/traceability/list?materialId=nonexistent_mat&pageSize=10');
   check('1.3 list 按 materialId 过滤', listByMat.code === 200, `total=${listByMat.result.total}`);
 
   // 1.4 list 按 originType 过滤（来源类型）
-  const listByOrigin = await api('GET', '/mes/batch/traceability/list?originType=1&pageSize=10', token);
+  const listByOrigin = await api('GET', '/mes/batch/traceability/list?originType=1&pageSize=10');
   check('1.4 list 按 originType 过滤', listByOrigin.code === 200, `total=${listByOrigin.result.total}`);
 
   // 1.5 list 按 status 过滤（在用/已用完等）
-  const listByStatus = await api('GET', '/mes/batch/traceability/list?status=1&pageSize=10', token);
+  const listByStatus = await api('GET', '/mes/batch/traceability/list?status=1&pageSize=10');
   check('1.5 list 按 status 过滤', listByStatus.code === 200, `total=${listByStatus.result.total}`);
 
   // ============================================================
@@ -61,23 +63,23 @@ async function run() {
   console.log('\n--- 2. 边界条件 ---');
 
   // 2.1 超大页码
-  const listBigPage = await api('GET', '/mes/batch/traceability/list?pageNo=999&pageSize=10', token);
+  const listBigPage = await api('GET', '/mes/batch/traceability/list?pageNo=999&pageSize=10');
   check('2.1 list 超大页码', listBigPage.code === 200, `code=${listBigPage.code}`);
 
   // 2.2 超大 pageSize
-  const listBigSize = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=999999', token);
+  const listBigSize = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=999999');
   check('2.2 list 超大 pageSize', listBigSize.code === 200, `code=${listBigSize.code}`);
 
   // 2.3 pageSize=0
-  const listZero = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=0', token);
+  const listZero = await api('GET', '/mes/batch/traceability/list?pageNo=1&pageSize=0');
   check('2.3 list pageSize=0', listZero.code === 200, `code=${listZero.code}`);
 
   // 2.4 负数 pageNo
-  const listNeg = await api('GET', '/mes/batch/traceability/list?pageNo=-1&pageSize=10', token);
+  const listNeg = await api('GET', '/mes/batch/traceability/list?pageNo=-1&pageSize=10');
   check('2.4 list 负数 pageNo', listNeg.code === 200, `code=${listNeg.code}`);
 
   // 2.5 超长 batchNo 过滤
-  const listLong = await api('GET', `/mes/batch/traceability/list?batchNo=${'X'.repeat(200)}&pageSize=10`, token);
+  const listLong = await api('GET', `/mes/batch/traceability/list?batchNo=${'X'.repeat(200)}&pageSize=10`);
   check('2.5 list 超长 batchNo', listLong.code === 200, `code=${listLong.code}`);
 
   // ============================================================
@@ -114,7 +116,7 @@ async function run() {
   check('4.1 list 返回 IPage 结构', listR.result && Array.isArray(listR.result.records), `records is array: ${Array.isArray(listR.result?.records)}`);
 
   // 4.2 list 不依赖 queryById（V10.0.3 没实现 queryById）
-  const noQueryById = await api('GET', '/mes/batch/traceability/queryById?id=any', token);
+  const noQueryById = await api('GET', '/mes/batch/traceability/queryById?id=any');
   check('4.2 无 queryById 端点（404）', noQueryById.code === 404 || noQueryById.code === 400, `code=${noQueryById.code}`);
 
   // ============================================================

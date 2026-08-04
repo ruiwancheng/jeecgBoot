@@ -7,7 +7,9 @@ const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 
-async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
+// update-begin---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper，签名改为 (method, path, body) 直接转发 c.api（token 由 createClient 闭包管理，调用方无需传）-----------
+async function api(method, path, body) { return c.api(method, path, body); }
+// update-end---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper-----------
 
 async function login() { const token = await c.login(); return token; }
 
@@ -37,23 +39,23 @@ async function run() {
   console.log('--- 1. 只读端点主流程 ---');
 
   // 1.1 list 端点可达
-  const listR = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=10', token);
+  const listR = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=10');
   check('1.1 list 端点可达', listR.code === 200, `total=${listR.result?.total}（接受历史残留）`);
 
   // 1.2 list 按 batchId 过滤
-  const listByBatch = await api('GET', '/mes/batch/ledger/list?batchId=nonexistent_batch&pageSize=10', token);
+  const listByBatch = await api('GET', '/mes/batch/ledger/list?batchId=nonexistent_batch&pageSize=10');
   check('1.2 list 按 batchId 过滤', listByBatch.code === 200, `total=${listByBatch.result.total}`);
 
   // 1.3 list 按 bizType 过滤（采购入库/生产入库/领料/销售出库）
-  const listByBiz = await api('GET', '/mes/batch/ledger/list?bizType=采购入库&pageSize=10', token);
+  const listByBiz = await api('GET', '/mes/batch/ledger/list?bizType=采购入库&pageSize=10');
   check('1.3 list 按 bizType 过滤', listByBiz.code === 200, `total=${listByBiz.result.total}`);
 
   // 1.4 listByBatchId 端点（按 batchId 查所有流水，不分页）
-  const listByBatchId = await api('GET', '/mes/batch/ledger/listByBatchId?batchId=nonexistent_batch', token);
+  const listByBatchId = await api('GET', '/mes/batch/ledger/listByBatchId?batchId=nonexistent_batch');
   check('1.4 listByBatchId 不存在的 batchId', listByBatchId.code === 200 && Array.isArray(listByBatchId.result), `result is array: ${Array.isArray(listByBatchId.result)}`);
 
   // 1.5 listByBatchId 缺 batchId 参数（应 400）
-  const listNoBatchId = await api('GET', '/mes/batch/ledger/listByBatchId', token);
+  const listNoBatchId = await api('GET', '/mes/batch/ledger/listByBatchId');
   check('1.5 listByBatchId 缺 batchId 参数', listNoBatchId.code === 400 || listNoBatchId.code === 500, `code=${listNoBatchId.code}`);
 
   // ============================================================
@@ -62,23 +64,23 @@ async function run() {
   console.log('\n--- 2. 边界条件 ---');
 
   // 2.1 超大页码
-  const listBigPage = await api('GET', '/mes/batch/ledger/list?pageNo=999&pageSize=10', token);
+  const listBigPage = await api('GET', '/mes/batch/ledger/list?pageNo=999&pageSize=10');
   check('2.1 list 超大页码', listBigPage.code === 200, `code=${listBigPage.code}`);
 
   // 2.2 超大 pageSize
-  const listBigSize = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=999999', token);
+  const listBigSize = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=999999');
   check('2.2 list 超大 pageSize', listBigSize.code === 200, `code=${listBigSize.code}`);
 
   // 2.3 pageSize=0
-  const listZero = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=0', token);
+  const listZero = await api('GET', '/mes/batch/ledger/list?pageNo=1&pageSize=0');
   check('2.3 list pageSize=0', listZero.code === 200, `code=${listZero.code}`);
 
   // 2.4 负数 pageNo
-  const listNeg = await api('GET', '/mes/batch/ledger/list?pageNo=-1&pageSize=10', token);
+  const listNeg = await api('GET', '/mes/batch/ledger/list?pageNo=-1&pageSize=10');
   check('2.4 list 负数 pageNo', listNeg.code === 200, `code=${listNeg.code}`);
 
   // 2.5 listByBatchId 超长 batchId
-  const listLongBatchId = await api('GET', `/mes/batch/ledger/listByBatchId?batchId=${'x'.repeat(200)}`, token);
+  const listLongBatchId = await api('GET', `/mes/batch/ledger/listByBatchId?batchId=${'x'.repeat(200)}`);
   check('2.5 listByBatchId 超长 batchId', listLongBatchId.code === 200, `code=${listLongBatchId.code}`);
 
   // ============================================================

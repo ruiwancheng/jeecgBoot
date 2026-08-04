@@ -7,18 +7,20 @@ const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const c = createClient(BASE);
 
-async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
+// update-begin---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper，签名改为 (method, path, body) 直接转发 c.api（token 由 createClient 闭包管理，调用方无需传）-----------
+async function api(method, path, body) { return c.api(method, path, body); }
+// update-end---author:pi---date:2026-08-05---for:[N1 修复] 消除 positional-param 反模式 wrapper-----------
 
 async function login() { const token = await c.login(); return token; }
 
 async function createCustomer(token, code, name) {
-  const r = await api('POST', '/mes/basic/customer/add', token, { code, name, status: 1 });
-  const list = await api('GET', `/mes/basic/customer/list?code=${code}&pageSize=1`, token);
+  const r = await api('POST', '/mes/basic/customer/add', { code, name, status: 1 });
+  const list = await api('GET', `/mes/basic/customer/list?code=${code}&pageSize=1`);
   return list.result.records[0];
 }
 
 async function findFollowUp(token, customerId, content) {
-  const r = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customerId}&pageSize=20`, token);
+  const r = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customerId}&pageSize=20`);
   return r.result.records.find((a) => a.content === content) || null;
 }
 
@@ -59,7 +61,7 @@ async function run() {
   console.log('--- 1. CRUD 主流程 ---');
 
   // 1.1 新增联系人（必填字段齐全）
-  const addR1 = await api('POST', '/mes/basic/customer/followUp/add', token, {
+  const addR1 = await api('POST', '/mes/basic/customer/followUp/add', {
     customerId: customer.id,
     followType: '1', content: '首次拜访，介绍产品', follower: '张三',
     followDate: '2026-08-04 10:00:00', nextDate: '2026-08-15 10:00:00',
@@ -70,7 +72,7 @@ async function run() {
   check('1.1.1 新增跟进落库', contact1 != null, `id=${contact1?.id}`);
 
   // 1.2 新增第二个联系人（非默认）
-  const addR2 = await api('POST', '/mes/basic/customer/followUp/add', token, {
+  const addR2 = await api('POST', '/mes/basic/customer/followUp/add', {
     customerId: customer.id,
     followType: '2', content: '电话跟进，发送报价单', follower: '李四',
     followDate: '2026-08-05 14:00:00', nextDate: '2026-08-20 14:00:00',
@@ -81,7 +83,7 @@ async function run() {
   check('1.2.1 第二个跟进落库', contact2 != null, `id=${contact2?.id}`);
 
   // 1.3 列表查询（按 customerId 过滤）
-  const listR = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customer.id}&pageSize=10`, token);
+  const listR = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customer.id}&pageSize=10`);
   check('1.3 列表查询(过滤客户)', listR.code === 200 && listR.result.total >= 2, `total=${listR.result.total}`);
   // 验证：orderByDesc followDate，最新跟进排第一
   if (listR.result.records.length >= 2) {
@@ -90,7 +92,7 @@ async function run() {
   }
 
   // 1.4 编辑联系人
-  const editR = await api('PUT', '/mes/basic/customer/followUp/edit', token, {
+  const editR = await api('PUT', '/mes/basic/customer/followUp/edit', {
     id: contact1.id, customerId: customer.id,
     followType: '1', content: '首次拜访-改', follower: '张三',
     followDate: '2026-08-04 10:00:00', nextDate: '2026-08-16 10:00:00',
@@ -101,19 +103,19 @@ async function run() {
   check('1.4.1 编辑后字段更新', contact1Edited?.content === '首次拜访-改', `name=${contact1Edited?.content}`);
 
   // 1.5 删除联系人
-  const delR = await api('DELETE', `/mes/basic/customer/followUp/delete?id=${contact2.id}`, token);
+  const delR = await api('DELETE', `/mes/basic/customer/followUp/delete?id=${contact2.id}`);
   check('1.5 删除联系人', delR.code === 200, delR.message);
   const contact2After = await findFollowUp(token, customer.id, '电话跟进，发送报价单');
   check('1.5.1 删除后查询不到', contact2After == null, `仍存在=${contact2After != null}`);
 
   // 1.6 批量删除
-  const addR3 = await api('POST', '/mes/basic/customer/followUp/add', token, {
+  const addR3 = await api('POST', '/mes/basic/customer/followUp/add', {
     customerId: customer.id, name: '王五', title: '助理', phone: '13700137000', email: 'wangwu@example.com', social: 'wx-003', isDefault: 0,
     province: '北京', city: '北京', district: '朝阳区',
     detail: '国贸路', isDefault: 0,
   });
   const contact3 = await findFollowUp(token, customer.id, '上门拜访，演示样品');
-  const batchR = await api('DELETE', `/mes/basic/customer/followUp/deleteBatch?ids=${contact3?.id}`, token);
+  const batchR = await api('DELETE', `/mes/basic/customer/followUp/deleteBatch?ids=${contact3?.id}`);
   check('1.6 批量删除', batchR.code === 200, batchR.message);
   const contact3After = await findFollowUp(token, customer.id, '上门拜访，演示样品');
   check('1.6.1 批量删除后查询不到', contact3After == null, `仍存在=${contact3After != null}`);
@@ -126,7 +128,7 @@ async function run() {
   // 2.1 缺 customerId - 应能添加（customerId 不是必填，看 controller）
   // 实际 controller 不校验 customerId 必填，service 层由 Schema 决定
   // 这里跳过验证必填（JeecgBoot 框架可能允许），只验证 customerId 过滤生效
-  const noCust = await api('POST', '/mes/basic/customer/followUp/add', token, {
+  const noCust = await api('POST', '/mes/basic/customer/followUp/add', {
     name: '无客户', title: 'X', phone: '13000130000', email: 'x@x.com', social: 'wx', isDefault: 0,
     detail: '某地址', isDefault: 0,
   });
@@ -138,22 +140,22 @@ async function run() {
   console.log('\n--- 3. 错误路径 ---');
 
   // 3.1 编辑不存在的 ID
-  const edit404 = await api('PUT', '/mes/basic/customer/followUp/edit', token, {
+  const edit404 = await api('PUT', '/mes/basic/customer/followUp/edit', {
     id: 'nonexistent_id_999', customerId: customer.id,
     followType: 'X', content: 'X', follower: 'X', followDate: '2026-01-01 00:00:00',
   });
   check('3.1 编辑不存在ID', edit404.code === 200, `code=${edit404.code} (mybatis-plus updateById 静默成功 0 行)`);
 
   // 3.2 删除不存在的 ID
-  const del404 = await api('DELETE', `/mes/basic/customer/followUp/delete?id=nonexistent_id_999`, token);
+  const del404 = await api('DELETE', `/mes/basic/customer/followUp/delete?id=nonexistent_id_999`);
   check('3.2 删除不存在ID', del404.code === 200, `code=${del404.code}`);
 
   // 3.3 批量删除空字符串
-  const batchEmpty = await api('DELETE', `/mes/basic/customer/followUp/deleteBatch?ids=`, token);
+  const batchEmpty = await api('DELETE', `/mes/basic/customer/followUp/deleteBatch?ids=`);
   check('3.3 批量删除空字符串', batchEmpty.code === 500 || batchEmpty.code === 200, `code=${batchEmpty.code} msg=${batchEmpty.message?.slice(0, 40)}`);
 
   // 3.4 列表查询异常分页
-  const listBig = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customer.id}&pageNo=999&pageSize=999999`, token);
+  const listBig = await api('GET', `/mes/basic/customer/followUp/list?customerId=${customer.id}&pageNo=999&pageSize=999999`);
   check('3.4 列表查询超大分页', listBig.code === 200, `code=${listBig.code}`);
 
   // ============================================================
@@ -172,7 +174,7 @@ async function run() {
   }
 
   // 4.2 importExcel (POST 无文件时应 400 或 500)
-  const importR = await api('POST', '/mes/basic/customer/followUp/importExcel', token, {});
+  const importR = await api('POST', '/mes/basic/customer/followUp/importExcel', {});
   check('4.2 importExcel 端点可达(空请求)', importR.code === 200 || importR.code === 500, `code=${importR.code} msg=${importR.message?.slice(0, 40)}`);
 
   // ============================================================
