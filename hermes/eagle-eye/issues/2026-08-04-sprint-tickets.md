@@ -10,7 +10,7 @@
 | Ticket | 来源 | 主题 | 优先级 | 工时 | Sprint | 状态 |
 |---|---|---|---|---|---|---|
 | TKT-001 | #9 + #11 合并 | 财务收款/付款 Drawer 补齐 | P2 | 2-3 h | W1 | 🟡 待开工 |
-| TKT-002 | #13 | 客户管理权限命名不一致修复 | P3 | 1-2 h | W1 | 🟡 待开工 |
+| **TKT-002** | #13 | 客户管理权限命名不一致修复 | P3 | 1 h | **W1** | ✅ 已完成 (a8250ba) |
 | TKT-003 | #14 方案 A | SysMessageModal TS 泛型未剥离 | P3 | 30 min | W1 | 🟡 待开工 |
 | TKT-004 | #14 方案 B | 全仓 `mes:basic:*` 与 `mes:customer*:*` 命名统一 | P3 | 2-3 h | W2 | 🔵 计划 |
 | TKT-005 | #2 | 库存预警工作台优化（产品范围待定） | P2 | 待定 | 待定 | 🔵 等业务侧 |
@@ -64,7 +64,7 @@ function handleAdd() { router.push('/project/mes/finance/collection/add'); }
 
 ---
 
-## TKT-002 客户管理权限命名不一致修复（#13）
+## TKT-002 客户管理权限命名不一致修复（#13）— ✅ 已完成
 
 | 字段 | 内容 |
 |---|---|
@@ -279,3 +279,19 @@ TKT-003 只是最小修复（替换 4 处 `<any>`）。**根因未排查**：Vit
 ## 变更日志
 
 - 2026-08-04：初版排期（5 个 ticket，覆盖 5 个真实问题）
+
+### 验收记录（2026-08-04）
+
+| 验收项 | 结果 |
+|---|---|
+| 修改 MesMenuRegistry + update-begin/end 标记 | ✅ commit a8250ba |
+| sys_permission 表有 mes:basic:* 7 行 | ✅ mysql 查得 |
+| admin 角色绑定 mes:basic:* 7 个 | ✅ mysql 查得 |
+| **mes_admin (=mes_role_001) 绑定 mes:basic:* 7 个** | ✅ mysql 查得 |
+| mes_admin → POST /mes/basic/customer/add | ✅ **200 '添加成功'**（之前 401 'Subject does not have permission [mes:basic:add]'） |
+| sales-receipt-flow.test.js step 0.3 | ✅ **'0.3 创建客户'** 通过 |
+
+**实际工时**：1 h（小于估算 1-2h，因为 MesMenuAutoRegisterRunner 自动完成 INSERT + bindRole，无需手写 SQL 迁移）
+
+**附加发现**：Runner 设计精妙，修改 MesMenuRegistry + 重启即可自动同步 sys_permission 和 sys_role_permission，业务代码无需手动维护 SQL 迁移。
+
