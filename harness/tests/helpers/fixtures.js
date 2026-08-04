@@ -63,16 +63,21 @@ async function safeDeleteDoc(c, basePath, id) {
  * 用 SQL 文件执行，绕开 Windows 命令行引号问题
  */
 function dbCleanup(sqlStatements) {
+  //update-begin---author:pi---date:2026-08-05---for:[BUG-5-R 修复] dbCleanup 失败时记录错误到 stderr（不静默吞错）-----------
   const f = path.join(os.tmpdir(), `harness-cleanup-${Date.now()}.sql`);
   try {
     fs.writeFileSync(f, sqlStatements, 'utf8');
     execSync(`${mysqlBin()} -uroot -proot --host=127.0.0.1 --protocol=TCP --default-character-set=utf8mb4 jeecg-boot < "${f}"`, { stdio: 'pipe' });
     return true;
   } catch (e) {
+    // 不再静默吞错：打印 SQL + 错误信息到 stderr，方便 CI log 排查
+    process.stderr.write(`[dbCleanup FAILED] SQL:\n${sqlStatements}\n`);
+    process.stderr.write(`[dbCleanup ERROR] ${e.message}\n`);
     return false;
   } finally {
     try { fs.unlinkSync(f); } catch (e) {}
   }
+  //update-end---author:pi---date:2026-08-05---for:[BUG-5-R 修复] dbCleanup 失败时记录错误到 stderr（不静默吞错）-----------
 }
 
 /** 常用清理：仓+料+库存+台账+成本日志（本地库） */
