@@ -39,6 +39,7 @@
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔵 待复核 | — |
 | 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | 🔵 待复核 | — |
 | 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔵 待复核 | — |
+| 14 | SysMessageModal `any is not defined`（全局 pageerror） | P3 | 🔴 真实 Bug | 已提排期（待认领） |
 
 > 复核状态说明：
 > - 🔵 待复核
@@ -488,10 +489,61 @@ ReferenceError: any is not defined
 
 1. **P1 先修**（基本 + 采购台账）：整页不可用，影响演示和日常操作
 2. **P2 批量修**（财务 4 个 + 其它入库自动预填）：抽屉触发和前端契约
-3. **P3 顺手清**（批次只读页 + 编码规则 + 销售 fixture）：UI 与后端契约对齐
+3. **P3 顺手清**（批次只读页 + 编码规则 + 销售 fixture + #14 SysMessageModal）：UI 与后端契约对齐 / 全局控制台净化
 
 ## 不在本次范围
 
 - 不修改 harness runner（已验证 E2E 失败是产品问题）
 - 不修改业务代码（按 CLAUDE.md "不因为单个 E2E 失败自动修改业务代码"）
 - 不修改 router/routes（已确认通过 MesMenuRegistry + 动态 addRoute 可达）
+
+---
+
+## #14 SysMessageModal `any is not defined`（全局 pageerror）— 已提排期
+
+- **发现问题位置**：`src/views/system/message/components/SysMessageModal.vue`
+- **复现入口**：顶部 header 铃铛全局加载 → 任何页面都触发
+- **首次发现**：#4 通用设置复核调试 spec 中捕获（2026-08-04）
+- **优先级**：P3（不影响渲染 / 功能，但污染所有页面控制台 + 让 E2E "console 无错" 断言批量误报）
+- **预计工时**：30 分钟（方案 A 最小修复） + 2 小时（方案 B 全仓排查同类）
+- **归属建议**：业务前端（基础架构组）
+
+### 根因
+
+`SysMessageModal.vue`（以及同模块的 `useSysMessage.ts`）使用了 Options API + `<script>`，里面写了 TypeScript 泛型语法 `reactive<any>(...)` 和 `ref<any>(...)`。**正常情况下 Vite 的 esbuild 会剥离 TS 类型，但实际运行时 `<any>` 作为标识符被抛出 `ReferenceError`** —— 说明 esbuild 对该文件的类型剥离失效或被某个插件跳过。
+
+### 受影响位置（4 处）
+
+| 文件 | 行 | 代码 |
+|---|---|---|
+| `src/views/system/message/components/SysMessageModal.vue` | 201 | `const searchParams = reactive<any>({...})` |
+| `src/views/system/message/components/SysMessageModal.vue` | 299 | `const searchRangeDate = ref<any>([])` |
+| `src/views/system/message/components/useSysMessage.ts` | 31 | `const messageList = ref<any>([])` |
+| `src/views/system/message/components/useSysMessage.ts` | 35 | `const searchParams = reactive<any>({...})` |
+
+### 修复方案
+
+**方案 A（推荐先做，30 min）：最小修复 — 去掉/替换 4 处 `<any>`**
+
+- `SysMessageModal.vue:201` searchParams 推断为 `Record<string, any>`（具体接口类型待补）
+- `SysMessageModal.vue:299` searchRangeDate 推断为 `[Dayjs, Dayjs]` 或 `[]`（与 ant-design 日期组件对齐）
+- `useSysMessage.ts:31/35` 同上
+- 验证：刷新页面 + 重跑 E2E，console 无 `pageerror: any is not defined`
+
+**方案 B（随后做，2 h）：根因排查 + 全仓扫描**
+
+- 检查 `vite.config.ts` 中 esbuild 配置、`build/vite/plugin/` 自定义插件是否跳过了类型剥离
+- 全仓 `grep -rn "ref<any>\|reactive<any>\|computed<any>" src/` 排查同类问题
+- 对发现的同类问题统一修复
+- 添加 lint 规则禁止 `<any>` 泛型（`@typescript-eslint/no-explicit-any`）
+
+### 验收标准
+
+1. 刷新任意页面，控制台无 `pageerror: any is not defined`
+2. 重跑 `harness/e2e/mes/commonSetting.spec.ts`，`不应有运行时错误` 断言通过
+3. 重跑 `harness/e2e/mes/*.spec.ts` 全量，统计"console 错误"导致的误报数（应显著下降）
+
+### 排期建议
+
+- **本周**：方案 A + 验收
+- **下周**：方案 B（全仓扫描 + lint 规则）
