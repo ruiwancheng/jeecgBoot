@@ -26,7 +26,7 @@
 
 | # | Issue | 严重程度 | 复核状态 | 核实结果 |
 |---|---|---|---|---|
-| 1 | 库存总览 (`/project/mes/basic/inventory`) | P1 | 🔵 待复核 | — |
+| 1 | 库存总览 (`/project/mes/warehouse/inventory`) | P1 | ✅ 误判 | URL 写错 + 页面是只读 dashboard，原 spec 误把“导出/新增/抽屉”当必备能力 |
 | 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | 🔵 待复核 | — |
 | 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | 🔵 待复核 | — |
 | 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | 🔵 待复核 | — |
@@ -50,17 +50,42 @@
 
 ## BASIC 模块
 
-### [P1] 库存总览（/project/mes/basic/inventory）
+### [P1] 库存总览（/project/mes/warehouse/inventory）
 
 - **后端 controller**：`MesInventoryController`
-- **症状**：页面 8/8 测试全失败：表格不渲染、列头/搜索/导出/新增按钮、数据行、抽屉、仓库筛选全部缺失
-- **失败测试**（7 个）：
-  - `库存总览 2. 表格 + 列头可见`
-  - `库存总览 3. 搜索表单 + 查询按钮可见`
-  - `库存总览 4. 导出按钮可见`
-  - `库存总览 5. 新增按钮可见`
-  - `库存总览 6. 数据行或空状态可见`
-  - `库存总览 7. 点击新增 → 抽屉可见`
+- **原报告症状**：页面 8/8 测试全失败：表格不渲染、列头/搜索/导出/新增按钮、数据行、抽屉、仓库筛选全部缺失
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**两个独立问题复合在一起造成误报，需拆开看：**
+
+1. **测试 URL 写错**：spec 里写的是 `/project/mes/basic/inventory`，但菜单注册和 router 都把 inventory 放在 `warehouse` 父节点下，**正确 URL 是 `/project/mes/warehouse/inventory`**。修正 URL 后路由可达。
+2. **页面是设计上的只读 dashboard**：
+   - 后端 `MesInventoryController` 只暴露 `@GetMapping("/list")`，没有 add/edit/delete/exportXls
+   - 前端 `inventory.api.ts` 只导出 `queryInventoryList`
+   - 前端 `index.vue` 调用 `useListPage` 时**没有传** `exportConfig`、`importConfig`、也没启用新增/操作列
+   - 菜单注册仅给 `mes:inventory:list` 权限
+   - 对比仓库管理页（传了 `exportConfig: { url: getExportUrl }` → 有导出按钮），库存总览本来就无导出
+
+**修正 URL + 后端就绪后重测（5 passed / 3 failed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询 | ✅ pass | 搜索表单正常 |
+| 4. 导出按钮 | ❌ fail | **页面没导出按钮（设计如此）** |
+| 5. 新增按钮 | ❌ fail | **页面没新增按钮（设计如此）** |
+| 6. 数据行 | ✅ pass | 数据正常 |
+| 7. 新增抽屉 | ❌ fail | **没新增按钮自然无抽屉（设计如此）** |
+| 8. 仓库筛选 | ✅ pass | 仓库下拉正常 |
+
+**核实依据**：调用 `cat jeecgboot-vue3/src/views/project/mes/basic/inventory/inventory.api.ts`、`MesInventoryController.java` 源码 + `MesMenuRegistry.java` 权限标记 + `useListPage` 调用参数对比仓库页。
+
+**action items**（不进排期，作为测试侧改进）：
+- 修正 `harness/e2e/mes/basic-inventory.spec.ts` 的 `PAGE_PATH` 为 `/project/mes/warehouse/inventory`
+- 调整 4/5/7 三个测试为 `test.skip` 或改成只读断言（这个页面是 dashboard，不该期望新增/导出/抽屉）
+- 生成时我把 basic/inventory.spec.ts 全部按 CRUD 模板生成，没看 controller 实际暴露的端点——模板应根据 controller endpoint set 调整
   - `库存总览 8. 仓库筛选可见`
 - **复现命令**：
   ```bash
