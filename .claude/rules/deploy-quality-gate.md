@@ -233,3 +233,24 @@ curl -s http://server/js/XxxDrawer-YYY.js | grep -c "movingAvgCost"
 | `.last-deploy-commit` | 记录上次部署 commit，做 diff 基准 |
 | `hermes/logs/skip-audit.log` | 紧急旁路使用记录 |
 | `hermes/reviews/` | 部署质量报告归档 |
+
+## CI 硬门控基线锁定模式（2026-08-05）
+
+**铁律**：CI 类型检查 / 测试覆盖率等**软门控阈值**转硬门控时，必须**显式锁定基线值** + 注释强调"阈值变更需主动同步"。
+
+**背景**：2026-08-04 vue-tsc 软门控 200 errors（基线 742）永远挂=装饰品；N3 修复改硬门控 742 基线才真生效。
+
+**强制要求**：
+1. **基线值用 `>` 而非 `==`**：`ERROR_COUNT > 742` 而非 `== 742`（防止边界值漏检）
+2. **注释锁定基线日期**：例如 `// 基线 742, 2026-08-05 锁定`
+3. **阈值变更触发器**：错误数下降时必须主动改 workflow（不要等 CI 误报）
+4. **typecheck 与 quality-gate 联动**：vue-tsc 错误数 > N → quality-gate 标 NEEDS WORK 而非 PASS
+
+**反模式**：
+- ❌ `continue-on-error: true` + 软门控 = 装饰品
+- ❌ `ERROR_COUNT > 200` 软门控（基线 742 永远挂）
+- ❌ 阈值变更不留痕（直接改 N 不在 commit 写原因）
+
+**实证**：2026-08-05 commit 52cc5c02，typecheck 改硬门控 742 基线后 CI 真实生效，typecheck 失败时 workflow exit 1。
+
+详见 `learnings/2026-08-05-ci-skip-via-env-not-code.md`（N3 相关段落）。
