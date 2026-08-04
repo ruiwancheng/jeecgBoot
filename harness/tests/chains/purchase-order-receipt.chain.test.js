@@ -136,4 +136,10 @@ async function run() {
   return c.summary('链路: 订单→入库');
 }
 
-run().then(ok => process.exit(ok ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });
+//update-begin---author:pi---date:2026-08-04---for:【BUG-1】段文件改为可重用模块（独立运行时才 exit，被 require 时不 exit）-----------
+if (require.main === module) {
+  run().then(ok => process.exit(ok ? 0 : 1)).catch(e => { console.error(e); process.exit(1); });
+} else {
+  module.exports = { run };
+}
+//update-end---author:pi---date:2026-08-04---for:【BUG-1】段文件改为可重用模块（独立运行时才 exit，被 require 时不 exit）-----------

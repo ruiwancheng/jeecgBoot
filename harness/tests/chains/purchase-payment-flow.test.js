@@ -316,4 +316,10 @@ async function run() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
-run().catch(err => { console.error('FATAL:', err); process.exit(2); });
+//update-begin---author:pi---date:2026-08-04---for:【BUG-1】段文件改为可重用模块（独立运行时才 exit，被 require 时不 exit）-----------
+if (require.main === module) {
+  run().catch(err => { console.error('FATAL:', err); process.exit(2); });
+} else {
+  module.exports = { run };
+}
+//update-end---author:pi---date:2026-08-04---for:【BUG-1】段文件改为可重用模块（独立运行时才 exit，被 require 时不 exit）-----------

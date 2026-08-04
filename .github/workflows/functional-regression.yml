@@ -172,12 +172,26 @@ jobs:
           if-no-files-found: ignore
 
   # ============================================================
-  # Job 2: E2E 测试（含前端 build + preview）
-  # ============================================================
+  # Job 2: E2E 测试（含后端服务 + 前端 build + preview）
+  # update-begin---author:pi---date:2026-08-04---for:【BUG-6 修复】e2e-test job 增加后端 services（之前无 services + continue-on-error 导致永远空转永远绿）-----------
   e2e-test:
     name: E2E Test (harness/e2e/mes)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    # e2e-test 需要后端 + MySQL（前端 XHR 调后端 API）
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: jeecg-boot
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     env:
       HARNESS_BASE_URL: http://localhost:8080/jeecg-boot
       E2E_UI_BASE: http://localhost:4173
@@ -191,6 +205,20 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Java 17 (后端启动需要)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-
+
       - name: Cache pnpm store (frontend)
         uses: actions/cache@v4
         with:
@@ -198,6 +226,39 @@ jobs:
           key: pnpm-frontend-${{ hashFiles('jeecgboot-vue3/pnpm-lock.yaml') }}
           restore-keys: |
             pnpm-frontend-
+
+      - name: Build backend
+        run: |
+          cd jeecg-boot
+          mvn clean install -DskipTests -pl jeecg-module-system/jeecg-system-start -am
+
+      - name: Init MySQL schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS \`jeecg-boot\` DEFAULT CHARACTER SET utf8mb4;"
+          mysql -h 127.0.0.1 -u root -proot jeecg-boot < jeecg-boot/db/jeecgboot-mysql-5.7.sql
+          # MES 业务模块表（失败的文件跳过，幂等）
+          find jeecg-boot/jeecg-boot-module/project-mes -path "*/target/*" -prune -o \
+            \( -path "*/sql/*.sql" -o -path "*/db/*.sql" \) -type f -print | sort | while read f; do
+            mysql -h 127.0.0.1 -u root -proot --force jeecg-boot < "$f" || true
+          done
+
+      - name: Start backend (DevTools disabled)
+        run: |
+          cd jeecg-boot/jeecg-module-system/jeecg-system-start
+          nohup java -jar target/jeecg-system-start-*.jar \
+            --spring.profiles.active=dev \
+            --spring.flyway.enabled=false \
+            --jeecg.login.enableLoginCaptcha=false \
+            > /tmp/backend.log 2>&1 &
+          for i in $(seq 1 40); do
+            sleep 3
+            curl -sf "http://localhost:8080/jeecg-boot/sys/getEncryptedString" >/dev/null && break
+          done
+          curl -sf "http://localhost:8080/jeecg-boot/sys/getEncryptedString" || {
+            echo "❌ Backend not ready after 120s"
+            tail -50 /tmp/backend.log
+            exit 1
+          }
 
       - name: Install frontend dependencies
         run: |
@@ -230,8 +291,7 @@ jobs:
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
 
-      - name: Run E2E tests (continue-on-error for soft gate)
-        continue-on-error: true
+      - name: Run E2E tests (硬门禁 - 失败即阻塞)
         run: |
           cd harness
           # 显式 --config 防止 baseURL 失效（2026-08-02 复盘发现）
@@ -239,6 +299,7 @@ jobs:
             --reporter=list \
             --retries=1 \
             --timeout=60000
+        # update-end---author:pi---date:2026-08-04---for:【BUG-6 修复】e2e-test job 增加后端 services（之前无 services + continue-on-error 导致永远空转永远绿）-----------
 
       - name: Upload E2E results
         if: always()
