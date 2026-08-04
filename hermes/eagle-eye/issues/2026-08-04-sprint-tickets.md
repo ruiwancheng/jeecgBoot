@@ -9,10 +9,19 @@
 
 | Ticket | 来源 | 主题 | 优先级 | 工时 | Sprint | 状态 |
 |---|---|---|---|---|---|---|
-| TKT-001 | #9 + #11 合并 | 财务收款/付款 Drawer 补齐 | P2 | 2-3 h | W1 | 🟡 待开工 |
+| TKT-001 | #9 + #11 合并 | 财务收款/付款 Drawer 补齐 | P2 | 2h | W1 | ✅ 已完成 (8d3b400) |
 | **TKT-002** | #13 | 客户管理权限命名不一致修复 | P3 | 1 h | **W1** | ✅ 已完成 (a8250ba) |
 | TKT-003 | #14 方案 A | SysMessageModal TS 泛型未剥离 | P3 | 30 min | W1 | 🟡 待开工 |
 | TKT-004 | #14 方案 B | 全仓 `mes:basic:*` 与 `mes:customer*:*` 命名统一 | P3 | 2-3 h | W2 | 🔵 计划 |
+| W2-1A | /add-tests basic customerAddress | 客户地址子模块测试 | P0 | 30min | W2 | ✅ 已完成 (7cb8796) |
+| W2-1B | /add-tests basic customerContact | 客户联系人子模块测试 | P0 | 30min | W2 | ✅ 已完成 (5b7bf8a) |
+| W2-1C | /add-tests basic customerFollowUp | 客户跟进子模块测试 | P0 | 30min | W2 | ✅ 已完成 (3b7cde5) |
+| W2-1D | /add-tests basic customerPrice | 客户价格子模块测试 | P0 | 30min | W2 | ✅ 已完成 (8258407) |
+| W2-2A | /add-tests basic batchInventory | 批次库存子模块测试 | P0 | 30min | W2 | ✅ 已完成 (b5e5809) |
+| W2-2B | /add-tests basic batchLedger | 批次流水子模块测试 | P0 | 30min | W2 | ✅ 已完成 (871181e) |
+| W2-2C | /add-tests basic batchTraceability | 批次追溯子模块测试 | P0 | 30min | W2 | ✅ 已完成 (15da8e5) |
+| W2-3A | /add-tests stock otherOut | 其他出库子模块测试 | P0 | 1h | W2 | ✅ 已完成 (58e5ee6) |
+| W2-3B | /add-tests finance accountSubject | 会计科目子模块测试 | P0 | 1h | W2 | ✅ 已完成 (c705842) |
 | TKT-005 | #2 | 库存预警工作台优化（产品范围待定） | P2 | 待定 | 待定 | 🔵 等业务侧 |
 
 **工时合计**：5.5-8 h（不含 TKT-005 产品优化）
