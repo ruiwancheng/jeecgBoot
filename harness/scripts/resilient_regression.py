@@ -709,6 +709,25 @@ def detached_launch(run_dir: Path, retry_failed: bool = False) -> int:
     return process.pid
 
 
+def launch_dashboard(run_dir: Path, port: int) -> int:
+    dashboard_log = run_dir / "dashboard.log"
+    script = Path(__file__).resolve().with_name("regression_dashboard.py")
+    command = [sys.executable, str(script), "--run-dir", str(run_dir), "--port", str(port)]
+    with dashboard_log.open("ab", buffering=0) as log_stream:
+        process = subprocess.Popen(
+            command,
+            cwd=REPO_ROOT,
+            stdin=subprocess.DEVNULL,
+            stdout=log_stream,
+            stderr=subprocess.STDOUT,
+            creationflags=process_creation_flags(detached=True),
+            start_new_session=(os.name != "nt"),
+        )
+    (run_dir / "dashboard.pid").write_text(str(process.pid), encoding="ascii")
+    (run_dir / "dashboard.url").write_text(f"http://127.0.0.1:{port}\n", encoding="utf-8")
+    return process.pid
+
+
 def latest_run_dir(runs_dir: Path = DEFAULT_RUNS_DIR) -> Path:
     candidates = sorted((path for path in runs_dir.glob("*") if path.is_dir()), reverse=True)
     if not candidates:
@@ -725,12 +744,20 @@ def print_status(run_dir: Path) -> None:
     print(json.dumps(state, ensure_ascii=False, indent=2))
 
 
-def stop_run(run_dir: Path, stop_services: bool) -> None:
+def stop_run(run_dir: Path, stop_services: bool, stop_dashboard: bool = False) -> None:
     state_path = run_dir / "state.json"
     state = read_state(run_dir)
     runner_pid = state.get("runner_pid")
     if runner_pid:
         terminate_process_tree(int(runner_pid))
+    if stop_dashboard:
+        dashboard_pid_path = run_dir / "dashboard.pid"
+        if dashboard_pid_path.exists():
+            try:
+                terminate_process_tree(int(dashboard_pid_path.read_text(encoding="ascii").strip()))
+            except (OSError, ValueError):
+                pass
+            dashboard_pid_path.unlink(missing_ok=True)
     if stop_services:
         for service in state.get("services", {}).values():
             pid = service.get("pid")
@@ -753,6 +780,8 @@ def build_parser() -> argparse.ArgumentParser:
     start_parser = subparsers.add_parser("start", help="start a detached regression run")
     start_parser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     start_parser.add_argument("--run-dir")
+    start_parser.add_argument("--dashboard", action="store_true", help="also start the read-only dashboard")
+    start_parser.add_argument("--port", type=int, default=8765)
 
     run_parser = subparsers.add_parser("run", help="run in the foreground")
     run_parser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
@@ -763,6 +792,8 @@ def build_parser() -> argparse.ArgumentParser:
     resume_parser.add_argument("--run-dir")
     resume_parser.add_argument("--foreground", action="store_true")
     resume_parser.add_argument("--retry-failed", action="store_true")
+    resume_parser.add_argument("--dashboard", action="store_true", help="also start the read-only dashboard")
+    resume_parser.add_argument("--port", type=int, default=8765)
 
     status_parser = subparsers.add_parser("status", help="show durable state")
     status_parser.add_argument("--run-dir")
@@ -770,6 +801,12 @@ def build_parser() -> argparse.ArgumentParser:
     stop_parser = subparsers.add_parser("stop", help="stop a run")
     stop_parser.add_argument("--run-dir")
     stop_parser.add_argument("--services", action="store_true")
+    stop_parser.add_argument("--dashboard", action="store_true")
+
+    dashboard_parser = subparsers.add_parser("dashboard", help="start the read-only dashboard in the foreground")
+    dashboard_parser.add_argument("--run-dir")
+    dashboard_parser.add_argument("--port", type=int, default=8765)
+    dashboard_parser.add_argument("--detach", action="store_true")
 
     report_parser = subparsers.add_parser("report", help="regenerate Markdown summary")
     report_parser.add_argument("--run-dir")
@@ -791,7 +828,8 @@ def main(argv: list[str] | None = None) -> int:
         )
         create_run(manifest, run_dir)
         pid = detached_launch(run_dir)
-        print(json.dumps({"run_dir": str(run_dir), "pid": pid}, ensure_ascii=False))
+        dashboard_pid = launch_dashboard(run_dir, args.port) if args.dashboard else None
+        print(json.dumps({"run_dir": str(run_dir), "pid": pid, "dashboard_pid": dashboard_pid, "dashboard_url": f"http://127.0.0.1:{args.port}" if args.dashboard else None}, ensure_ascii=False))
         return 0
     if args.command == "run":
         run_dir = Path(args.run_dir).resolve()
@@ -802,14 +840,23 @@ def main(argv: list[str] | None = None) -> int:
         if args.foreground:
             return execute_run(run_dir, retry_failed=args.retry_failed)
         pid = detached_launch(run_dir, retry_failed=args.retry_failed)
-        print(json.dumps({"run_dir": str(run_dir), "pid": pid}, ensure_ascii=False))
+        dashboard_pid = launch_dashboard(run_dir, args.port) if args.dashboard else None
+        print(json.dumps({"run_dir": str(run_dir), "pid": pid, "dashboard_pid": dashboard_pid, "dashboard_url": f"http://127.0.0.1:{args.port}" if args.dashboard else None}, ensure_ascii=False))
         return 0
     if args.command == "status":
         print_status(resolve_run_dir(args.run_dir))
         return 0
     if args.command == "stop":
-        stop_run(resolve_run_dir(args.run_dir), args.services)
+        stop_run(resolve_run_dir(args.run_dir), args.services, args.dashboard)
         return 0
+    if args.command == "dashboard":
+        run_dir = resolve_run_dir(args.run_dir)
+        if args.detach:
+            pid = launch_dashboard(run_dir, args.port)
+            print(json.dumps({"run_dir": str(run_dir), "dashboard_pid": pid, "dashboard_url": f"http://127.0.0.1:{args.port}"}, ensure_ascii=False))
+            return 0
+        from regression_dashboard import main as dashboard_main
+        return dashboard_main(["--run-dir", str(run_dir), "--port", str(args.port)])
     if args.command == "report":
         run_dir = resolve_run_dir(args.run_dir)
         manifest = read_json(run_dir / "manifest.json")
