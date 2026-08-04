@@ -75,14 +75,52 @@ harness/
 ├── INDEX.md                    # 全局索引
 ├── docs/                       # 文档（列入 git，见 .gitignore）
 ├── tests/                      # 生成的测试代码
-│   └── <项目名>/                # 按项目分组
-│       ├── api/                # API 测试
-│       └── e2e/                # E2E 测试
+│   ├── <项目名>/                # 按项目分组
+│   │   ├── api/                # API 测试
+│   │   └── e2e/                # E2E 测试
+│   ├── modules/                # 鹰眼团 API 测试 (test.js)
+│   ├── chains/                 # 跨模块链路测试
+│   ├── helpers/                # API/E2E 公共 helper
+│   └── runner/                 # runner 自测 (test_resilient_regression.py 等)
 ├── e2e/                        # E2E 测试工程
 │   ├── demo/                   # 演示项目
-│   └── <项目名>/                # 按项目分组
-└── test-results/               # 测试运行结果（临时）
+│   ├── <项目名>/                # 按项目分组
+│   └── smoke/                  # 冒烟
+├── test-results/               # 测试运行结果（临时）
+├── scripts/                    # runner 与 dashboard 脚本（git 跟踪）
+│   ├── resilient_regression.py # 可恢复回归 runner
+│   ├── regression_dashboard.py # 本地只读看板
+│   └── regression_plan.py      # 链路与质量合并器
+├── regression/                 # 回归 manifest（git 跟踪）
+│   └── recovery-plan.json      # 业务手工切片 + frontend-static + test-quality
+├── dashboard/                  # 本地看板静态资源（git 跟踪）
+│   ├── index.html
+│   ├── dashboard.css
+│   └── dashboard.js
+└── .regression-runs/           # 运行时生成（gitignore）
+    └── <run-id>/
+        ├── state.json
+        ├── manifest.json
+        ├── summary.md
+        ├── logs/
+        └── services/
 ```
+
+### harness/regression/recovery-plan.merged.json（gitignore）
+
+由 `python harness/scripts/resilient_regression.py plan` 动态生成，将 `recovery-plan.json` + `business-chains.json` 的 `chainTests.segments` 合并为一份临时 manifest。**不得入仓**。
+
+### harness/.regression-runs/（gitignore）
+
+后台 runner 每次跑生成的运行目录。包含：
+
+- `state.json`：原子落盘的进度状态。
+- `state.json.fallback`：Windows 文件锁时的备份。
+- `telemetry.jsonl`：心跳流。
+- `summary.md`：本次汇总报告。
+- `logs/<slice>.attempt-N.log`：原始执行日志。
+- `services/backend.log`：本次 runner 启动的后端日志。
+- `dashboard.url` / `dashboard.pid`：本地看板进程句柄。
 
 ### harness/ 与 jeecgboot-vue3/tests/ 的分工
 

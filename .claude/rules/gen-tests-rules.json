@@ -115,9 +115,11 @@
       "addCase": {
         "rule": "每个 describe/场景() 块必须 ≥ 1 条语义断言",
         "validation": "语义断言定义：(a) 验证具体字段值（如 result.code 非空、result.records[0].code 前缀正确），(b) 验证状态流转（如草稿→审核→禁编辑），(c) 验证显示值（锚点 #4：UI 显示编码/名称非裸 ID），(d) 验证数据传递（审核后库存变化量 = 申报量）",
-        "enforcement": "CI api-test job 前置门控：grep 统计 c.check()/expect()/assert() 数，<2 断言/文件拒绝入库；R009 硬下限：每个场景至少 1 条 (a)/(b)/(c)/(d) 之一"
+        "qualityScan": "harness/scripts/regression_plan.py evaluate_test_quality 扫描 harness/tests/modules/**/*.test.js，统计 c.check/expect/assert 总数 与以下语义模式命中数：\\.[A-Za-z_]+\\s*[!=]==\\s*['\"\\d]、\\.status\\s*[!=]==、\\.code\\s*[!=]==、\\.startsWith\\(|\\.includes\\(|\\.toBe\\(|\\.quantity\\s*[!=]=|\\.qty\\s*[!=]=|\\.total\\s*[!=]=|\\.amount\\s*[!=]=|expect\\([^,]*\\.to[A-Z][A-Za-z_]+\\(|getByText\\(|locator\\(",
+        "enforcement": "CI api-test job 前置门控：grep 统计 c.check()/expect()/assert() 数，<2 断言/文件拒绝入库；R009 硬下限：每个场景至少 1 条 (a)/(b)/(c)/(d) 之一；regression runner test-quality 切片输出 quality_score（语义断言/总断言）作为软门控，不达 30% 报 test_design_issue",
+        "report": "harness/scripts/regression_plan.py report --root harness/tests/modules 输出 hermes/eagle-eye/reports/<run-id>/test-quality.json 与 summary.md 中的 Test Quality 小节"
       },
-      "source": "2026-08-04 测试体系评估",
+      "source": "2026-08-04 测试体系评估 + 回归 runner 集成",
       "created": "2026-08-04"
     }
   ]
