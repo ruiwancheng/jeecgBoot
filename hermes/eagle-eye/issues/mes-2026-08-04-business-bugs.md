@@ -28,7 +28,7 @@
 |---|---|---|---|---|
 | 1 | 库存总览 (`/project/mes/warehouse/inventory`) | P1 | ✅ 误判 | URL 写错 + 页面是只读 dashboard，原 spec 误把“导出/新增/抽屉”当必备能力 |
 | 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | 🔴 真实需求（产品优化） | 测试侧误判（spec 按 CRUD 模板生成） + 产品侧明确需要优化（用户判断：当前基本无用） |
-| 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | 🔵 待复核 | — |
+| 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | ✅ 误判 | 产品决策明确不需导出（后端 + 权限实际有，前端故意不接入） |
 | 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | 🔵 待复核 | — |
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | 🔵 待复核 | — |
 | 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | 🔵 待复核 | — |
@@ -198,6 +198,46 @@
     npx playwright test e2e/mes/ --grep "编码规则" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：**
+> 该页面没设计导出功能，也不需要
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端 export 端点 | `@GetMapping("/exportXls") @RequiresPermissions("mes:codeRule:export")` **已实现** | `MesCodeRuleController.java:81-86` |
+| 后端 CRUD 端点 | list/add/edit/delete/deleteBatch/queryById/queryAll/nextCode 共 9 个端点齐全 | 同上全文 |
+| 前端 API | 8 个方法齐全，**但没有 exportUrl**（后端 exportXls 端点未接入前端） | `codeRule.api.ts`（全文 21 行） |
+| 前端表格 | 用 `BasicTable + useTable`，有新增按钮 / 搜索表单 / 操作列 / 抽屉，**但未传 `exportConfig`**（对比仓库页：传了 `exportConfig: { url: getExportUrl }` 才有导出按钮） | `index.vue`（全文 38 行） |
+| 菜单权限 | `list,add,edit,delete,deleteBatch,export,import` —— **export 权限已授予**（意味着未来需要时启用只需前端加 exportConfig） | `MesMenuRegistry.java:37` |
+
+**与 #1/#2 的关键区别：** #1 后端没 exportXls，#2 后端根本没 CRUD 端点 —— 是“能力未实现”。**#3 是后端 + 权限能力都有**，仅前端未接入，是**有意为之的产品决策**（用户已明确“不需要”）。
+
+**实测 spec（1 failed / 7 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询按钮 | ✅ pass | 搜索正常 |
+| 4. 导出按钮 | ❌ fail | **产品决策不实现（用户明确不需要）** |
+| 5. 新增按钮 | ✅ pass | 新增按钮存在 |
+| 6. 数据行或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 抽屉 | ✅ pass | 抽屉正常 |
+| 8. 编码规则类型下拉 | ✅ pass | 下拉正常 |
+
+**action items**（不进排期，作为测试侧改进）：
+- 调整 `harness/e2e/mes/basic-codeRule.spec.ts` 的测试 4 为 `test.skip`，或改成“导出能力检查”（验证后端 `GET /mes/basic/codeRule/exportXls?token=...` 返回 200/Excel 响应，不依赖前端按钮）
+- 记录“该页面产品决策不需要导出”作为元数据，避免后续 gen-tests 重复生成同类期望
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/basic-codeRule.spec.ts --workers=1
+  ```
 
 ### [P1] 通用设置（/project/mes/basic/commonSetting）
 
