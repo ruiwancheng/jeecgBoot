@@ -31,7 +31,7 @@
 | 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | ✅ 误判 | 产品决策明确不需导出（后端 + 权限实际有，前端故意不接入） |
 | 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | ✅ 误判（页面正常） + 🔴 发现独立 issue（SysMessageModal any 错误，需另建） | 页面渲染正常，pageerror 是 system 模块全局问题，与本页面无关 |
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | ✅ 误判 | 只读流水页面（导出有、增/删/改无），数据由入库/出库自动生成（用户判断） |
-| 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | 🔵 待复核 | — |
+| 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | ✅ 误判 | 同 #5，只读库存页（导出有、增/删/改无），数据由入库/出库生成 |
 | 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | 🔵 待复核 | — |
 | 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | 🔵 待复核 | — |
 | 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔵 待复核 | — |
@@ -387,6 +387,45 @@ ReferenceError: any is not defined
     npx playwright test e2e/mes/ --grep "批次库存" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：**
+> 同批次流水页面，没设计新增功能，批次库存页面的数据是由入库/出库功能生成的，无需批次库存页面新增
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端端点 | 仅 `list`（分页）/ `queryById`（按 ID 查）/ `exportXls`（导出）共 3 个，**无 add/edit/delete** | `MesBatchInventoryController.java` 全文 |
+| 后端逻辑 | 走 `QueryGenerator.initQueryWrapper` 支持搜索，默认按 `create_time` 倒序，**纯查询型 controller** | 同上 |
+| 前端表格 | `useListPage` 模板：有 `exportConfig: { name: '批次库存', url: getExportUrl }`，**无 importConfig**，无操作列 | `index.vue`（全文 31 行） |
+| 前端 API | `queryInventoryList` + `queryInventoryById` + `getExportUrl` 共 3 个方法，**无 add/edit/delete** | `inventory.api.ts`（全文 13 行） |
+| 菜单权限 | `list, export` 两项，**无 add/edit/delete** | `MesMenuRegistry.java:127` |
+
+**与 #5 批次台账完全同型**（两份实现几乎逐字相同）：只读数据流页面 + 导出能力，**不该有新增/编辑/删除**。
+
+**实测 spec（2 failed / 6 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询按钮 | ✅ pass | 搜索正常 |
+| 4. 导出按钮 | ✅ pass | 导出按钮存在且可用 |
+| 5. 新增按钮 | ❌ fail | **页面无新增按钮（设计如此）** |
+| 6. 数据行或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 抽屉 | ❌ fail | **没新增按钮自然无抽屉（设计如此）** |
+| 8. 批次库存导出按钮 | ✅ pass | 导出按钮存在 |
+
+**action items**（不进排期，作为测试侧改进）：
+- 调整 `harness/e2e/mes/batch-inventory.spec.ts` 的 5/7 两个测试为 `test.skip`，或改成只读 + 导出断言
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/batch-inventory.spec.ts --workers=1
+  ```
 
 ### [P2] 其它入库（自动预填）（/project/mes/stock/other-in）
 
