@@ -142,7 +142,9 @@ jobs:
           echo "=== 断言密度自检（R009 软门控）==="
           FAIL=0
           for f in tests/modules/basic-*.test.js; do
-            checks=$(grep -cE "c\.check|\.check\(|expect\(|assert\(" "$f" || true)
+            # update-begin---author:pi---date:2026-08-04---for:[CI fix] 断言密度自检 grep 模式（c\.check→check\()-----------
+            checks=$(grep -cE "check\(|expect\(|assert\(" "$f" || true)
+            # update-end---author:pi---date:2026-08-04---for:[CI fix] 断言密度自检 grep 模式-----------
             echo "  $f: ${checks:-0} assertions"
             if [ "${checks:-0}" -lt 2 ]; then
               echo "    ❌ FAIL: <2 assertions"
