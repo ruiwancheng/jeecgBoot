@@ -29,7 +29,7 @@
 | 1 | 库存总览 (`/project/mes/warehouse/inventory`) | P1 | ✅ 误判 | URL 写错 + 页面是只读 dashboard，原 spec 误把“导出/新增/抽屉”当必备能力 |
 | 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | 🔴 真实需求（产品优化） | 测试侧误判（spec 按 CRUD 模板生成） + 产品侧明确需要优化（用户判断：当前基本无用） |
 | 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | ✅ 误判 | 产品决策明确不需导出（后端 + 权限实际有，前端故意不接入） |
-| 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | 🔵 待复核 | — |
+| 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | ✅ 误判（页面正常） + 🔴 发现独立 issue（SysMessageModal any 错误，需另建） | 页面渲染正常，pageerror 是 system 模块全局问题，与本页面无关 |
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | 🔵 待复核 | — |
 | 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | 🔵 待复核 | — |
 | 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | 🔵 待复核 | — |
@@ -252,6 +252,66 @@
     npx playwright test e2e/mes/ --grep "通用设置" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 实测页面加载正常。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端 controller | `MesGlobalSwitchController` 有 list/save/closeCheck/closeBatchSwitch 4 个端点（拆分查+写） | `MesGlobalSwitchController.java` |
+| 后端逻辑 | 开关列表 + 保存/更新 + 关闭前置检查 + 原子化关闭（含检查+总开关+物料 batch_enabled 批量置 0） | 同上 |
+| 前端表格 | `BasicTable + useTable`，无搜索栏/无分页/无新增/无导出（开关页不该有这些） | `index.vue` |
+| 前端开关逻辑 | 开启直接调 save；关闭走 closeCheck → 二次确认 → closeBatchSwitch 三步流 | `index.vue:67-119` |
+| 全局状态 | `useMesGlobalSwitchStore` (Pinia)，跨页面共享开关状态（物料页读 store 决定 batch_enabled.disabled） | `src/store/modules/mesGlobalSwitch.ts` |
+| 菜单权限 | `list, edit` 两项 | `MesMenuRegistry.java:42` |
+
+**实测（1 failed / 8 assertions passed）：**
+
+| 断言 | 结果 |
+|---|---|
+| 路由可达 + URL 保持 `/project/mes/basic/commonSetting` | ✅ pass |
+| 页面标题"通用设置"可见 | ✅ pass |
+| "生产批次管理"开关可见 | ✅ pass |
+| ant-switch 组件渲染 | ✅ pass |
+| first switch `aria-checked="true"` | ✅ pass |
+| 截图存证 `harness/e2e/screenshots/commonSetting.png` | ✅ pass（页面渲染完整） |
+| **console 无致命错误** | ❌ fail |
+
+#### 🔴 复核中发现的独立 issue（不是 #4 的问题）
+
+**pageerror 来源**（调试 spec 抓到的完整 stack）：
+
+```
+ReferenceError: any is not defined
+    at setup (SysMessageModal.vue:66:37)
+    at callWithErrorHandling (chunk-5JWESHCG.js:2019:19)
+    ...
+```
+
+**关键发现：**
+
+- `SysMessageModal.vue` 在 `setup` 中写了 `const searchParams = reactive<any>({...})` 和 `const searchRangeDate = ref<any>([])`（行 201、299）—— **TS 泛型语法 `<any>` 被错误保留到运行时**
+- `SysMessageModal` 不是 commonSetting 页面加载的，**它在顶部 header 铃铛上全局加载**（`src/layouts/default/header/components/notify/index.vue`），所以**任何页面都会触发**这个错误
+- 截图显示 commonSetting 页面实际渲染完整（面包屑 + 侧边栏 + 表格 + 开关都正常）—— **与用户判断一致**
+
+**结论拆开看：**
+
+1. **#4 通用设置页面本身：** ✅ 误判 — 页面渲染、菜单权限、开关交互、关闭流程、后端端点全正常，与用户判断一致
+2. **pageerror 真实存在但：** 🔴 是**独立 issue** — 根因在 system/message 模块的 TS 泛型未剥离问题，不是 commonSetting 的问题
+
+**action items：**
+
+- #4 本身不进排期，进 spec 侧改进：在 `commonSetting.spec.ts` 中加入 console 错误白名单，把 `pageerror: any is not defined`（system 全局问题）从 fatal 过滤中放行，或拆出 system 模块独立验证
+- **新建独立 issue #14（建议）**：修复 `SysMessageModal.vue` 的 `<any>` TS 泛型未剥离问题（影响所有页面控制台，需要打包工具/编译配置排查）
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/commonSetting.spec.ts --workers=1
+  ```
 
 ---
 
