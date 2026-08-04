@@ -1,0 +1,1 @@
+[2026-08-04] [test] JS 包装层位置参数陷阱 | 触发：包装函数 `f(a, b, c) { return helper(a, b) }` 隐式丢弃 c | 处理：包装层显式选要传的参数（按 method 区分），或用对象参数 `{a, b, c}` 防止位置错位。本案：`api(method, path, token, body)` 内部 `c.api(method, path, body)` → body 参数位置不对，**token 字符串被当 body 塞进 query string**。结论：**包装层签名要明确每个参数用途**，不要靠位置约定。
