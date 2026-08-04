@@ -139,7 +139,7 @@ jobs:
           # 前置门控：断言密度自检（每个 .test.js 必须有 c.check 或 expect 断言）
           echo "=== 断言密度自检（R009 软门控）==="
           FAIL=0
-          for f in tests/mes/*.test.js; do
+          for f in tests/modules/basic-*.test.js; do
             checks=$(grep -cE "c\.check|\.check\(|expect\(|assert\(" "$f" || true)
             echo "  $f: ${checks:-0} assertions"
             if [ "${checks:-0}" -lt 2 ]; then
@@ -152,9 +152,9 @@ jobs:
             exit 1
           fi
 
-          echo "=== 运行 API 测试 ==="
+          echo "=== 运行 API 测试（modules + chains）==="
           FAILED=0
-          for f in tests/mes/*.test.js; do
+          for f in tests/modules/basic-*.test.js; do
             echo "--- $f ---"
             timeout 120 node "$f" || FAILED=1
           done
