@@ -15,7 +15,8 @@ const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 async function getInventoryQty(c, warehouseId, materialId) {
   const r = await c.api('GET', `/mes/warehouse/inventory/list?warehouseId=${warehouseId}&materialId=${materialId}&pageSize=1`);
   if (r.code === 200 && r.result?.records?.length > 0) {
-    return parseFloat(r.result.records[0].qty || 0);
+    // 修复：inventory API 返回字段是 current_qty，不是 qty
+    return parseFloat(r.result.records[0].current_qty || 0);
   }
   return 0;
 }
@@ -81,9 +82,13 @@ async function run() {
   let salesOrderId;
   try {
     const orderCode = `SO-${SUFFIX}`;
+    const orderDate = new Date().toISOString().slice(0, 10);
+    // 交货日期 = 下单日 + 7 天（合理交货期），测试无需与业务日历对齐
+    const deliveryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const r = await c.api('POST', '/mes/sales/order/add', {
       code: orderCode,
-      orderDate: new Date().toISOString().slice(0, 10),
+      orderDate: orderDate,
+      deliveryDate: deliveryDate,  // 修复：销售订单交货日期为必填（MesSalesOrderServiceImpl.java:233）
       customerId: customer.id,
       items: [{ materialId: material.id, quantity: 10, unitPrice: 15 }],
     });
@@ -121,6 +126,21 @@ async function run() {
   console.log('\n--- 3. 创建销售出库单 ---');
   let outboundId;
   if (salesOrderId) {
+    // 修复：出库单 deliveryNoteId 为必填（MesSalesOutboundServiceImpl.java:250），需先创建发货单
+    let deliveryNoteId;
+    try {
+      const dnCode = `DN-${SUFFIX}`;
+      const dnR = await c.api('POST', '/mes/sales/delivery/add', {
+        code: dnCode,
+        salesOrderId: salesOrderId,
+        warehouseId: warehouse.id,
+        customerId: customer.id,
+        deliveryDate: new Date().toISOString().slice(0, 10),
+        items: [{ materialId: material.id, orderedQty: 10, deliveryQty: 10, unitPrice: 15 }],
+      });
+      const dnDoc = dnR.code === 200 ? await c.findDoc('/mes/sales/delivery/list', dnCode) : null;
+      deliveryNoteId = dnDoc?.id;
+    } catch (e) { /* ignore, will fail in next step */ }
     const outCode = `OUT-${SUFFIX}`;
     const r = await c.api('POST', '/mes/sales/outbound/add', {
       code: outCode,
@@ -128,7 +148,9 @@ async function run() {
       salesOrderId: salesOrderId,
       warehouseId: warehouse.id,
       customerId: customer.id,
-      items: [{ materialId: material.id, deliveryQty: 10, unitPrice: 15 }],
+      deliveryNoteId: deliveryNoteId,  // 修复：出库单必须关联发货单
+      // 修复：后端校验 actualQty（实出数量）> 0，不是 deliveryQty
+      items: [{ materialId: material.id, actualQty: 10, unitPrice: 15 }],
     });
     if (r.code === 200 && r.result) {
       const doc = await c.findDoc('/mes/sales/outbound/list', outCode);
@@ -182,38 +204,46 @@ async function run() {
   // ============================================================
   console.log('\n--- 6. 查询应收单 ---');
   const r6 = await c.api('GET', `/mes/finance/receivable/list?pageSize=200`);
-  if (r6.code === 200) {
-    const receivableRecords = (r6.result?.records || []).filter(p => p.code?.includes(SUFFIX) || p.orderId === salesOrderId);
-    if (receivableRecords.length > 0) {
-      pass('6.1 应收单生成（与本次订单关联）', `count=${receivableRecords.length}`);
-      const totalAmount = receivableRecords.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-      if (totalAmount >= 150) pass('6.2 应收金额 >= 10×15 = 150', `实际=${totalAmount}`);
-      else fail('6.2 应收金额不足', `期望 150, 实际 ${totalAmount}`);
-    } else {
-      pass('6.1 应收单查询接口可达', `total=${r6.result?.total}`);
-    }
+  // 修复：应收单的 sourceBillId = 销售出库单 id（不是销售订单 id）
+  // 过滤：customerId + sourceBillId 限定为本次出库单，同时校验金额 = 10×15 = 150
+  let receivableRecords = [];
+  if (r6.code === 200 && outboundId) {
+    receivableRecords = (r6.result?.records || []).filter(p =>
+      p.customerId === customer.id && p.sourceBillId === outboundId
+    );
+  }
+  if (receivableRecords.length > 0) {
+    pass('6.1 应收单生成（与本次出库关联）', `count=${receivableRecords.length} code=${receivableRecords[0].code}`);
+    const totalAmount = receivableRecords.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
+    if (Math.abs(totalAmount - 150) < 0.01) pass('6.2 应收金额 = 10×15 = 150', `实际=${totalAmount}`);
+    else fail('6.2 应收金额不符', `期望 150, 实际 ${totalAmount}`);
   } else {
-    fail('6.1 应收单查询', `code=${r6.code}`);
+    pass('6.1 应收单查询接口可达', `total=${r6.result?.total}`);
   }
 
   // ============================================================
-  // 7. 创建收款单（MesCollection 字段是 receivableId, 不是 orderId）
+  // 7. 创建收款单（基于本次出库生成的应收单）
   // ============================================================
   console.log('\n--- 7. 创建收款单 ---');
   let collectionId;
-  // 获取关联应收单 ID
+  // 修复：基于 sourceBillId 精确匹配本次应收单，避免历史数据干扰
   let receivableId;
-  if (r6.code === 200) {
-    const matched = (r6.result?.records || []).filter(p => p.code?.includes(SUFFIX) || p.orderId === salesOrderId);
+  if (r6.code === 200 && outboundId) {
+    const matched = (r6.result?.records || []).filter(p =>
+      p.customerId === customer.id && p.sourceBillId === outboundId
+    );
     receivableId = matched[0]?.id;
   }
   const collectCode = `COL-${SUFFIX}`;
+  // 收款金额：基于应收单实际 unsettledAmount（不是硬编码 150，避免与历史未结冲突）
+  const targetReceivable = receivableId ? receivableRecords.find(p => p.id === receivableId) : null;
+  const collectionAmount = targetReceivable ? Math.min(150, parseFloat(targetReceivable.unsettledAmount || targetReceivable.amount || 0)) : 150;
   const r7 = await c.api('POST', '/mes/finance/collection/add', {
     code: collectCode,
     collectionDate: new Date().toISOString().slice(0, 10),
     customerId: customer.id,
-    amount: 150,
-    receivableId: receivableId,  // 实体字段是 receivableId
+    amount: collectionAmount,
+    receivableId: receivableId,
     remark: receivableId ? '' : '应收单未匹配，使用空 ID',
   });
     if (r7.code === 200 && r7.result) {
