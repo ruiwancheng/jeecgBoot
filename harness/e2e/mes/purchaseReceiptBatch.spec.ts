@@ -3,7 +3,7 @@
 import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
-const API_BASE = 'http://localhost:8080/jeecg-boot';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 async function getToken(request: any): Promise<string> {
   const login = await request.post(`${API_BASE}/sys/login`, {

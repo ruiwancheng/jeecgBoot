@@ -16,19 +16,20 @@ test.describe(`MES ${PAGE_NAME} E2E（/add-tests 完整版）`, () => {
   });
 
   // Helper: 通过 page.evaluate fetch（走 page context，能访问 localStorage）调用 API
+  // P0-2 修复：base 参数从 page.evaluate 闭包传入（避免硬编码 localhost:8080）
   async function apiViaPage(page: any, method: string, path: string, body?: any) {
-    return page.evaluate(async ({ m, p, b }: any) => {
+    return page.evaluate(async ({ m, p, b, base }: any) => {
       // 从 localStorage 读取 token（注入时写入的 COMMON__LOCAL__KEY__）
       const cacheKey = Object.keys(localStorage).find((k) => k.includes('COMMON__LOCAL__KEY__'));
       const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
       const token = cache?.value?.['TOKEN__']?.value;
-      const r = await fetch(`http://localhost:8080/jeecg-boot${p}`, {
+      const r = await fetch(`${base}${p}`, {
         method: m,
         headers: { 'Content-Type': 'application/json', 'X-Access-Token': token },
         body: b ? JSON.stringify(b) : undefined,
       });
       return { status: r.status, json: await r.json().catch(() => ({})) };
-    }, { m: method, p: path, b: body });
+    }, { m: method, p: path, b: body, base: API_BASE });
   }
 
   test(`${PAGE_NAME} 1. 路由可达性 + 客户页渲染`, async ({ page }) => {

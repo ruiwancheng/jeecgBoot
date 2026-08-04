@@ -305,8 +305,9 @@ jobs:
       - name: Run E2E tests (硬门禁 - 失败即阻塞)
         run: |
           cd harness
-          # 显式 --config 防止 baseURL 失效（2026-08-02 复盘发现）
-          npx playwright test --config e2e/playwright.config.ts e2e/mes/ \
+          # P0-1 修复：删 e2e/playwright.config.ts，统一用 harness/playwright.config.ts（cwd 是 harness，自动识别）
+          # harness/playwright.config.ts 已含 env var fallback + evidence-reporter
+          npx playwright test e2e/mes/ \
             --reporter=list \
             --retries=1 \
             --timeout=60000

@@ -8,7 +8,7 @@
 import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
-const API_BASE = 'http://localhost:8080/jeecg-boot';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 test('batchEnabled 字符串 \"1\"/\"0\" Jackson 反序列化为 Integer 1/0', async ({ request }) => {
   // 直接通过 API 模拟前端 form 提交（前端 form submit 会发 batchEnabled='1'）
