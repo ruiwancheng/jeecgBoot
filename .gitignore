@@ -55,3 +55,7 @@ nul
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# JeecgBoot 在线代码生成模板（运行时生成，不入 git）
+# 2026-08-05 清理过期产物时统一 ignore
+config/jeecg/code-template-online/
