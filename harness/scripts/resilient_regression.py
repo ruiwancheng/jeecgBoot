@@ -551,6 +551,22 @@ python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
     return content
 
 
+def _dispatch_slice_kind(slice_state: dict[str, Any], item: dict[str, Any], exit_code: int, timed_out: bool, message: str) -> None:
+    if timed_out:
+        slice_state["status"] = "timeout"
+        slice_state["message"] = f"exceeded {item.get('timeout_seconds', 300)} seconds"
+    elif exit_code == 0:
+        slice_state["status"] = "passed"
+        slice_state["message"] = "command exited with code 0"
+    else:
+        verdict = item.get("verdict_when_failed")
+        if verdict:
+            slice_state["status"] = "verdict"
+        else:
+            slice_state["status"] = "failed"
+        slice_state["message"] = message or (f"command exited with code {exit_code}")
+
+
 def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
     manifest_path = run_dir / "manifest.json"
     if not manifest_path.exists():
@@ -639,8 +655,7 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
                     slice_state["status"] = "passed"
                     slice_state["message"] = "command exited with code 0"
                 else:
-                    slice_state["status"] = "failed"
-                    slice_state["message"] = f"command exited with code {exit_code}"
+                    _dispatch_slice_kind(slice_state, item, exit_code, False, f"command exited with code {exit_code}")
             except Exception as error:  # The error is durable; later slices may still be useful.
                 child_pid = slice_state.pop("child_pid", None)
                 if child_pid:
@@ -811,6 +826,11 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser = subparsers.add_parser("report", help="regenerate Markdown summary")
     report_parser.add_argument("--run-dir")
 
+    plan_parser = subparsers.add_parser("plan", help="build a merged plan from chains + manifest")
+    plan_parser.add_argument("--manifest", default=str(REPO_ROOT / "harness" / "regression" / "recovery-plan.json"))
+    plan_parser.add_argument("--target", default=str(REPO_ROOT / "harness" / "regression" / "recovery-plan.merged.json"))
+    plan_parser.add_argument("--base")
+
     worker_parser = subparsers.add_parser("_worker", help=argparse.SUPPRESS)
     worker_parser.add_argument("--run-dir", required=True)
     worker_parser.add_argument("--retry-failed", action="store_true")
@@ -857,6 +877,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         from regression_dashboard import main as dashboard_main
         return dashboard_main(["--run-dir", str(run_dir), "--port", str(args.port)])
+    if args.command == "plan":
+        from regression_plan import main as plan_main
+        argv = ["build", "--manifest", args.manifest, "--target", args.target]
+        if args.base:
+            argv.extend(["--base", args.base])
+        return plan_main(argv)
     if args.command == "report":
         run_dir = resolve_run_dir(args.run_dir)
         manifest = read_json(run_dir / "manifest.json")

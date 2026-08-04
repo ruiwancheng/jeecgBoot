@@ -37,6 +37,7 @@ jeecg-boot/jeecg-module-system/jeecg-system-start/config/
 settings.local.json
 harness/test-results/
 harness/.regression-runs/
+harness/regression/recovery-plan.merged.json
 ## hermes engineering artifacts
 hermes/logs/
 hermes/sessions/

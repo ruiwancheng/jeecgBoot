@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "name": "MES regression recovery 2026-08-04",
   "report_path": "hermes/eagle-eye/reports/2026-08-04/resilient-regression-recovery.md",
   "environment": {
@@ -19,6 +19,13 @@
       "timeout_seconds": 5,
       "contains": "<"
     }
+  },
+  "static_checks": {
+    "scanner": "test-quality",
+    "root": "harness/tests",
+    "tests_root": "harness/tests/modules",
+    "frontend_root": "jeecgboot-vue3",
+    "fail_threshold": 0.3
   },
   "services": [
     {
@@ -56,6 +63,26 @@
       "timeout_seconds": 1800,
       "requires": [],
       "continue_on_failure": false
+    },
+    {
+      "id": "frontend-static",
+      "name": "前端类型检查与构建验证",
+      "kind": "frontend-static",
+      "cwd": "jeecgboot-vue3",
+      "command": ["pnpm", "run", "typecheck"],
+      "fallback_command": ["npx", "vue-tsc", "--noEmit"],
+      "timeout_seconds": 360,
+      "requires": ["frontend"],
+      "verdict_when_failed": "test_design_issue"
+    },
+    {
+      "id": "test-quality",
+      "name": "API 测试断言质量扫描 (R009)",
+      "kind": "quality",
+      "cwd": ".",
+      "command": ["python", "harness/scripts/regression_plan.py", "report", "--root", "harness/tests/modules"],
+      "timeout_seconds": 60,
+      "requires": []
     },
     {
       "id": "1.1",
