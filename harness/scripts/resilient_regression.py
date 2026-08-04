@@ -603,12 +603,6 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
         raise FileNotFoundError(f"manifest snapshot not found: {manifest_path}")
     manifest = read_json(manifest_path)
     state_path = run_dir / "state.json"
-    state = (
-        read_state(run_dir)
-        if state_path.exists() or state_path.with_name(state_path.name + ".fallback").exists()
-        else initial_state(manifest, run_dir)
-    )
-    ctx = RunContext(run_dir, manifest, state)
     chains_doc = load_chains_doc()
     diff_files: list[str] = list(manifest.get("diff_files") or [])
     scope: str = manifest.get("scope") or "full"
@@ -621,9 +615,16 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
             manifest["slices"] = filter_slices_by_scope(list(manifest.get("slices", [])), scope, matched_chains)
         except (ImportError, AttributeError):
             pass
+    state = (
+        read_state(run_dir)
+        if state_path.exists() or state_path.with_name(state_path.name + ".fallback").exists()
+        else initial_state(manifest, run_dir)
+    )
+    ctx = RunContext(run_dir, manifest, state)
     state["diff_files"] = diff_files
     state["matched_chains"] = sorted(matched_chains)
     state["scope"] = scope
+    state["base"] = manifest.get("base")
 
     with RunLock(run_dir / "runner.lock"):
         recover_interrupted_state(state)
@@ -744,6 +745,22 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
 def create_run(manifest_source: Path, run_dir: Path) -> None:
     manifest_path = manifest_snapshot(manifest_source, run_dir)
     manifest = read_json(manifest_path)
+    # Apply scope-based slice filter BEFORE the first state checkpoint so
+    # state.slices never contains phantom pending entries for chain ids the
+    # change-scope filter removed. Otherwise run/detached workers would read
+    # the unfiltered list via read_state (existing state.json wins).
+    scope: str = manifest.get("scope") or "full"
+    diff_files: list[str] = list(manifest.get("diff_files") or [])
+    matched_chains: set[str] = set()
+    if diff_files:
+        matched_chains = chain_ids_for_diff(load_chains_doc(), diff_files)
+    if scope != "full":
+        try:
+            from regression_plan import filter_slices_by_scope
+            manifest["slices"] = filter_slices_by_scope(list(manifest.get("slices", [])), scope, matched_chains)
+        except (ImportError, AttributeError):
+            pass
+        atomic_write_json(manifest_path, manifest)
     state_path = run_dir / "state.json"
     if not state_path.exists():
         atomic_write_json(state_path, initial_state(manifest, run_dir))
@@ -904,11 +921,28 @@ def main(argv: list[str] | None = None) -> int:
             from regression_plan import git_diff_names
             diff_files = git_diff_names(args.base)
         manifest_doc = read_json(manifest)
-        manifest_doc = {**manifest_doc, "scope": scope, "diff_files": diff_files}
-        atomic_write_json(run_dir / "manifest.json", manifest_doc) if (run_dir.exists()) else None
-        create_run(manifest, run_dir)
-        manifest = manifest_doc
-        atomic_write_json(run_dir / "manifest.json", manifest)
+        manifest_doc = {**manifest_doc, "scope": scope, "diff_files": diff_files, "base": args.base}
+        # create_run filters via filter_slices_by_scope, which matches chain
+        # slices by ``source.chain``. The raw recovery-plan.json slices have no
+        # ``source`` field; only the merged plan does. Build the merged plan
+        # first so change-scope actually filters.
+        from regression_plan import expand_chain_slices, merge_slices
+        # ``python harness/scripts/resilient_regression.py`` puts scripts/ on
+        # sys.path[0], so the bare ``regression_plan`` module imports work.
+        merged = merge_slices(manifest_doc, expand_chain_slices(load_chains_doc()))
+        manifest_doc = {**merged, "scope": scope, "diff_files": diff_files, "base": args.base}
+        # create_run snapshots the manifest, then applies the scope filter and
+        # writes run_dir/manifest.json. Feed it the decorated manifest via a
+        # temp file so it can see scope/diff_files/base when filtering.
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as tmp:
+            tmp.write(json.dumps(manifest_doc, ensure_ascii=False))
+            decorated_path = Path(tmp.name)
+        try:
+            create_run(decorated_path, run_dir)
+        finally:
+            decorated_path.unlink(missing_ok=True)
         pid = detached_launch(run_dir)
         dashboard_pid = launch_dashboard(run_dir, args.port) if args.dashboard else None
         print(json.dumps({"run_dir": str(run_dir), "pid": pid, "dashboard_pid": dashboard_pid, "dashboard_url": f"http://127.0.0.1:{args.port}" if args.dashboard else None, "scope": scope, "diff_files": diff_files}, ensure_ascii=False))
