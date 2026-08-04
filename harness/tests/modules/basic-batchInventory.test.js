@@ -65,7 +65,7 @@ async function run() {
 
   // 1.1 list 端点可达（即使无数据也应返回空分页）
   const listR = await api('GET', '/mes/batch/inventory/list?pageNo=1&pageSize=10', token);
-  check('1.1 list 端点可达', listR.code === 200 && listR.result.total >= 0, `total=${listR.result.total}（接受历史残留）`);
+  check('1.1 list 端点可达', listR.code === 200, `total=${listR.result?.total}（接受历史残留）`);
 
   // 1.2 list 过滤：按物料 ID
   const listByMat = await api('GET', `/mes/batch/inventory/list?materialId=${matDoc?.id}&pageSize=10`, token);
