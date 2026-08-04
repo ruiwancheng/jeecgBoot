@@ -346,6 +346,101 @@ class ResilientRegressionCliTest(unittest.TestCase):
                              "unrelated chain must be filtered out")
 
 
+    def test_fallback_command_succeeds_when_primary_fails(self) -> None:
+        """If the primary ``command`` exits non-zero and ``fallback_command`` is
+        set, the runner should try the fallback and treat the slice as passed
+        when it returns 0. Both outputs are appended to the same attempt log so
+        a human reviewer can see what happened.
+        """
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = root / "run"
+            manifest = root / "manifest.json"
+            success_marker = root / "fallback_ok.txt"
+            primary_marker = root / "primary_ran.txt"
+            write_manifest(
+                manifest,
+                [
+                    {
+                        "id": "fb",
+                        "name": "fallback exercise",
+                        "kind": "test",
+                        "cwd": ".",
+                        "command": python_command(
+                            f"from pathlib import Path; "
+                            f"Path({str(primary_marker)!r}).write_text('primary-failed'); "
+                            f"raise SystemExit(7)"
+                        ),
+                        "fallback_command": python_command(
+                            f"from pathlib import Path; "
+                            f"Path({str(success_marker)!r}).write_text('fallback-ok')"
+                        ),
+                        "timeout_seconds": 30,
+                        "requires": [],
+                    },
+                ],
+            )
+
+            result = run_cli(
+                "run",
+                "--manifest",
+                str(manifest),
+                "--run-dir",
+                str(run_dir),
+                timeout=20,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertTrue(success_marker.exists(), "fallback_command did not run")
+            self.assertTrue(primary_marker.exists(), "primary command did not run")
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            fb = state["slices"]["fb"]
+            self.assertEqual("passed", fb["status"])
+            self.assertEqual(0, fb["exit_code"])
+            log_text = (run_dir / "logs" / "fb.attempt-1.log").read_text(encoding="utf-8")
+            self.assertIn("fallback_command=", log_text)
+            self.assertIn("primary exit_code=7", log_text)
+            self.assertIn("fallback_command succeeded", log_text)
+
+    def test_fallback_not_invoked_when_primary_succeeds(self) -> None:
+        """``fallback_command`` must only run when the primary exits non-zero."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = root / "run"
+            manifest = root / "manifest.json"
+            fallback_marker = root / "fallback_should_not_run.txt"
+            write_manifest(
+                manifest,
+                [
+                    {
+                        "id": "fb2",
+                        "name": "primary ok",
+                        "kind": "test",
+                        "cwd": ".",
+                        "command": python_command("print('primary ok')"),
+                        "fallback_command": python_command(
+                            f"from pathlib import Path; "
+                            f"Path({str(fallback_marker)!r}).write_text('oops')"
+                        ),
+                        "timeout_seconds": 10,
+                        "requires": [],
+                    },
+                ],
+            )
+
+            result = run_cli(
+                "run",
+                "--manifest",
+                str(manifest),
+                "--run-dir",
+                str(run_dir),
+                timeout=15,
+            )
+            self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertFalse(fallback_marker.exists(), "fallback ran even though primary succeeded")
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            self.assertEqual("passed", state["slices"]["fb2"]["status"])
+
+
 if __name__ == "__main__":
     unittest.main()
 # update-end---author:pi---date:2026-08-04---for:【REGRESSION-CRASH-GUARD】回归任务断点续跑保底测试---

@@ -408,57 +408,116 @@ def check_requirements(ctx: RunContext, item: dict[str, Any]) -> tuple[bool, str
     return True, "all required services are healthy"
 
 
+def _run_one_command(command: list[str], cwd: Path, environment: dict[str, Any],
+                     log_stream, timeout_seconds: float, ctx: RunContext,
+                     item_id: str, started: float) -> tuple[int | None, bool]:
+    """Spawn ``command`` and wait for completion, writing output to ``log_stream``.
+
+    Returns (exit_code, timed_out). The caller owns the overall slice duration
+    so that ``command`` + ``fallback_command`` count as one attempt with a
+    single timeout budget.
+    """
+    process = subprocess.Popen(
+        command,
+        cwd=cwd,
+        env=environment,
+        stdin=subprocess.DEVNULL,
+        stdout=log_stream,
+        stderr=subprocess.STDOUT,
+        creationflags=process_creation_flags(detached=False),
+        start_new_session=(os.name != "nt"),
+    )
+    timed_out = False
+    while process.poll() is None:
+        elapsed = time.monotonic() - started
+        if elapsed >= timeout_seconds:
+            timed_out = True
+            terminate_process_tree(process.pid)
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                pass
+            break
+        ctx.heartbeat("slice-running")
+        time.sleep(0.2)
+    return process.poll(), timed_out
+
+
 def run_slice_process(ctx: RunContext, item: dict[str, Any], slice_state: dict[str, Any]) -> tuple[int | None, bool, float, str]:
     attempt = slice_state["attempts"]
     log_path = ctx.run_dir / "logs" / f"{safe_id(item['id'])}.attempt-{attempt}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     command = resolve_command(list(item["command"]))
+    fallback_command = item.get("fallback_command")
     cwd = (REPO_ROOT / item.get("cwd", ".")).resolve()
     timeout_seconds = float(item.get("timeout_seconds", 300))
     environment = os.environ.copy()
     environment.update({str(k): str(v) for k, v in ctx.manifest.get("environment", {}).items()})
     environment.update({str(k): str(v) for k, v in item.get("environment", {}).items()})
     started = time.monotonic()
+    timed_out = False
+    exit_code: int | None = None
 
     with log_path.open("wb") as log_stream:
-        header = (
+        log_stream.write(
             f"[{now_iso()}] slice={item['id']} cwd={cwd}\n"
-            f"command={json.dumps(command, ensure_ascii=False)}\n\n"
+            f"command={json.dumps(command, ensure_ascii=False)}\n".encode("utf-8")
         )
-        log_stream.write(header.encode("utf-8"))
+        if fallback_command:
+            log_stream.write(
+                f"fallback_command={json.dumps(fallback_command, ensure_ascii=False)}\n".encode("utf-8")
+            )
+        log_stream.write(b"\n")
         log_stream.flush()
-        process = subprocess.Popen(
-            command,
-            cwd=cwd,
-            env=environment,
-            stdin=subprocess.DEVNULL,
-            stdout=log_stream,
-            stderr=subprocess.STDOUT,
-            creationflags=process_creation_flags(detached=False),
-            start_new_session=(os.name != "nt"),
-        )
-        slice_state["child_pid"] = process.pid
-        slice_state["log_path"] = display_path(log_path)
-        ctx.save()
-        timed_out = False
-        while process.poll() is None:
-            elapsed = time.monotonic() - started
-            if elapsed >= timeout_seconds:
+        log_path_for_state = display_path(log_path)
+
+        # Try the primary command first.
+        try:
+            exit_code, timed_out = _run_one_command(
+                command, cwd, environment, log_stream, timeout_seconds, ctx,
+                item['id'], started,
+            )
+        except Exception as error:  # pragma: no cover - safety net for spawn errors
+            log_stream.write(f"runner spawn error: {type(error).__name__}: {error}\n".encode("utf-8"))
+            exit_code, timed_out = 1, False
+
+        # If primary failed (non-zero exit, NOT a timeout) and fallback_command
+        # is configured, give the alternative a shot. The fallback shares the
+        # primary's timeout budget so a slice's overall SLA still applies.
+        if (
+            fallback_command
+            and not timed_out
+            and (exit_code is None or exit_code != 0)
+        ):
+            remaining = max(1.0, timeout_seconds - (time.monotonic() - started))
+            log_stream.write(
+                f"\n[{now_iso()}] primary exit_code={exit_code}, falling back to fallback_command "
+                f"(remaining timeout={remaining:.1f}s)\n".encode("utf-8")
+            )
+            try:
+                fallback_exit, fallback_timed_out = _run_one_command(
+                    list(fallback_command), cwd, environment, log_stream, remaining, ctx,
+                    item['id'], started,
+                )
+            except Exception as error:  # pragma: no cover
+                log_stream.write(f"runner fallback spawn error: {type(error).__name__}: {error}\n".encode("utf-8"))
+                fallback_exit, fallback_timed_out = 1, False
+
+            if fallback_exit == 0 and not fallback_timed_out:
+                exit_code = 0
+                timed_out = False
+                log_stream.write(f"fallback_command succeeded, treating slice as passed\n".encode("utf-8"))
+            elif fallback_timed_out:
                 timed_out = True
-                terminate_process_tree(process.pid)
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    pass
-                break
-            ctx.heartbeat("slice-running")
-            time.sleep(0.2)
-        exit_code = process.poll()
+                exit_code = fallback_exit
+
         duration = round(time.monotonic() - started, 3)
         footer = f"\n[{now_iso()}] exit_code={exit_code} timed_out={timed_out} duration={duration}s\n"
         log_stream.write(footer.encode("utf-8"))
 
-    return exit_code, timed_out, duration, display_path(log_path)
+    slice_state["log_path"] = log_path_for_state
+    ctx.save()
+    return exit_code, timed_out, duration, log_path_for_state
 
 
 def recover_interrupted_state(state: dict[str, Any]) -> None:

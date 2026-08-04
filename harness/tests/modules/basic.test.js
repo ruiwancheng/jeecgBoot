@@ -60,11 +60,12 @@ async function run() {
   const r5 = await api('GET', '/mes/basic/warehouse/queryAll', token);
   check('queryAll', r5.code === 200 && r5.result.length >= 2, `count=${r5.result.length}`);
 
-  // 获取两个仓库的ID
-  const list = await api('GET', '/mes/basic/warehouse/list?pageNo=1&pageSize=10', token);
-  const wh1 = list.result.records.find(r => r.code === 'TEST_WH01');
-  const wh2 = list.result.records.find(r => r.code === 'TEST_WH02');
+  // 获取两个仓库的ID — 使用 r5 (queryAll) 查找，避免 list 分页假设（DB 残留会让 TEST_WH 落到 pageNo=1 之外）
+  // update-begin---author:pi---date:2026-08-04---for:【SMOKE-API-DATA】warehouse list 分页假设避免残留数据崩溃---
+  const wh1 = r5.result.find(r => r.code === 'TEST_WH01');
+  const wh2 = r5.result.find(r => r.code === 'TEST_WH02');
   const wh1Id = wh1.id, wh2Id = wh2.id;
+  // update-end---author:pi---date:2026-08-04---for:【SMOKE-API-DATA】warehouse list 分页假设避免残留数据崩溃---
 
   // 6. 编辑仓库
   const r6 = await api('PUT', '/mes/basic/warehouse/edit', token, { id: wh1Id, code: 'TEST_WH01', name: '测试原料仓-改', type: '1', status: 1 });
