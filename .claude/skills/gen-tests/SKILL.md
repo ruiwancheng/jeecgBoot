@@ -97,6 +97,25 @@ npm install @playwright/test
 
 **禁止**：仅 `code === 200` / `code !== 500` / "不崩溃" 类断言。
 
+## Controller endpoint set 驱动（TS-3，2026-08-05 新增）
+
+**问题**：gen-tests 历史生成的 E2E 一律按 CRUD 模板（5/7 = 新增按钮/抽屉），未对照 controller 实际端点。结果对"只读 + 导出"页面（应收/应付/批次台账/批次库存/编码规则等）产生"新增按钮找不到"误判——浪费复核精力（2026-08-04 mes-2026-08-04-business-bugs.md #5/#6/#8/#10 同型）。
+
+**强制流程**（生成 spec 前必做）：
+
+1. **grep controller 端点**：`grep -E "@\(Get\|Post\|Put\|Delete\)Mapping" <Controller>.java` 列出实际暴露的端点
+2. **判断 pageKind**：
+   - **CRUD 页面**（有 add/edit/delete）→ 生成完整 CRUD 模板（5/7 测试保留）
+   - **只读 + 导出页面**（仅 list/queryById/queryAll/exportXls）→ **跳过 5/7**，生成只读 + 导出断言
+   - **聚合只读页面**（仅 list，无 add/edit/delete/export）→ 仅生成 1/2/6 测试
+3. **同步识别**：
+   - 若 controller 有 `@PostMapping("/add")` 但页面没"新增按钮"→ spec 标 🔴 真实 Bug（如 #9 收款管理、#11 付款管理）
+   - 若 controller 无 `@PostMapping("/add")` 但 spec 期望"新增按钮"→ spec 标 ✅ 误判
+
+**与 R009 的关系**：TS-3 是"生成侧契约对齐"，R009 是"断言侧语义深度"，互补不重叠。
+
+**复核依据**：`hermes/eagle-eye/issues/mes-2026-08-04-business-bugs.md`（同型误判 5 个：B1/B2/B3 + #5/#6/#8）。
+
 ### 2. 写入前统计
 
 gen-tests 在写入文件前扫描：

@@ -2,19 +2,21 @@
 // 覆盖: collection（收款）/ invoice（销项发票）/ payable（应付）/ payment（付款）
 //       purchaseInvoice（进项发票）/ receivable（应收）/ subject（科目）/ voucher（凭证）
 // 关联: .claude/plans/2026-08-04-mes-regression-plan.md
-// 🔴 已知问题: finance 模块 8 个前端页面虽然存在，但 router/routes/modules/mes.ts 中
-//    **没有注册 finance 路由**（菜单不可达）。本测试通过直接 URL 访问验证。
-//    每个测试期望失败（路由缺失 → 跳登录页），失败即为 P1 bug 暴露。
+// 2026-08-05 复核：finance.spec.ts 测试 5/7 对"应收/应付"页面不再期望新增按钮
+//   历史依据：hermes/eagle-eye/issues/mes-2026-08-04-business-bugs.md #8/#10
+//   MesReceivableController / MesPayableController 仅 list/queryById/queryAll/exportXls，
+//   无 add/edit/delete 端点；菜单权限仅 list/export；数据由业务自动生成
+//   本次跳过 5/7，6 仍验证数据/空状态可见
 import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
 const PAGES = [
   { name: '收款管理', path: '/project/mes/finance/collection' },
   { name: '销项发票', path: '/project/mes/finance/invoice' },
-  { name: '应付账款', path: '/project/mes/finance/payable' },
+  { name: '应付账款', path: '/project/mes/finance/payable', skipAddBtn: true },
   { name: '付款管理', path: '/project/mes/finance/payment' },
   { name: '进项发票', path: '/project/mes/finance/purchaseInvoice' },
-  { name: '应收账款', path: '/project/mes/finance/receivable' },
+  { name: '应收账款', path: '/project/mes/finance/receivable', skipAddBtn: true },
   { name: '会计科目', path: '/project/mes/finance/subject' },
   { name: '凭证管理', path: '/project/mes/finance/voucher' },
 ];
@@ -72,6 +74,7 @@ test.describe('MES 财务模块 E2E（gen-tests 完整版）', () => {
       await expect(exportBtn, `${pg.name} 导出按钮可见`).toBeVisible({ timeout: 10000 });
     });
 
+    test.skip(pg.skipAddBtn === true, `${pg.name} 5. 新增按钮可见（设计无新增）`);
     test(`${pg.name} 5. 新增按钮可见`, async ({ page }) => {
       await page.goto(pg.path);
       await waitForTableReady(page);
@@ -92,6 +95,7 @@ test.describe('MES 财务模块 E2E（gen-tests 完整版）', () => {
       }
     });
 
+    test.skip(pg.skipAddBtn === true, `${pg.name} 7. 点击新增 → 弹窗/抽屉可见（设计无新增）`);
     test(`${pg.name} 7. 点击新增 → 弹窗/抽屉可见`, async ({ page }) => {
       await page.goto(pg.path);
       await waitForTableReady(page);

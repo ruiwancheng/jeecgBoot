@@ -962,6 +962,24 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _check_port_held(port: int) -> bool:
+    """跨平台端口占用探测（socket connect 探测，不依赖 netstat/lsof 命令）。
+
+    返回 True = 端口被占用；False = 空闲。
+    注：不返回 PID（跨平台 PID 获取依赖 netstat/lsof/ss 不同实现，留给用户自查）。
+    """
+    # update-begin---author:pi---date:2026-08-05---for:[N8 修复] start 前置端口探测，避免 mvn clean 撞后端 jar file lock（2026-08-05 本地跑回归时撞 PID 27076 案例）-----------
+    import socket
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            s.connect(("127.0.0.1", port))
+        return True
+    except (ConnectionRefusedError, OSError, socket.timeout):
+        return False
+    # update-end---author:pi---date:2026-08-05---for:[N8 修复] start 前置端口探测-----------
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "start":
@@ -975,6 +993,23 @@ def main(argv: list[str] | None = None) -> int:
         if scope == "change" and not args.base:
             print("--scope change requires --base <commit>", file=sys.stderr)
             return 2
+        # update-begin---author:pi---date:2026-08-05---for:[N8 修复] 启动 run 前探测后端/前端端口，提示先停旧服务避免 mvn clean 撞 file lock-----------
+        # 探测 8080 (后端) + 3100 (前端) 端口占用
+        # 不自动 kill（避免误杀用户开发用的进程），只 warn + 给排查命令
+        warnings: list[str] = []
+        if _check_port_held(8080):
+            warnings.append(
+                "[N8] 端口 8080 已被占用（后端在线）。mvn clean install 会撞 jar file lock → 0-build 必失败。\n"
+                "     处理: 'netstat -ano | findstr :8080' (Windows) 或 'lsof -i :8080' (Linux/Mac) 找 PID → taskkill / kill 后重试"
+            )
+        if _check_port_held(3100):
+            warnings.append(
+                "[N8] 端口 3100 已被占用（前端 dev 在线）。E2E 会用 4173 preview，3100 不冲突但建议停。\n"
+                "     处理: 同上"
+            )
+        for w in warnings:
+            print(w, file=sys.stderr)
+        # update-end---author:pi---date:2026-08-05---for:[N8 修复] 启动 run 前探测后端/前端端口-----------
         diff_files: list[str] = []
         if args.base:
             from regression_plan import git_diff_names
