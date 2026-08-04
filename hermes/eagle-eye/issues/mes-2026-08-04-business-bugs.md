@@ -22,6 +22,30 @@
 - **P2**：核心流程缺失（新增/导出/抽屉触发等），数据可看不可改
 - **P3**：次要按钮或契约不一致，不影响主流程
 
+## 复核进度跟踪
+
+| # | Issue | 严重程度 | 复核状态 | 核实结果 |
+|---|---|---|---|---|
+| 1 | 库存总览 (`/project/mes/basic/inventory`) | P1 | 🔵 待复核 | — |
+| 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | 🔵 待复核 | — |
+| 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | 🔵 待复核 | — |
+| 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | 🔵 待复核 | — |
+| 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | 🔵 待复核 | — |
+| 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | 🔵 待复核 | — |
+| 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | 🔵 待复核 | — |
+| 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | 🔵 待复核 | — |
+| 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔵 待复核 | — |
+| 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | 🔵 待复核 | — |
+| 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔵 待复核 | — |
+| 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | 🔵 待复核 | — |
+| 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔵 待复核 | — |
+
+> 复核状态说明：
+> - 🔵 待复核
+> - 🟡 复核中（有问题/验证中）
+> - ✅ 误判（写明核实依据）
+> - 🔴 真实 Bug（写明核实依据）
+
 ---
 
 ## BASIC 模块
