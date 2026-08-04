@@ -27,7 +27,7 @@
 | # | Issue | 严重程度 | 复核状态 | 核实结果 |
 |---|---|---|---|---|
 | 1 | 库存总览 (`/project/mes/warehouse/inventory`) | P1 | ✅ 误判 | URL 写错 + 页面是只读 dashboard，原 spec 误把“导出/新增/抽屉”当必备能力 |
-| 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | 🔵 待复核 | — |
+| 2 | 库存预警 (`/project/mes/basic/inventoryAlert`) | P2 | ✅ 误判 | 只读预警 dashboard，后端仅 `GET /list`、前端无搜索/导出/新增/抽屉，与 #1 同型误判 |
 | 3 | 编码规则 (`/project/mes/basic/codeRule`) | P3 | 🔵 待复核 | — |
 | 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | 🔵 待复核 | — |
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | 🔵 待复核 | — |
@@ -112,6 +112,44 @@
     npx playwright test e2e/mes/ --grep "库存预警" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**与 #1 库存总览完全同型的误判：spec 按 CRUD 模板生成，未对照 controller 实际端点。库存预警是设计上的只读预警 dashboard，不该有这些能力。**
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端端点 | 仅 `@GetMapping("/list") @RequiresPermissions("mes:inventoryAlert:list")`，无 add/edit/delete/exportXls/importXls | `MesInventoryAlertController.java:24-49` |
+| 后端逻辑 | 聚合查询：从 `MesMaterial.safetyStock` 和 `MesInventory.currentQty` 计算缺口并按缺口降序返回，**不接受任何查询参数** | 同上 |
+| 前端模板 | 单一 `<a-table>` + `<a-alert>` 提示；无 `<BasicForm>`/`<QueryFilter>`/搜索栏；无 `<a-drawer>`/`<a-modal>`；`:pagination="false"`；用 `ref + onMounted` 拉一次数据，**没有** `useListPage` | `index.vue`（全文 39 行） |
+| 前端 API | 仅 `queryInventoryAlerts()` 一个方法，调 `GET /mes/basic/inventoryAlert/list` | `inventoryAlert.api.ts`（全文 3 行） |
+| 菜单权限 | `addPerms(list, "mes:inventoryAlert:", ..., new String[]{"list"})` —— 仅 list 一个权限 | `MesMenuRegistry.java:60` |
+
+**实测 spec（5 failed / 3 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格 6 列（物料编码/名称/当前库存/安全库存/最高库存/缺口）正常 |
+| 3. 搜索表单 + 查询按钮 | ❌ fail | **页面无搜索栏（设计如此）** |
+| 4. 导出按钮 | ❌ fail | **页面无导出按钮（设计如此）** |
+| 5. 新增按钮 | ❌ fail | **页面无新增按钮（设计如此）** |
+| 6. 数据行或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 抽屉 | ❌ fail | **没新增按钮自然无抽屉（设计如此）** |
+| 8. 预警级别筛选 | ❌ fail | **页面无 select 筛选（后端不接受任何查询参数）** |
+
+**action items**（不进排期，作为测试侧改进）：
+- 调整 `harness/e2e/mes/basic-inventoryAlert.spec.ts` 的 3/4/5/7/8 五个测试为 `test.skip`，或改成只读 dashboard 断言（路由 + 表格 + 数据 + 列头）
+- 同样问题在 #5 批次台账、#6 批次库存也会出现，需在 spec 改造时统一处理
+- gen-tests 模板应根据 controller endpoint set 调整：对只有 GET /list 的 controller，不要生成 add/edit/delete/export 相关的测试
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/basic-inventoryAlert.spec.ts --workers=1
+  ```
 
 ### [P3] 编码规则（/project/mes/basic/codeRule）
 
