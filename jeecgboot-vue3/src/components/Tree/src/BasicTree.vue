@@ -50,7 +50,7 @@
         checkedKeys: props.checkedKeys || [],
       });
 
-      const searchState = reactive<any>({
+      const searchState = reactive({
         startSearch: false,
         searchText: '',
         searchData: [] as TreeItem[],
@@ -69,7 +69,7 @@
           ...fieldNames,
         };
       });
-      const treeRef = ref<any>(null);
+      const treeRef = ref(null);
 
       const getBindValues = computed(() => {
         let propsData = {

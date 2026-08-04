@@ -174,7 +174,7 @@
       // 表单ref
       const onlineQueryFormRef = ref(null);
       // 表单渲染用到的配置
-      const formSchemas = ref<any>([]);
+      const formSchemas = ref([]);
       // 表单栅格 VUEN-2493【优化】online默认查询条件太宽了，参考online报表
       const baseColProps = ref({ xs:24, sm: 24, md: 12, lg:6, xl:6 });
       // 切换字段显示隐藏按钮是否显示
@@ -184,7 +184,7 @@
       // 查询条件
       const queryParams = ref({});
       // 需要隐藏的字段
-      const hideList = ref<any>([]);
+      const hideList = ref([]);
       const { createMessage: $message } = useMessage();
       const { linkTableCard2Select } = useExtendComponent();
       const formLabelWidth = ref(80);
@@ -195,7 +195,7 @@
        *  3.地址栏参数-param
        *  当表单id发生改变，config改变，列表页传入cache，param;监听status change然后重置表单的值
        */
-      const defaultValues = reactive<any>({
+      const defaultValues = reactive({
         config: {},
         cache: {},
         param: {},

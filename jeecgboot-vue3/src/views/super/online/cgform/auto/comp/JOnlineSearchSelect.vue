@@ -47,7 +47,7 @@
     emits: ['update:value'],
     setup(props, { emit }) {
       let selected = ref('');
-      let selectOptions = ref<any>([]);
+      let selectOptions = ref([]);
       let isHasData = true;
       let scrollLoading = false;
       let searchKeyword = '';

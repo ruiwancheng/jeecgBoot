@@ -43,7 +43,7 @@
     props,
     setup(props, { slots }) {
       const wrapElRef = ref<HTMLDivElement | null>(null);
-      const state = reactive<any>({
+      const state = reactive({
         first: 0,
         last: 0,
         scrollTop: 0,

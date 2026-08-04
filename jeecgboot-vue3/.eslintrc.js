@@ -29,7 +29,9 @@ module.exports = defineConfig({
     'vue/script-setup-uses-vars': 'error',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    //update-begin---author:pi---date:2026-08-04---for:【TKT-004】开启 no-explicit-any 规则（防 #14 复发）-----------
+    '@typescript-eslint/no-explicit-any': 'warn', // 警告级别，不阻断 CI；Options API 中的 <any> 泛型会引起 pageerror（已修 12 个文件）
+    //update-end---author:pi---date:2026-08-04---for:【TKT-004】开启 no-explicit-any 规则（防 #14 复发）-----------
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     'vue/custom-event-name-casing': 'off',

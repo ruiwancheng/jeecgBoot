@@ -210,7 +210,7 @@
   import { Loading } from '/@/components/Loading';
   import { isObject } from '/@/utils/is';
   
-  const subTableData = ref<any>([]);
+  const subTableData = ref([]);
   const tabActiveKey = ref(0);
   const selectedRowRcord = ref(null);
   const tableSetting = ref({});

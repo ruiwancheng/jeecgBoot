@@ -14,7 +14,7 @@
     emits: ['success', 'change', 'update:value'],
     setup(props, { emit, attrs, expose }) {
       const basicRef = ref<Nullable<DragVerifyActionType>>(null);
-      const state = reactive<any>({
+      const state = reactive({
         showTip: false,
         isPassing: false,
         imgStyle: {},

@@ -213,11 +213,11 @@
   import { INNER_TABLE } from '../../util/constant';
   import { Loading } from '/@/components/Loading';
 
-  const innerSubTable = reactive<any>({
+  const innerSubTable = reactive({
     tabNav: [],
     tabIndex: '0',
   });
-  const expandedRowKeys = ref<any>([]);
+  const expandedRowKeys = ref([]);
   const mainTableSelectedRowRcord = ref(null);
   const { createMessage: $message } = useMessage();
   // 这行代码应该在每次进入新的路由都会走，不管该路由有没有被缓存--
