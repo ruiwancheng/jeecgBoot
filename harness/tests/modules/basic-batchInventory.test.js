@@ -3,21 +3,13 @@
 // 覆盖：3/3 endpoints (list/queryById/exportXls) - 只读 controller
 // 场景：CRUD + 边界 + 错误路径（只读场景下的特殊处理）
 const { dbCleanup } = require('../helpers/fixtures');
+const { createClient } = require('../helpers/api');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
+const c = createClient(BASE);
 
-async function api(method, path, token, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (token) opts.headers['X-Access-Token'] = token;
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(BASE + path, opts);
-  return await res.json();
-}
+async function api(method, path, token, body) { return (method === 'POST' || method === 'PUT' || method === 'PATCH') ? c.api(method, path, body) : c.api(method, path); }
 
-async function login() {
-  const r = await api('POST', '/sys/login', null, { username: 'mes_admin', password: '123456' });
-  if (r.code !== 200) throw new Error('Login failed: ' + r.message);
-  return r.result.token;
-}
+async function login() { const token = await c.login(); return token; }
 
 async function run() {
   let passed = 0, failed = 0;
