@@ -5,32 +5,15 @@
 // 命令来源：/add-tests basic customerAddress
 import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
+import { apiViaPage } from '../helpers/apiViaPage';
 
 const PAGE_PATH = '/project/mes/basic/customer';
 const PAGE_NAME = '客户地址';
-const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 test.describe(`MES ${PAGE_NAME} E2E（/add-tests 完整版）`, () => {
   test.beforeEach(async ({ page }) => {
     await loginViaApi(page);
   });
-
-  // Helper: 通过 page.evaluate fetch（走 page context，能访问 localStorage）调用 API
-  // P0-2 修复：base 参数从 page.evaluate 闭包传入（避免硬编码 localhost:8080）
-  async function apiViaPage(page: any, method: string, path: string, body?: any) {
-    return page.evaluate(async ({ m, p, b, base }: any) => {
-      // 从 localStorage 读取 token（注入时写入的 COMMON__LOCAL__KEY__）
-      const cacheKey = Object.keys(localStorage).find((k) => k.includes('COMMON__LOCAL__KEY__'));
-      const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
-      const token = cache?.value?.['TOKEN__']?.value;
-      const r = await fetch(`${base}${p}`, {
-        method: m,
-        headers: { 'Content-Type': 'application/json', 'X-Access-Token': token },
-        body: b ? JSON.stringify(b) : undefined,
-      });
-      return { status: r.status, json: await r.json().catch(() => ({})) };
-    }, { m: method, p: path, b: body, base: API_BASE });
-  }
 
   test(`${PAGE_NAME} 1. 路由可达性 + 客户页渲染`, async ({ page }) => {
     await page.goto(PAGE_PATH);
