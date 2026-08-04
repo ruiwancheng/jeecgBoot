@@ -85,6 +85,24 @@
       "requires": []
     },
     {
+      "id": "smoke-api",
+      "name": "变更感知冒烟 (核心接口)",
+      "kind": "module",
+      "cwd": "harness",
+      "command": ["node", "tests/modules/basic.test.js"],
+      "timeout_seconds": 240,
+      "requires": ["backend"]
+    },
+    {
+      "id": "smoke-e2e",
+      "name": "变更感知冒烟 (核心 E2E)",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": ["npx", "playwright", "test", "e2e/mes/basic.spec.ts", "--workers=1"],
+      "timeout_seconds": 240,
+      "requires": ["backend", "frontend"]
+    },
+    {
       "id": "1.1",
       "name": "采购申请到订单",
       "kind": "chain",

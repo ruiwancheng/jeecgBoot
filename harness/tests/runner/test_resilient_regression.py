@@ -146,7 +146,7 @@ class ResilientRegressionCliTest(unittest.TestCase):
             self.assertEqual("passed", interrupted_state["slices"]["first"]["status"])
             self.assertEqual("running", interrupted_state["slices"]["second"]["status"])
 
-            resumed = run_cli("resume", "--run-dir", str(run_dir), "--foreground")
+            resumed = run_cli("resume", "--run-dir", str(run_dir), "--foreground", "--scope", "full")
             self.assertEqual(0, resumed.returncode, resumed.stdout + resumed.stderr)
 
             final_state = json.loads(state_path.read_text(encoding="utf-8"))

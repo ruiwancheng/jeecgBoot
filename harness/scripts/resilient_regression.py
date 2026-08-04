@@ -567,6 +567,36 @@ def _dispatch_slice_kind(slice_state: dict[str, Any], item: dict[str, Any], exit
         slice_state["message"] = message or (f"command exited with code {exit_code}")
 
 
+def load_chains_doc() -> dict[str, Any]:
+    chains_path = REPO_ROOT / "hermes" / "business-chains.json"
+    if not chains_path.exists():
+        return {"chains": {}}
+    try:
+        return read_json(chains_path)
+    except (OSError, json.JSONDecodeError):
+        return {"chains": {}}
+
+
+def chain_ids_for_diff(chains_doc: dict[str, Any], diff_files: list[str]) -> set[str]:
+    matched: set[str] = set()
+    for chain in (chains_doc.get("chains") or {}).values():
+        chain_id = chain.get("id")
+        if not chain_id:
+            continue
+        modules = chain.get("modules") or []
+        for diff_file in diff_files:
+            for module in modules:
+                needle = f"/{module}/"
+                marker = f"/{module}."
+                tail_marker = f"/{module}."
+                if f"/{diff_file}".find(needle) != -1 or f"/{diff_file}".find(marker) != -1 or diff_file.endswith(tail_marker.lstrip("/")) or diff_file.endswith(f"{module}.java"):
+                    matched.add(chain_id)
+                    break
+            if chain_id in matched:
+                break
+    return matched
+
+
 def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
     manifest_path = run_dir / "manifest.json"
     if not manifest_path.exists():
@@ -579,6 +609,21 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
         else initial_state(manifest, run_dir)
     )
     ctx = RunContext(run_dir, manifest, state)
+    chains_doc = load_chains_doc()
+    diff_files: list[str] = list(manifest.get("diff_files") or [])
+    scope: str = manifest.get("scope") or "full"
+    matched_chains: set[str] = set()
+    if diff_files:
+        matched_chains = chain_ids_for_diff(chains_doc, diff_files)
+    if scope != "full":
+        try:
+            from regression_plan import filter_slices_by_scope
+            manifest["slices"] = filter_slices_by_scope(list(manifest.get("slices", [])), scope, matched_chains)
+        except (ImportError, AttributeError):
+            pass
+    state["diff_files"] = diff_files
+    state["matched_chains"] = sorted(matched_chains)
+    state["scope"] = scope
 
     with RunLock(run_dir / "runner.lock"):
         recover_interrupted_state(state)
@@ -795,6 +840,8 @@ def build_parser() -> argparse.ArgumentParser:
     start_parser = subparsers.add_parser("start", help="start a detached regression run")
     start_parser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     start_parser.add_argument("--run-dir")
+    start_parser.add_argument("--scope", choices=["full", "change"], default="full", help="full: run every slice, change: only smoke + chain slices matching git diff")
+    start_parser.add_argument("--base", help="base commit used to compute the diff for --scope change")
     start_parser.add_argument("--dashboard", action="store_true", help="also start the read-only dashboard")
     start_parser.add_argument("--port", type=int, default=8765)
 
@@ -807,6 +854,8 @@ def build_parser() -> argparse.ArgumentParser:
     resume_parser.add_argument("--run-dir")
     resume_parser.add_argument("--foreground", action="store_true")
     resume_parser.add_argument("--retry-failed", action="store_true")
+    resume_parser.add_argument("--scope", choices=["full", "change"], help="override the persisted scope for this resume")
+    resume_parser.add_argument("--base", help="base commit for the diff when --scope change is used")
     resume_parser.add_argument("--dashboard", action="store_true", help="also start the read-only dashboard")
     resume_parser.add_argument("--port", type=int, default=8765)
 
@@ -846,10 +895,23 @@ def main(argv: list[str] | None = None) -> int:
             if args.run_dir
             else DEFAULT_RUNS_DIR / datetime.now().strftime("%Y%m%d-%H%M%S")
         )
+        scope = args.scope
+        if scope == "change" and not args.base:
+            print("--scope change requires --base <commit>", file=sys.stderr)
+            return 2
+        diff_files: list[str] = []
+        if args.base:
+            from regression_plan import git_diff_names
+            diff_files = git_diff_names(args.base)
+        manifest_doc = read_json(manifest)
+        manifest_doc = {**manifest_doc, "scope": scope, "diff_files": diff_files}
+        atomic_write_json(run_dir / "manifest.json", manifest_doc) if (run_dir.exists()) else None
         create_run(manifest, run_dir)
+        manifest = manifest_doc
+        atomic_write_json(run_dir / "manifest.json", manifest)
         pid = detached_launch(run_dir)
         dashboard_pid = launch_dashboard(run_dir, args.port) if args.dashboard else None
-        print(json.dumps({"run_dir": str(run_dir), "pid": pid, "dashboard_pid": dashboard_pid, "dashboard_url": f"http://127.0.0.1:{args.port}" if args.dashboard else None}, ensure_ascii=False))
+        print(json.dumps({"run_dir": str(run_dir), "pid": pid, "dashboard_pid": dashboard_pid, "dashboard_url": f"http://127.0.0.1:{args.port}" if args.dashboard else None, "scope": scope, "diff_files": diff_files}, ensure_ascii=False))
         return 0
     if args.command == "run":
         run_dir = Path(args.run_dir).resolve()
@@ -857,6 +919,14 @@ def main(argv: list[str] | None = None) -> int:
         return execute_run(run_dir, retry_failed=args.retry_failed)
     if args.command == "resume":
         run_dir = resolve_run_dir(args.run_dir)
+        if args.scope:
+            manifest_path = run_dir / "manifest.json"
+            try:
+                manifest = read_json(manifest_path)
+                manifest["scope"] = args.scope
+                atomic_write_json(manifest_path, manifest)
+            except (OSError, json.JSONDecodeError):
+                pass
         if args.foreground:
             return execute_run(run_dir, retry_failed=args.retry_failed)
         pid = detached_launch(run_dir, retry_failed=args.retry_failed)

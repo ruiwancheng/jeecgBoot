@@ -68,6 +68,47 @@ class PlanMergingTest(unittest.TestCase):
             self.assertEqual(1, len(data["slices"]))
 
 
+class DiffSlicingTest(unittest.TestCase):
+    def test_scope_full_keeps_every_slice(self) -> None:
+        slices = [
+            {"id": "0-build", "kind": "build"},
+            {"id": "smoke-api", "kind": "module"},
+            {"id": "chain.purchase-chain.1", "kind": "chain"},
+        ]
+        filtered = plan.filter_slices_by_scope(slices, "full", set())
+        self.assertEqual(3, len(filtered))
+
+    def test_scope_change_keeps_smoke_and_matching_chain(self) -> None:
+        slices = [
+            {"id": "0-build", "kind": "build"},
+            {"id": "smoke-api", "kind": "module"},
+            {"id": "smoke-e2e", "kind": "e2e"},
+            {"id": "chain.purchase-chain.1", "kind": "chain", "source": {"chain": "purchase-chain"}},
+            {"id": "chain.manufacturing-chain.1", "kind": "chain", "source": {"chain": "manufacturing-chain"}},
+        ]
+        filtered = plan.filter_slices_by_scope(slices, "change", {"purchase-chain"})
+        ids = {s["id"] for s in filtered}
+        self.assertIn("0-build", ids)
+        self.assertIn("smoke-api", ids)
+        self.assertIn("smoke-e2e", ids)
+        self.assertIn("chain.purchase-chain.1", ids)
+        self.assertNotIn("chain.manufacturing-chain.1", ids)
+
+    def test_scope_change_keeps_only_smoke_when_no_chain_matches(self) -> None:
+        slices = [
+            {"id": "0-build", "kind": "build"},
+            {"id": "smoke-api", "kind": "module"},
+            {"id": "smoke-e2e", "kind": "e2e"},
+            {"id": "chain.purchase-chain.1", "kind": "chain", "source": {"chain": "purchase-chain"}},
+        ]
+        filtered = plan.filter_slices_by_scope(slices, "change", set())
+        ids = {s["id"] for s in filtered}
+        self.assertIn("0-build", ids)
+        self.assertIn("smoke-api", ids)
+        self.assertIn("smoke-e2e", ids)
+        self.assertNotIn("chain.purchase-chain.1", ids)
+
+
 class TestQualityGateTest(unittest.TestCase):
     def test_counts_assertions_per_file(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

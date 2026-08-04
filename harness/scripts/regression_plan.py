@@ -153,6 +153,25 @@ def git_diff_names(base: str | None) -> list[str]:
     return [line.strip().replace("\\", "/") for line in completed.stdout.splitlines() if line.strip()]
 
 
+def filter_slices_by_scope(slices: list[dict[str, Any]], scope: str, matched_chains: set[str]) -> list[dict[str, Any]]:
+    if scope == "full":
+        return list(slices)
+    selected: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for entry in slices:
+        kind = entry.get("kind", "")
+        chain = (entry.get("source") or {}).get("chain", "")
+        entry_id = entry.get("id", "")
+        if kind == "build" or entry_id in {"frontend-static", "test-quality"} or entry_id.startswith("smoke-"):
+            selected.append(entry)
+            seen.add(entry_id)
+            continue
+        if kind == "chain" and chain and chain in matched_chains and entry_id not in seen:
+            selected.append(entry)
+            seen.add(entry_id)
+    return selected
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(argv or sys.argv[1:])
     if not args or args[0] != "build" and args[0] != "report":
