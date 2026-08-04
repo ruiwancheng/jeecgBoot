@@ -197,3 +197,41 @@ netstat
 5. **失败时回退**：`regression_plan.py` import 失败时 runner 不退出，只保留全量切片。
 
 详见 `learnings/2026-08-04-recovery-plan-linked-to-business-chains.md`。
+
+### runner 启动前端口探测，不自动 kill（runner-port-probe-no-autokill）
+
+**铁律**：runner start 子命令必须探测 8080/3100 端口占用，**只 warn + 给排查命令，不自动 kill 进程**。
+
+**强制流程**：
+1. **探测**：`_check_port_held(port)` 用 `socket.connect(('127.0.0.1', port))`（跨平台，不依赖 netstat/lsof/ss）
+2. **warn stderr**：占用时打印 stderr（不阻塞），含 `netstat -ano | findstr :PORT` / `lsof -i :PORT` 命令
+3. **不自动 kill**：避免误杀同一用户的开发用进程（用户可能同时跑开发 + 回归）
+
+**反模式**：
+- ❌ `taskkill //F //PID <PID>` 自动杀 — 误杀开发后端 / 测试服务
+- ❌ `if (检测到占用) sys.exit(1)` 阻断 — 让用户决策，不要越权
+
+**实证**：2026-08-05 run 20260805-040648 撞 PID 27076 后端 jar lock，warn → 用户 kill → 重启 OK。
+
+详见 `learnings/2026-08-05-runner-port-probe-no-autokill.md`。
+
+### CI 跨平台差异首选 env-var 配置层隔离（ci-skip-via-env-not-code）
+
+**铁律**：CI 与本地的环境差异（mysql client / GPU / 网络）通过**环境变量**在配置层隔离，**不改业务逻辑代码**。
+
+**强制流程**：
+1. **识别差异**：CI 容器无 host 工具（如 mysql client），本地有 → execSync 必失败
+2. **加 env-guard**：fixtures 入口加 `if (process.env.SKIP_DB_CLEANUP === 'true') return true;`
+3. **CI workflow env 设值**：`SKIP_DB_CLEANUP: 'true'`
+4. **本地不设 env var** 仍走原路径
+
+**反模式**：
+- ❌ `if (process.platform === 'linux') return true;` — 平台分支膨胀
+- ❌ CI 装 mysql client — 启动慢 ~30s，不解决根因（数据本就不需要清理）
+- ❌ `try { ... } catch { /* ignore */ }` — 静默吞错比失败还糟
+
+**前提条件**：(1) CI 幂等（CREATE DATABASE IF NOT EXISTS）；(2) fixture 用时间戳后缀；(3) runner 不持久化 CI 数据。
+
+**实证**：2026-08-05 commit 55ef7bd，CI schema init 跑通（之前必 ENOENT）。
+
+详见 `learnings/2026-08-05-ci-skip-via-env-not-code.md`。
