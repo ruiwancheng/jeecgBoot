@@ -57,6 +57,7 @@ jobs:
           --health-retries=5
     env:
       HARNESS_BASE: http://localhost:8080/jeecg-boot
+      SKIP_DB_CLEANUP: 'true'  # CI services 容器无 host mysql client → dbCleanup 跳过
     steps:
       - name: Checkout
         uses: actions/checkout@v4

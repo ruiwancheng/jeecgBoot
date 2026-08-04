@@ -63,6 +63,13 @@ async function safeDeleteDoc(c, basePath, id) {
  * 用 SQL 文件执行，绕开 Windows 命令行引号问题
  */
 function dbCleanup(sqlStatements) {
+  // CI 环境跳过 DB 清理（services 容器无 host mysql client + CREATE DATABASE 已保证幂等）
+  // 配合时间戳后缀 fixture，CI 跑多次不撞唯一索引
+  // 本地 Windows / macOS / Linux 仍走 execSync（mysql client 在 PATH 或已知路径）
+  if (process.env.SKIP_DB_CLEANUP === 'true') {
+    process.stderr.write('[dbCleanup SKIPPED] SKIP_DB_CLEANUP=true (CI environment)\n');
+    return true;
+  }
   //update-begin---author:pi---date:2026-08-05---for:[BUG-5-R 修复] dbCleanup 失败时记录错误到 stderr（不静默吞错）-----------
   const f = path.join(os.tmpdir(), `harness-cleanup-${Date.now()}.sql`);
   try {
