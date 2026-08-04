@@ -32,7 +32,7 @@
 | 4 | 通用设置 (`/project/mes/basic/commonSetting`) | P1 | ✅ 误判（页面正常） + 🔴 发现独立 issue（SysMessageModal any 错误，需另建） | 页面渲染正常，pageerror 是 system 模块全局问题，与本页面无关 |
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | ✅ 误判 | 只读流水页面（导出有、增/删/改无），数据由入库/出库自动生成（用户判断） |
 | 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | ✅ 误判 | 同 #5，只读库存页（导出有、增/删/改无），数据由入库/出库生成 |
-| 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | 🔵 待复核 | — |
+| 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | ✅ 误判 | 功能正常，用户截图证实 71.6667/100.0000 预填成功；spec 失败因硬编码 MAT-A000027 不存在 |
 | 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | 🔵 待复核 | — |
 | 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔵 待复核 | — |
 | 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | 🔵 待复核 | — |
@@ -440,6 +440,60 @@ ReferenceError: any is not defined
     npx playwright test e2e/mes/ --grep "其它入库（自动预填）" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 按“其它入库 › 新增入库单-物料选中后自动预填移动平均成本”手动操作**成功预填成本单价**（截图证实：生产批次01→71.6667、生产批次02→100.0000，与物料 movingAvgCost 一致）。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 前端实现 | `onMaterialChange(i, v)` 函数：从 `v.record.movingAvgCost` 读取成本并调用 `updateItem(i, 'unitCost', cost)` 预填 | `OtherInDrawer.vue:110-115` |
+| 提示文案 | 页面有蓝色 Alert：“成本按移动平均预填，可手工修改。入库后库存增加。” | `OtherInDrawer.vue:65` |
+| 批量添加 | `handleBatchAddMaterials(materials)` 走 `m.movingAvgCost` 预填，与单选走同一条路 | `OtherInDrawer.vue:122-126` |
+| UI 交互 | 选中物料后输入框 placeholder 从 `手工录入` 变为 `71.6667`/`100.0000`（预填成功） | 用户截图（Temp/orca-paste-1785850251181） |
+| 后端联动 | 保存后 `saved.totalAmount === qty * unitCost`（API 验证落库、金额计算正确） | spec line 78-83 逻辑 |
+
+**实测 spec（1 failed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 其它入库 › 新增入库单-物料选中后自动预填移动平均成本 | ❌ fail | **spec 硬编码物料编码 MAT-A000027 不存在**（实际环境是 MAT-0062/MAT-0052/MAT-0070 等） |
+
+**spec 失败根因：**
+
+```bash
+# spec line 64-66
+await modal.getByPlaceholder('搜索编码/名称/规格').fill('MAT-A000027');
+await modal.getByRole('button', { name: '搜 索' }).click();
+await modal.locator('.ant-table-row', { hasText: 'MAT-A000027' }).first().waitFor({ timeout: 8000 });
+# ➜ 失败：搜索无结果，8s 超时
+```
+
+**环境实际物料（脚本查询）：**
+
+```
+MAT-0062 | movingAvgCost: 60.6667
+MAT-0052 | movingAvgCost: 0.0
+MAT-0070 | movingAvgCost: 0.0
+...
+```
+
+`MAT-A000027` 这个编码在 db 脚本里**根本不存在**——是 gen-tests 生成时硬编码的假设物料。功能完全正常，**误判是 spec 硬编码错物料导致**。
+
+**action items**（不进排期，作为测试侧改进）：
+
+- 调整 `harness/e2e/mes/other-stock-in.spec.ts`：
+  - 将硬编码 `MAT-A000027` 改为“任意有 movingAvgCost > 0 的物料”，可通过先调 `/mes/basic/material/list?pageNo=1&pageSize=20` 获取首个非零成本物料
+  - 或通过动态查 `movingAvgCost > 0` 的物料代替硬编码
+- 同样问题可能在其他 spec 里出现（gen-tests 模板假设了固定种子数据）
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/other-stock-in.spec.ts --workers=1
+  ```
 
 ---
 
