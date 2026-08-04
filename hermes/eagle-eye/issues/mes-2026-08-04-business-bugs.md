@@ -33,7 +33,7 @@
 | 5 | 批次台账 (`/project/mes/batch/ledger`) | P3 | ✅ 误判 | 只读流水页面（导出有、增/删/改无），数据由入库/出库自动生成（用户判断） |
 | 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | ✅ 误判 | 同 #5，只读库存页（导出有、增/删/改无），数据由入库/出库生成 |
 | 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | ✅ 误判 | 功能正常，用户截图证实 71.6667/100.0000 预填成功；spec 失败因硬编码 MAT-A000027 不存在 |
-| 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | 🔵 待复核 | — |
+| 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | ✅ 误判 | 同 #5/#6，只读页（导出有、增/删/改无），数据由销售出库等业务生成 |
 | 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔵 待复核 | — |
 | 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | 🔵 待复核 | — |
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔵 待复核 | — |
@@ -513,6 +513,53 @@ MAT-0070 | movingAvgCost: 0.0
     npx playwright test e2e/mes/ --grep "应收账款" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 同批次流水页面，没设计新增功能，数据是由其他功能生成的，无需该页面新增。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端端点 | `list`（分页）/ `queryById` / `queryAll` / `exportXls` 共 4 个，**无 add/edit/delete** | `MesReceivableController.java` 全文 |
+| 后端逻辑 | 走 `QueryGenerator.initQueryWrapper` 支持搜索，默认按 `create_time` 倒序，**纯查询型 controller**（QUERY_ALL_MAX=5000 安全阈值） | 同上 |
+| 前端表格 | `useListPage` 模板：有 `exportConfig: { name: '应收账款', url: getExportUrl }`，**无 importConfig**，无操作列 | `index.vue`（全文 23 行） |
+| 前端 API | `queryReceivableList` + `queryReceivableById` + `getExportUrl` 共 3 个方法，**无 add/edit/delete** | `receivable.api.ts`（全文 5 行） |
+| 菜单权限 | `list, export` 两项，**无 add/edit/delete** | `MesMenuRegistry.java:141` |
+
+**与 #5/#6 同型**：只读数据流页面 + 导出能力，**不该有新增/编辑/删除**。应收数据由销售出库等业务自动生成（用户判断验证）。
+
+**实测 spec（2 failed / 5 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK（尽管 spec 注释说“路由未注册”，实测可达，说明动态 addRoute 生效） |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询按钮 | ✅ pass | 搜索正常 |
+| 4. 导出按钮 | ✅ pass | 导出按钮存在且可用 |
+| 5. 新增按钮 | ❌ fail | **页面无新增按钮（设计如此）** |
+| 6. 数据行存在或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 抽屉 | ❌ fail | **没新增按钮自然无抽屉（设计如此）** |
+
+**额外发现：finance.spec.ts 的错误假设**
+
+spec 顶部注释（line 5-8）说：
+
+> 🔴 已知问题: finance 模块 8 个前端页面虽然存在，但 router/routes/modules/mes.ts 中**没有注册 finance 路由**（菜单不可达）。本测试通过直接 URL 访问验证。每个测试期望失败（路由缺失 → 跳登录页），失败即为 P1 bug 暴露。
+
+实测表明**路由是可达的**（测试 1/2/3/4/6 都通过）—— 路由通过 `MesMenuRegistry` + 动态 `addRoute` 生效，与 CLAUDE.md “不修改 router/routes（已确认通过 MesMenuRegistry + 动态 addRoute 可达）”一致。这个 spec 顶部的假设是错的，需修改。
+
+**action items**（不进排期，作为测试侧改进）：
+- 调整 `harness/e2e/mes/finance.spec.ts`：删除顶部“期望路由缺失”的注释（已过期）
+- 调整 #8 应收账款的 5/7 测试为 `test.skip`，或改成只读 + 导出断言
+- 同样问题在 #9/#10/#11 财务页面也会出现（同一个 finance.spec.ts 中的 8 个页面），需统一处理
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/finance.spec.ts --grep "应收账款" --workers=1
+  ```
 
 ### [P2] 收款管理（/project/mes/finance/collection）
 
