@@ -38,7 +38,7 @@
 | 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | ✅ 误判 | 同 #5/#6/#8，只读页（导出有、增/删/改无），数据由采购入库等业务生成 |
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔴 真实 Bug（同 #9） | 点击新增 → router.push 到不存在的路由 `/payment/add` → 404（缺 `PaymentDrawer.vue`） |
 | 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | ✅ 误判（与 #1 同型，spec 虚构页面） | 没有"采购台账"菜单；真实页面是"库存台账" `/project/mes/warehouse/ledger`，且功能正常 |
-| 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔵 待复核 | — |
+| 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔴 真实 Bug（进排期） | mes_admin 角色缺 `mes:basic:add` 权限 → 链路起点创建客户失败（controller 用 `mes:basic:*`，菜单注册却用 `mes:customerAddress:*` 等子模块） |
 | 14 | SysMessageModal `any is not defined`（全局 pageerror） | P3 | 🔴 真实 Bug | 已提排期（待认领） |
 
 > 复核状态说明：
@@ -868,6 +868,57 @@ GET /mes/warehouse/ledger/list → 200 True  records=10
 #### 链路失败（1）
 
 - **sales-receipt-flow** / 0.3 创建客户：Subject does not have permission [mes:basic:add] — admin 缺 mes:basic:add 权限，链路 fixture 创建失败
+
+#### 🔴 复核结果：真实 Bug，权限命名不一致（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 确认是真实 BUG。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| **MesCustomerController 用的权限** | `@RequiresPermissions("mes:basic:list")` / `("mes:basic:add")` / `("mes:basic:edit")` / `("mes:basic:delete")` / `("mes:basic:deleteBatch")` / `("mes:basic:import")` | `MesCustomerController.java:40,65,69,73,77,109` |
+| **MesMenuRegistry 声明的权限** | 仅 `mes:customerAddress:*`、`mes:customerContact:*`、`mes:customerFollowUp:*`、`mes:customerPrice:*` —— **⚠️ 没有 `mes:basic:*`** | `MesMenuRegistry.java:31-34` |
+| **V10.1.1 脚本绑定的权限** | 绑定上面 4 个子模块权限给 admin + mes_admin 角色 | `db/V10.1.1__mes_customer_perms_bind.sql` 全文 |
+| **测试调用路径** | `POST /mes/basic/customer/add`（需要 `mes:basic:add`） | `tests/chains/sales-receipt-flow.test.js:25` |
+| **测试登录账号** | `mes_admin / 123456`（不是 admin） | `tests/chains/sales-receipt-flow.test.js:39` |
+
+**根因（权限命名不一致）：**
+
+`MesCustomerController` 用的是 `mes:basic:*` 权限（上一版本客户管理的命名），但 V10 重构后菜单注册改用了子模块名 `mes:customerAddress:*` 等。**两边的权限码没同步**，导致：
+
+1. `mes_basic_customer` 菜单注册到 `sys_permission` 表的权限是子模块 4 套（28 个权限）
+2. **`mes:basic:*` 这 7 个权限码在 sys_permission 表根本不存在**（因为菜单注册时没声明）
+3. **controller 注解依然引用 `mes:basic:*`** → 请求过来时 Shiro 拒绝
+
+**实测验证（脚本对比）：**
+
+```
+admin      → POST /mes/basic/customer/add  → 200 success=True  message='添加成功'
+mes_admin  → POST /mes/basic/customer/add  → 200 success=False message='Subject does not have permission [mes:basic:add]'
+```
+
+- **admin 能过**：admin 是 jeecgboot 内置超级管理员，权限表里没有权限码但仍能通过（admin 默认 bypass Shiro 检查）
+- **mes_admin 不能过**：mes_admin 是普通自定义角色，需精确匹配权限码；`mes:basic:add` 在 `sys_permission` 不存在 → Shiro 拒绝
+
+**action items**（**进排期**）：
+
+- **修复方案（推荐 A）**：修改 `MesMenuRegistry.java`，为 `mes_basic_customer` 菜单补齐 `mes:basic:*` 权限声明：
+  ```java
+  // 例：在 mes_basic_customer 菜单后添加：
+  addPerms(list, "mes:basic:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","import","export"});
+  ```
+  然后重启后端 → `mes:basic:*` 7 个权限码会动态插入 `sys_permission` → 再写一个新迁移把 `mes:basic:*` 绑给 mes_admin 角色（参考 V10.1.1 写法）
+- **预计工时**：1-2 h（修改 MesMenuRegistry + 新迁移脚本 + 重启后端 + 验证）
+- **验证**：重跑 `tests/chains/sales-receipt-flow.test.js`，step 0.3 创建客户应通过
+- **连带影响**：同样问题可能出现在其他 `mes:basic:*` 权限码上（供应商、物料等 controller）—— 需全仓 grep 排查：
+  ```bash
+  cd jeecg-boot && grep -rn "mes:basic:" jeecg-boot-module/project-mes/src/main/java/org/jeecg/modules/mes/basic/controller/ | head -30
+  ```
+- **复现命令**：
+  ```bash
+  cd harness && node tests/chains/sales-receipt-flow.test.js
+  ```
 
 ---
 
