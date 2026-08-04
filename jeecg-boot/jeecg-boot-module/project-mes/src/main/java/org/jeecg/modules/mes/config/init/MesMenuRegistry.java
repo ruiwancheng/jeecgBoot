@@ -26,6 +26,9 @@ public final class MesMenuRegistry {
         // ==================== 基础设置 ====================
         list.add(MesMenuDefinition.folder("mes_basic", "mes_menu_001", "基础设置", "/project/mes/basic", "/project/mes/basic/customer").sortNo(10.0).icon("ant-design:setting-outlined"));
         list.add(MesMenuDefinition.leaf("mes_basic_customer", "mes_basic", "客户管理", "/project/mes/basic/customer", "project/mes/basic/customer/index", "MesBasicCustomer").sortNo(1.0).icon("ant-design:user-outlined"));
+        //update-begin---author:pi---date:2026-08-04---for:【TKT-002】补充 mes:basic:* 权限码（MesCustomerController 引用）-----------
+        addPerms(list, "mes:basic:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","import","export"});
+        //update-end---author:pi---date:2026-08-04---for:【TKT-002】补充 mes:basic:* 权限码（MesCustomerController 引用）-----------
         list.add(MesMenuDefinition.leaf("mes_basic_supplier", "mes_basic", "供应商管理", "/project/mes/basic/supplier", "project/mes/basic/supplier/index", "MesBasicSupplier").sortNo(2.0).icon("ant-design:shop-outlined"));
         addPerms(list, "mes:supplier:", "mes_basic_supplier", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
 addPerms(list, "mes:customerAddress:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
