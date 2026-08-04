@@ -12,7 +12,12 @@
       "file": "e2e/mes/commonSetting.spec.ts",
       "titleContains": "切片B：通用设置页面端到端验证",
       "route": "/project/mes/basic/commonSetting",
-      "steps": ["登录系统", "打开通用设置页面", "等待开关列表和生产批次管理开关出现", "观察浏览器运行时错误"],
+      "steps": [
+        "登录系统",
+        "打开通用设置页面",
+        "等待开关列表和生产批次管理开关出现",
+        "观察浏览器运行时错误"
+      ],
       "expected": "通用设置页面显示生产批次管理开关，浏览器无致命运行时错误",
       "category": "frontend_runtime"
     },
@@ -20,7 +25,11 @@
       "file": "e2e/mes/purchase.spec.ts",
       "titleContains": "采购订单",
       "route": "/project/mes/purchase/order",
-      "steps": ["登录系统", "打开采购订单页面", "等待列表加载"],
+      "steps": [
+        "登录系统",
+        "打开采购订单页面",
+        "等待列表加载"
+      ],
       "expected": "显示采购订单表格，或显示明确的空数据状态",
       "category": "page_rendering"
     },
@@ -28,7 +37,11 @@
       "file": "e2e/mes/purchase.spec.ts",
       "titleContains": "采购入库",
       "route": "/project/mes/purchase/receipt",
-      "steps": ["登录系统", "打开采购入库页面", "等待列表加载"],
+      "steps": [
+        "登录系统",
+        "打开采购入库页面",
+        "等待列表加载"
+      ],
       "expected": "显示采购入库表格，或显示明确的空数据状态",
       "category": "page_rendering"
     },
@@ -36,7 +49,11 @@
       "file": "e2e/mes/sales-order.spec.ts",
       "titleContains": "销售订单",
       "route": "/project/mes/sales/order",
-      "steps": ["登录系统", "打开销售订单页面", "等待列表加载"],
+      "steps": [
+        "登录系统",
+        "打开销售订单页面",
+        "等待列表加载"
+      ],
       "expected": "显示销售订单表格，或显示明确的空数据状态",
       "category": "page_rendering"
     },
@@ -44,7 +61,11 @@
       "file": "e2e/mes/sales-delivery.spec.ts",
       "titleContains": "销售发货单",
       "route": "/project/mes/sales/delivery",
-      "steps": ["登录系统", "打开发货单页面", "检查路由、表格、查询、导出、新增和抽屉"],
+      "steps": [
+        "登录系统",
+        "打开发货单页面",
+        "检查路由、表格、查询、导出、新增和抽屉"
+      ],
       "expected": "发货单页面独立完成基础交互验证，路由可达，提交/签收/取消操作可发现",
       "category": "page_rendering"
     },
@@ -52,7 +73,11 @@
       "file": "e2e/mes/sales-outbound.spec.ts",
       "titleContains": "销售出库",
       "route": "/project/mes/sales/outbound",
-      "steps": ["登录系统", "打开销售出库页面", "检查路由、表格、查询、导出、新增、审核和抽屉"],
+      "steps": [
+        "登录系统",
+        "打开销售出库页面",
+        "检查路由、表格、查询、导出、新增、审核和抽屉"
+      ],
       "expected": "出库页面独立完成基础交互验证，路由可达，审核/取消操作可发现",
       "category": "page_rendering"
     },
@@ -60,7 +85,11 @@
       "file": "e2e/mes/sales-price.spec.ts",
       "titleContains": "销售价格管理",
       "route": "/project/mes/sales/price",
-      "steps": ["登录系统", "打开价格管理页面", "检查路由、表格、查询、导出、导入、新增和抽屉"],
+      "steps": [
+        "登录系统",
+        "打开价格管理页面",
+        "检查路由、表格、查询、导出、导入、新增和抽屉"
+      ],
       "expected": "价格管理页面独立完成基础交互验证，路由可达，导入按钮可见",
       "category": "page_rendering"
     },
@@ -68,7 +97,12 @@
       "file": "e2e/mes/materialBatch.spec.ts",
       "titleContains": "C.2",
       "route": "/project/mes/basic/material",
-      "steps": ["打开通用设置并开启生产批次管理", "进入物料页面", "打开第一条物料编辑抽屉", "检查启用批次开关是否可编辑"],
+      "steps": [
+        "打开通用设置并开启生产批次管理",
+        "进入物料页面",
+        "打开第一条物料编辑抽屉",
+        "检查启用批次开关是否可编辑"
+      ],
       "expected": "总开关开启时，物料编辑抽屉中的启用批次开关可编辑",
       "category": "selector_or_data_precondition"
     },
@@ -76,16 +110,32 @@
       "file": "e2e/mes/other-stock-in.spec.ts",
       "titleContains": "自动预填移动平均成本",
       "route": "/project/mes/stock/other-in",
-      "steps": ["登录系统", "打开其它入库页面", "点击新增", "选择入库类型和仓库", "打开物料选择弹窗", "搜索有移动平均成本的测试物料", "确认物料并检查成本单价"],
+      "steps": [
+        "登录系统",
+        "打开其它入库页面",
+        "点击新增",
+        "选择入库类型和仓库",
+        "打开物料选择弹窗",
+        "搜索有移动平均成本的测试物料",
+        "确认物料并检查成本单价"
+      ],
       "expected": "物料选择成功，成本单价自动预填为移动平均成本",
-      "data": {"requiredMaterial": "应由测试 fixture 创建或查询，不依赖固定历史编码"},
+      "data": {
+        "requiredMaterial": "应由测试 fixture 创建或查询，不依赖固定历史编码"
+      },
       "category": "data_precondition"
     },
     {
       "file": "e2e/mes/traceabilityBatch.spec.ts",
       "titleContains": "点击查看追溯",
       "route": "/project/mes/batch/traceability",
-      "steps": ["登录系统", "打开批次追溯页面", "选择有流水的批次", "点击查看追溯", "检查批次追溯抽屉和批次流水区域"],
+      "steps": [
+        "登录系统",
+        "打开批次追溯页面",
+        "选择有流水的批次",
+        "点击查看追溯",
+        "检查批次追溯抽屉和批次流水区域"
+      ],
       "expected": "抽屉显示批次追溯口径提示、批次流水标题和流水表头",
       "category": "traceability_drawer"
     },
@@ -93,7 +143,11 @@
       "file": "e2e/mes/manufacturing.spec.ts",
       "titleContains": "",
       "route": "/project/mes/manufacturing/",
-      "steps": ["登录系统", "打开生产制造页面", "逐页检查页面加载、按钮和表格"],
+      "steps": [
+        "登录系统",
+        "打开生产制造页面",
+        "逐页检查页面加载、按钮和表格"
+      ],
       "expected": "每个生产页面独立完成加载和基础交互验证",
       "category": "test_design"
     },
@@ -101,7 +155,11 @@
       "file": "e2e/mes/finance.spec.ts",
       "titleContains": "",
       "route": "/project/mes/finance/",
-      "steps": ["登录系统", "打开财务页面", "检查路由、表格、查询、导出、新增和弹窗"],
+      "steps": [
+        "登录系统",
+        "打开财务页面",
+        "检查路由、表格、查询、导出、新增和弹窗"
+      ],
       "expected": "每个财务页面独立完成基础交互验证，不因其他页面超时而丢失结果",
       "category": "test_design"
     },
@@ -109,9 +167,133 @@
       "file": "e2e/mes/stocktake.spec.ts",
       "titleContains": "",
       "route": "/project/mes/stock/stocktake",
-      "steps": ["登录系统", "创建唯一盘点 fixture", "执行盘点、快照、实盘、审核和清理"],
+      "steps": [
+        "登录系统",
+        "创建唯一盘点 fixture",
+        "执行盘点、快照、实盘、审核和清理"
+      ],
       "expected": "盘点页面独立完成业务流验证并清理测试数据",
       "category": "test_design"
+    },
+    {
+      "file": "e2e/mes/basic-material.spec.ts",
+      "titleContains": "物料管理",
+      "route": "/project/mes/basic/material",
+      "steps": [
+        "登录系统",
+        "打开物料管理页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "物料管理页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/basic-customer.spec.ts",
+      "titleContains": "客户管理",
+      "route": "/project/mes/basic/customer",
+      "steps": [
+        "登录系统",
+        "打开客户管理页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "客户管理页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/basic-supplier.spec.ts",
+      "titleContains": "供应商管理",
+      "route": "/project/mes/basic/supplier",
+      "steps": [
+        "登录系统",
+        "打开供应商管理页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "供应商管理页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/basic-codeRule.spec.ts",
+      "titleContains": "编码规则",
+      "route": "/project/mes/basic/codeRule",
+      "steps": [
+        "登录系统",
+        "打开编码规则页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "编码规则页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/basic-inventoryAlert.spec.ts",
+      "titleContains": "库存预警",
+      "route": "/project/mes/basic/inventoryAlert",
+      "steps": [
+        "登录系统",
+        "打开库存预警页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "库存预警页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/basic-inventory.spec.ts",
+      "titleContains": "库存总览",
+      "route": "/project/mes/basic/inventory",
+      "steps": [
+        "登录系统",
+        "打开库存总览页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "库存总览页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/batch-master.spec.ts",
+      "titleContains": "批次主档",
+      "route": "/project/mes/batch/master",
+      "steps": [
+        "登录系统",
+        "打开批次主档页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "批次主档页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/batch-ledger.spec.ts",
+      "titleContains": "批次台账",
+      "route": "/project/mes/batch/ledger",
+      "steps": [
+        "登录系统",
+        "打开批次台账页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "批次台账页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/batch-inventory.spec.ts",
+      "titleContains": "批次库存",
+      "route": "/project/mes/batch/inventory",
+      "steps": [
+        "登录系统",
+        "打开批次库存页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "批次库存页面完成基础交互验证",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/purchase-ledger.spec.ts",
+      "titleContains": "采购台账",
+      "route": "/project/mes/purchase/ledger",
+      "steps": [
+        "登录系统",
+        "打开采购台账页面",
+        "检查路由、表格、查询、导出、新增、抽屉"
+      ],
+      "expected": "采购台账页面完成基础交互验证",
+      "category": "page_rendering"
     }
   ]
 }
