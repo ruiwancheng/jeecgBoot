@@ -2,7 +2,7 @@
 // 覆盖: bom（物料清单）/ order（生产订单）/ picking（生产领料）/ completion（完工入库）
 // 关联: .claude/plans/2026-08-04-mes-regression-plan.md
 // 规则: 每个页面 7 个基础 E2E：加载/列表/搜索/导出/新增/列头/抽屉
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
 const PAGES = [

@@ -488,6 +488,22 @@ def generate_report(ctx: RunContext) -> str:
             f"{result['attempts']} | {exit_code} | {duration} | `{log_path}` | {message} |"
         )
     counts_text = ", ".join(f"{key}={value}" for key, value in sorted(counts.items())) or "无"
+    review_summary_path = REPO_ROOT / "hermes" / "eagle-eye" / "reports" / datetime.now().strftime("%Y-%m-%d") / "issues" / "review-summary.json"
+    if review_summary_path.exists():
+        try:
+            review_summary = read_json(review_summary_path)
+            review_counts = ", ".join(
+                f"{key}={value}" for key, value in sorted(review_summary.get("counts", {}).items())
+            ) or "无候选问题"
+            review_section = (
+                "## 失败复核摘要\n\n"
+                f"- 复核目录：`{display_path(review_summary_path.parent)}`\n"
+                f"- 当前复核结果：{review_counts}\n"
+            )
+        except (OSError, json.JSONDecodeError):
+            review_section = "## 失败复核摘要\n\n- 复核报告存在但暂时无法读取。\n"
+    else:
+        review_section = "## 失败复核摘要\n\n- 本轮没有生成 E2E 失败复核报告，或该切片尚未完成。\n"
     content = f"""# MES 可恢复回归报告
 
 - 运行 ID：`{ctx.state['run_id']}`
@@ -501,6 +517,7 @@ def generate_report(ctx: RunContext) -> str:
 |---|---|---:|---:|---:|---:|---|---|
 {chr(10).join(rows)}
 
+{review_section}
 ## 恢复方式
 
 ```bash

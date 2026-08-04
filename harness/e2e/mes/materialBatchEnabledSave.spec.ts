@@ -5,7 +5,7 @@
 //     后端 Jackson 自动转 Integer 1/0 → 关键断言
 //  2) 列表回显：customRender { text } === 1 仍然显示"已启用"（数字 === 数字）
 //  3) UI 验证：通用设置总开关 + 物料页 batchEnabled 联动 + 关闭总开关后字段禁用（切片 C）
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
 const API_BASE = 'http://localhost:8080/jeecg-boot';

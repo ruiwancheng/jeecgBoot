@@ -165,20 +165,30 @@
       "requires": ["backend", "frontend"]
     },
     {
-      "id": "8.2",
-      "name": "生产财务盘点三页面 E2E",
+      "id": "8.2-manufacturing",
+      "name": "生产页面 E2E",
       "kind": "e2e",
       "cwd": "harness",
-      "command": [
-        "npx",
-        "playwright",
-        "test",
-        "e2e/mes/manufacturing.spec.ts",
-        "e2e/mes/finance.spec.ts",
-        "e2e/mes/stocktake.spec.ts",
-        "--workers=1"
-      ],
+      "command": ["npx", "playwright", "test", "e2e/mes/manufacturing.spec.ts", "--workers=1"],
+      "timeout_seconds": 360,
+      "requires": ["backend", "frontend"]
+    },
+    {
+      "id": "8.2-finance",
+      "name": "财务页面 E2E",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": ["npx", "playwright", "test", "e2e/mes/finance.spec.ts", "--workers=1"],
       "timeout_seconds": 600,
+      "requires": ["backend", "frontend"]
+    },
+    {
+      "id": "8.2-stocktake",
+      "name": "盘点页面 E2E",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": ["npx", "playwright", "test", "e2e/mes/stocktake.spec.ts", "--workers=1"],
+      "timeout_seconds": 480,
       "requires": ["backend", "frontend"]
     },
     {

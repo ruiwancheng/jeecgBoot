@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi, API_BASE } from './helpers/auth';
 import { dbCleanup } from '../../tests/helpers/fixtures';
 

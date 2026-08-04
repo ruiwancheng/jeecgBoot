@@ -4,7 +4,8 @@
 // 关联: hermes/reviews/2026-08-03-orca-review-traceability-batch-level.md
 // 规则: 内置 R001-R008 — R001(必填校验-不适用) R005(特殊字符搜索) R008(dictCode-不适用) 命中
 
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
+import type { Page } from '@playwright/test';
 import { loginViaApi } from './helpers/auth';
 
 const PAGE_PATH = '/project/mes/batch/traceability';

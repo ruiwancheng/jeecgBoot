@@ -1,18 +1,18 @@
-import { test, expect } from '@playwright/test';
-import { loginViaApi, BASE } from './helpers/auth';
+import { test, expect } from './helpers/diagnostic-test';
+import { loginViaApi, BASE, API_BASE } from './helpers/auth';
 
 let accessToken: string;
 
 async function cleanupDoc(code: string) {
   try {
-    const listRes = await fetch(`${BASE}:8080/jeecg-boot/mes/stock/otherIn/list?pageNo=1&pageSize=5&code=${code}`, {
+    const listRes = await fetch(`${API_BASE}/mes/stock/otherIn/list?pageNo=1&pageSize=5&code=${code}`, {
       headers: { 'X-Access-Token': accessToken },
     });
     const list = await listRes.json();
     const doc = list.result?.records?.[0];
     if (doc) {
-      await fetch(`${BASE}:8080/jeecg-boot/mes/stock/otherIn/unaudit?id=${doc.id}`, { method: 'PUT', headers: { 'X-Access-Token': accessToken } });
-      await fetch(`${BASE}:8080/jeecg-boot/mes/stock/otherIn/delete?id=${doc.id}`, { method: 'DELETE', headers: { 'X-Access-Token': accessToken } });
+      await fetch(`${API_BASE}/mes/stock/otherIn/unaudit?id=${doc.id}`, { method: 'PUT', headers: { 'X-Access-Token': accessToken } });
+      await fetch(`${API_BASE}/mes/stock/otherIn/delete?id=${doc.id}`, { method: 'DELETE', headers: { 'X-Access-Token': accessToken } });
     }
   } catch (e) { console.log('cleanup skip', e); }
 }
@@ -79,7 +79,7 @@ test.describe('其它入库', () => {
     // 7. 保存后用 API 验证单据真实落库（比 toast 可靠）
     await drawer.getByRole('button', { name: '确 认' }).click();
     await page.waitForTimeout(2500);
-    const listRes = await fetch(`${BASE}:8080/jeecg-boot/mes/stock/otherIn/list?pageNo=1&pageSize=5&code=${code}`, {
+    const listRes = await fetch(`${API_BASE}/mes/stock/otherIn/list?pageNo=1&pageSize=5&code=${code}`, {
       headers: { 'X-Access-Token': accessToken },
     });
     const list = await listRes.json();

@@ -5,7 +5,7 @@
 // 🔴 已知问题: finance 模块 8 个前端页面虽然存在，但 router/routes/modules/mes.ts 中
 //    **没有注册 finance 路由**（菜单不可达）。本测试通过直接 URL 访问验证。
 //    每个测试期望失败（路由缺失 → 跳登录页），失败即为 P1 bug 暴露。
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
 const PAGES = [

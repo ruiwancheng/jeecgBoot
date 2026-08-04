@@ -1,6 +1,6 @@
 // 切片 B 端到端验证：通用设置页 + 菜单注册 + 路由
 // 验证：登录→导航到基础设置→通用设置→开关列表渲染 + 关闭弹窗
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
 test('切片B：通用设置页面端到端验证', async ({ page }) => {

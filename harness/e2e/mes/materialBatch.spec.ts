@@ -2,8 +2,8 @@
 // 验证 1：物料列表能看到"启用批次"列
 // 验证 2：总开关开启时编辑物料，batchEnabled 字段可切
 // 验证 3：总开关关闭时编辑物料，batchEnabled 字段被禁用
-import { test, expect } from '@playwright/test';
-import { loginViaApi } from './helpers/auth';
+import { test, expect } from './helpers/diagnostic-test';
+import { loginViaApi, BASE, API_BASE } from './helpers/auth';
 
 const MATERIAL_PATH = '/project/mes/basic/material';
 const SETTING_PATH = '/project/mes/basic/commonSetting';
@@ -31,12 +31,11 @@ test('切片C.2：总开关开启时物料表单 batchEnabled 可编辑', async 
     await page.waitForTimeout(1500);
   }
 
-  // 2. 进入物料页（P2-4 修复：跨域跳转到 baseURL 100.122.125.106 而非 localhost:3100，避免 token 丢失）
-  // update-begin---author:ruiwancheng---date:2026-08-02---for: P2-4 跨域修复 改用 baseURL 让 token localStorage 生效-----------
-  await page.goto(`http://100.122.125.106${MATERIAL_PATH}`);
+  // update-begin---author:pi---date:2026-08-04---for:【REGRESSION-EVIDENCE-REVIEW】统一使用可配置 UI 地址，避免跨域导致 token 丢失-----------
+  await page.goto(`${BASE}${MATERIAL_PATH}`);
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(800);
-  // update-end---author:ruiwancheng---date:2026-08-02---for: P2-4 跨域修复-----------
+  // update-end---author:pi---date:2026-08-04---for:【REGRESSION-EVIDENCE-REVIEW】统一使用可配置 UI 地址-----------
 
   // 3. 点编辑第一行（P2-4 修复：选择器兼容 button + a + 图标标题）
   const editBtn = page.locator('button:has-text("编辑"), a:has-text("编辑"), [title="编辑"], [aria-label="编辑"]').first();
@@ -77,7 +76,7 @@ test.fixme('切片C.3：总开关关闭时物料表单 batchEnabled 被禁用', 
     return JSON.parse(localStorage.getItem(key) || '{}').value?.TOKEN__?.value;
   });
   const saveRes = await page.evaluate(async (tk) => {
-    const r = await fetch('http://localhost:8080/jeecg-boot/mes/system/globalSwitch/save', {
+    const r = await fetch(`${API_BASE}/mes/system/globalSwitch/save`, {
       method: 'POST',
       headers: { 'X-Access-Token': tk, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -97,12 +96,12 @@ test.fixme('切片C.3：总开关关闭时物料表单 batchEnabled 被禁用', 
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(800);
 
-  // 3. 进入物料页 + 打开编辑（P2-4 跨域修复：改用 baseURL）
-  // update-begin---author:ruiwancheng---date:2026-08-02---for: P2-4 跨域修复 改用 baseURL-----------
-  await page.goto(`http://100.122.125.106${MATERIAL_PATH}`);
+  // 3. 进入物料页 + 打开编辑（P2-4 修复：改用 baseURL）
+  // update-begin---author:pi---date:2026-08-04---for:【REGRESSION-EVIDENCE-REVIEW】统一使用可配置 UI 地址，避免跨域导致 token 丢失-----------
+  await page.goto(`${BASE}${MATERIAL_PATH}`);
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(800);
-  // update-end---author:ruiwancheng---date:2026-08-02---for: P2-4 跨域修复-----------
+  // update-end---author:pi---date:2026-08-04---for:【REGRESSION-EVIDENCE-REVIEW】统一使用可配置 UI 地址-----------
   // update-begin---author:ruiwancheng---date:2026-08-02---for: P2-4 C.3 同 C.2 选择器兼容-----------
   const editBtn = page.locator('button:has-text("编辑"), a:has-text("编辑"), [title="编辑"], [aria-label="编辑"]').first();
   await editBtn.click({ timeout: 10000 });
