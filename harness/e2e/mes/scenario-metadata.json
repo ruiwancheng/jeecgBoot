@@ -41,6 +41,30 @@
       "category": "page_rendering"
     },
     {
+      "file": "e2e/mes/sales-delivery.spec.ts",
+      "titleContains": "销售发货单",
+      "route": "/project/mes/sales/delivery",
+      "steps": ["登录系统", "打开发货单页面", "检查路由、表格、查询、导出、新增和抽屉"],
+      "expected": "发货单页面独立完成基础交互验证，路由可达，提交/签收/取消操作可发现",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/sales-outbound.spec.ts",
+      "titleContains": "销售出库",
+      "route": "/project/mes/sales/outbound",
+      "steps": ["登录系统", "打开销售出库页面", "检查路由、表格、查询、导出、新增、审核和抽屉"],
+      "expected": "出库页面独立完成基础交互验证，路由可达，审核/取消操作可发现",
+      "category": "page_rendering"
+    },
+    {
+      "file": "e2e/mes/sales-price.spec.ts",
+      "titleContains": "销售价格管理",
+      "route": "/project/mes/sales/price",
+      "steps": ["登录系统", "打开价格管理页面", "检查路由、表格、查询、导出、导入、新增和抽屉"],
+      "expected": "价格管理页面独立完成基础交互验证，路由可达，导入按钮可见",
+      "category": "page_rendering"
+    },
+    {
       "file": "e2e/mes/materialBatch.spec.ts",
       "titleContains": "C.2",
       "route": "/project/mes/basic/material",
