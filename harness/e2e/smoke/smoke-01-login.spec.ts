@@ -3,7 +3,7 @@
 // 来源：test-e2e skill 冒烟测试集
 import { test, expect } from '@playwright/test';
 
-const API_BASE = process.env.E2E_API_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 test('冒烟 1: 登录接口返回 Token', async ({ request }) => {
   const res = await request.post(`${API_BASE}/sys/login`, {

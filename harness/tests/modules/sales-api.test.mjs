@@ -2,7 +2,7 @@
 // MES Sales Module API Test — 铁拳团审计P0修复验证
 // Usage: node harness/tests/modules/sales-api.test.js
 
-const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const TOKEN_URL = `/sys/login`;
 const ADMIN = { username: 'admin', password: '123456' };
 

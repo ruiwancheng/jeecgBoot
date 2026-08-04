@@ -2,7 +2,7 @@
 // MES 编码规则模块 API 测试 — 编码规则与单据绑定验证
 // Usage: node harness/tests/modules/codeRule.test.mjs
 
-const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 const ADMIN = { username: 'admin', password: '123456' };
 let token = '';
 let passed = 0, failed = 0;

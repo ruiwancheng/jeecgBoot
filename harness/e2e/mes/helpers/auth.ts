@@ -7,8 +7,8 @@
 import type { Page } from '@playwright/test';
 
 // 双地址分离：UI 地址 + API 地址，可用环境变量覆盖（默认打服务器，本地跑传 E2E_UI_BASE/E2E_API_BASE）
-export const BASE = process.env.E2E_UI_BASE || 'http://100.122.125.106';
-export const API_BASE = process.env.E2E_API_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+export const BASE = process.env.E2E_UI_BASE || 'http://localhost:4173';
+export const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 let cachedToken: string | null = null;
 

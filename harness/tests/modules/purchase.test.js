@@ -1,6 +1,6 @@
 // MES 采购模块 API 测试
 // 测试范围: 采购申请 / 采购订单 / 采购入库 / 库存台账
-const BASE = process.env.HARNESS_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 
 let token = '';
 const TS = Date.now();
