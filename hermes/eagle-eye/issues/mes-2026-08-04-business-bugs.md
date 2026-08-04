@@ -34,7 +34,7 @@
 | 6 | 批次库存 (`/project/mes/batch/inventory`) | P3 | ✅ 误判 | 同 #5，只读库存页（导出有、增/删/改无），数据由入库/出库生成 |
 | 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | ✅ 误判 | 功能正常，用户截图证实 71.6667/100.0000 预填成功；spec 失败因硬编码 MAT-A000027 不存在 |
 | 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | ✅ 误判 | 同 #5/#6，只读页（导出有、增/删/改无），数据由销售出库等业务生成 |
-| 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔵 待复核 | — |
+| 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔴 真实 Bug | 点击新增 → router.push 到不存在的路由 `/collection/add` → 404（缺 `CollectionDrawer.vue`） |
 | 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | 🔵 待复核 | — |
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔵 待复核 | — |
 | 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | 🔵 待复核 | — |
@@ -574,6 +574,56 @@ spec 顶部注释（line 5-8）说：
     npx playwright test e2e/mes/ --grep "收款管理" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### 🔴 复核结果：真实 Bug（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 确认 BUG。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端 controller | `MesCollectionController` 5 个端点：`list`/`queryById`/`add`/`queryAll`/`exportXls`，**`add` 端点存在** | `MesCollectionController.java` |
+| 菜单权限 | `list, add, export` —— **add 权限已授予** | `MesMenuRegistry.java:147` |
+| 前端 API | `queryCollectionList` / `queryCollectionById` / `addCollection` / `getExportUrl` —— **addCollection 已有** | `collection.api.ts`（全文 5 行） |
+| 前端表格 | 有“新增收款”按钮，**handleAdd 调用 router.push('/project/mes/finance/collection/add')** | `index.vue:27` |
+| **router 中是否有 `/collection/add` 子路由** | **❌ 没有！** router 只注册了 `collection`，没注册 `collection/add` 子路由 | `src/router/routes/modules/mes.ts:207` |
+| 是否有 `CollectionDrawer.vue` | **❌ 没有！** finance 模块中只有 invoice/purchaseInvoice/subject/voucher 有 Drawer，**collection 和 payment 缺失** | `find src/views/project/mes/finance -name "*Drawer*"` |
+
+**根因（双层问题）：**
+
+1. **错走 router.push 而非 useDrawer**：`handleAdd` 调用 `router.push('/project/mes/finance/collection/add')`，但这个子路由不存在（router 只有顶级 `collection` 路由）
+2. **缺少 `CollectionDrawer.vue`**：对比 `finance/invoice/index.vue` + `InvoiceDrawer.vue`，**正确做法**是 `useDrawer` + `openDrawer(true, { isUpdate: false })` + 同目录下 `CollectionDrawer.vue`
+
+**实测验证（1 failed / 6 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | `/project/mes/finance/collection` 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询按钮 | ✅ pass | 搜索正常 |
+| 4. 导出按钮 | ✅ pass | 导出按钮存在 |
+| 5. 新增按钮 | ✅ pass | “新增收款”按钮可见 |
+| 6. 数据行存在或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 弹窗/抽屉 | ❌ fail | **点击后 router.push 到 `/collection/add` → 该路由不存在 → 跳 404 页面（截图证实）** |
+
+**截图证实**：点击“新增收款”后，页面跳转后主区域显示 **404 “抱歉，您访问的页面不存在”**，面包屑变 “首页 / 收款管理”（说明被路由到 collection 下某个不存在的子路径）。
+
+**action items**（**进排期**）：
+
+- **修复方案（推荐）**：参考 `finance/invoice/index.vue` 改造：
+  - 新建 `src/views/project/mes/finance/collection/CollectionDrawer.vue`（参考 `InvoiceDrawer.vue`，含收款单表单 + submit 调用 `addCollection`）
+  - 修改 `index.vue`：
+    - 引入 `useDrawer` 和 `CollectionDrawer`
+    - `handleAdd` 改为 `openDrawer(true, { isUpdate: false })`
+  - 预计工时：1-2 h（Drawer 表单与 invoice 类似）
+- **同样问题预计在 #11 付款管理**（payment 也缺 Drawer，走同样的 router.push hack）—— 排期时一起修
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/finance.spec.ts --grep "收款管理" --workers=1
+  ```
 
 ### [P2] 应付账款（/project/mes/finance/payable）
 
