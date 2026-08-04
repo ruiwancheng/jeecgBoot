@@ -37,7 +37,7 @@
 | 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔴 真实 Bug | 点击新增 → router.push 到不存在的路由 `/collection/add` → 404（缺 `CollectionDrawer.vue`） |
 | 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | ✅ 误判 | 同 #5/#6/#8，只读页（导出有、增/删/改无），数据由采购入库等业务生成 |
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔴 真实 Bug（同 #9） | 点击新增 → router.push 到不存在的路由 `/payment/add` → 404（缺 `PaymentDrawer.vue`） |
-| 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | 🔵 待复核 | — |
+| 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | ✅ 误判（与 #1 同型，spec 虚构页面） | 没有"采购台账"菜单；真实页面是"库存台账" `/project/mes/warehouse/ledger`，且功能正常 |
 | 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔵 待复核 | — |
 | 14 | SysMessageModal `any is not defined`（全局 pageerror） | P3 | 🔴 真实 Bug | 已提排期（待认领） |
 
@@ -771,6 +771,81 @@ spec 顶部注释（line 5-8）说：
     npx playwright test e2e/mes/ --grep "采购台账" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判，与 #1 同型（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** "这页面，哪来的？我不记得添加过这个页面，核实下" —— **用户直觉完全正确**。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| **菜单注册中有没有“采购台账”** | **❌ 没有！** menu 定义列表中只有“库存台账”（`mes_inventory_ledger`，在 `mes_warehouse` 父节点下） | `MesMenuRegistry.java:85` |
+| **菜单 URL 是 `/project/mes/purchase/ledger` 还是 `/project/mes/warehouse/ledger`** | **`/project/mes/warehouse/ledger`**（spec 写错） | `MesMenuRegistry.java:85` |
+| 后端 controller | `MesInventoryLedgerController`（`@RequestMapping("/mes/warehouse/ledger")`，3 个端点 list/queryAll/exportXls）+ `MesCostLogController`（`@RequestMapping("/mes/purchase/mesCostLog")`，1 个端点 list） | 两个 controller 都在 |
+| 前端目录 | `src/views/project/mes/purchase/ledger/` —— **仅前端代码放在 purchase 目录下**（目录命名脏），但路由注册到 `warehouse/ledger` URL 下 | `ls src/views/project/mes/warehouse/ledger` → **不存在** |
+| 前端 router | `mes.ts:147-149` `path: 'ledger'` (warehouse 父节点) → 组件 `project/mes/purchase/ledger/index.vue` | `src/router/routes/modules/mes.ts:147-149` |
+| 前端 index.vue | `defineOptions({ name: 'MesInventoryLedger' })`，标题"库存台账"，不是"采购台账" | `index.vue` |
+| 后端 API 是否可达 | `/mes/warehouse/ledger/list` → 200 / 10 records；`/mes/purchase/ledger/list` → **404** | API 实测 |
+
+**用户问题的直接回答：**
+
+> “这页面，哪来的？”
+
+**spec 是凭空猜的**。原 spec 顶部注释本身混乱：
+
+```
+// MES 采购台账 E2E 测试（gen-tests 自动生成版）
+// 覆盖：/project/mes/purchase/ledger（MesCostLogController + MesInventoryLedgerController）
+// 后端：GET /mes/purchase/mesCostLog/list + GET /mes/warehouse/ledger/list
+// 未在 router 静态注册；通过 MesMenuRegistry + 动态 addRoute 加载
+```
+
+问题：
+1. 页面名叫“采购台账”，但菜单、路由、前端 `defineOptions` 名都是“库存台账”（`MesInventoryLedger`）
+2. URL 写为 `/project/mes/purchase/ledger`，但菜单/router 都是 `/project/mes/warehouse/ledger`
+3. 注释说“未在 router 静态注册”——**错的**，mes.ts:147-149 静态注册了
+4. 注释把 `MesCostLogController` 拼进来（实际是 cost log 独立接口，未与本页面关联）
+
+**实测（7 failed / 1 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 + 页面渲染 | ✅ pass | **幸运通过**：`waitForTimeout(3000)` 后页面跳 404 后继续，但 `url.includes(PAGE_PATH)` 仍为 true（路径还是在 `/project/mes/purchase/ledger`，因为未重定向到首页） |
+| 2. 表格 + 列头 | ❌ fail | 页面跳 404，无表格 |
+| 3. 搜索表单 + 查询按钮 | ❌ fail | 404 页面 |
+| 4. 导出按钮 | ❌ fail | 404 页面 |
+| 5. 新增按钮 | ❌ fail | 404 页面 |
+| 6. 数据行或空状态 | ❌ fail | 404 页面 |
+| 7. 点击新增 → 抽屉 | ❌ fail | 404 页面 |
+| 8. 成本/库存台账 tab 切换 | ❌ fail | 404 页面（且本页面无 tab 结构） |
+
+**截图证实**：访问 `/project/mes/purchase/ledger` 后主区域显示 **404 “抱歉，您访问的页面不存在”**。
+
+**API 实测：**
+
+```
+GET /mes/purchase/ledger/list  → 200 False "请求地址不存在"
+GET /mes/warehouse/ledger/list → 200 True  records=10
+```
+
+**action items**（不进排期，作为测试侧改进）：
+
+- 调整 `harness/e2e/mes/purchase-ledger.spec.ts`：
+  - `PAGE_PATH` 改为 `/project/mes/warehouse/ledger`（**与菜单/路由一致**）
+  - `PAGE_NAME` 改为“库存台账”（**与菜单/前端 `defineOptions` 一致**）
+  - 调整 2-8 测试：库存台账是只读 + 导出页面，不该期望新增/抽屉；“成本/库存台账 tab 切换”本页面无此结构，应删
+- gen-tests 模板需修正：
+  - **PAGE_NAME 必须从菜单注册读取**，不能根据路径猜测
+  - **PAGE_PATH 必须从 `MesMenuRegistry.leaf(...)` 的第二个参数读取**
+  - 不能根据 `/project/mes/purchase/ledger` 路径猜“采购台账”（同名 controller `purchase/ledger/MesCostLogController` 不表示菜单存在）
+- **同时改进测试目录名一致性**：前端目录 `purchase/ledger/` 与菜单/router 不一致，未来可能优化（不迫在眉睫）
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/purchase-ledger.spec.ts --workers=1
+  ```
 
 ---
 
