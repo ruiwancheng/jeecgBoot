@@ -35,7 +35,7 @@
 | 7 | 其它入库自动预填 (`/project/mes/stock/other-in`) | P2 | ✅ 误判 | 功能正常，用户截图证实 71.6667/100.0000 预填成功；spec 失败因硬编码 MAT-A000027 不存在 |
 | 8 | 应收账款 (`/project/mes/finance/receivable`) | P2 | ✅ 误判 | 同 #5/#6，只读页（导出有、增/删/改无），数据由销售出库等业务生成 |
 | 9 | 收款管理 (`/project/mes/finance/collection`) | P2 | 🔴 真实 Bug | 点击新增 → router.push 到不存在的路由 `/collection/add` → 404（缺 `CollectionDrawer.vue`） |
-| 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | 🔵 待复核 | — |
+| 10 | 应付账款 (`/project/mes/finance/payable`) | P2 | ✅ 误判 | 同 #5/#6/#8，只读页（导出有、增/删/改无），数据由采购入库等业务生成 |
 | 11 | 付款管理 (`/project/mes/finance/payment`) | P2 | 🔵 待复核 | — |
 | 12 | 采购台账 (`/project/mes/purchase/ledger`) | P1 | 🔵 待复核 | — |
 | 13 | 销售链路 fixture (`/project/mes/sales/outbound`) | P3 | 🔵 待复核 | — |
@@ -639,6 +639,45 @@ spec 顶部注释（line 5-8）说：
     npx playwright test e2e/mes/ --grep "应付账款" --workers=1
   ```
 - **归属建议**：业务前端 + 后端联调（路由/契约/UI 实现）
+
+#### ✅ 复核结果：误判（2026-08-04 由 ruiwancheng/pi 复核）
+
+**用户判断（2026-08-04）：** 同批次流水页面，没设计新增功能，数据是由其他功能生成的，无需该页面新增。
+
+**核实依据：**
+
+| 检查项 | 实际内容 | 文件:行 |
+|---|---|---|
+| 后端端点 | `list`（分页）/ `queryById` / `queryAll` / `exportXls` 共 4 个，**无 add/edit/delete** | `MesPayableController.java` 全文 |
+| 后端逻辑 | 走 `QueryGenerator.initQueryWrapper` 支持搜索，默认按 `create_time` 倒序，**纯查询型 controller**（QUERY_ALL_MAX=5000 安全阈值） | 同上 |
+| 前端表格 | `useListPage` 模板：仅有“导出”按钮（`exportConfig: { name: '应付账款', url: getExportUrl }`），**无新增/编辑/删除按钮，无操作列** | `index.vue`（全文 21 行） |
+| 前端 API | `queryPayableList` + `queryPayableById` + `getExportUrl` 共 3 个方法，**无 add/edit/delete** | `payable.api.ts`（全文 5 行） |
+| 菜单权限 | `list, export` 两项，**无 add/edit/delete** | `MesMenuRegistry.java:144` |
+
+**与 #5/#6/#8 同型**：只读数据流页面 + 导出能力，**不该有新增/编辑/删除**。应付数据由采购入库等业务自动生成（用户判断验证）。
+
+**实测 spec（2 failed / 5 passed）：**
+
+| 测试 | 结果 | 真实原因 |
+|---|---|---|
+| 1. 路由可达性 | ✅ pass | 路由 OK |
+| 2. 表格 + 列头 | ✅ pass | 表格正常 |
+| 3. 搜索表单 + 查询按钮 | ✅ pass | 搜索正常 |
+| 4. 导出按钮 | ✅ pass | 导出按钮存在且可用 |
+| 5. 新增按钮 | ❌ fail | **页面无新增按钮（设计如此）** |
+| 6. 数据行存在或空状态 | ✅ pass | 数据/空状态正常 |
+| 7. 点击新增 → 抽屉 | ❌ fail | **没新增按钮自然无抽屉（设计如此）** |
+
+**action items**（不进排期，作为测试侧改进）：
+
+- 调整 `harness/e2e/mes/finance.spec.ts` 中应付账款的 5/7 测试为 `test.skip`，或改成只读 + 导出断言
+- 同样问题在 #8 应收 / #9 收款 / #11 付款 也会出现，需统一处理（注：#9/#11 是真实 bug，#8/#10 是误判，处理方式不同）
+- **复现命令**：
+  ```bash
+  cd harness && PLAYWRIGHT_BASE_URL=http://localhost:3100 \
+    E2E_UI_BASE=http://localhost:3100 E2E_API_BASE=http://localhost:8080/jeecg-boot \
+    npx playwright test e2e/mes/finance.spec.ts --grep "应付账款" --workers=1
+  ```
 
 ### [P2] 付款管理（/project/mes/finance/payment）
 
