@@ -41,6 +41,8 @@ harness/regression/recovery-plan.merged.json
 ## hermes engineering artifacts
 hermes/logs/
 hermes/sessions/
+# 鹰眼团回归 runner 跑出的临时问题报告（含截图链接、视频），不入仓
+hermes/eagle-eye/reports/*/issues/
 .remember/
 
 ## deploy-server dependencies
