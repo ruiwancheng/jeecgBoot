@@ -63,9 +63,9 @@ async function run() {
   const r0 = await api('POST', '/mes/batch/master/add', {
     materialId: matId,
     batchNo: 'FREEZE-' + TS,
-    warehouseId: whId,
     qty: 50,
-    productionDate: '2026-07-01'
+    productionDate: '2026-07-01',
+    originType: 'manual'
   });
   ass(r0.code === 200, '1. 创建批次: ' + r0.message);
 
@@ -89,7 +89,7 @@ async function run() {
   // 3. 冻结后状态验证
   const frzGet = await api('GET', '/mes/batch/master/queryById?id=' + bid);
   if (frzGet.code === 200) {
-    ass(frzGet.result?.status === 'frozen', '3. 冻结后 status=frozen: ' + frzGet.result?.status);
+    ass(frzGet.result?.status === '2', '3. 冻结后 status=2: ' + frzGet.result?.status);
   }
 
   // 4. unfreeze 解冻

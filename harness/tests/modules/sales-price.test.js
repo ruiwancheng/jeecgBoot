@@ -78,9 +78,9 @@ async function run() {
   const get = await api('GET', '/mes/sales/price/queryById?id=' + priceId);
   ass(get.code === 200 && get.result?.code === priceCode, '4. queryById: ' + get.result?.code);
 
-  // 5. edit
+  // 5. edit（code 必填）
   const edit = await api('PUT', '/mes/sales/price/edit', {
-    id: priceId, price: 88.00, remark: '已修改'
+    id: priceId, code: priceCode, materialId: matId, price: 88.00, remark: '已修改'
   });
   ass(edit.code === 200, '5. edit: ' + edit.message);
 
