@@ -275,7 +275,16 @@ async function run() {
     // 验证审核后状态
     const d = await api('GET', '/mes/manufacturing/completion/queryById?id=' + rcvForAudit.id);
     assert(d.code === 200 && d.result?.status === '2', '4b.2 审核后状态=2(已审核): ' + (d.result?.status || '?'));
-    console.log('✓ 完工入库审核通过, status→2');
+    // 4b.2 反审核 rollback（CompletionReceipt 无 unaudit 端点，记录后跳过）
+    const unaudR = await api('PUT', '/mes/manufacturing/completion/unaudit?id=' + rcvForAudit.id);
+    if (unaudR.code === 404 || /路径不存在/.test(unaudR.message || '')) {
+      console.log('⚠ 4b.3 CompletionReceipt 无 unaudit 端点（设计如此），跳过 rollback');
+    } else {
+      assert(unaudR.code === 200, '4b.3 反审核 rollback: ' + (unaudR.message || ''));
+      const rcvAfterUnaudo = await api('GET', '/mes/manufacturing/completion/queryById?id=' + rcvForAudit.id);
+      assert(rcvAfterUnaudo.result?.status === '1', '4b.4 反审核后 status=1: 实际=' + rcvAfterUnaudo.result?.status);
+      console.log('✓ 完工入库反审核通过, status→1');
+    }
   } else {
     console.log('⚠ 4b 无草稿态入库单，跳过');
   }
@@ -289,7 +298,19 @@ async function run() {
     // 库存不足时返回 500（业务正确拒绝），非技术错误
     assert(r.code === 200 || (r.code === 500 && /库存/.test(r.message || '')),
       '4b.3 领料审核(库存不足拦截): code=' + r.code + ' msg=' + (r.message || '').slice(0, 60));
-    console.log('✓ 领料审核正确拒绝(库存不足): code=' + r.code);
+    // 4b.5 领料审核成功后反审核 rollback（ProductionPicking 无 unaudit 端点，记录后跳过）
+    const pickAuditSucc = r.code === 200;
+    if (pickAuditSucc) {
+      const unaudPick = await api('PUT', '/mes/manufacturing/picking/unaudit?id=' + pickForAudit.id);
+      if (unaudPick.code === 404 || /路径不存在/.test(unaudPick.message || '')) {
+        console.log('⚠ 4b.6 ProductionPicking 无 unaudit 端点（设计如此），跳过 rollback');
+      } else {
+        assert(unaudPick.code === 200, '4b.6 领料反审核 rollback: ' + (unaudPick.message || ''));
+        const pickAfterUnaud = await api('GET', '/mes/manufacturing/picking/queryById?id=' + pickForAudit.id);
+        assert(pickAfterUnaud.result?.status === '1', '4b.7 领料反审核后 status=1: 实际=' + pickAfterUnaud.result?.status);
+        console.log('✓ 领料反审核通过, status→1');
+      }
+    }
   } else {
     console.log('⚠ 4b 无草稿态领料单，跳过');
   }

@@ -239,6 +239,16 @@ async function run() {
         const vouDetail = await c.api('GET', '/mes/finance/voucher/queryById?id=' + vouId);
         if (vouDetail.code === 200 && vouDetail.result?.status === '2') { passed++; c.check('voucher 4.2 审核后状态=2', true, `status=${vouDetail.result?.status}`); }
         else { failed++; c.check('voucher 4.2 审核后状态=2', false, `status=${vouDetail.result?.status}`); }
+        // 4.3 反审核 rollback（Voucher 无 unaudit 端点，跳过）
+        const unaudVou = await c.api('PUT', '/mes/finance/voucher/unaudit?id=' + vouId);
+        if (unaudVou.code === 404 || /路径不存在/.test(unaudVou.message || '')) {
+          console.log('⚠ voucher 4.3 无 unaudit 端点（设计如此），跳过 rollback');
+        } else if (unaudVou.code === 200) {
+          passed++; c.check('voucher 4.3 反审核 rollback', true, unaudVou.message || '');
+          const vouAfterUnaud = await c.api('GET', '/mes/finance/voucher/queryById?id=' + vouId);
+          if (vouAfterUnaud.code === 200 && vouAfterUnaud.result?.status === '1') { passed++; c.check('voucher 4.4 反审核后 status=1', true, `status=${vouAfterUnaud.result?.status}`); }
+          else { failed++; c.check('voucher 4.4 反审核后 status=1', false, `status=${vouAfterUnaud.result?.status}`); }
+        } else { failed++; c.check('voucher 4.3 反审核 rollback', false, `code=${unaudVou.code} msg=${(unaudVou.message || '').slice(0, 80)}`); }
       } else { console.log('⚠ voucher: 找不到新创凭证ID'); }
     } else { console.log('⚠ voucher 4.0: 创建凭证失败', vouRes.message); }
   }
