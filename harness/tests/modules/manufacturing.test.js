@@ -262,8 +262,41 @@ async function run() {
   bizDefect('#LEDGER-MISSING', '完工入库不写库存台账，completedQty 不回写订单（本次修复未含）');
 
   // ==================================================
-  // 5. 清理测试数据
+  // 4b. 状态机补全（阶段 3 — 生产状态机）
   // ==================================================
+  console.log('\n=== 状态机-完工入库审核 ===');
+
+  // 4b.1 完工入库审核（新建入库单草稿→审核）
+  r = await api('GET', '/mes/manufacturing/completion/list?pageNo=1&pageSize=20');
+  const rcvForAudit = r.result?.records?.find(x => x.code?.includes(TS.toString()) && x.status === '1');
+  if (rcvForAudit) {
+    r = await api('PUT', '/mes/manufacturing/completion/audit?id=' + rcvForAudit.id);
+    assert(r.code === 200, '4b.1 完工入库审核: ' + (r.message || ''));
+    // 验证审核后状态
+    const d = await api('GET', '/mes/manufacturing/completion/queryById?id=' + rcvForAudit.id);
+    assert(d.code === 200 && d.result?.status === '2', '4b.2 审核后状态=2(已审核): ' + (d.result?.status || '?'));
+    console.log('✓ 完工入库审核通过, status→2');
+  } else {
+    console.log('⚠ 4b 无草稿态入库单，跳过');
+  }
+
+  console.log('\n=== 状态机-领料单审核 ===');
+  // 4b.3 领料单审核（库存不足时正确拒绝）
+  r = await api('GET', '/mes/manufacturing/picking/list?pageNo=1&pageSize=20');
+  const pickForAudit = r.result?.records?.find(x => x.code?.includes(TS.toString()) && x.status === '1');
+  if (pickForAudit) {
+    r = await api('PUT', '/mes/manufacturing/picking/audit?id=' + pickForAudit.id);
+    // 库存不足时返回 500（业务正确拒绝），非技术错误
+    assert(r.code === 200 || (r.code === 500 && /库存/.test(r.message || '')),
+      '4b.3 领料审核(库存不足拦截): code=' + r.code + ' msg=' + (r.message || '').slice(0, 60));
+    console.log('✓ 领料审核正确拒绝(库存不足): code=' + r.code);
+  } else {
+    console.log('⚠ 4b 无草稿态领料单，跳过');
+  }
+
+  // ==================================================
+  // 5. 清理测试数据
+  // ==========================================================
   console.log('\n=== 5. 清理测试数据 ===');
 
   // 删入库单（草稿可删）

@@ -242,6 +242,39 @@ async function run() {
   console.log('✓ 清理订单: ' + orderIds.length + '条');
 
   // ==========================================
+  // 6. 状态机补全（阶段 2）
+  // ==========================================
+  console.log('\n=== 状态机-申请单驳回 ===');
+
+  // 6.1 新建申请单（草稿态）
+  const ts2 = Date.now();
+  r = await api('POST', '/mes/purchase/apply/add', {
+    code: 'PA-REJ-' + ts2,
+    applyDate: '2026-07-16',
+    requiredDate: '2026-07-30',
+    supplierId: 'SUP001',
+    items: [{ lineNo: 1, materialId: 'm001', quantity: 10 }]
+  });
+  assert(r.code === 200, '6.1 新建申请单: ' + r.message);
+
+  // 获取ID
+  r = await api('GET', '/mes/purchase/apply/list?pageNo=1&pageSize=10');
+  const applyForReject = r.result?.records?.find(x => x.code === 'PA-REJ-' + ts2)?.id || '';
+  assert(applyForReject !== '', '6.1b 获取申请单ID');
+
+  // 6.2 驳回（草稿态可驳回）
+  r = await api('PUT', '/mes/purchase/apply/reject?id=' + applyForReject);
+  assert(r.code === 200, '6.2 驳回申请单: ' + r.message);
+
+  // 验证驳回后状态
+  r = await api('GET', '/mes/purchase/apply/queryById?id=' + applyForReject);
+  assert(r.code === 200 && r.result?.status === '4', '6.2b 驳回后状态=4(status=4): ' + r.result?.status);
+
+  // 6.3 驳回后unaudit应失败（仅已审核可反审核）
+  r = await api('PUT', '/mes/purchase/apply/unaudit?id=' + applyForReject);
+  assert(r.code === 500, '6.3 驳回态不允许反审核: ' + r.message);
+
+  // ==========================================
   // 汇总
   // ==========================================
   console.log('\n========== 测试完成 ==========');

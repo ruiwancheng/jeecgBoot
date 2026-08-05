@@ -211,6 +211,39 @@ async function run() {
   }
 
   // ============================================================
+  // 阶段 4：Voucher 状态机（audit）补全
+  // ============================================================
+  console.log('\n--- 状态机-凭证审核 ---');
+  const voucherMod = ENDPOINTS.find(e => e.mod === 'voucher');
+  if (voucherMod) {
+    const ts4 = Date.now();
+    // 4.1 创建凭证（含草稿态）
+    const vouRes = await c.api('POST', '/mes/finance/voucher/add', {
+      voucherNo: 'VOU-AUDIT-' + ts4, voucherDate: '2026-07-16', period: '2026-07',
+      sourceType: '手工录入', sourceBillNo: '手工凭证-' + ts4,
+      items: [
+        { subjectId: '2085120173736493057', summary: '借方', debitAmount: 100, creditAmount: 0 },
+        { subjectId: '2085120173816184834', summary: '贷方', debitAmount: 0, creditAmount: 100 }
+      ]
+    });
+    if (vouRes.code === 200) {
+      // 4.2 查 ID
+      const vouList = await c.api('GET', '/mes/finance/voucher/list?pageNo=1&pageSize=20');
+      const vouId = vouList.result?.records?.find(x => x.voucherNo === 'VOU-AUDIT-' + ts4)?.id || '';
+      if (vouId) {
+        // 4.3 审核
+        const auditR = await c.api('PUT', '/mes/finance/voucher/audit?id=' + vouId);
+        if (auditR.code === 200) { passed++; c.check('voucher 4.1 audit 审核凭证', true, auditR.message || ''); }
+        else { failed++; c.check('voucher 4.1 audit 审核凭证', false, `code=${auditR.code} msg=${(auditR.message || '').slice(0, 80)}`); }
+        // 4.4 验证审核后状态=2
+        const vouDetail = await c.api('GET', '/mes/finance/voucher/queryById?id=' + vouId);
+        if (vouDetail.code === 200 && vouDetail.result?.status === '2') { passed++; c.check('voucher 4.2 审核后状态=2', true, `status=${vouDetail.result?.status}`); }
+        else { failed++; c.check('voucher 4.2 审核后状态=2', false, `status=${vouDetail.result?.status}`); }
+      } else { console.log('⚠ voucher: 找不到新创凭证ID'); }
+    } else { console.log('⚠ voucher 4.0: 创建凭证失败', vouRes.message); }
+  }
+
+  // ============================================================
   // R002 全模块无权限账号测试
   // ============================================================
   console.log('\n--- R002 全模块越权（无权限账号） ---');

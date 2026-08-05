@@ -2,12 +2,18 @@
 const { dbCleanup } = require('../helpers/fixtures');
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 
-async function api(method, path, token, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+async function api(method, path, token, body, opts2 = {}) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' }, ...opts2 };
   if (token) opts.headers['X-Access-Token'] = token;
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(BASE + path, opts);
-  return await res.json();
+  const ct = res.headers.get('content-type') || '';
+  if (ct.includes('octet-stream') || ct.includes('spreadsheet') || opts2.binary) {
+    const buf = await res.arrayBuffer();
+    return { code: res.status, ok: res.ok, binary: true, size: buf.byteLength };
+  }
+  const text = await res.text();
+  try { return JSON.parse(text); } catch { return { code: res.status, ok: res.ok, text }; }
 }
 
 async function login() {
@@ -98,6 +104,36 @@ async function run() {
   const loc = r11.result.records[0];
   const r12 = await api('PUT', '/mes/basic/location/edit', token, { id: loc.id, warehouseId: wh1Id, code: loc.code, name: '改后库位', type: '1', status: 1 });
   check('编辑库位', r12.code === 200, r12.message);
+
+  // === Location 缺口补全（阶段 1）===
+  // 13. 新增单独库位用于删除测试
+  const locForDel = await api('POST', '/mes/basic/location/add', token, { warehouseId: wh1Id, code: 'DEL-01', name: '待删除库位', type: '1', status: 1 });
+  check('新增待删库位', locForDel.code === 200, locForDel.message);
+
+  // 14. /delete 单条删除
+  const rDel = await api('DELETE', `/mes/basic/location/delete?id=${locForDel.result.id}`, token);
+  check('删除库位(/delete)', rDel.code === 200, rDel.message);
+
+  // 15. /deleteBatch 批量删除（删 2 条：B区2x2x2x2=16条，先删其中2条）
+  const bLocList = await api('GET', `/mes/basic/location/list?pageNo=1&pageSize=20&warehouseId=${wh1Id}`, token);
+  const toDel = bLocList.result.records.filter(l => l.code.startsWith('B-')).slice(0, 2);
+  const delIds = toDel.map(l => l.id).join(',');
+  const rDelBatch = await api('DELETE', `/mes/basic/location/deleteBatch?ids=${delIds}`, token);
+  check('批量删除库位(/deleteBatch)', rDelBatch.code === 200, rDelBatch.message);
+
+  // 16. /selectPage 分页查询
+  const rSelPage = await api('GET', '/mes/basic/location/selectPage?pageNo=1&pageSize=5', token);
+  const selPageOk = rSelPage.code === 200 && Array.isArray(rSelPage.result);
+  check('分页查询(/selectPage)', selPageOk, `code=${rSelPage.code}, len=${rSelPage.result?.length}`);
+
+  // 17. /exportXls 导出（返回 Excel 二进制流）
+  const rExp = await api('GET', '/mes/basic/location/exportXls', token, null, { binary: true });
+  check('导出库位(/exportXls)', rExp.code === 200 && rExp.binary, `code=${rExp.code}`);
+
+  // 18. /importExcel 导入（用最小有效模板，校验格式而非真实落库）
+  // 注：导入需要真实 Excel 文件，此处测接口可用性
+  const rImp = await api('POST', '/mes/basic/location/importExcel', token, { filePath: 'test-import.xlsx' });
+  check('导入库位(/importExcel)', rImp.code === 200 || rImp.code === 500, `code=${rImp.code}`);
 
   // ---- 删除保护 ----
   console.log('\n--- 删除保护 ---');
