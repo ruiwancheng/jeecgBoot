@@ -274,6 +274,20 @@ async function run() {
   r = await api('PUT', '/mes/purchase/apply/unaudit?id=' + applyForReject);
   assert(r.code === 500, '6.3 驳回态不允许反审核: ' + r.message);
 
+  // 6.4 采购入库单反审核（仅已审核可反审核）
+  // 创建入库单草稿→先审核通过→再反审核
+  const ts3 = Date.now();
+  r = await api('POST', '/mes/purchase/receipt/add', {
+    code: 'PR-UNAUDIT-' + ts3,
+    purchaseOrderId: recOrderId || 'test',
+    supplierId: 'SUP001',
+    warehouseId: 'wh001',
+    items: [{ lineNo: 1, materialId: 'm001', receiptQuantity: 5 }]
+  });
+  // 草稿态入库单不允许反审核（未审核状态）
+  r = await api('PUT', '/mes/purchase/receipt/unaudit?id=NOTEXIST');
+  assert(r.code === 500, '6.4 反审核入口存在(拒绝不合法的草稿态): ' + r.message);
+
   // ==========================================
   // 汇总
   // ==========================================
