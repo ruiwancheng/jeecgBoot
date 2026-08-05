@@ -80,6 +80,11 @@ addPerms(list, "mes:customerAddress:", "mes_basic_customer", new String[]{"list"
         list.add(MesMenuDefinition.leaf("mes_purchase_receipt", "mes_purchase", "采购入库", "/project/mes/purchase/receipt", "project/mes/purchase/receipt/index", "MesPurchaseReceipt").sortNo(3.0).icon("ant-design:import-outlined"));
         addPerms(list, "mes:purchaseReceipt:", "mes_purchase_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
 
+        //update-begin---author:ruiwancheng---date:2026-08-06---for:【P0 bug 修复】mesCostLog 权限码未注册，所有用户访问 /list 端点 500-----------
+        // 成本日志（只读 ledger，MesCostLogController 仅 /list 端点，无前端页面，挂权限不挂菜单）
+        addPerms(list, "mes:purchase:costLog:", "mes_purchase", new String[]{"list"});
+        //update-end---author:ruiwancheng---date:2026-08-06---for:【P0 bug 修复】mesCostLog 权限码未注册-----------
+
         // 库存总览(仓储管理下)
         list.add(MesMenuDefinition.leaf("mes_inventory_overview", "mes_warehouse", "库存总览", "/project/mes/warehouse/inventory", "project/mes/basic/inventory/index", "MesInventoryOverview").sortNo(3.0).icon("ant-design:eye-outlined"));
         addPerms(list, "mes:inventory:", "mes_inventory_overview", new String[]{"list"});
