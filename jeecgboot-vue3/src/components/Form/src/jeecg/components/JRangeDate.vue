@@ -20,7 +20,7 @@
         },
         emits:['change', 'update:value'],
         setup(props, {emit}){
-            const rangeValue = ref<any>([])
+            const rangeValue = ref([])
             const formItemContext = Form.useInjectFormItemContext();
 
             watch(()=>props.value, (val)=>{

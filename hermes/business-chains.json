@@ -2,7 +2,7 @@
   "$schema": "business-chains.schema.json",
   "version": "1.0.0",
   "description": "业务链路注册表——声明模块间上下游依赖，改任意节点触发全链路质量验证",
-  "lastUpdated": "2026-07-29",
+  "lastUpdated": "2026-08-04",
   "chains": {
     "采购链路": {
       "id": "purchase-chain",
@@ -27,7 +27,7 @@
         "finance/payable"
       ],
       "tests": {
-        "api": "harness/tests/mes/purchase.test.js",
+        "api": "harness/tests/modules/purchase.test.js",
         "e2e": "harness/e2e/mes/purchase.spec.ts"
       },
       "criticalPaths": [
@@ -40,24 +40,33 @@
         "segments": [
           {
             "name": "申请→订单",
-            "file": "harness/tests/mes/purchase-apply-order.chain.test.js",
-            "assertions": 17,
+            "file": "harness/tests/chains/purchase-apply-order.chain.test.js",
+            "assertions": 18,
             "covers": [
               "创建申请→审核→加载到订单→创建订单→审核→反审核"
             ]
           },
           {
             "name": "订单→入库",
-            "file": "harness/tests/mes/purchase-order-receipt.chain.test.js",
+            "file": "harness/tests/chains/purchase-order-receipt.chain.test.js",
             "assertions": 16,
             "covers": [
               "创建订单→审核→入库→超量拦截→全部到货→库存台账"
             ]
+          },
+          {
+            "name": "采购→入库→付款",
+            "file": "harness/tests/chains/purchase-payment-flow.test.js",
+            "assertions": 3,
+            "covers": [
+              "采购入库审核→应付生成→付款核销→跨财务对账"
+            ]
           }
-        ]
+        ],
+        "orchestrator": "harness/tests/chains/purchase-chain.test.js"
       },
       "health": {
-        "lastAudit": "2026-07-22",
+        "lastAudit": "2026-08-04",
         "status": "healthy",
         "openGaps": []
       }
@@ -82,9 +91,18 @@
       },
       "criticalPaths": [],
       "health": {
-        "lastAudit": null,
-        "status": "unknown",
-        "openGaps": []
+        "lastAudit": "2026-08-04",
+        "status": "planned",
+        "openGaps": [
+          "sales-chain.test.js 待新建（基于 sales-receipt-flow + 加贯通断言）"
+        ]
+      },
+      "chainTests": {
+        "enabled": false,
+        "planned": true,
+        "reason": "待手工验证可贯通性后再编码链文件",
+        "flowFile": "harness/tests/chains/sales-receipt-flow.test.js",
+        "nextStep": "跑 /chain-test 销售链路 验证 ID 跨段传递"
       }
     },
     "生产链路": {
@@ -104,10 +122,23 @@
       ],
       "sideEffects": [],
       "tests": {
-        "api": "harness/tests/mes/manufacturing.test.js",
+        "api": "harness/tests/modules/manufacturing.test.js",
         "e2e": null
       },
-      "criticalPaths": []
+      "criticalPaths": [],
+      "chainTests": {
+        "enabled": false,
+        "planned": true,
+        "reason": "待手工验证可贯通性后再编码链文件",
+        "nextStep": "跑 /chain-test 生产链路 验证 BOM→订单→领料→完工"
+      },
+      "health": {
+        "lastAudit": "2026-08-04",
+        "status": "planned",
+        "openGaps": [
+          "manufacturing-chain.test.js 待新建"
+        ]
+      }
     },
     "基础数据": {
       "id": "basic-data",
@@ -118,16 +149,20 @@
       ],
       "sideEffects": [],
       "tests": {
-        "api": "harness/tests/mes/basic.test.js",
+        "api": "harness/tests/modules/basic.test.js",
         "e2e": "harness/e2e/mes/basic.spec.ts"
       },
       "criticalPaths": [],
       "health": {
-        "lastAudit": null,
-        "status": "unknown",
+        "lastAudit": "2026-08-04",
+        "status": "standalone",
         "openGaps": []
       },
-      "isStandalone": true
+      "isStandalone": true,
+      "chainTests": {
+        "enabled": false,
+        "reason": "独立模块无上下游，不强制链路化"
+      }
     },
     "其它出入库": {
       "id": "other-stock",
@@ -152,11 +187,15 @@
         "PUT /mes/stock/otherIn/unaudit → stockOut回冲 / PUT /mes/stock/otherOut/unaudit → stockIn恢复"
       ],
       "health": {
-        "lastAudit": null,
-        "status": "unknown",
+        "lastAudit": "2026-08-04",
+        "status": "standalone",
         "openGaps": []
       },
-      "isStandalone": true
+      "isStandalone": true,
+      "chainTests": {
+        "enabled": false,
+        "reason": "独立模块无上下游，不强制链路化"
+      }
     },
     "仓储链路": {
       "id": "warehouse-chain",
@@ -179,7 +218,7 @@
         "basic/material(movingAvgCost)"
       ],
       "tests": {
-        "api": "harness/tests/mes/other-stock-in.test.js + harness/tests/mes/stocktake.test.js",
+        "api": "harness/tests/modules/other-stock-in.test.js + harness/tests/modules/stocktake.test.js",
         "e2e": "harness/e2e/mes/other-stock-in.spec.ts"
       },
       "criticalPaths": [
@@ -189,7 +228,20 @@
         "POST /mes/stock/stocktake/add → 全盘自动快照(book_qty+unit_cost) + 抽盘book_qty后端校验",
         "PUT /mes/stock/stocktake/edit → 原有行book_qty必须等于原快照(防篡改) + generatedId清空",
         "PUT /mes/stock/stocktake/audit → 差异行合并生成盘盈入库/盘亏出库单并审核(同事务) + 库存校准 + generated_in/out_id回写"
-      ]
+      ],
+      "chainTests": {
+        "enabled": false,
+        "planned": true,
+        "reason": "待手工验证可贯通性后再编码链文件",
+        "nextStep": "合并 other-stock-in + stocktake 到 warehouse-chain.test.js"
+      },
+      "health": {
+        "lastAudit": "2026-08-04",
+        "status": "planned",
+        "openGaps": [
+          "warehouse-chain.test.js 待新建（合并 other-stock-in + stocktake + 加贯通断言）"
+        ]
+      }
     }
   },
   "changeClassification": {

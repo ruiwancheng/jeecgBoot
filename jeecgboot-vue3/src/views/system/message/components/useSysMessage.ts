@@ -28,17 +28,21 @@ export function useSysMessage(setLocaleText) {
   console.log('rangeDateArray', rangeDateArray);
   console.log('+++++++++++++++++++++');
 
-  const messageList = ref<any>([]);
+  //update-begin---author:pi---date:2026-08-04---for:【TKT-003】useSysMessage TS 泛型 <any> 未剥离修复（#14 方案 A）-----------
+  const messageList = ref([]);
   const pageNo = ref(1)
   let pageSize = 10;
 
-  const searchParams = reactive<any>({
+  //update-end---author:pi---date:2026-08-04---for:【TKT-003】useSysMessage TS 泛型 <any> 未剥离修复（#14 方案 A）-----------
+  //update-begin---author:pi---date:2026-08-04---for:【TKT-003】useSysMessage searchParams <any> 修复（#14 方案 A）-----------
+  const searchParams = reactive({
     fromUser: '',
     rangeDateKey: '',
     rangeDate: [],
     starFlag: '',
     noticeType: ''
   });
+  //update-end---author:pi---date:2026-08-04---for:【TKT-003】useSysMessage searchParams <any> 修复（#14 方案 A）-----------
 
 
   function getQueryParams() {

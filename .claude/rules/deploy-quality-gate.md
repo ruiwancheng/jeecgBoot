@@ -38,9 +38,9 @@ version: 1.0.0
   │   未命中 → 仅跑通用 smoke test
   │
   ├─ Step 4: 执行验证
-  │   ├─ 鹰眼团 API 回归: node harness/tests/mes/<chain>.test.js
+  │   ├─ 鹰眼团 API 回归: node harness/tests/modules/<chain>.test.js
   │   ├─ 鹰眼团 E2E 回归: npx playwright test harness/e2e/mes/<chain>.spec.ts
-  │   ├─ 鹰眼团 链路测试: node harness/tests/mes/<chain>-*.chain.test.js (full级)
+  │   ├─ 鹰眼团 链路测试: node harness/tests/chains/<chain>-*.chain.test.js (full级)
   │   ├─ 铁拳团模块审计: 10 Agent 并行审计 (仅 full 级, 约10min)
   │   └─ 链路审计: 变更涉及 ≥2 模块时自动触发 (链路人1号, 约5min)
   │       详见 .claude/skills/jeecg-chain-audit/SKILL.md
@@ -92,7 +92,7 @@ full 级变更时，自动运行 `business-chains.json` 中对应链路的 `chai
 - 触发条件: full 级变更 + 链路有 chainTests 配置
 - 测试类型: 2-3步微链路端到端测试（不重复单端点已有的输入校验）
 - 配置位置: `hermes/business-chains.json` → `chains.<name>.chainTests`
-- 命名规范: `harness/tests/mes/<模块A>-<模块B>.chain.test.js`
+- 命名规范: `harness/tests/chains/<模块A>-<模块B>.chain.test.js`
 
 链路测试与模块测试互补：
 - 模块测试：单端点输入校验、边界值、权限
@@ -233,3 +233,24 @@ curl -s http://server/js/XxxDrawer-YYY.js | grep -c "movingAvgCost"
 | `.last-deploy-commit` | 记录上次部署 commit，做 diff 基准 |
 | `hermes/logs/skip-audit.log` | 紧急旁路使用记录 |
 | `hermes/reviews/` | 部署质量报告归档 |
+
+## CI 硬门控基线锁定模式（2026-08-05）
+
+**铁律**：CI 类型检查 / 测试覆盖率等**软门控阈值**转硬门控时，必须**显式锁定基线值** + 注释强调"阈值变更需主动同步"。
+
+**背景**：2026-08-04 vue-tsc 软门控 200 errors（基线 742）永远挂=装饰品；N3 修复改硬门控 742 基线才真生效。
+
+**强制要求**：
+1. **基线值用 `>` 而非 `==`**：`ERROR_COUNT > 742` 而非 `== 742`（防止边界值漏检）
+2. **注释锁定基线日期**：例如 `// 基线 742, 2026-08-05 锁定`
+3. **阈值变更触发器**：错误数下降时必须主动改 workflow（不要等 CI 误报）
+4. **typecheck 与 quality-gate 联动**：vue-tsc 错误数 > N → quality-gate 标 NEEDS WORK 而非 PASS
+
+**反模式**：
+- ❌ `continue-on-error: true` + 软门控 = 装饰品
+- ❌ `ERROR_COUNT > 200` 软门控（基线 742 永远挂）
+- ❌ 阈值变更不留痕（直接改 N 不在 commit 写原因）
+
+**实证**：2026-08-05 commit 52cc5c02，typecheck 改硬门控 742 基线后 CI 真实生效，typecheck 失败时 workflow exit 1。
+
+详见 `learnings/2026-08-05-ci-skip-via-env-not-code.md`（N3 相关段落）。

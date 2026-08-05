@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MES 回归测试看板</title>
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <div>
+        <p class="eyebrow">MES REGRESSION</p>
+        <h1>回归测试看板</h1>
+        <p id="run-name" class="muted">正在读取运行状态…</p>
+      </div>
+      <div id="run-status" class="status status-unknown">UNKNOWN</div>
+    </header>
+
+    <section class="summary-grid">
+      <article class="card progress-card">
+        <div class="card-title"><span>总体进度</span><strong id="progress-text">0 / 0</strong></div>
+        <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+        <div id="progress-detail" class="metrics"></div>
+      </article>
+      <article class="card">
+        <div class="card-title">当前切片</div>
+        <div id="current-slice" class="current-slice">—</div>
+        <div id="heartbeat" class="muted">最后心跳：—</div>
+      </article>
+      <article class="card">
+        <div class="card-title">问题复核</div>
+        <div id="issue-metrics" class="metrics issue-metrics"></div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="section-header"><h2>服务健康</h2><span id="refresh-time" class="muted">—</span></div>
+      <div id="services" class="service-grid"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-header"><h2>切片进度</h2><span class="muted">点击行查看日志</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>切片</th><th>名称</th><th>状态</th><th>尝试</th><th>耗时</th><th>退出码</th><th>说明</th></tr></thead>
+          <tbody id="slice-table"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lower-grid">
+      <article class="card">
+        <div class="section-header"><h2>问题复核</h2><span class="muted">首次失败不等于产品缺陷</span></div>
+        <div id="issues" class="issue-list"><p class="muted">暂无复核问题</p></div>
+      </article>
+      <article class="card log-card">
+        <div class="section-header"><h2 id="log-title">运行日志</h2><button id="clear-log" class="ghost-button">清空</button></div>
+        <pre id="log-content" class="log-content">点击切片行查看日志</pre>
+      </article>
+    </section>
+    <footer class="footer">只读看板 · 数据每 3 秒刷新 · 看板不会修改业务数据</footer>
+  </main>
+  <script src="/dashboard.js"></script>
+</body>
+</html>

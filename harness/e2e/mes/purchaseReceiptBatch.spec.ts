@@ -1,9 +1,9 @@
 // 切片 E3 E2E 测试：采购入库/完工入库 Drawer 条件显示批次号/生产日期字段
 // 关键路径：进采购入库或完工入库页 → 选单据 → 编辑打开抽屉 → 验证明细子表两列
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 import { loginViaApi } from './helpers/auth';
 
-const API_BASE = 'http://localhost:8080/jeecg-boot';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 async function getToken(request: any): Promise<string> {
   const login = await request.post(`${API_BASE}/sys/login`, {

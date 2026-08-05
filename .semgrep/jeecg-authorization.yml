@@ -1,0 +1,68 @@
+encoding: utf-8
+rules:
+  # ============================================================
+  # ============================================================
+
+  - id: mes-restcontroller-write-method-needs-permission
+    languages: [java]
+    severity: ERROR
+    message: >-
+    metadata:
+      cwe: "CWE-862: Missing Authorization"
+      owasp: "A01:2021 Broken Access Control"
+      category: security
+    pattern-either:
+      - patterns:
+          - pattern: |
+              @PostMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @PostMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+      - patterns:
+          - pattern: |
+              @PutMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @PutMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+      - patterns:
+          - pattern: |
+              @DeleteMapping(...)
+              public $RT $M(...) { ... }
+          - pattern-not: |
+              @DeleteMapping(...)
+              @RequiresPermissions(...)
+              public $RT $M(...) { ... }
+    paths:
+      include:
+        - "**/controller/**/*.java"
+        - "**/controllers/**/*.java"
+        - "**/*Controller.java"
+      exclude:
+        - "**/test/**"
+        - "**/Test*.java"
+        - "**/*Test.java"
+        - "**/target/**"
+        - "**/jmreport/**"
+        # 2026-08-04: 排除标品 + customer-demo 模块（customer-demo 缺权限注解为已知遗留,标品禁改）
+        - "jeecg-module-demo/**"
+        - "customer-demo/**"
+
+  - id: mes-menu-registry-duplicate-addperms
+    languages: [java]
+    severity: WARNING
+    message: >-
+    metadata:
+      cwe: "CWE-1188: Insecure Default Initialization of Resource"
+      category: security
+    pattern-regex: 'addPerms\s*\(\s*list\s*,\s*"mes:[^"]+:[^"]+"\s*,'
+    paths:
+      include:
+        - "**/MesMenuRegistry.java"
+        - "**/MesMenuDefinition.java"
+        - "**/config/init/*.java"
+      exclude:
+        - "**/target/**"

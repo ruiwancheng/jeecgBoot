@@ -313,12 +313,12 @@
       //条数
       const topNumber = ref<number>(5);
       //定向返回结果集
-      const hitTextList = ref<any>([]);
+      const hitTextList = ref([]);
       //用户头像
-      const avatar = ref<any>('');
+      const avatar = ref('');
       const userStore = useUserStore();
       //文档列表
-      const knowledgeDocDataList = ref<any>([]);
+      const knowledgeDocDataList = ref([]);
       //当前页数
       const pageNo = ref<number>(1);
       //每页条数
@@ -326,13 +326,13 @@
       //总条数
       const total = ref<number>(0);
       //可选择的页数
-      const pageSizeOptions = ref<any>(['10', '20', '30']);
+      const pageSizeOptions = ref(['10', '20', '30']);
       //查询参数
       const searchText = ref<string>('');
       //是否没有命中
       const notHit = ref<boolean>(false);
       //定时任务刷新列表
-      const timer = ref<any>(null);
+      const timer = ref(null);
       //token
       const headers = getHeaders();
       const globSetting = useGlobSetting();
@@ -342,7 +342,7 @@
       const uploadLoading = ref<boolean>(false);
 
       //菜单项
-      const menuItems = ref<any>([
+      const menuItems = ref([
         {
           key: 'document',
           icon: '',

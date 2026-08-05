@@ -80,7 +80,7 @@ echo "$CHANGED_FILES"
 
 ```bash
 # API 套件（~3-5min）：全部业务流测试
-for f in harness/tests/mes/*.test.js harness/tests/mes/*.test.mjs; do
+for f in harness/tests/{modules,chains}/*.test.js harness/tests/modules/*.test.mjs; do
   node "$f" || SUITE_FAILED=1
 done
 

@@ -34,7 +34,7 @@ public class MesVoucherController extends JeecgController<MesVoucher, IMesVouche
     @GetMapping("/queryById") @RequiresPermissions("mes:voucher:list")
     public Result<MesVoucher> queryById(@RequestParam String id) { MesVoucher e = service.queryWithItems(id); return e != null ? Result.ok(e) : Result.error("凭证不存在"); }
     @Operation(summary = "新增凭证") @PostMapping("/add") @RequiresPermissions("mes:voucher:add")
-    public Result<String> add(@RequestBody MesVoucher entity) { service.saveWithItems(entity); return Result.ok("添加成功"); }
+    public Result<String> add(@RequestBody MesVoucher entity) { if (entity == null) return Result.error("请求体不能为空"); service.saveWithItems(entity); return Result.ok("添加成功"); }
     @Operation(summary = "编辑凭证") @PutMapping("/edit") @RequiresPermissions("mes:voucher:edit")
     public Result<String> edit(@RequestBody MesVoucher entity) { service.updateWithItems(entity); return Result.ok("编辑成功"); }
     @DeleteMapping("/delete") @RequiresPermissions("mes:voucher:delete")

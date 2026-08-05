@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -219,7 +220,7 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
         order.setPurchaseApplyId(applyId);
         order.setSupplierId(apply.getSupplierId());
         order.setPurchaseType(apply.getPurchaseType());
-        order.setOrderDate(new Date());
+        order.setOrderDate(truncateToDay(now));
         order.setDeliveryDate(apply.getRequiredDate());
         order.setStatus("1"); // 草稿
 
@@ -246,6 +247,23 @@ public class MesPurchaseApplyServiceImpl extends ServiceImpl<MesPurchaseApplyMap
 
         // 复用现有 saveWithItems（含 validateOrder + resurrect + DuplicateKey 兜底）
         purchaseOrderService.saveWithItems(order);
+    }
+
+    /**
+     * 截断 Date 到日精度(0时0分0秒),与 requiredDate/deliveryDate 的入库精度对齐。
+     * 避免 audit() 在 UTC+8 凌晨/傍晚窗口因 now 含时分秒而晚于 requiredDate 导致
+     * MesPurchaseOrderServiceImpl.validateOrder 报"交货日期不能早于订单日期"的事务回滚。
+     * 修复 BUG-PURCHASE-AUDIT-DATE-TZ (P1)
+     */
+    private Date truncateToDay(Date d) {
+        if (d == null) return null;
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
     }
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.1 采购链路-审核自动生成订单-----------
 

@@ -51,8 +51,8 @@
       
       const titleFieldName = ref('');
       const imageFieldName = ref('')
-      const fieldOptions = ref<any>([]);
-      const imageFieldOptions = ref<any>([])
+      const fieldOptions = ref([]);
+      const imageFieldOptions = ref([])
       async function getFieldOptions(tableName){
         if(tableName){
           const url = '/online/cgform/field/listByHeadCode';

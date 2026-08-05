@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Tag(name = "MES-客户管理")
 @RestController
+@RequiresPermissions("mes:basic:list")
 @RequestMapping("/mes/basic/customer")
 public class MesCustomerController extends JeecgController<MesCustomer, IMesCustomerService> {
     @Autowired
@@ -60,15 +62,19 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
     }
 
     @Operation(summary = "新增客户", description = "支持编码回收——删除后同编码可复用原ID")
+    @RequiresPermissions("mes:basic:add")
     @PostMapping("/add") public Result<String> add(@RequestBody MesCustomer e) { service.save(e); return Result.ok("添加成功"); }
 
     @Operation(summary = "编辑客户", description = "修改客户信息并校验编码唯一性")
+    @RequiresPermissions("mes:basic:edit")
     @PutMapping("/edit") public Result<String> edit(@RequestBody MesCustomer e) { service.updateById(e); return Result.ok("编辑成功"); }
 
     @Operation(summary = "删除客户", description = "软删除，删除前校验关联业务")
+    @RequiresPermissions("mes:basic:delete")
     @DeleteMapping("/delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
 
     @Operation(summary = "批量删除", description = "批量软删除客户")
+    @RequiresPermissions("mes:basic:deleteBatch")
     @DeleteMapping("/deleteBatch") public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
     @Operation(summary = "查询全部客户", description = "不分页返回所有活跃客户")
@@ -100,6 +106,7 @@ public class MesCustomerController extends JeecgController<MesCustomer, IMesCust
     }
 
     @Operation(summary = "导入Excel", description = "从Excel导入客户，自动校验编码重复")
+    @RequiresPermissions("mes:basic:import")
     @PostMapping("/importExcel")
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;

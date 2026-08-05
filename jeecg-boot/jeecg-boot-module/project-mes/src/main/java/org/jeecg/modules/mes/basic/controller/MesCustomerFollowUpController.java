@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.servlet.ModelAndView;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -21,12 +22,14 @@ import java.util.List;
 
 @Slf4j
 @Tag(name = "MES-客户跟进记录")
+@RequiresPermissions("mes:customerFollowUp:list")
 @RestController
 @RequestMapping("/mes/basic/customer/followUp")
 public class MesCustomerFollowUpController extends JeecgController<MesCustomerFollowUp, IMesCustomerFollowUpService> {
     @Autowired
     private IMesCustomerFollowUpService service;
 
+    @RequiresPermissions("mes:customerFollowUp:list")
     @GetMapping("/list")
     public Result<IPage<MesCustomerFollowUp>> queryPageList(MesCustomerFollowUp entity,
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
@@ -36,16 +39,22 @@ public class MesCustomerFollowUpController extends JeecgController<MesCustomerFo
         qw.orderByDesc(MesCustomerFollowUp::getFollowDate);
         return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
     }
+    @RequiresPermissions("mes:customerFollowUp:add")
     @PostMapping("/add") public Result<String> add(@RequestBody MesCustomerFollowUp e) { service.save(e); return Result.ok("添加成功"); }
+    @RequiresPermissions("mes:customerFollowUp:edit")
     @PutMapping("/edit") public Result<String> edit(@RequestBody MesCustomerFollowUp e) { service.updateById(e); return Result.ok("编辑成功"); }
+    @RequiresPermissions("mes:customerFollowUp:delete")
     @DeleteMapping("/delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
+    @RequiresPermissions("mes:customerFollowUp:deleteBatch")
     @DeleteMapping("/deleteBatch") public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
+    @RequiresPermissions("mes:customerFollowUp:export")
     @GetMapping("/exportXls")
     public ModelAndView exportXls(MesCustomerFollowUp entity, HttpServletRequest req) {
         return super.exportXls(req, entity, MesCustomerFollowUp.class, "客户跟进记录");
     }
 
+    @RequiresPermissions("mes:customerFollowUp:import")
     @PostMapping("/importExcel")
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesCustomerFollowUp.class);

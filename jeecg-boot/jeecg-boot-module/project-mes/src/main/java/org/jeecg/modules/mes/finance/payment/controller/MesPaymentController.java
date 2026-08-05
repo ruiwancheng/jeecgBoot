@@ -34,7 +34,7 @@ public class MesPaymentController extends JeecgController<MesPayment, IMesPaymen
     @GetMapping("/queryById") @RequiresPermissions("mes:payment:list")
     public Result<MesPayment> queryById(@RequestParam String id) { MesPayment e = service.getById(id); return e != null ? Result.ok(e) : Result.error("付款单不存在"); }
     @Operation(summary = "新增付款") @PostMapping("/add") @RequiresPermissions("mes:payment:add")
-    public Result<String> add(@RequestBody MesPayment entity) { service.save(entity); return Result.ok("付款成功，应付已更新"); }
+    public Result<String> add(@RequestBody MesPayment entity) { if (entity == null) return Result.error("请求体不能为空"); service.save(entity); return Result.ok("付款成功，应付已更新"); }
     @GetMapping("/queryAll") @RequiresPermissions("mes:payment:list")
     public Result<List<MesPayment>> queryAll() { if (service.count() > QUERY_ALL_MAX) throw new JeecgBootException("付款单超过" + QUERY_ALL_MAX + "条"); return Result.ok(service.list()); }
     @GetMapping("/exportXls") @RequiresPermissions("mes:payment:export")

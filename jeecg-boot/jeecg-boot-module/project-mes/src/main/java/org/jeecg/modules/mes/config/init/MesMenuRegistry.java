@@ -26,8 +26,15 @@ public final class MesMenuRegistry {
         // ==================== 基础设置 ====================
         list.add(MesMenuDefinition.folder("mes_basic", "mes_menu_001", "基础设置", "/project/mes/basic", "/project/mes/basic/customer").sortNo(10.0).icon("ant-design:setting-outlined"));
         list.add(MesMenuDefinition.leaf("mes_basic_customer", "mes_basic", "客户管理", "/project/mes/basic/customer", "project/mes/basic/customer/index", "MesBasicCustomer").sortNo(1.0).icon("ant-design:user-outlined"));
+        //update-begin---author:pi---date:2026-08-04---for:【TKT-002】补充 mes:basic:* 权限码（MesCustomerController 引用）-----------
+        addPerms(list, "mes:basic:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","import","export"});
+        //update-end---author:pi---date:2026-08-04---for:【TKT-002】补充 mes:basic:* 权限码（MesCustomerController 引用）-----------
         list.add(MesMenuDefinition.leaf("mes_basic_supplier", "mes_basic", "供应商管理", "/project/mes/basic/supplier", "project/mes/basic/supplier/index", "MesBasicSupplier").sortNo(2.0).icon("ant-design:shop-outlined"));
         addPerms(list, "mes:supplier:", "mes_basic_supplier", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+addPerms(list, "mes:customerAddress:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        addPerms(list, "mes:customerContact:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
+        addPerms(list, "mes:customerFollowUp:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        addPerms(list, "mes:customerPrice:", "mes_basic_customer", new String[]{"list","add","edit","delete","deleteBatch","export"});
         //update-begin---author:ruiwancheng---date:2026-07-21  for：编码规则菜单注册-----------
         list.add(MesMenuDefinition.leaf("mes_basic_codeRule", "mes_basic", "编码规则", "/project/mes/basic/codeRule", "project/mes/basic/codeRule/index", "MesBasicCodeRule").sortNo(3.0).icon("ant-design:number-outlined"));
         addPerms(list, "mes:codeRule:", "mes_basic_codeRule", new String[]{"list","add","edit","delete","deleteBatch","export","import"});
@@ -105,9 +112,15 @@ public final class MesMenuRegistry {
         list.add(MesMenuDefinition.leaf("mes_production_order", "mes_manufacturing", "生产订单", "/project/mes/manufacturing/order", "project/mes/manufacturing/order/index", "MesProductionOrder").sortNo(2.0).icon("ant-design:file-text-outlined"));
         addPerms(list, "mes:productionOrder:", "mes_production_order", new String[]{"list","add","edit","delete","deleteBatch","export"});
         list.add(MesMenuDefinition.leaf("mes_production_picking", "mes_manufacturing", "生产领料", "/project/mes/manufacturing/picking", "project/mes/manufacturing/picking/index", "MesProductionPicking").sortNo(3.0).icon("ant-design:export-outlined"));
+        //update-begin---author:patch-2026-08-04---for: 补齐生产领料权限码（修复 P1）-----------
         addPerms(list, "mes:productionPicking:", "mes_production_picking", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:patch-2026-08-04---for: 补齐生产领料权限码-----------
+
         list.add(MesMenuDefinition.leaf("mes_completion_receipt", "mes_manufacturing", "完工入库", "/project/mes/manufacturing/completion", "project/mes/manufacturing/completion/index", "MesCompletionReceipt").sortNo(4.0).icon("ant-design:import-outlined"));
+        //update-begin---author:patch-2026-08-04---for: 补齐完工入库权限码（修复 P1）-----------
         addPerms(list, "mes:completionReceipt:", "mes_completion_receipt", new String[]{"list","add","edit","delete","deleteBatch","export"});
+        //update-end---author:patch-2026-08-04---for: 补齐完工入库权限码-----------
+
 
         //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-菜单注册-----------
         list.add(MesMenuDefinition.folder("mes_batch", "mes_warehouse", "批次管理", "/project/mes/batch", "/project/mes/batch/master").sortNo(4.5).icon("ant-design:barcode-outlined"));

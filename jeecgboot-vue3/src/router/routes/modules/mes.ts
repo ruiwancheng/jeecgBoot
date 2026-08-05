@@ -193,6 +193,25 @@ const mes: AppRouteModule = {
         },
       ],
     },
+    //update-begin---author:patch-2026-08-04---for: MES财务管控路由注册（与 MesMenuRegistry 对齐）-----------
+    {
+      path: 'finance',
+      name: 'MesFinance',
+      component: LAYOUT,
+      redirect: '/project/mes/finance/receivable',
+      meta: { title: '业财管控', icon: 'ant-design:bank-outlined' },
+      children: [
+        { path: 'subject', name: 'MesFinanceSubject', component: () => import('/@/views/project/mes/finance/subject/index.vue'), meta: { title: '会计科目' } },
+        { path: 'receivable', name: 'MesFinanceReceivable', component: () => import('/@/views/project/mes/finance/receivable/index.vue'), meta: { title: '应收账款' } },
+        { path: 'payable', name: 'MesFinancePayable', component: () => import('/@/views/project/mes/finance/payable/index.vue'), meta: { title: '应付账款' } },
+        { path: 'collection', name: 'MesFinanceCollection', component: () => import('/@/views/project/mes/finance/collection/index.vue'), meta: { title: '收款管理' } },
+        { path: 'payment', name: 'MesFinancePayment', component: () => import('/@/views/project/mes/finance/payment/index.vue'), meta: { title: '付款管理' } },
+        { path: 'voucher', name: 'MesFinanceVoucher', component: () => import('/@/views/project/mes/finance/voucher/index.vue'), meta: { title: '凭证管理' } },
+        { path: 'invoice', name: 'MesFinanceSalesInvoice', component: () => import('/@/views/project/mes/finance/invoice/index.vue'), meta: { title: '销项发票' } },
+        { path: 'purchaseInvoice', name: 'MesFinancePurchaseInvoice', component: () => import('/@/views/project/mes/finance/purchaseInvoice/index.vue'), meta: { title: '进项发票' } },
+      ],
+    },
+    //update-end---author:patch-2026-08-04---for: MES财务管控路由注册-----------
   ],
 };
 export default mes;

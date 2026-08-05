@@ -34,7 +34,7 @@ public class MesCollectionController extends JeecgController<MesCollection, IMes
     @GetMapping("/queryById") @RequiresPermissions("mes:collection:list")
     public Result<MesCollection> queryById(@RequestParam String id) { MesCollection e = service.getById(id); return e != null ? Result.ok(e) : Result.error("收款单不存在"); }
     @Operation(summary = "新增收款") @PostMapping("/add") @RequiresPermissions("mes:collection:add")
-    public Result<String> add(@RequestBody MesCollection entity) { service.save(entity); return Result.ok("收款成功，应收已更新"); }
+    public Result<String> add(@RequestBody MesCollection entity) { if (entity == null) return Result.error("请求体不能为空"); service.save(entity); return Result.ok("收款成功，应收已更新"); }
     @GetMapping("/queryAll") @RequiresPermissions("mes:collection:list")
     public Result<List<MesCollection>> queryAll() { if (service.count() > QUERY_ALL_MAX) throw new JeecgBootException("收款单超过" + QUERY_ALL_MAX + "条"); return Result.ok(service.list()); }
     @GetMapping("/exportXls") @RequiresPermissions("mes:collection:export")

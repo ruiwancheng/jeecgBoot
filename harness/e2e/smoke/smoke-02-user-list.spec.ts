@@ -3,7 +3,7 @@
 // 来源：test-e2e skill 冒烟测试集
 import { test, expect } from '@playwright/test';
 
-const API_BASE = process.env.E2E_API_BASE || 'http://100.122.125.106:8080/jeecg-boot';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
 
 test('冒烟 2: 用户列表加载 + 数据展示', async () => {
   // 1. 登录拿 token（用 fetch 而非 Playwright request 以避免 baseURL 干扰）

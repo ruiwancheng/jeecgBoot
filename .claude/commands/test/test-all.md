@@ -1,33 +1,76 @@
+<!-- update-begin---author:pi---date:2026-08-04---for:【REGRESSION-COMMANDS】将test-all接入主动可恢复回归流程 -->
 ---
-description: 自有命令 — 全量测试：自动检测+自动修复，提交前最终验证
+description: 自有命令 — 全量回归入口：环境闸门 + 后台 runner + 看板 + 复核报告
 ---
 
-# /test-all <项目名> [功能名]
+# /test-all <项目名> [功能名] [--resume]
 
-API + E2E 全量测试。自动修复 + 汇总报告。
+`/test-all` 是完整回归入口。对于当前 MES harness，必须主动调用可恢复 runner，不再由当前会话前台串行执行整批测试。
 
-## 用法
-- `/test-all demo` — demo 全部功能
-- `/test-all demo 仓库管理` — 只测仓库管理
+## 当前 MES 标准调用
 
-## 流程
+执行以下顺序：
 
-### 1. 加载领域知识
-使用 `test-all` 技能获取：测试聚合逻辑、智能范围判断参数、目录结构、汇总报告格式。
+```text
+/test-environment --check
+        ↓ READY
+/test-regression --dashboard
+```
 
-### 2. 智能范围判断（可选增强）
-使用技能中的智能范围判断参数调用 MCP graph tools。
-- 如果图形可用：低风险+少量变更 → 轻量模式（仅测受影响模块）；高风险 → 全量模式
-- 如果图形不可用：全量模式
+实际 runner 命令：
 
-### 3. 扫描
-检查已有测试，缺则自动生成。
+```bash
+python harness/scripts/resilient_regression.py start \
+  --manifest harness/regression/recovery-plan.json \
+  --dashboard \
+  --port 8765
+```
 
-### 4. API 测试
-逐模块运行，失败则自动修复后重跑。
+如果检测到已有运行任务：
 
-### 5. E2E 测试
-浏览器全流程，失败则自动修复后重跑。
+```bash
+python harness/scripts/resilient_regression.py status
+```
 
-### 6. 汇总报告
-按技能中的汇总报告格式输出。
+禁止重复启动，直接返回已有运行目录和看板地址。
+
+## 参数
+
+```text
+/test-all mes                 # 启动 MES 全量回归
+/test-all mes --resume         # 恢复最近一次未完成/失败任务
+/test-all mes --status         # 查看状态，不启动新任务
+/test-all mes --stop           # 停止 runner，不默认停止业务服务
+```
+
+恢复命令：
+
+```bash
+python harness/scripts/resilient_regression.py resume \
+  --run-dir <run-dir> \
+  --retry-failed \
+  --dashboard \
+  --port 8765
+```
+
+## 失败分类
+
+不能把命令退出码非零直接判定为产品问题。最终结论依据：
+
+```text
+hermes/eagle-eye/reports/YYYY-MM-DD/issues/
+```
+
+复核结果分：
+
+- pending_review
+- suspected_bug
+- confirmed_bug
+- false_positive
+- test_defect
+- environment_issue
+- data_precondition
+- test_design_issue
+
+只有人工确认后才会升级到 confirmed_bug。
+<!-- update-end---author:pi---date:2026-08-04---for:【REGRESSION-COMMANDS】将test-all接入主动可恢复回归流程 -->

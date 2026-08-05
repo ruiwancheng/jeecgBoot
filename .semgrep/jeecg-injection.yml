@@ -1,0 +1,86 @@
+encoding: utf-8
+
+# ============================================================
+# SQL injection / Command injection detection
+# Updated 2026-08-04: exclude standard-product dirs + known false-positive files
+# ============================================================
+
+rules:
+  - id: mybatis-dollar-brace-interpolation
+    languages: [java]
+    severity: ERROR
+    message: >-
+      Detected ${} string interpolation in MyBatis XML/annotation.
+      ${} directly concatenates SQL fragments and is vulnerable to SQL injection.
+      Use #{} precompiled parameters instead.
+    metadata:
+      cwe: "CWE-89: SQL Injection"
+      owasp: "A03:2021 Injection"
+      category: security
+    pattern-regex: '\$\{[^}]+\}'
+    paths:
+      include:
+        - "**/*Mapper.java"
+      exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
+        - "**/*Mapper.xml"
+        - "**/target/**"
+        # MyBatis-Plus QueryWrapper standard API - not real SQL injection
+        - "**/MesBatchTraceabilityMapper.java"
+
+  - id: jdbc-string-concat-query
+    languages: [java]
+    severity: ERROR
+    message: >-
+      Detected JDBC string concatenation in SQL query.
+      String concatenation in SQL is vulnerable to injection.
+      Use PreparedStatement with parameters.
+    metadata:
+      cwe: "CWE-89"
+      category: security
+    pattern-either:
+      - pattern: |
+          String $Q = $P1 + $P2;
+          $ST.execute($Q);
+      - pattern: |
+          StringBuilder $SB = new StringBuilder();
+          $SB.append($X);
+          $ST.execute($SB.toString());
+    paths:
+      include:
+        - "jeecg-boot-module/**/*.java"
+      exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
+        - "**/target/**"
+
+  - id: runtime-exec-with-user-input
+    languages: [java]
+    severity: ERROR
+    message: >-
+      Detected Runtime.exec() or ProcessBuilder with potentially user-controlled input.
+      Command injection risk.
+    metadata:
+      cwe: "CWE-78: OS Command Injection"
+      category: security
+    pattern-either:
+      - pattern: |
+          Runtime.getRuntime().exec($CMD)
+      - pattern: |
+          new ProcessBuilder($CMD)
+    paths:
+      include:
+        - "jeecg-boot-module/**/*.java"
+      exclude:
+        - "jeecg-module-system/**"
+        - "jeecg-server-cloud/**"
+        - "jeecg-boot-base-core/**"
+        - "**/target/**"
+        - "**/test/**"
+        # Known false positives: MyBatis-Plus QueryWrapper standard API + airag hardened ProcessBuilder
+        - "**/MesBatchTraceabilityMapper.java"
+        - "**/CommandExecUtil.java"
+        - "**/VideoGenerationServiceImpl.java"

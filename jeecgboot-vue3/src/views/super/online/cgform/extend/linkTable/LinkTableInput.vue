@@ -39,7 +39,7 @@
   const [registerFormModal, { openModal: openFormModal }] = useModal();
 
   // ---- 数据 ----
-  const selectRecords = ref<any>([]);
+  const selectRecords = ref([]);
   const popTableName = computed(() => props.tableName);
 
   const { auths, textFieldArray, transData, loadOne, compareData, formatData, initFormData } = useLinkTable(props);

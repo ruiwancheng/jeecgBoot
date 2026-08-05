@@ -47,6 +47,8 @@ version: 1.1
 | **状态机阶段颜色映射合并全表（多模块共用）** | ✅ **真实** | 多模块共用 `Record<string, string>` 状态颜色时，状态值巧合同色但含义不同（如订单'2'已审核 / 发货'2'待出库 / 出库'2'待审核），维护者看不出区别易改错。必须用 `Record<Module, Record<status, color>>` 分模块映射表 | ← 2026-07-30 销售链路对齐 |
 | **功能启用标志用降级策略（防数据库膨胀）** | ✅ **真实** | 新增"物料启用批次"等可选功能时，业务员不能批量启用。主库存事务先跑，**判断标志=1 才创建附加数据**（如批次）。避免"默认启用"导致一夜之间几万行无用数据。**物料档案单独勾选**，不批量默认 | ← 2026-07-31 批次管理 Phase 3 整合 |
 | **跨链路 @Dict 注解不一致（仅部分模块有注解）** | ✅ **真实** | 黄金模板对齐依赖 @Dict 注解使 list 接口带 `_dictText`。销售链路 4 关联字段全有 @Dict，采购链路 2 字段漏掉——出现相同语义的"申请单号 / 订单号 / 入库单号"字段，一个能正常显示编码、一个只能显示 ID。黄金模板对齐前必跨模块 grep `@Dict(dictTable` 扫描所有关联字段 | ← 2026-07-30 采购链路对齐 |
+| **前端 wrapper 反模式（token 静默丢弃 / positional-param）** | ✅ **真实** | 测试 helper 函数 `api(method, path, token, body)` 第 3 位 token 被 wrapper 静默丢弃（只用 c.api 闭包 token），调用方看似传 token 实际丢弃 → 维护者改 c.api 行为时测试静默失效。N1 修复：统一签名 `(method, path, body)` 删冗余 token。已落库 learnings/2026-08-04-js-positional-param-trap.md | ← 2026-08-05 N1 module 测试审计 |
+| **N9 schema init V1.0.0+ ALTER 加 --force** | ✅ **真实** | CI workflow schema init 跑增量脚本（V1.0.0+）时不加 --force → V0.0.0 已建字段（如 c_mes_customer.grade）报 Duplicate column name grade → exit 1 → api-test/e2e-test 全挂。临时方案：增量脚本加 --force 与 V0.0.0 一致（忽略 ALTER 冲突错误，DDL 数据仍正确写入）。真修复方向：删除 V0.0.0 已含字段让增量脚本不冲突；或迁 Flyway 管理版本 | ← 2026-08-05 CI 跑挂实证 |
 
 ## 判定流程
 
@@ -94,3 +96,5 @@ AI 在收到审计报告后，必须：
    建议追加到 audit-classification.md 常见模式速查表
    确认？(y/n)
 ```
+
+| **N9 schema init V1.0.0+ ALTER 加 --force** | ✅ **真实** | CI workflow schema init 跑增量脚本（V1.0.0+）时不加 --force → V0.0.0 已建字段（如 c_mes_customer.grade）报 Duplicate column name 'grade' → exit 1 → api-test/e2e-test 全挂。临时方案：增量脚本加 --force 与 V0.0.0 一致（忽略 ALTER 冲突错误，DDL 数据仍正确写入）。真修复方向：删除 V0.0.0 已含字段让增量脚本不冲突；或迁 Flyway 管理版本 | ← 2026-08-05 CI 跑挂实证 |

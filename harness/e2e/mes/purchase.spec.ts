@@ -1,9 +1,9 @@
 // MES 采购模块 E2E 测试 (token注入模式)
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 
-const BASE_URL = 'http://100.122.125.106';
+const BASE_URL = BASE;
 
-import { loginViaApi } from './helpers/auth';
+import { loginViaApi, BASE } from './helpers/auth';
 
 // ====== 采购申请 ======
 test.describe('采购申请', () => {

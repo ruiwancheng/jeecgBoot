@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.servlet.ModelAndView;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.base.controller.JeecgController;
@@ -22,12 +23,14 @@ import java.util.List;
 
 @Slf4j
 @Tag(name = "MES-客户联系人")
+@RequiresPermissions("mes:customerContact:list")
 @RestController
 @RequestMapping("/mes/basic/customer/contact")
 public class MesCustomerContactController extends JeecgController<MesCustomerContact, IMesCustomerContactService> {
     @Autowired
     private IMesCustomerContactService service;
 
+    @RequiresPermissions("mes:customerContact:list")
     @GetMapping("/list")
     public Result<IPage<MesCustomerContact>> queryPageList(MesCustomerContact entity,
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
@@ -37,16 +40,22 @@ public class MesCustomerContactController extends JeecgController<MesCustomerCon
         qw.orderByDesc(MesCustomerContact::getIsDefault);
         return Result.ok(service.page(new Page<>(pageNo, pageSize), qw));
     }
+    @RequiresPermissions("mes:customerContact:add")
     @PostMapping("/add") public Result<String> add(@RequestBody MesCustomerContact e) { service.save(e); return Result.ok("添加成功"); }
+    @RequiresPermissions("mes:customerContact:edit")
     @PutMapping("/edit") public Result<String> edit(@RequestBody MesCustomerContact e) { service.updateById(e); return Result.ok("编辑成功"); }
+    @RequiresPermissions("mes:customerContact:delete")
     @DeleteMapping("/delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
+    @RequiresPermissions("mes:customerContact:deleteBatch")
     @DeleteMapping("/deleteBatch") public Result<String> deleteBatch(@RequestParam String ids) { service.removeByIds(Arrays.asList(ids.split(","))); return Result.ok("批量删除"); }
 
+    @RequiresPermissions("mes:customerContact:export")
     @GetMapping("/exportXls")
     public ModelAndView exportXls(MesCustomerContact entity, HttpServletRequest req) {
         return super.exportXls(req, entity, MesCustomerContact.class, "客户联系人");
     }
 
+    @RequiresPermissions("mes:customerContact:import")
     @PostMapping("/importExcel")
     public Result<?> importExcel(HttpServletRequest request) throws Exception {
         return super.importExcel(request, null, MesCustomerContact.class);

@@ -96,7 +96,7 @@
       // const { createMessage } = useMessage();
       const [registerModel, { openModal }] = useModal();
       const { userInfo } = useUserStore();
-      const dataList = ref<any>([]);
+      const dataList = ref([]);
       const commentId = ref('');
 
       async function loadFileList() {

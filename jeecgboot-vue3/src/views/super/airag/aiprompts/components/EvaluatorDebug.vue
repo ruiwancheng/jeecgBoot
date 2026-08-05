@@ -110,7 +110,7 @@ const showFailureExample = ref(false)
 // 运行状态
 const loading = ref(false)
 // 响应式数据
-const variable = ref<any>([])
+const variable = ref([])
 // 结果
 const result = ref("")
 // 从内容中提取参数

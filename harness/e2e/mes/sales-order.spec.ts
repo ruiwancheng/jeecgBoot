@@ -1,9 +1,9 @@
 // MES 销售订单 E2E 测试 (token注入模式)
-import { test, expect } from '@playwright/test';
+import { test, expect } from './helpers/diagnostic-test';
 
-const BASE_URL = 'http://100.122.125.106';
+const BASE_URL = BASE;
 
-import { loginViaApi } from './helpers/auth';
+import { loginViaApi, BASE } from './helpers/auth';
 
 test.describe('销售订单', () => {
   test.beforeEach(async ({ page }) => { await loginViaApi(page); });

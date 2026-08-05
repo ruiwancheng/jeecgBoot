@@ -1,0 +1,1 @@
+[2026-08-04] [CI] 双 config 半修复产生伪安全感 | 触发：CI 失败有"两个类似配置文件"（如 harness/x + harness/y/子目录/x）时 | 处理：先 grep CI 实际用的那份（`grep "config" workflow.yml`）只改它，**不**改另一份。同时 env var fallback 加在两份上，避免下次又错位。本案：CI 用了 `e2e/playwright.config.ts`，我修了 `harness/playwright.config.ts`（硬编码 IP），env var 设了白设——E2E 永远连不到内网 IP。结论：**修复同类多处时，确认哪份被实际引用**。

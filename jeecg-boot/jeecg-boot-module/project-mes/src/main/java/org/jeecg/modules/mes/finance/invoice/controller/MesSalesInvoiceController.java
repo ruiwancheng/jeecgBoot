@@ -26,7 +26,7 @@ public class MesSalesInvoiceController extends JeecgController<MesSalesInvoice, 
         QueryWrapper<MesSalesInvoice> qw=QueryGenerator.initQueryWrapper(e,req.getParameterMap()); qw.orderByDesc("create_time"); return Result.ok(service.page(new Page<>(pn,ps),qw));
     }
     @GetMapping("/queryById") @RequiresPermissions("mes:salesInvoice:list") public Result<MesSalesInvoice> queryById(@RequestParam String id) { MesSalesInvoice e=service.getById(id); return e!=null?Result.ok(e):Result.error("不存在"); }
-    @PostMapping("/add") @RequiresPermissions("mes:salesInvoice:add") public Result<String> add(@RequestBody MesSalesInvoice e) { service.save(e); return Result.ok("添加成功"); }
+    @PostMapping("/add") @RequiresPermissions("mes:salesInvoice:add") public Result<String> add(@RequestBody MesSalesInvoice e) { if (e == null) return Result.error("请求体不能为空"); service.save(e); return Result.ok("添加成功"); }
     @PutMapping("/edit") @RequiresPermissions("mes:salesInvoice:edit") public Result<String> edit(@RequestBody MesSalesInvoice e) { service.updateById(e); return Result.ok("编辑成功"); }
     @DeleteMapping("/delete") @RequiresPermissions("mes:salesInvoice:delete") public Result<String> delete(@RequestParam String id) { service.removeById(id); return Result.ok("删除成功"); }
     @GetMapping("/queryAll") @RequiresPermissions("mes:salesInvoice:list") public Result<List<MesSalesInvoice>> queryAll() { if(service.count()>QMAX) throw new JeecgBootException("超过"+QMAX+"条"); return Result.ok(service.list()); }

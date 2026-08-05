@@ -198,12 +198,14 @@
       }
 
       // 查询区域存储值
-      const searchParams = reactive<any>({
+      //update-begin---author:pi---date:2026-08-04---for:【TKT-003】SysMessageModal TS 泛型 <any> 未剥离修复（#14 方案 A）-----------
+      const searchParams = reactive({
         fromUser: '',
         realname: '',
         rangeDateKey: '7day',
         rangeDate: [],
       });
+      //update-end---author:pi---date:2026-08-04---for:【TKT-003】SysMessageModal TS 泛型 <any> 未剥离修复（#14 方案 A）-----------
 
       function loadData(){
         let params = {
@@ -296,7 +298,7 @@
         }
         return false;
       });
-      const searchRangeDate = ref<any>([]);
+      const searchRangeDate = ref([]);
       function handleChangeSearchDate(_value, dateStringArray) {
         searchParams.rangeDate = [...dateStringArray]
         loadData();

@@ -12,7 +12,7 @@
     props: basicProps,
     emits: ['success', 'update:value', 'change', 'start', 'move', 'end'],
     setup(props, { emit, slots, expose }) {
-      const state = reactive<any>({
+      const state = reactive({
         isMoving: false,
         isPassing: false,
         moveDistance: 0,

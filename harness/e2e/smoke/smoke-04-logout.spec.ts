@@ -3,8 +3,8 @@
 // 来源：test-e2e skill 冒烟测试集
 import { test, expect } from '@playwright/test';
 
-const API_BASE = process.env.E2E_API_BASE || 'http://100.122.125.106:8080/jeecg-boot';
-const UI_BASE = process.env.E2E_UI_BASE || 'http://100.122.125.106';
+const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8080/jeecg-boot';
+const UI_BASE = process.env.E2E_UI_BASE || 'http://localhost:4173';
 
 test('冒烟 4: 登出接口 + 重定向到登录页', async ({ page }) => {
   // 1. 登录拿 token（用 fetch 而非 Playwright request）

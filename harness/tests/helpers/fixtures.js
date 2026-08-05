@@ -63,16 +63,28 @@ async function safeDeleteDoc(c, basePath, id) {
  * 用 SQL 文件执行，绕开 Windows 命令行引号问题
  */
 function dbCleanup(sqlStatements) {
+  // CI 环境跳过 DB 清理（services 容器无 host mysql client + CREATE DATABASE 已保证幂等）
+  // 配合时间戳后缀 fixture，CI 跑多次不撞唯一索引
+  // 本地 Windows / macOS / Linux 仍走 execSync（mysql client 在 PATH 或已知路径）
+  if (process.env.SKIP_DB_CLEANUP === 'true') {
+    process.stderr.write('[dbCleanup SKIPPED] SKIP_DB_CLEANUP=true (CI environment)\n');
+    return true;
+  }
+  //update-begin---author:pi---date:2026-08-05---for:[BUG-5-R 修复] dbCleanup 失败时记录错误到 stderr（不静默吞错）-----------
   const f = path.join(os.tmpdir(), `harness-cleanup-${Date.now()}.sql`);
   try {
     fs.writeFileSync(f, sqlStatements, 'utf8');
     execSync(`${mysqlBin()} -uroot -proot --host=127.0.0.1 --protocol=TCP --default-character-set=utf8mb4 jeecg-boot < "${f}"`, { stdio: 'pipe' });
     return true;
   } catch (e) {
+    // 不再静默吞错：打印 SQL + 错误信息到 stderr，方便 CI log 排查
+    process.stderr.write(`[dbCleanup FAILED] SQL:\n${sqlStatements}\n`);
+    process.stderr.write(`[dbCleanup ERROR] ${e.message}\n`);
     return false;
   } finally {
     try { fs.unlinkSync(f); } catch (e) {}
   }
+  //update-end---author:pi---date:2026-08-05---for:[BUG-5-R 修复] dbCleanup 失败时记录错误到 stderr（不静默吞错）-----------
 }
 
 /** 常用清理：仓+料+库存+台账+成本日志（本地库） */

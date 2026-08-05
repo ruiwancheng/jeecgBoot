@@ -1,5 +1,35 @@
 # Harness 工程进度
 
+## 会话收尾（2026-08-05 session-wrap #11）回归体系评估+本地全量回归+9 修复
+
+**本次主要工作**：
+- 回归体系 v0.2 后 7 轴评估（B+ → A）
+- 本地完整回归 run 20260805-041046：20/23 pass (87%)
+- 9 修复：N1（token wrapper 反模式 9 文件）/ N2（fixtures.js CI 跨平台）/ N3（typecheck 硬门控 742）/ N4（summary 三 job 硬门控）/ N5（e2e 删 --retries=1）/ N8（runner 端口探测）/ N9（schema init --force）/ TS-1（finance skipAddBtn）/ TS-2（other-stock-in 物料动态化）/ TS-3（gen-tests 端点契约驱动规则）
+- 3 条 learnings 沉淀 + /evolve 反哺 testing.md / workflow.md
+- B1-B4 人工复核：B1/B2/B3 = false_positive（同型 #8/#10/#7 历史误判），B4 = confirmed_bug（批次追溯抽屉）
+- CI 跑通：N3+N4+N5+N9 真硬门控生效
+
+**关键决策**：
+- N8 不自动 kill：避免误杀用户开发用进程，warn + 留决策权
+- N2 跨平台用 env-var 隔离（不动业务逻辑）：CI 幂等 + 时间戳后缀 + fixture 不持久化
+- N3 硬门控基线 742 锁定：后续错误数下降要主动同步阈值
+- TS-3 gen-tests 端点契约驱动：防止 B1-B3 同型误判再生
+
+**累计修复**（保留）：
+- 体系评级：B+ → A（87% → 90% harness-check）
+- learnings 总数 111 → 113-3=110（3 条反哺到 rules）
+- CI 闸门真正生效：N3 typecheck + N4 summary + N5 失败重试删除
+
+**遗留**（暂缓）：
+- B4 批次追溯 V10.0.3 抽屉前端 bug（前端工程师 0.5-1 人天）
+- N6 注释示范硬编码 IP（1min）/ N7 fixtures inType 字典注释（1min）
+- GAP-12 并发安全测试底座（2h）/ GAP-13 权限越权测试底座（1h）
+- Unit 测试层底座（2-3h）
+- audit-classification.md 速查表 12 天未更新（建议明日 B4 修完做审计）
+- **P2 ⑤ 7 月 learnings archive 清理**（85 条 7 月 learnings 仍全部在主目录，.archived/ 空。建议明日与 harness 完整性审计一起做，1h+）
+
+---
 ## 会话收尾（2026-08-02 session-wrap #10）
 
 **本次主要工作**：

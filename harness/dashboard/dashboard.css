@@ -1,0 +1,71 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b1120;
+  --panel: #111a2e;
+  --panel-2: #17223a;
+  --border: #263653;
+  --text: #e6edf7;
+  --muted: #8ea0bd;
+  --blue: #4f8cff;
+  --green: #35c48d;
+  --red: #f06d7a;
+  --yellow: #e3b341;
+  --purple: #ae8bff;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 Inter, "Microsoft YaHei", sans-serif; }
+.page { width: min(1480px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 40px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; }
+.eyebrow { color: var(--blue); font-size: 11px; letter-spacing: 2px; margin: 0 0 4px; }
+h1, h2, p { margin-top: 0; }
+h1 { font-size: 28px; margin-bottom: 4px; }
+h2 { font-size: 16px; margin: 0; }
+.muted { color: var(--muted); }
+.status { border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; letter-spacing: .5px; }
+.status-running { color: var(--blue); border-color: var(--blue); }
+.status-completed, .status-passed { color: var(--green); border-color: var(--green); }
+.status-failed, .status-completed_with_failures { color: var(--red); border-color: var(--red); }
+.status-blocked_environment, .status-timeout { color: var(--yellow); border-color: var(--yellow); }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 18px; box-shadow: 0 8px 24px #05091433; }
+.summary-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 18px; }
+.card-title, .section-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-title { color: var(--muted); margin-bottom: 14px; }
+.card-title strong { color: var(--text); }
+.progress-track { height: 12px; overflow: hidden; background: #24314d; border-radius: 99px; }
+.progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--blue), var(--green)); border-radius: inherit; transition: width .4s ease; }
+.metrics { display: flex; flex-wrap: wrap; gap: 10px 16px; color: var(--muted); margin-top: 12px; }
+.metrics span strong { color: var(--text); margin-right: 4px; }
+.current-slice { font-size: 22px; font-weight: 700; margin: 22px 0 6px; color: var(--blue); }
+.section-header { margin-bottom: 14px; }
+.service-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.service { min-width: 180px; padding: 12px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; }
+.service-name { font-weight: 700; margin-bottom: 4px; }
+.service-healthy { color: var(--green); }
+.service-unhealthy { color: var(--red); }
+.service-unknown { color: var(--yellow); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 880px; }
+th, td { padding: 11px 10px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; }
+tbody tr { cursor: pointer; transition: background .15s; }
+tbody tr:hover { background: var(--panel-2); }
+.status-cell { font-weight: 700; }
+.state-passed { color: var(--green); }
+.state-failed { color: var(--red); }
+.state-timeout, .state-pending_review, .state-blocked_environment { color: var(--yellow); }
+.state-running { color: var(--blue); }
+.state-pending { color: var(--muted); }
+.lower-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.issue-list { display: grid; gap: 10px; max-height: 420px; overflow: auto; }
+.issue { padding: 12px; background: var(--panel-2); border-left: 3px solid var(--yellow); border-radius: 6px; }
+.issue-title { font-weight: 700; margin-bottom: 4px; }
+.issue-meta { color: var(--muted); font-size: 12px; }
+.issue-suspected_bug { border-color: var(--red); }
+.issue-false_positive { border-color: var(--green); }
+.log-card { min-width: 0; }
+.log-content { height: 420px; overflow: auto; background: #080d18; color: #c7d3e8; border: 1px solid var(--border); border-radius: 8px; padding: 12px; white-space: pre-wrap; word-break: break-word; font: 12px/1.45 Consolas, monospace; }
+.ghost-button { border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.ghost-button:hover { color: var(--text); border-color: var(--blue); }
+.footer { color: var(--muted); text-align: center; font-size: 12px; margin-top: 22px; }
+@media (max-width: 900px) { .summary-grid, .lower-grid { grid-template-columns: 1fr; } .page { width: min(100% - 20px, 1480px); padding-top: 16px; } }

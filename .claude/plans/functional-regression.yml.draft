@@ -1,0 +1,214 @@
+# GitHub Actions workflow: 功能回归测试
+# 由 2026-08-04 测试体系 P0 改造沉淀
+# 触发: pull_request + push to main/fix/**
+# 内容: API 测试 + E2E 测试 + 前端 typecheck 三层回归
+#
+# 本工作流设计:
+# 1. api-test job — Node 原生 runner 跑 harness/tests/mes/*.test.js（~10 秒）
+# 2. e2e-test job — Playwright 跑 harness/e2e/mes/*.spec.ts（~3 分钟）
+# 3. typecheck job — vue-tsc 跑 jeecgboot-vue3（~5 分钟）
+#
+# 依赖:
+# - 不需要后端运行（API 测试用 fixture 自包含 mock 后端响应）
+# - 不需要前端运行（typecheck 仅做静态类型检查）
+# - 自包含（pnpm + node_modules 在 workflow 内 install）
+
+name: Functional Regression
+
+on:
+  push:
+    branches: [main, fix/**]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# 取消同分支重复跑（节省 CI 资源）
+concurrency:
+  group: functional-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ============================================================
+  # Job 1: API 测试 — 静态扫描层（秒级）
+  # ============================================================
+  api-test:
+    name: API Test (harness/tests/mes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@10
+
+      - name: Install dependencies
+        run: |
+          cd harness
+          pnpm install --frozen-lockfile
+
+      - name: Run API tests
+        run: |
+          cd harness
+          # 统计断言密度（前置门控：0 断言文件拦截）
+          echo "=== 断言密度自检 ==="
+          for f in tests/mes/*.test.js; do
+            assertions=$(grep -cE '(✓|✅|\bok\b|\bassert\(|expect\(|=== )' "$f" || true)
+            scenarios=$(grep -cE '^(\s*)(场景|=== )' "$f" || true)
+            echo "  $f: assertions=$assertions scenarios=$scenarios"
+            # 0 断言文件直接 fail
+            if [ "${assertions:-0}" -lt 1 ]; then
+              echo "❌ FAIL: $f has 0 assertions, gen-tests R009 拦截"
+              exit 1
+            fi
+          done
+
+          echo "=== 运行 API 测试 ==="
+          # 原生 node runner（harness/package.json 无 vitest/jest）
+          for f in tests/mes/*.test.js; do
+            echo "--- $f ---"
+            timeout 120 node "$f" || exit 1
+          done
+
+      - name: Upload API test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: harness/test-results/
+          retention-days: 7
+
+  # ============================================================
+  # Job 2: E2E 测试 — 浏览器全流程（分钟级）
+  # ============================================================
+  e2e-test:
+    name: E2E Test (harness/e2e/mes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@10
+
+      - name: Install dependencies
+        run: |
+          cd harness
+          pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: |
+          cd harness
+          npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        env:
+          # ⚠️ CI 环境无法访问服务端 baseURL，使用 localhost 假设前端运行中
+          # 后续改进：部署独立 preview 环境或用 self-hosted runner
+          PLAYWRIGHT_BASE_URL: http://localhost:3100
+          HARNESS_BASE_URL: http://localhost:8080/jeecg-boot
+        run: |
+          cd harness
+          # ⚠️ Playwright 配置注意：baseURL 必须显式 --config 指定（2026-08-02 复盘）
+          npx playwright test --config e2e/playwright.config.ts e2e/mes/ \
+            --reporter=list \
+            --retries=1 \
+            --timeout=60000 || exit 1
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results
+          path: |
+            harness/test-results/
+            harness/playwright-report/
+          retention-days: 7
+
+  # ============================================================
+  # Job 3: 前端 TypeScript 类型检查（分钟级）
+  # ============================================================
+  typecheck:
+    name: Frontend Type Check (vue-tsc)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: 'jeecgboot-vue3/pnpm-lock.yaml'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@10
+
+      - name: Install frontend dependencies
+        run: |
+          cd jeecgboot-vue3
+          pnpm install --frozen-lockfile
+
+      - name: Run vue-tsc type check
+        # ⚠️ 不允许 vue-tsc 失败阻塞 — 当前有 742 个基线错误（2026-08-04）
+        # 改进：先达到 ≤ 200 错误后启用 fail-on-error
+        # 当前：作为软门控，记录错误数变化趋势
+        continue-on-error: true
+        run: |
+          cd jeecgboot-vue3
+          pnpm exec vue-tsc --noEmit 2>&1 | tee /tmp/typecheck.log || true
+          ERROR_COUNT=$(grep -c "error TS" /tmp/typecheck.log || echo 0)
+          echo "TypeScript errors: $ERROR_COUNT"
+          # 软门控：错误数 > 200 时 exit 1
+          if [ "$ERROR_COUNT" -gt 200 ]; then
+            echo "❌ TypeScript errors exceed threshold (200): $ERROR_COUNT"
+            exit 1
+          fi
+
+      - name: Run Vite build (sanity check)
+        run: |
+          cd jeecgboot-vue3
+          pnpm build
+
+  # ============================================================
+  # 汇总报告 job（依赖前面所有 job）
+  # ============================================================
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [api-test, e2e-test, typecheck]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "API Test: ${{ needs.api-test.result }}"
+          echo "E2E Test: ${{ needs.e2e-test.result }}"
+          echo "Typecheck: ${{ needs.typecheck.result }}"
+
+          if [ "${{ needs.api-test.result }}" != "success" ] || \
+             [ "${{ needs.e2e-test.result }}" != "success" ] || \
+             [ "${{ needs.typecheck.result }}" != "success" ]; then
+            echo "❌ 至少一个测试 job 失败"
+            exit 1
+          fi
+          echo "✅ 所有测试通过"
