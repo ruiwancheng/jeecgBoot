@@ -86,7 +86,8 @@ function runModuleBatch(batchId) {
   console.log(`📦 Module batch: ${batchId} (${batch.length} 个测试)`);
   let total = 0, passed = 0, failed = 0;
   for (const name of batch) {
-    const file = path.join(PROJECT, 'harness', 'tests', 'modules', `${name}.test.js`);
+    const fileName = name.endsWith('.test') ? `${name}.js` : `${name}.test.js`;
+    const file = path.join(PROJECT, 'harness', 'tests', 'modules', fileName);
     if (!fs.existsSync(file)) {
       console.log(`  ⚠️  ${name}: 文件不存在，跳过`);
       continue;
