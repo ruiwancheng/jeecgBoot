@@ -188,6 +188,24 @@
       ]
     },
     {
+      "id": "1.4",
+      "name": "采购链路贯通（编排器：申请→订单→入库→付款）",
+      "kind": "chain",
+      "cwd": "harness",
+      "command": [
+        "node",
+        "tests/chains/purchase-chain.test.js"
+      ],
+      "timeout_seconds": 900,
+      "requires": [
+        "backend",
+        "1.1",
+        "1.2",
+        "1.3"
+      ],
+      "continue_on_failure": false
+    },
+    {
       "id": "2.1",
       "name": "销售收发货基础链路",
       "kind": "chain",
