@@ -61,8 +61,8 @@ async function run() {
     type: '1',       // mes_price_type: 1=标准价
     price: 99.50,
     status: 1,
-    beginDate: '2026-08-01',
-    endDate: '2026-12-31',
+    beginDate: '2030-01-01',
+    endDate: '2030-12-31',
     remark: '自动测试'
   });
   ass(add.code === 200, '2. add: ' + add.message);

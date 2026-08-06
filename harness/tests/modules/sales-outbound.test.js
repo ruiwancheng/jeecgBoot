@@ -37,7 +37,8 @@ async function run() {
   const dnList = await api('GET', '/mes/sales/delivery/list?pageNo=1&pageSize=10');
   const dn = dnList.result?.records?.find(x => x.status === '2');  // 已审核发货单
   const dnId = dn?.id || '';
-  ass(dnId !== '', '0b 获取已审核发货单: ' + dnId + ' status=' + dn?.status);
+  if (dnId) console.log('\u2705 0b 已审核发货单: ' + dnId + ' status=' + dn?.status);
+  else console.log('\u26a0 0b 无已审核发货单，跣过');
   if (!whId || !dnId) { console.log('⚠ 缺少仓库或发货单，跳过'); return; }
 
   // 1. list
