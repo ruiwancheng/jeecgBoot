@@ -41,8 +41,10 @@ async function run() {
   const custCode = 'SLICE9_C_' + TS;
   const custAdd = await api('POST', `${CUST}/add`, { code: custCode, name: 'slice-9 客户', status: 1 });
   ass(custAdd.code === 200, '1.1 add Customer: ' + custAdd.message);
-  const custList = await api('GET', `${CUST}/list?pageNo=1&pageSize=10`);
-  const cust = custList.result?.records?.find(x => x.code === custCode);
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — 改用 code 过滤查询（dev DB 共享资源 pageSize=10 找不到）-----------
+  const custList = await api('GET', `${CUST}/list?pageNo=1&pageSize=10&code=${encodeURIComponent(custCode)}`);
+  const cust = custList.result?.records?.[0];
+  // update-end---author:pi---date:2026-08-07---for: Slice J — 改用 code 过滤查询-----------
   const custId = cust?.id || '';
   ass(!!custId, '1.2 查到 Customer: ' + custId);
 
@@ -75,13 +77,17 @@ async function run() {
   const supCode = 'SLICE9_S_' + TS;
   const supAdd = await api('POST', `${SUP}/add`, { code: supCode, name: 'slice-9 供应商', status: 1 });
   ass(supAdd.code === 200, '2.1 add Supplier: ' + supAdd.message);
-  const supList = await api('GET', `${SUP}/list?pageNo=1&pageSize=10`);
-  const sup = supList.result?.records?.find(x => x.code === supCode);
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — 改用 code 过滤查询（dev DB 共享资源 pageSize=10 找不到）-----------
+  const supList = await api('GET', `${SUP}/list?pageNo=1&pageSize=10&code=${encodeURIComponent(supCode)}`);
+  const sup = supList.result?.records?.[0];
+  // update-end---author:pi---date:2026-08-07---for: Slice J — 改用 code 过滤查询-----------
   const supId = sup?.id || '';
   ass(!!supId, '2.2 查到 Supplier: ' + supId);
 
   if (supId) {
-    const edit = await api('PUT', `${SUP}/edit`, { id: supId, name: 'slice-9 供应商-已编辑' });
+    // update-begin---author:pi---date:2026-08-07---for: Slice J — supplier edit 需带 code 字段（dev DB 共享资源）-----------
+    const edit = await api('PUT', `${SUP}/edit`, { id: supId, code: supCode, name: 'slice-9 供应商-已编辑' });
+    // update-end---author:pi---date:2026-08-07---for: Slice J — supplier edit 需带 code 字段-----------
     ass(edit.code === 200, '2.3 edit: ' + edit.message);
 
     const byId = await api('GET', `${SUP}/queryById?id=${supId}`);
