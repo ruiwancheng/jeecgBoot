@@ -1,6 +1,7 @@
 {
   "version": "1.0",
   "project": "JeecgBoot ERP",
+  "_comment": "features.json 由 harness/scripts/cross_validate_features.py 与 hermes/business-chains.json 交叉验证（pre-commit-check.sh 调起）。新增 modules 必须同步在 business-chains.json 引用或接受未被链路引用的 warning。",
   "modules": [
     {"id":"user","name":"用户管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/user/","apiBase":"/sys/user","entity":"SysUser"},
     {"id":"role","name":"角色管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/role/","apiBase":"/sys/role","entity":"SysRole"},
@@ -12,7 +13,25 @@
     {"id":"oss","name":"文件管理","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/oss/","apiBase":"/sys/oss","entity":"OssFile"},
     {"id":"announcement","name":"系统公告","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"src/views/system/notice/","apiBase":"/sys/annountCement","entity":"SysAnnouncement"},
     {"id":"openapi","name":"开放API","category":"system","backendPath":"jeecg-module-system/jeecg-system-biz/","frontendPath":"","apiBase":"/openapi","entity":""},
-    {"id":"demo","name":"演示示例","category":"demo","backendPath":"jeecg-boot-module/jeecg-module-demo/","frontendPath":"src/views/demo/","apiBase":"/test/jeecgDemo","entity":"JeecgDemo"}
+    {"id":"demo","name":"演示示例","category":"demo","backendPath":"jeecg-boot-module/jeecg-module-demo/","frontendPath":"src/views/demo/","apiBase":"/test/jeecgDemo","entity":"JeecgDemo"},
+    {"id":"basic","name":"基础数据","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/basic/","apiBase":"/mes/basic","entity":"MesBasic"},
+    {"id":"basic/inventory","name":"库存基础","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/basic/inventory/","apiBase":"/mes/basic/inventory","entity":"MesInventory"},
+    {"id":"basic/material(movingAvgCost)","name":"物料移动平均成本","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/basic/material/","apiBase":"/mes/basic/material","entity":"MesMaterial"},
+    {"id":"finance/payable","name":"应付账","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/finance/payable/","apiBase":"/mes/finance/payable","entity":"MesFinancePayable"},
+    {"id":"manufacturing/bom","name":"BOM清单","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/manufacturing/bom/","apiBase":"/mes/manufacturing/bom","entity":"MesBom"},
+    {"id":"manufacturing/completion","name":"生产完工","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/manufacturing/completion/","apiBase":"/mes/manufacturing/completion","entity":"MesCompletion"},
+    {"id":"manufacturing/order","name":"生产订单","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/manufacturing/order/","apiBase":"/mes/manufacturing/order","entity":"MesManufacturingOrder"},
+    {"id":"manufacturing/picking","name":"生产领料","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/manufacturing/picking/","apiBase":"/mes/manufacturing/picking","entity":"MesPicking"},
+    {"id":"purchase/apply","name":"采购申请","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/purchase/apply/","apiBase":"/mes/purchase/apply","entity":"MesPurchaseApply"},
+    {"id":"purchase/ledger","name":"采购台账","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/purchase/ledger/","apiBase":"/mes/purchase/ledger","entity":"MesPurchaseLedger"},
+    {"id":"purchase/order","name":"采购订单","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/purchase/order/","apiBase":"/mes/purchase/order","entity":"MesPurchaseOrder"},
+    {"id":"purchase/receipt","name":"采购入库","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/purchase/receipt/","apiBase":"/mes/purchase/receipt","entity":"MesPurchaseReceipt"},
+    {"id":"sales/delivery","name":"销售送货","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/sales/delivery/","apiBase":"/mes/sales/delivery","entity":"MesSalesDelivery"},
+    {"id":"sales/order","name":"销售订单","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/sales/order/","apiBase":"/mes/sales/order","entity":"MesSalesOrder"},
+    {"id":"sales/outbound","name":"销售出库","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/sales/outbound/","apiBase":"/mes/sales/outbound","entity":"MesSalesOutbound"},
+    {"id":"stock/other-in","name":"其它入库","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/stock/other-in/","apiBase":"/mes/stock/other-in","entity":"MesStockOtherIn"},
+    {"id":"stock/other-out","name":"其它出库","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/stock/other-out/","apiBase":"/mes/stock/other-out","entity":"MesStockOtherOut"},
+    {"id":"stock/stocktake","name":"盘点","category":"mes","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/stock/stocktake/","apiBase":"/mes/stock/stocktake","entity":"MesStocktake"}
   ],
   "projects": [{"id":"demo","name":"demo客户","backendPath":"jeecg-boot-module/customer-demo/","frontendPath":"src/views/customer/demo/"},{"id":"mes","name":"MES项目","backendPath":"jeecg-boot-module/project-mes/","frontendPath":"src/views/project/mes/"}]
 }

@@ -273,4 +273,22 @@ if [ -n "$WARNINGS" ]; then
   echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"[Super Harness] 提交前提醒: ${WARNINGS}（跳过检查: git commit --no-verify）\"}}"
 fi
 
+# ============================================
+# Slice A: features.json ↔ business-chains.json 交叉验证
+# （commit 前发现 features.json 模块名与 business-chains.json 链路引用不一致）
+PYTHON_BIN="$(command -v python3 || command -v python)"
+if [ -n "$PYTHON_BIN" ]; then
+  CV_OUT=$("$PYTHON_BIN" harness/scripts/cross_validate_features.py 2>&1)
+  CV_EXIT=$?
+  if [ $CV_EXIT -ne 0 ]; then
+    # 未声明模块被引用 — exit 2 + stderr（Claude Code 中 exit 1 不阻断，exit 2 阻断）
+    echo "$CV_OUT" >&2
+    exit 2
+  fi
+  # warning（features 声明但未被引用）通过 stdout 输出供 AI 看到
+  if echo "$CV_OUT" | grep -q "⚠️"; then
+    echo "$CV_OUT"
+  fi
+fi
+
 exit 0

@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 4 | **简单精准** — 只写必要代码、不顺手改邻居、困惑就问 |
 | 5 | **信任结果不信任过程** — 功能对+数据对是最硬证据，不纠结 AI 有没有跳步。结果验证 > 过程验证 |
 | 6 | **验证派 worker 而非自己跑** — `/verify` 阶段改派 subagent worker 在独立 terminal 实测（避免主对话 context 污染 + 漏掉 P0 bug）。PI 静态检查漏掉的 4 个 P0 都是 worker 跑测发现的。 |
+| 7 | **配置交叉验证** — features.json 加新模块必须同步 business-chains.json（pre-commit-check.sh 调 `harness/scripts/cross_validate_features.py` 自动验证）。未声明模块被引用 → exit 2 阻断；孤立模块（声明但未引用）→ warning。 |
 
 ---
 
