@@ -15,9 +15,9 @@
 
 | 日期 | 文件 | 说明 |
 |------|------|------|
-| 2026-07-21 | [tests/mes/sales-order.test.mjs](tests/mes/sales-order.test.mjs) | 销售订单 API 测试（/gen-tests 生成，30 用例含状态机守卫） |
-| 2026-07-21 | [tests/mes/codeRule.test.mjs](tests/mes/codeRule.test.mjs) | 编码规则模块 API 测试（规则绑定+取号+CRUD） |
-| 2026-07-18 | [tests/mes/sales-api.test.mjs](tests/mes/sales-api.test.mjs) | 销售模块 API 测试 |
+| 2026-07-21 | [tests/modules/sales-order.test.js](tests/modules/sales-order.test.js) | 销售订单 API 测试（/gen-tests 生成，30 用例含状态机守卫） |
+| 2026-07-21 | [tests/modules/codeRule.test.js](tests/modules/codeRule.test.js) | 编码规则模块 API 测试（规则绑定+取号+CRUD） |
+| 2026-07-18 | [tests/modules/sales-api.test.js](tests/modules/sales-api.test.js) | 销售模块 API 测试 |
 | 2026-07-16 | [tests/mes/purchase.test.js](tests/mes/purchase.test.js) | 采购模块 API 测试 |
 | 2026-07-16 | [tests/mes/manufacturing.test.js](tests/mes/manufacturing.test.js) | 生产制造模块 API 测试 |
 | - | [tests/mes/basic.test.js](tests/mes/basic.test.js) | 基础数据 API 测试 |

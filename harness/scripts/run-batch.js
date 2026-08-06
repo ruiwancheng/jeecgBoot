@@ -38,8 +38,10 @@ const MODULE_BATCHES = {
   ],
   'basic-2': [
     'basic-material', 'basic-otherStockOut', 'basic-supplier', 'basic.test', 'batch-freeze',
-    'batch-global-switch', 'batch-manual-e2e', 'finance-invoice-crud', 'finance-invoice',
+    'batch-global-switch', 'batch-manual-e2e', 'codeRule',
+    'finance-invoice-crud', 'finance-invoice',
     'finance-others', 'finance-voucher-crud', 'finance.test',
+    'sales-api', 'sales-order',
   ],
   'extended': [
     'manufacturing-crud', 'manufacturing.test', 'misc-extra', 'other-stock-in',
