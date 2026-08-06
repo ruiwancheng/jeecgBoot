@@ -32,7 +32,7 @@ description: 自有命令 — 质量门控：提交前执行三层检查（现�
 
 **Step 2 — 安全扫描：**
 - 对 `git diff` 运行安全专项检查清单
-- 检测：`@RequiresPermissions` 缺失/移除、SQL 拼接、硬编码密钥、`@Transactional` 移除
+- 检测项详见 `@rules/code-style.md` 安全规范章节（@RequiresPermissions 缺失/移除、SQL 拼接、硬编码密钥、@Transactional 移除等）
 - 输出 P0/P1 发现数量和建议修复方案
 
 **Step 3 — API 验证：**

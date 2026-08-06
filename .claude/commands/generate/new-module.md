@@ -40,12 +40,12 @@ AI 输出：
 
 用户确认后，AI 一次性生成所有文件（不复用探索过程）。生成规则：
 
-- Entity: 复制模板文件结构，替换表名/字段
-- Mapper: 复制 `selectDeletedByCode` + `resurrect` 骨架
+- Entity: 复制模板文件结构，替换表名/字段（详见 `@rules/code-style.md` 后端优先原则）
+- Mapper: 复制 `selectDeletedByCode` + `resurrect` 骨架（详见 `@rules/code-style.md` 软删除+借尸还魂模式）
 - Service: 主子表复制 `saveWithItems/updateWithItems/removeWithItems` 模式
-- Controller: 9 个标准端点 + `@RequiresPermissions`
-- SQL: 模板建表 + DELETE+INSERT 字典 + INSERT IGNORE 角色绑定
-- 前端: 模板 index.vue + Drawer.vue + api.ts + data.ts
+- Controller: 标准端点（见 `gen-tests-rules.json` rules.apiStandard 数组）+ 鉴权注解（详见 `@rules/code-style.md` 安全规范）
+- SQL: 模板建表 + DELETE+INSERT 字典 + INSERT IGNORE 角色绑定（详见 `@rules/code-style.md` SQL迁移脚本规范）
+- 前端: 模板 index.vue + Drawer.vue + api.ts + data.ts（详见 `@rules/code-style.md` Vue/TypeScript 章节）
 
 ### 4. 注册
 

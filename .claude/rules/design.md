@@ -1,3 +1,12 @@
+---
+name: design
+version: 1.0.0
+globs:
+  - 'jeecg-boot/jeecg-boot-module/project-mes/**/*.java'
+  - 'harness/tests/**/*.js'
+  - 'harness/tests/**/*.ts'
+---
+
 # 业务设计规则
 
 > MES 批次/库存/单据领域的设计规范（2026-08-01 起从 learnings 沉淀）

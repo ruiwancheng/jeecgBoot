@@ -13,18 +13,28 @@ version: 1.0.0
 - `.claude/settings.json` — 项目级设置
 - `.claude/features.json` — 功能模块清单
 
-### 命令 Commands（48 个）
-`admin/admin`, `dev/brainstorm`, `dev/business-description`, `dev/plan`, `dev/done`, `dev/debug`, `dev/verify`, `dev/finish`, `dev/start`, `dev/new-terminal`, `dev/onboard`, `dev/chain-test`, `dev/client-start`, `dev/visual-check`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/new-project`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `generate/gen-tests`, `generate/new-module`, `admin/list-projects`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-frontend`, `learn/evolve`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `util/capability-check`, `util/compat-check`, `orca/delegate`, `quality/gate`, `quality/deep-inspect`, `quality/dashboard`, `quality/deploy-verify`, `quality/pre-commit-gate`, `quality/tiequan-audit`
+### 命令 Commands（56 个）
+`admin/admin`, `admin/list-projects`, `admin/new-project`, `admin/restart-backend`, `admin/setup`, `admin/switch-project`, `dev/brainstorm`, `dev/business-description`, `dev/chain-test`, `dev/client-start`, `dev/debug`, `dev/decompose`, `dev/done`, `dev/finish`, `dev/new-terminal`, `dev/onboard`, `dev/plan`, `dev/start`, `dev/verify`, `dev/visual-check`, `dev/vue-audit`, `dev/vue-migrate`, `review/review`, `review/harness-check`, `review/architecture-report`, `review/dead-code-check`, `admin/list-projects`, `learn/session-wrap`, `learn/learn`, `learn/auto-learn`, `learn/evolve`, `generate/gen-tests`, `generate/new-module`, `test/add-tests`, `test/coverage`, `test/eagle-eye-report`, `test/test-all`, `test/test-api`, `test/test-e2e`, `test/test-environment`, `test/test-frontend`, `test/test-regression`, `git/commit`, `git/pr`, `util/cleanup-context`, `util/token-usage`, `util/anti-pattern`, `util/update-graph`, `util/capability-check`, `util/compat-check`, `orca/delegate`, `quality/dashboard`, `quality/deep-inspect`, `quality/deploy-verify`, `quality/gate`, `quality/pre-commit-gate`, `quality/pre-vue-audit`, `quality/tiequan-audit`
 
 > 死命令治理判据（来源：2026-07-28 /test-loop 移除）：4 问全中=死命令，应删除并清理引用——①项目无可跑资产（如测试命令但无测试套件）②技能描述技术栈与项目不匹配 ③无任何 hook/CI/其它命令引用 ④近期开发从未触发。/test-loop 即因此移除。
+>
+> 2026-08-06 更新：56 个命令（原 48）。新增：`dev/decompose`, `dev/vue-audit`, `dev/vue-migrate`, `test/add-tests`, `test/coverage`, `test/eagle-eye-report`, `test/test-e2e`, `test/test-environment`, `test/test-regression`。SKILL.md 自检计数与实际同步。
 
-### 规则 Rules（14 个 + 1 配置）
-`audit-classification`, `boundary`, `code-style`, `debugging`, `deploy-quality-gate`, `engineering-artifacts`, `frontend`, `hook-authoring`, `karpathy-guidelines`, `quality-gates`, `skill-command-boundary`, `testing`, `tiequan-reports`, `workflow` + `gen-tests-rules.json`（配置）
+### 规则 Rules（16 个 + 1 配置）
+`audit-classification`, `boundary`, `code-style`, `debugging`, `deploy-quality-gate`, `design`, `engineering-artifacts`, `frontend`, `hook-authoring`, `karpathy-guidelines`, `quality-gates`, `script-safety`, `skill-command-boundary`, `testing`, `tiequan-reports`, `workflow` + `gen-tests-rules.json`（配置）
 
 > 2026-07-28 合并：file-scope+data-scope→`boundary`；backend-first/security/no-platform-modify/override-mechanism→`code-style`（原文件在 rules/.archived/）
+>
+> 2026-08-06 更新：16 个规则（原 14）。新增：`design`, `script-safety`。SKILL.md 自检计数与实际同步。
 
-### 钩子 Hooks（10 个）
-`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-tool-failure`, `session-end`, `pre-plan-check`, `orca-setup`, `pre-deploy-check`, `_os-detect`（共享 OS 检测工具）
+### 钩子 Hooks（10 个注册 + 2 个工具脚本 = 12 个 .sh）
+**注册 Hooks（10 个，出现在 settings.json）**：`pre-write-check`, `pre-commit-check`, `block-dangerous`, `session-start`, `post-merge-check`, `post-tool-failure`, `session-end`, `pre-plan-check`, `pre-vue-audit`, `pre-deploy-check`
+
+**工具脚本（2 个，非注册 hook）**：
+- `_os-detect.sh` — 共享 OS 检测工具（被其他 hook source）
+- `orca-setup.sh` — Orca 集成工具脚本
+
+> 2026-08-06 更新：12 个 .sh 脚本（原声明 10）。SKILL.md 自检计数与实际同步，区分注册 hook vs 工具脚本。
 
 ### 其他
 - `.claude/memory/progress.md` — 项目进度记录

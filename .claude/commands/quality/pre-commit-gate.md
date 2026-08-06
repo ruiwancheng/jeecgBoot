@@ -29,11 +29,8 @@ skip 级 → 直接 PASS，不继续。
 
 ### 3. 安全检查
 
-复用 pre-commit-check.sh 的逻辑，Orca agent 执行：
-- @RequiresPermissions 缺失检查
-- 硬编码密码/密钥检测
-- SQL 字符串拼接检测
-- Mapper XML ${} 非参数化检测
+复用 pre-commit-check.sh 的逻辑，Orca agent 执行。
+- 检测项详见 `@rules/code-style.md` 安全规范章节：@RequiresPermissions 缺失、硬编码密码/密钥、SQL 字符串拼接、Mapper XML ${} 非参数化等。
 
 ### 4. 视觉门控（非 skip 级）
 

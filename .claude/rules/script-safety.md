@@ -1,3 +1,13 @@
+---
+name: script-safety
+version: 1.0.0
+globs:
+  - '.claude/hooks/**/*.sh'
+  - 'harness/scripts/**/*.sh'
+  - 'harness/scripts/**/*.py'
+  - 'harness/scripts/**/*.js'
+---
+
 # 脚本安全规则
 
 > 防止批量脚本破坏仓库（2026-08-02 P0 清理灾难教训）
