@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "MES regression recovery 2026-08-04",
+  "name": "MES regression recovery 2026-08-04 (FULL: 30 slices + chain)",
   "report_path": "hermes/eagle-eye/reports/${date}/resilient-regression-recovery.md",
   "environment": {
     "HARNESS_BASE": "http://127.0.0.1:8080/jeecg-boot",
@@ -380,6 +380,135 @@
       "requires": [
         "backend",
         "frontend"
+      ]
+    },
+    {
+      "id": "module-basic-1",
+      "name": "Module API 测试 batch-1: basic-accountSubject ~ basic-location (12 个)",
+      "kind": "module",
+      "cwd": ".",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "module",
+        "basic-1"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend"
+      ]
+    },
+    {
+      "id": "module-basic-2",
+      "name": "Module API 测试 batch-2: basic-material ~ finance (12 个)",
+      "kind": "module",
+      "cwd": ".",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "module",
+        "basic-2"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend"
+      ]
+    },
+    {
+      "id": "module-extended",
+      "name": "Module API 测试 batch-3: manufacturing ~ sales (12 个)",
+      "kind": "module",
+      "cwd": ".",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "module",
+        "extended"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend"
+      ]
+    },
+    {
+      "id": "module-final",
+      "name": "Module API 测试 batch-4: sales-outbound ~ warehouse-ledger (9 个)",
+      "kind": "module",
+      "cwd": ".",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "module",
+        "final"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend"
+      ]
+    },
+    {
+      "id": "e2e-basic",
+      "name": "E2E batch-1: basic-* (16 个 spec)",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "e2e",
+        "basic"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend",
+        "frontend"
+      ]
+    },
+    {
+      "id": "e2e-biz",
+      "name": "E2E batch-2: batch-* + commonSetting + finance + manufacturing + materialBatch (8 个 spec)",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "e2e",
+        "biz"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend",
+        "frontend"
+      ]
+    },
+    {
+      "id": "e2e-purchase-sales",
+      "name": "E2E batch-3: purchase + sales + stocktake + traceability (11 个 spec)",
+      "kind": "e2e",
+      "cwd": "harness",
+      "command": [
+        "node",
+        "harness/scripts/run-batch.js",
+        "e2e",
+        "purchase-sales"
+      ],
+      "timeout_seconds": 1800,
+      "requires": [
+        "backend",
+        "frontend"
+      ]
+    },
+    {
+      "id": "concurrent-audit",
+      "name": "并发安全：audit 幂等性测试",
+      "kind": "concurrent",
+      "cwd": "harness",
+      "command": [
+        "node",
+        "tests/concurrent/audit-concurrent.test.js"
+      ],
+      "timeout_seconds": 600,
+      "requires": [
+        "backend"
       ]
     }
   ]
