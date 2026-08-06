@@ -18,23 +18,14 @@
 
 ### 2.1 一键运行（推荐）
 
-**Linux / macOS**：
+**Linux / macOS / Windows**（统一入口）：
 ```bash
 cd harness
-./scripts/run-regression.sh           # 全量（API + E2E）
-./scripts/run-regression.sh api       # 仅 API
-./scripts/run-regression.sh e2e       # 仅 E2E
-./scripts/run-regression.sh smoke     # 仅冒烟
+python3 ../harness/scripts/resilient_regression.py start \
+  --manifest harness/regression/recovery-plan.json
 ```
 
-**Windows**：
-```cmd
-cd harness
-scripts\run-regression.bat
-scripts\run-regression.bat api
-scripts\run-regression.bat e2e
-scripts\run-regression.bat smoke
-```
+> 自 2026-08-06 起，原一键 shell/bat 脚本已废弃（死代码，仅 1 个 git commit，runner 端无引用）。统一改用 `resilient_regression.py` 走 manifest 调度（自带 crash guard + checkpoint + 报告生成）。
 
 ### 2.2 单文件运行
 

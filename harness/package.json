@@ -10,10 +10,9 @@
   "scripts": {
     "test": "npm run test:api",
     "test:api": "node tests/modules/basic-customerAddress.test.js && node tests/modules/basic-customerContact.test.js && node tests/modules/basic-customerFollowUp.test.js && node tests/modules/basic-customerPrice.test.js && node tests/modules/basic-batchInventory.test.js && node tests/modules/basic-batchLedger.test.js && node tests/modules/basic-batchTraceability.test.js && node tests/modules/basic-otherStockOut.test.js && node tests/modules/basic-accountSubject.test.js",
-    "test:e2e": "playwright test e2e/mes/basic-*.spec.ts --config e2e/playwright.config.ts",
+    "test:e2e": "playwright test e2e/mes/basic-*.spec.ts --config harness/playwright.config.ts",
     "test:chains": "node tests/chains/sales-receipt-flow.test.js",
-    "test:smoke": "playwright test e2e/smoke/ --config e2e/playwright.config.ts",
-    "test:all": "node scripts/run-regression.sh"
+    "test:smoke": "playwright test e2e/smoke/ --config harness/playwright.config.ts"
   },
   "keywords": [],
   "author": "",
