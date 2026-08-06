@@ -365,7 +365,9 @@ function renderTemplate(template, vars) {
 // ─────────────────────────────────────────────
 
 function generate(runDirArg) {
-  const runDir = path.join(RUNS_DIR, runDirArg);
+  // Phase 4 / 建议 6 bugfix：runDirArg 可能是绝对路径或 run-id
+  // Python runner 用 subprocess 传绝对路径；CLI 用户可能传 run-id
+  const runDir = path.isAbsolute(runDirArg) ? runDirArg : path.join(RUNS_DIR, runDirArg);
   if (!fs.existsSync(runDir)) {
     console.error(`Run directory not found: ${runDir}`);
     process.exit(1);
