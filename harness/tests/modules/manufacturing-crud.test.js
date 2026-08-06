@@ -103,10 +103,6 @@ async function testCompletion() {
   const whList = await api('GET', '/mes/basic/warehouse/list?pageNo=1&pageSize=1');
   const warehouseId = whList.result?.records?.[0]?.id || '';
   // productionOrder 可选（如有）；省略 productionOrderId 试一下（后端允许明细行携带）
-  const id = await addAndGetId(PREFIX, {
-    code: 'CR-' + TS, productId, warehouseId, status: '1', remark: 'slice-10',
-    items: [{ lineNo: 1, materialId: productId, planQty: 10, receiptQty: 10 }]
-  });
   // update-begin---author:pi---date:2026-08-07---for: Slice J — completion add 需要 productId/warehouseId/productionOrderId（先 add order 取 id）-----------
   // 先 add 一个 production order 作为 completion 的前置
   const orderList2 = await api('GET', '/mes/manufacturing/order/list?pageNo=1&pageSize=1');
