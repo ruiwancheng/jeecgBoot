@@ -60,8 +60,12 @@ test('切片B：通用设置页面端到端验证', async ({ page }) => {
       !e.includes('ERR_CONNECTION_TIMED_OUT') &&
       !e.includes('ERR_CONNECTION_REFUSED') &&
       !e.includes('ERR_NAME_NOT_RESOLVED') &&
-      !e.includes('net::')
+      !e.includes('net::') &&
       // update-end---author:ruiwancheng---date:2026-08-02---for: P2-3 ERR_CONNECTION_TIMED_OUT 已知非致命-----------
+      // update-begin---author:pi---date:2026-08-06---for: WebSocket 握手失败（token 过期/缺失时 jeecg 返回 200 而非 101）非页面级致命错误-----------
+      !e.includes('WebSocket connection') &&
+      !e.includes('websocket/')
+      // update-end---author:pi---date:2026-08-06---for: WebSocket 握手失败非致命-----------
   );
   console.log('  · console errors:', fatal.length === 0 ? '无' : fatal.join('\n  · '));
   expect(fatal.length, '不应有运行时错误').toBe(0);

@@ -4,26 +4,28 @@ import { dbCleanup } from '../../tests/helpers/fixtures';
 
 let accessToken: string;
 
-/** 建测试仓+料+期初库存，返回 {api, whId, matId, matCode, inDocId} */
+/** 建测试料+期初库存（使用现有仓库，避免 add 仓库后 dropdown 找不到新仓库），返回 {api, whId, matId, matCode, inDocId} */
 async function setupFixture(suffix: string) {
   const h = { 'Content-Type': 'application/json', 'X-Access-Token': accessToken };
   const api = async (method: string, path: string, body?: any) => {
     const res = await fetch(`${API_BASE}${path}`, { method, headers: h, body: body ? JSON.stringify(body) : undefined });
     return res.json();
   };
-  await api('POST', '/mes/basic/warehouse/add', { code: `WH_STE_${suffix}`, name: '盘点E2E仓', status: 1 });
+  // 使用 dev DB 现有仓库（修复：新建仓库在 UI dropdown 里可能因缓存/权限不可见）
+  const wh = (await api('GET', `/mes/basic/warehouse/list?pageNo=1&pageSize=5`)).result.records[0];
+  if (!wh) throw new Error('dev DB 无可用仓库，请先 seed c_mes_warehouse');
   await api('POST', '/mes/basic/material/add', { code: `MAT-STE-${suffix}`, name: '盘点E2E料', type: '1' });
-  const wh = (await api('GET', `/mes/basic/warehouse/list?pageNo=1&pageSize=5&code=WH_STE_${suffix}`)).result.records[0];
   const mat = (await api('GET', `/mes/basic/material/list?pageNo=1&pageSize=5&code=MAT-STE-${suffix}`)).result.records[0];
   const inCode = `STEIN_${suffix}`;
   await api('POST', '/mes/stock/otherIn/add', { code: inCode, inType: '2', warehouseId: wh.id, reason: '期初', stockDate: '2026-07-29', items: [{ materialId: mat.id, qty: 20, unitCost: 8 }] });
   const inDoc = (await api('GET', `/mes/stock/otherIn/list?pageNo=1&pageSize=5&code=${inCode}`)).result.records[0];
   await api('PUT', `/mes/stock/otherIn/audit?id=${inDoc.id}`);
-  return { api, whId: wh.id, matId: mat.id, matCode: mat.code, inDocId: inDoc.id };
+  return { api, whId: wh.id, whCode: wh.code, matId: mat.id, matCode: mat.code, inDocId: inDoc.id };
 }
 
 async function cleanup(fx: any, pdCode: string) {
-  const { api, whId, matId, inDocId } = fx;
+  const { api, matId, inDocId } = fx;
+  // 注意：whId 是 dev DB 现有仓库，不能删
   const pd = (await api('GET', `/mes/stock/stocktake/list?pageNo=1&pageSize=5&code=${pdCode}`)).result.records[0];
   if (pd) await api('DELETE', `/mes/stock/stocktake/delete?id=${pd.id}`);
   // 调整单（盘盈/盘亏）清理
@@ -37,7 +39,7 @@ async function cleanup(fx: any, pdCode: string) {
   await api('PUT', `/mes/stock/otherIn/unaudit?id=${inDocId}`);
   await api('DELETE', `/mes/stock/otherIn/delete?id=${inDocId}`);
   await api('DELETE', `/mes/basic/material/delete?id=${matId}`);
-  await api('DELETE', `/mes/basic/warehouse/delete?id=${whId}`);
+  // 不删 whId（dev DB 共享资源）
 }
 
 test.describe('盘点单（黄金模板重构版）', () => {
@@ -56,7 +58,7 @@ test.describe('盘点单（黄金模板重构版）', () => {
     await drawer.locator('.ant-select').filter({ hasText: '请选择仓库' }).first().locator('.ant-select-selector').click();
     await page.waitForSelector('.ant-select-dropdown:visible .ant-select-item-option', { timeout: 5000 });
     await page.waitForTimeout(400);
-    await page.locator('.ant-select-dropdown:visible .ant-select-item-option', { hasText: `WH_STE_${suffix}` }).first().click({ force: true });
+    await page.locator('.ant-select-dropdown:visible .ant-select-item-option', { hasText: fx.whCode }).first().click({ force: true });
     await drawer.getByRole('button', { name: '确 认' }).click();
     await page.waitForTimeout(2000);
 

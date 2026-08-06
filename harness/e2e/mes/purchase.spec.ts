@@ -10,13 +10,19 @@ test.describe('采购申请', () => {
   test.beforeEach(async ({ page }) => { await loginViaApi(page); });
 
   test('E2E-01: 页面加载 + 列表渲染', async ({ page }) => {
+    const responses: number[] = [];
+    page.on('response', (r) => {
+      if (r.url().includes('/mes/') && !r.url().includes('/websocket/')) {
+        responses.push(r.status());
+      }
+    });
     await page.goto(`${BASE_URL}/project/mes/purchase/apply`);
     await page.waitForTimeout(3000);
-    // 验证页面不报白屏/500
+    // 验证页面有内容 + 后端 API 不报 500/404（避免 .toContain('500') 太严匹配到 CSS/链接文本）
     const hasContent = await page.locator('body').innerText();
-    expect(hasContent.length).toBeGreaterThan(0);
-    expect(hasContent).not.toContain('500');
-    expect(hasContent).not.toContain('404');
+    expect(hasContent.length, '页面 body 不应为空').toBeGreaterThan(0);
+    const serverErrors = responses.filter((s) => s === 500 || s === 404);
+    expect(serverErrors, `后端不应返回 500/404，实际: ${JSON.stringify(responses)}`).toEqual([]);
   });
 
   test('E2E-02: 新增按钮可点击 (R001)', async ({ page }) => {

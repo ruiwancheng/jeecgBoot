@@ -26,10 +26,23 @@ const DATA_ROW = '.ant-table-tbody tr.ant-table-row';
 const HEADER_TH = '.ant-table-thead th';
 
 test.describe('MES 批次追溯 V10.0.3 批次级 E2E', () => {
-  test.beforeEach(async ({ page }) => {
+  // 动态取一个 dev DB 真实存在的批次号（避免硬编码 PC-20260802-001 在 dev DB 不存在）
+  let KNOWN_BATCH_NO = '';
+  test.beforeEach(async ({ page, request }) => {
     // admin 权限足够（mes_admin 在某些 UI 路径会跳登录页）
     await loginViaApi(page, PAGE_PATH);
     await waitForTableReady(page);
+    if (!KNOWN_BATCH_NO) {
+      const login = await request.post('http://127.0.0.1:8080/jeecg-boot/sys/login', {
+        data: { username: 'admin', password: '123456', captcha: '1', checkKey: 'x' },
+      });
+      const token = (await login.json()).result.token;
+      const list = await request.get('http://127.0.0.1:8080/jeecg-boot/mes/batch/master/list?pageNo=1&pageSize=1', {
+        headers: { 'X-Access-Token': token },
+      });
+      const records = (await list.json()).result?.records || [];
+      KNOWN_BATCH_NO = records[0]?.batchNo || '';
+    }
   });
 
   // ============================================================
@@ -55,12 +68,14 @@ test.describe('MES 批次追溯 V10.0.3 批次级 E2E', () => {
   });
 
   // ============================================================
-  // 2. 搜索批次号
+  // 2. 搜索批次号（动态取 dev DB 真实存在的批次号）
   // ============================================================
-  test('2. 搜索批次号 PC-20260802-001', async ({ page }) => {
+  test('2. 搜索批次号', async ({ page }) => {
+    test.skip(!KNOWN_BATCH_NO, 'dev DB 无批次数据，请先 seed c_mes_batch');
+
     const batchNoInput = page.locator('input[placeholder="请输入批次号"]').first();
     await expect(batchNoInput).toBeVisible({ timeout: 5000 });
-    await batchNoInput.fill('PC-20260802-001');
+    await batchNoInput.fill(KNOWN_BATCH_NO);
 
     await page.locator('button:has-text("查询")').first().click();
     await waitForTableReady(page);
@@ -68,11 +83,11 @@ test.describe('MES 批次追溯 V10.0.3 批次级 E2E', () => {
     const rows = page.locator(DATA_ROW);
     await rows.first().waitFor({ state: 'visible', timeout: 10000 });
     const count = await rows.count();
-    expect(count, '搜索结果应 >= 1 条').toBeGreaterThanOrEqual(1);
+    expect(count, `搜索结果应 >= 1 条（搜索 ${KNOWN_BATCH_NO}）`).toBeGreaterThanOrEqual(1);
 
     // 第一行第一个 td = batchNo
     const firstBatchNo = await rows.first().locator('td').first().textContent();
-    expect(firstBatchNo?.trim(), `第一行 batchNo 应为 PC-20260802-001`).toBe('PC-20260802-001');
+    expect(firstBatchNo?.trim(), `第一行 batchNo 应为 ${KNOWN_BATCH_NO}`).toBe(KNOWN_BATCH_NO);
   });
 
   // ============================================================
@@ -105,21 +120,21 @@ test.describe('MES 批次追溯 V10.0.3 批次级 E2E', () => {
   });
 
   // ============================================================
-  // 4. 点击"查看追溯"打开抽屉
+  // 4. 点击"查看追溯"打开抽屉（动态取首个批次行）
   // ============================================================
   test('4. 点击查看追溯 → 抽屉显示口径提示 + 流水表', async ({ page }) => {
-    // 优先点击有流水的批次（PC-20260802-001 的生产批次01 或 02）以看到完整内容
-    // 退而求其次：取第一行
+    test.skip(!KNOWN_BATCH_NO, 'dev DB 无批次数据，请先 seed c_mes_batch');
+
     const candidates = page.locator(`${DATA_ROW} a:has-text("查看追溯"), ${DATA_ROW} button:has-text("查看追溯")`);
     await candidates.first().waitFor({ state: 'visible', timeout: 10000 });
 
-    // 尝试找 PC-20260802-001 对应的查看追溯链接
+    // 优先点击 KNOWN_BATCH_NO 对应行，否则取第一行
     let clicked = false;
-    const pcRow = page.locator(DATA_ROW).filter({ hasText: 'PC-20260802-001' }).first();
-    if (await pcRow.count() > 0) {
-      const pcLink = pcRow.locator('a:has-text("查看追溯"), button:has-text("查看追溯")').first();
-      if (await pcLink.count() > 0) {
-        await pcLink.click();
+    const knownRow = page.locator(DATA_ROW).filter({ hasText: KNOWN_BATCH_NO }).first();
+    if (await knownRow.count() > 0) {
+      const knownLink = knownRow.locator('a:has-text("查看追溯"), button:has-text("查看追溯")').first();
+      if (await knownLink.count() > 0) {
+        await knownLink.click();
         clicked = true;
       }
     }
