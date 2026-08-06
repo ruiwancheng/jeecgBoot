@@ -433,7 +433,7 @@ function generate(runDirArg) {
   let successCount = 0, failCount = 0;
   for (const pathTemplate of allPaths) {
     const resolved = pathTemplate.replace(/\$\{date\}/g, date);
-    const absolute = path.isAbsolute(resolved) ? resolved : path.join(PROJECT, resolved);
+    const absolute = path.isAbsolute(resolved) ? resolved : path.join(REPO, resolved);
     try {
       fs.mkdirSync(path.dirname(absolute), { recursive: true });
       fs.writeFileSync(absolute, report);
