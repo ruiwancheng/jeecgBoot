@@ -126,13 +126,11 @@ function q(sql) { return sqlFileCleanup(sql); }
   // 物料 batchEnabled 回 0
   await c.api('PUT', '/mes/basic/material/edit', { ...matA, batchEnabled: 0 });
   // DB 清理（仅本地库有效）
+  // 注意：source_bill_no 只在 c_mes_batch_ledger 台账表，inventory/batch/inventory_ledger/c_mes_batch 主表都没有该列
   q(`
-    DELETE FROM c_mes_batch_inventory_ledger WHERE source_bill_no LIKE 'PR_D_%';
-    DELETE FROM c_mes_batch_inventory WHERE source_bill_no LIKE 'PR_D_%';
-    DELETE FROM c_mes_batch WHERE source_bill_no LIKE 'PR_D_%';
+    DELETE FROM c_mes_batch_ledger WHERE source_bill_no LIKE 'PR_D_%';
     DELETE FROM c_mes_purchase_receipt_item WHERE material_id='${item.materialId}';
     DELETE FROM c_mes_purchase_receipt WHERE code LIKE 'PR_D_%';
-    DELETE FROM c_mes_inventory_ledger WHERE source_bill_no LIKE 'PR_D_%';
   `);
   console.log('  (DB 清理已尝试，本地库才生效)');
 
