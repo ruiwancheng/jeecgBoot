@@ -214,7 +214,7 @@ function matchIssuesForSlice(testNames, issueBySpec) {
   if (matched.length === 0) {
     return { reproduction: '', page_path: '', matched_specs: [] };
   }
-  // 格式化输出：按 spec 分组列出所有复现步骤 + 页面路径
+  // 格式化输出：按 spec 分组列出所有复现步骤 + 页面路径 + 问题点
   const lines = [];
   for (const specKey of [...new Set(matched)]) {
     const issues = issueBySpec[specKey] || [];
@@ -223,9 +223,16 @@ function matchIssuesForSlice(testNames, issueBySpec) {
       const loc = issue.code_location || '';
       const title = issue.title || '';
       const reprod = issue.reproduction || '(无)';
+      const problem = issue.actual_error || '(无)';
       lines.push(`- 测试位置：\`${loc}\`${title ? ` 标题：${title}` : ''}`);
-      lines.push(`  复现步骤：`);
+      // 1. 操作步骤
+      lines.push(`  操作步骤：`);
       for (const line of reprod.split('\n')) {
+        lines.push(`    ${line}`);
+      }
+      // 2. 问题点（actual_error：断言/异常等具体失败信息）
+      lines.push(`  问题点：`);
+      for (const line of problem.split('\n')) {
         lines.push(`    ${line}`);
       }
     }
