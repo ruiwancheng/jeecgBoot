@@ -35,8 +35,10 @@ async function setupSupplier() {
   const code = 'SLICE11_SUP_' + TS;
   const add = await api('POST', '/mes/basic/supplier/add', { code, name: 'slice-11 供应商', status: 1 });
   if (add.code !== 200) return '';
-  const list = await api('GET', '/mes/basic/supplier/list?pageNo=1&pageSize=50');
-  return list.result?.records?.find(x => x.code === code)?.id || '';
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — 用 code 过滤查询（dev DB 共享资源 pageSize=50 找不到）-----------
+  const list = await api('GET', '/mes/basic/supplier/list?pageNo=1&pageSize=10&code=' + encodeURIComponent(code));
+  return list.result?.records?.[0]?.id || '';
+  // update-end---author:pi---date:2026-08-07---for: Slice J — 用 code 过滤查询-----------
 }
 
 async function run() {
@@ -48,12 +50,20 @@ async function run() {
   const PREFIX = '/mes/purchase/order';
 
   // 1. add
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — purchase order add 需要 items 订单行（至少 1 行）-----------
+  const matList = await api('GET', '/mes/basic/material/list?pageNo=1&pageSize=1');
+  const materialId = matList.result?.records?.[0]?.id || '';
   const add = await api('POST', `${PREFIX}/add`, {
     code: 'PO-' + TS, supplierId, orderDate: '2026-08-06',
-    status: '1', remark: 'slice-11 auto'
+    status: '1', remark: 'slice-11 auto',
+    items: [{ lineNo: 1, materialId, quantity: 10, unitPrice: 5, amount: 50, taxRate: 0.13 }]
   });
+  // update-end---author:pi---date:2026-08-07---for: Slice J — purchase order add 需要 items 订单行-----------
   ass(add.code === 200, '1.1 add: ' + add.message);
-  const id = add.result;
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — JeecgBoot add 不返回 id，用 list 反查-----------
+  const idList = await api('GET', `${PREFIX}/list?pageNo=1&pageSize=10`);
+  const id = idList.result?.records?.find(r => r.code === 'PO-' + TS)?.id || '';
+  // update-end---author:pi---date:2026-08-07---for: Slice J — JeecgBoot add 不返回 id，用 list 反查-----------
 
   // 2. queryById (新增覆盖)
   if (id) {
@@ -63,7 +73,14 @@ async function run() {
 
   // 3. edit
   if (id) {
-    const edit = await api('PUT', `${PREFIX}/edit`, { id, remark: 'slice-11 edited' });
+    // update-begin---author:pi---date:2026-08-07---for: Slice J — purchase order edit 需要带 code + supplierId + items 必填字段（dev DB 共享）-----------
+    const matList2 = await api('GET', '/mes/basic/material/list?pageNo=1&pageSize=1');
+    const materialId2 = matList2.result?.records?.[0]?.id || '';
+    const edit = await api('PUT', `${PREFIX}/edit`, {
+      id, code: 'PO-' + TS, supplierId, remark: 'slice-11 edited',
+      items: [{ lineNo: 1, materialId: materialId2, quantity: 20, unitPrice: 5, amount: 100, taxRate: 0.13 }]
+    });
+    // update-end---author:pi---date:2026-08-07---for: Slice J — purchase order edit 需要带 code + supplierId + items-----------
     ass(edit.code === 200, '3.1 edit: ' + edit.message);
   }
 
