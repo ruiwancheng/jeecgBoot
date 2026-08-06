@@ -325,11 +325,23 @@ function parseIssueMd(filePath) {
 }
 
 function extractSection(txt, header) {
-  const re = new RegExp(`## ${header}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`, 'm');
-  const m = txt.match(re);
-  if (!m) return '';
-  // 去掉 markdown 围栏
-  return m[1].replace(/```[a-z]*\n/g, '').replace(/```\n?/g, '').trim().split('\n').slice(0, 8).join('\n');
+  // 按 `## ` 分割 section（split 比正则更可靠，避免贪婪吞换行）
+  const sections = txt.split(/^## /m);
+  for (const s of sections) {
+    const firstLine = s.split('\n')[0];
+    // firstLine 可能是原标题如 "复现步骤" 或包含 BOM 的变体
+    if (firstLine.trim() === header || firstLine.includes(header)) {
+      // 去掉 markdown 围栏 + 头尾空白
+      return s.substring(firstLine.length)
+        .replace(/```[a-z]*\n/g, '')
+        .replace(/```\n?/g, '')
+        .trim()
+        .split('\n')
+        .slice(0, 12)
+        .join('\n');
+    }
+  }
+  return '';
 }
 
 function issueReviewSummary(date) {
