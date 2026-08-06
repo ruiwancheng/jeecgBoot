@@ -396,3 +396,59 @@ if (orderRef) {
 详见 `learnings/2026-07-30-dict-text-only-on-list.md`。
 
 //update-end---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月数据库/SQL 9 条 learnings 到 code-style.md---
+
+## 变量重构与重命名规范（refactor-full-grep-variables）
+
+**触发条件：** 任何 "rename variable X → Y" 类重构（PROJECT → REPO、PATHS → HARNESS_PATHS、etc.）。
+
+**核心规则：不要相信"我看了一遍"** —— 重构时漏改 1 行 = P0 bug。
+
+**强制 grep 验证：**
+```bash
+# 重构后必须跑，全文件 grep 验证无残留
+grep -rn "\bOLD_VAR\b" harness/ jeecgboot-vue3/
+grep -rn "\bNEW_VAR\b" harness/ jeecgboot-vue3/
+
+# 输出 0 行 OLD_VAR 引用才算完成（注释除外）
+# commit message 附 grep 输出作为证据
+```
+
+**跨语言调用特别注意：**
+- Python 调 Node（subprocess）/ Node 调 Python（child_process）时，参数语义变化（绝对路径 vs run-id）也会触发同类 bug
+- 必须**双向验证**：发起方 + 接收方都跑 grep
+
+**静态 import 检查：**
+- 重构 import 后，旧变量名还在代码里被引用 → ImportError/NameError
+- 必须搜全 + 跑一次实际调用测试
+
+**实战错误示例：**
+- `regression-report.js` L436 `path.join(PROJECT, resolved)` 未改为 `path.join(REPO, resolved)` → 整个归档写入崩溃 → 用户笔记空间丢失 Node v2 报告
+- `regression-report.js` L369 `path.join(RUNS_DIR, runDirArg)` 不处理绝对路径 → Python 传绝对路径时被 path.join 双重嵌套 → "Run directory not found"
+
+**配套：** orca-review 评审 plan 时，行号会漂移——评审必须 read 完整文件确认位置，不要凭 plan 描述做判断。
+
+详见 `learnings/2026-08-06-refactor-full-grep-variables.md`。
+
+//update-end---author:evolve---date:2026-08-06---for:【/evolve 批 4】合并 8 月 5 条 learnings 到规则---
+
+## 路径配置集中化规范（paths-config-centralization）
+
+**触发条件：** 任何有多个 driver 共享同一文件系统布局的项目（harness/scripts/、tools/、infra/ 等）。
+
+**核心原则：单一真相源** —— 路径常量散落 = 改一处忘一处 = 拼写错误 = P0 bug。
+
+**标准模式：**
+1. 新建 `<root>/config/paths.json`（如 `harness/config/paths.json`）
+2. **Python + Node 对称 API**：
+   - Python: `_paths.py` 导出 `PATHS / REPO_ROOT / resolve() / load_paths() / reload_paths()`
+   - Node: `_paths.js` 导出 `PATHS / REPO / resolve() / loadPaths()`（同名同语义）
+3. **Fallback 设计**：缺文件时返回硬编码字典，保证向后兼容；环境变量 `HARNESS_PATHS_FILE` 可覆盖（CI 友好）
+4. **`${date}` 模板**：helper 函数 `resolve(path, date=None)` 自动展开，本地时间（避免 TZ 漂移）
+5. **REPO_ROOT 锚点保留**：cwd/relative_to 类用法仍需锚点，不要把所有路径都塞进 PATHS
+6. **新字段加 fallback 同步**：每次 paths.json 加字段，_paths.py / _paths.js / FALLBACK 三处必须同步更新
+7. **DETACHED runner 限制**：load_paths() 在 import 时执行，detached 长进程（>30 min）编辑 paths.json 不自动生效
+
+**实证：** 2026-08-06 Phase 3 一次完成 6 driver 切换（resilient_regression.py / regression-report.js / run-batch.js / coverage.js / regression_dashboard.py / regression_plan.py），后续 Phase 4 复用同一机制。
+
+**模板：** 见 `learnings/2026-08-06-paths-config-centralization.md`。
+

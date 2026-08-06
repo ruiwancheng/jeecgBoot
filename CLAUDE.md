@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 3 | **验证必实测** — 本地后端在线时 `/verify` 会 curl 实测 |
 | 4 | **简单精准** — 只写必要代码、不顺手改邻居、困惑就问 |
 | 5 | **信任结果不信任过程** — 功能对+数据对是最硬证据，不纠结 AI 有没有跳步。结果验证 > 过程验证 |
+| 6 | **验证派 worker 而非自己跑** — `/verify` 阶段改派 subagent worker 在独立 terminal 实测（避免主对话 context 污染 + 漏掉 P0 bug）。PI 静态检查漏掉的 4 个 P0 都是 worker 跑测发现的。 |
 
 ---
 
@@ -161,3 +162,67 @@ jeecg-boot/
 ## 会话记忆
 
 `.remember/` 目录持久化会话上下文。文件：`now.md`（当前缓冲）、`today-*.md`（每日）、`recent.md`（7 天）、`archive.md`（旧记录）、`core-memories.md`（关键事件）。`/learn` 命令结束时捕获经验写入。
+
+<!-- code-review-graph MCP tools -->
+## MCP Tools: code-review-graph
+
+**IMPORTANT: This project has a knowledge graph. ALWAYS use the
+code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
+the codebase.** The graph is faster, cheaper (fewer tokens), and gives
+you structural context (callers, dependents, test coverage) that file
+scanning cannot.
+
+### When to use graph tools FIRST
+
+- **Exploring code**: `semantic_search_nodes_tool` or `query_graph_tool` instead of Grep
+- **Understanding impact**: `get_impact_radius_tool` instead of manually tracing imports
+- **Code review**: `detect_changes_tool` + `get_review_context_tool` instead of reading entire files
+- **Finding relationships**: `query_graph_tool` with callers_of/callees_of/imports_of/tests_for
+- **Architecture questions**: `get_architecture_overview_tool` + `list_communities_tool`
+
+Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+### Key Tools
+
+| Tool | Use when |
+| ------ | ---------- |
+| `detect_changes_tool` | Reviewing code changes — gives risk-scored analysis |
+| `get_review_context_tool` | Need source snippets for review — token-efficient |
+| `get_impact_radius_tool` | Understanding blast radius of a change |
+| `get_affected_flows_tool` | Finding which execution paths are impacted |
+| `query_graph_tool` | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes_tool` | Finding functions/classes by name or keyword |
+| `get_architecture_overview_tool` | Understanding high-level codebase structure |
+| `refactor_tool` | Planning renames, finding dead code |
+
+### Workflow
+
+1. The graph auto-updates on file changes (via hooks).
+2. Use `detect_changes_tool` for code review.
+3. Use `get_affected_flows_tool` to understand impact.
+4. Use `query_graph_tool` pattern="tests_for" to check coverage.
+
+### Degradation transparency (hard requirement)
+
+**Silent degradation is forbidden.** If code-review-graph MCP tools are unavailable (not in the tool list, or calls return errors), you MUST output the following degradation notice verbatim before falling back:
+
+```
+⚠️ 降级：code-review-graph MCP 不可用 → 改用 Grep/Read（影响：失去架构感知能力，代码探索/审查质量下降。诊断：/capability-check）
+```
+
+Then proceed with the fallback. The user must see this notice.
+
+### MCP 不可用降级策略（mcp-downgrade-policy）
+
+**触发条件：** code-review-graph MCP 在当前会话不可用（不在工具列表 / capability_hash revoked / server 挂）。
+
+**处理方式：**
+1. **禁止静默降级到 Grep/Read**（违反 project instructions）
+2. **改派 Claude subagent**：用 `orca orchestration task-create + dispatch --inject` 把调研任务派给 Claude 终端（如 `term_20ea31ad-*`），Claude 自带 MCP 可深度分析
+3. **subagent 工具失败时降级**：`subagent` 工具偶尔"成功但未注入" → 改用 `orca terminal send --text "..." --enter` 直接 inject 到 Claude 终端
+4. **回报机制**：subagent 通过 `orca orchestration send --task <id> --to run:<id> --type worker_done` 回报；用 inbox 轮询拿结果
+5. **如 MCP 仍报不可用**：subagent 内部也用 Read/Grep，但报告时明确标注"MCP 调用次数 = 0（不可用）"
+
+**用户偏好（2026-08-06）：** "派发子任务可参考 orca-review 命令"——`orca terminal list` 找 Claude 终端 → `task-create` → `dispatch --inject`。
+
+详见 `learnings/2026-08-06-mcp-downgrade-policy.md`。
