@@ -33,13 +33,25 @@ async function run() {
   const PREFIX = '/mes/stock/otherIn';
 
   // 1. add (最小 payload)
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — otherStockIn add 需要 warehouseId + items 子项；add 不返回 id，用 list 反查-----------
+  const whList = await api('GET', '/mes/basic/warehouse/list?pageNo=1&pageSize=1');
+  const warehouseId = whList.result?.records?.[0]?.id || '';
+  const matList = await api('GET', '/mes/basic/material/list?pageNo=1&pageSize=1');
+  const materialId = matList.result?.records?.[0]?.id || '';
   const add = await api('POST', `${PREFIX}/add`, {
-    code: 'OSI-' + TS, inType: '1', inDate: '2026-08-06',
-    status: '1', remark: 'slice-7 auto'
+    code: 'OSI-' + TS, inType: '1', inDate: '2026-08-06', warehouseId,
+    status: '1', remark: 'slice-7 auto',
+    items: [{ lineNo: 1, materialId, qty: 5, unitCost: 10, amount: 50 }]
   });
+  if (add.code !== 200) {
+    console.log(`  ⚠️ add 失败: code=${add.code} msg=${add.message}`);
+  }
   ass(add.code === 200, '1.1 add: ' + add.message);
-  const id = add.result;
+  // list 反查 id
+  const addList = await api('GET', `${PREFIX}/list?pageNo=1&pageSize=10`);
+  const id = addList.result?.records?.find(r => r.code === 'OSI-' + TS)?.id || '';
   ass(typeof id === 'string' && id.length > 0, '1.2 add 返回 id: ' + id);
+  // update-end---author:pi---date:2026-08-07---for: Slice J — otherStockIn add 需要 warehouseId + items-----------
 
   // 2. list 查到
   const list = await api('GET', `${PREFIX}/list?pageNo=1&pageSize=1`);
@@ -65,7 +77,10 @@ async function run() {
 
   // 6. edit
   if (id) {
-    const edit = await api('PUT', `${PREFIX}/edit`, { id, remark: 'slice-7 edited' });
+    const edit = await api('PUT', `${PREFIX}/edit`, {
+      id, code: 'OSI-' + TS, inType: '1', inDate: '2026-08-06', warehouseId, remark: 'slice-7 edited',
+      items: [{ lineNo: 1, materialId, qty: 5, unitCost: 10, amount: 50 }]
+    });
     ass(edit.code === 200, '6.1 edit: ' + edit.message);
   }
 
@@ -76,9 +91,11 @@ async function run() {
   }
 
   // 8. exportXls
-  const exp = await fetch(`${PREFIX}/exportXls?pageNo=1&pageSize=1`, {
+  // update-begin---author:pi---date:2026-08-07---for: Slice J — exportXls 需要完整 URL（BASE + path）-----------
+  const exp = await fetch(`${BASE}${PREFIX}/exportXls?pageNo=1&pageSize=1`, {
     method: 'GET', headers: { 'X-Access-Token': token }
   });
+  // update-end---author:pi---date:2026-08-07---for: Slice J — exportXls 需要完整 URL-----------
   ass(exp.status === 200 || exp.status === 500, '8.1 exportXls status=' + exp.status);
 
   console.log(process.exitCode ? '\n❌ 有失败项' : '\n✅ 全部通过');
