@@ -25,7 +25,9 @@ async function run() {
   if (Array.isArray(r1.result) && r1.result.length > 0) {
     const sw = r1.result[0];
     c.check('1.3 字段 switchKey 存在', 'switchKey' in sw, `keys=${Object.keys(sw).slice(0, 5).join(',')}`);
-    c.check('1.4 字段 enabled 存在', 'enabled' in sw, `enabled=${sw.enabled}`);
+    // update-begin---author:pi---date:2026-08-07---for: Slice J — 测试期望对齐 API 实际字段（switchValue 而非 enabled）-----------
+    c.check('1.4 字段 switchValue 存在', 'switchValue' in sw, `switchValue=${sw.switchValue}`);
+    // update-end---author:pi---date:2026-08-07---for: Slice J — 测试期望对齐 API 实际字段（switchValue 而非 enabled）-----------
   } else {
     console.log('  ⚠️ 开关列表为空，跳过字段校验');
   }
@@ -40,7 +42,9 @@ async function run() {
     c.check('2.1 closeCheck 200', r2.code === 200, `code=${r2.code}`);
     c.check('2.2 返回结果对象', typeof r2.result === 'object' && r2.result !== null, `type=${typeof r2.result}`);
     if (r2.result) {
-      c.check('2.3 含 hasError 字段', 'hasError' in r2.result, `keys=${Object.keys(r2.result).join(',')}`);
+      // update-begin---author:pi---date:2026-08-07---for: Slice J — closeCheck 实际返回 canClose/errors 而非 hasError-----------
+      c.check('2.3 含 canClose 字段', 'canClose' in r2.result, `keys=${Object.keys(r2.result).join(',')}`);
+      // update-end---author:pi---date:2026-08-07---for: Slice J — closeCheck 实际返回 canClose/errors 而非 hasError-----------
     }
 
     const r2inv = await c.api('GET', `${BASE_PATH}/closeCheck?switchKey=non-existent-switch`);
