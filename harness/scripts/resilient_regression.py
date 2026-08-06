@@ -588,18 +588,24 @@ python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
 """
     local_report = ctx.run_dir / "summary.md"
     write_text_atomic(local_report, content)
-    configured = ctx.manifest.get("report_path")
-    if configured:
+    # 收集所有外部归档路径（Phase 2 / 建议 4：report_paths[] + report_mirror_paths[]）
+    configured_paths = list(ctx.manifest.get("report_paths") or [])
+    if not configured_paths and ctx.manifest.get("report_path"):
+        configured_paths = [ctx.manifest["report_path"]]  # 向后兼容
+    configured_paths.extend(ctx.manifest.get("report_mirror_paths") or [])
+    for path_template in configured_paths:
         # 支持 ${date} 模板（按当天日期归档报告，避免覆盖其他日期的报告）
-        target_str = configured.replace("${date}", datetime.now().strftime("%Y-%m-%d"))
-        target = (REPO_ROOT / target_str).resolve()
+        target_str = path_template.replace("${date}", datetime.now().strftime("%Y-%m-%d"))
+        target = Path(target_str).resolve() if Path(target_str).is_absolute() else (REPO_ROOT / target_str).resolve()
         try:
+            target.parent.mkdir(parents=True, exist_ok=True)
             write_text_atomic(target, content)
         except OSError as error:
             # Shared report delivery is best-effort. Never let a locked report file
             # terminate the runner after the durable run-local checkpoint is safe.
             delivery_error = (
-                f"{now_iso()} shared report write failed: {type(error).__name__}: {error}\n"
+                f"{now_iso()} shared report write failed: {path_template} -> {target}\n"
+                f"{type(error).__name__}: {error}\n"
                 f"local report: {local_report}\n"
             )
             try:
