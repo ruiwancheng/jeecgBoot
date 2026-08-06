@@ -542,90 +542,92 @@ def recover_interrupted_state(state: dict[str, Any]) -> None:
                 terminate_process_tree(child_pid)
 
 
-def generate_report(ctx: RunContext) -> str:
-    rows = []
+# update-begin---author:pi---date:2026-08-06---for:【REPORT-GENERATOR】Phase 4 / 建议 6 — 废弃 generate_report，统一 Node 生成---
+
+
+def _node_binary_available() -> str:
+    """查找 node 可执行文件（P1-1 修复：缺 node 时明确报错）"""
+    import shutil
+    candidate = os.environ.get("HARNESS_NODE_BIN", "node")
+    if shutil.which(candidate):
+        return candidate
+    raise FileNotFoundError(
+        f"node binary not found (HARNESS_NODE_BIN={candidate!r}). "
+        f"Install Node.js or set HARNESS_NODE_BIN env to point at it."
+    )
+
+
+def _generate_report_via_node(run_dir: Path) -> None:
+    """Phase 4 / 建议 6：调用 Node regression-report.js v2 生成报告
+
+    替代原 generate_report()。跨语言调用，best-effort：
+    - 失败不抛异常
+    - 失败信息写入 report-delivery-error.log
+    - **P1-2 修复**：subprocess 异步执行（daemon thread），不阻塞 runner 退出
+    """
+    script = Path(__file__).resolve().parent / "regression-report.js"
+
+    def _run() -> None:
+        try:
+            node_bin = _node_binary_available()
+        except FileNotFoundError as e:
+            with (run_dir / "report-delivery-error.log").open("a", encoding="utf-8") as f:
+                f.write(f"{now_iso()} {e}\n")
+            return
+        cmd = [node_bin, str(script), "--run-dir", str(run_dir)]
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                timeout=120,
+                check=False,
+            )
+            if result.returncode == 0:
+                return
+            error_log = run_dir / "report-delivery-error.log"
+            with error_log.open("a", encoding="utf-8") as f:
+                f.write(
+                    f"{now_iso()} node regression-report.js exit {result.returncode}\n"
+                    f"stdout: {result.stdout[:500]}\n"
+                    f"stderr: {result.stderr[:500]}\n"
+                )
+        except subprocess.TimeoutExpired:
+            with (run_dir / "report-delivery-error.log").open("a", encoding="utf-8") as f:
+                f.write(f"{now_iso()} node regression-report.js timeout (>120s)\n")
+        except Exception as e:
+            with (run_dir / "report-delivery-error.log").open("a", encoding="utf-8") as f:
+                f.write(f"{now_iso()} node regression-report.js error: {type(e).__name__}: {e}\n")
+
+    # P1-2 修复：异步后台线程，不阻塞 runner 退出
+    import threading
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+
+
+def _write_summary_md(run_dir: Path, state: dict[str, Any], manifest: dict[str, Any]) -> None:
+    """轻量本地调试输出（不写 hermes/用户笔记空间）
+
+    保留 summary.md 作为 runner 自身的状态摘要，但不再与 Node 报告竞争写 hermes 路径。
+    """
     counts: dict[str, int] = {}
-    for item in ctx.manifest.get("slices", []):
-        result = ctx.state["slices"][item["id"]]
-        status = result["status"]
+    for item in manifest.get("slices", []):
+        result = state["slices"].get(item["id"], {})
+        status = result.get("status", "?")
         counts[status] = counts.get(status, 0) + 1
-        duration = "-" if result["duration_seconds"] is None else f"{result['duration_seconds']}s"
-        exit_code = "-" if result["exit_code"] is None else str(result["exit_code"])
-        log_path = result.get("log_path") or "-"
-        message = (result.get("message") or "-").replace("|", "\\|").replace("\n", " ")
-        rows.append(
-            f"| {item['id']} | {item.get('name', item['id'])} | {status} | "
-            f"{result['attempts']} | {exit_code} | {duration} | `{log_path}` | {message} |"
-        )
-    counts_text = ", ".join(f"{key}={value}" for key, value in sorted(counts.items())) or "无"
-    review_summary_path = _resolve_path(_HARNESS_PATHS.get("hermes", {}).get("eagle_eye_reports", "hermes/eagle-eye/reports")) / datetime.now().strftime("%Y-%m-%d") / "issues" / "review-summary.json"
-    if review_summary_path.exists():
-        try:
-            review_summary = read_json(review_summary_path)
-            review_counts = ", ".join(
-                f"{key}={value}" for key, value in sorted(review_summary.get("counts", {}).items())
-            ) or "无候选问题"
-            review_section = (
-                "## 失败复核摘要\n\n"
-                f"- 复核目录：`{display_path(review_summary_path.parent)}`\n"
-                f"- 当前复核结果：{review_counts}\n"
-            )
-        except (OSError, json.JSONDecodeError):
-            review_section = "## 失败复核摘要\n\n- 复核报告存在但暂时无法读取。\n"
-    else:
-        review_section = "## 失败复核摘要\n\n- 本轮没有生成 E2E 失败复核报告，或该切片尚未完成。\n"
-    content = f"""# MES 可恢复回归报告
-
-- 运行 ID：`{ctx.state['run_id']}`
-- 任务：{ctx.state['name']}
-- 状态：**{ctx.state['status']}**
-- 创建时间：{ctx.state['created_at']}
-- 更新时间：{ctx.state['updated_at']}
-- 汇总：{counts_text}
-
-| 切片 | 名称 | 状态 | 尝试 | 退出码 | 耗时 | 原始日志 | 说明 |
-|---|---|---:|---:|---:|---:|---|---|
-{chr(10).join(rows)}
-
-{review_section}
-## 恢复方式
-
-```bash
-python harness/scripts/resilient_regression.py status --run-dir "{ctx.run_dir}"
-python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
-```
-
-> `passed` 表示命令真实退出码为 0；`blocked_environment` 表示依赖服务不可用，未当作产品失败。
-"""
-    local_report = ctx.run_dir / "summary.md"
-    write_text_atomic(local_report, content)
-    # 收集所有外部归档路径（Phase 2 / 建议 4：report_paths[] + report_mirror_paths[]）
-    configured_paths = list(ctx.manifest.get("report_paths") or [])
-    if not configured_paths and ctx.manifest.get("report_path"):
-        configured_paths = [ctx.manifest["report_path"]]  # 向后兼容
-    configured_paths.extend(ctx.manifest.get("report_mirror_paths") or [])
-    for path_template in configured_paths:
-        # 支持 ${date} 模板（按当天日期归档报告，避免覆盖其他日期的报告）
-        target_str = path_template.replace("${date}", datetime.now().strftime("%Y-%m-%d"))
-        target = _resolve_path(target_str)
-        try:
-            target.parent.mkdir(parents=True, exist_ok=True)
-            write_text_atomic(target, content)
-        except OSError as error:
-            # Shared report delivery is best-effort. Never let a locked report file
-            # terminate the runner after the durable run-local checkpoint is safe.
-            delivery_error = (
-                f"{now_iso()} shared report write failed: {path_template} -> {target}\n"
-                f"{type(error).__name__}: {error}\n"
-                f"local report: {local_report}\n"
-            )
-            try:
-                with (ctx.run_dir / "report-delivery-error.log").open("a", encoding="utf-8") as stream:
-                    stream.write(delivery_error)
-                ctx.state["report_delivery_error"] = delivery_error.strip()
-                ctx.save()
-            except OSError:
-                pass
+    summary_path = run_dir / "summary.md"
+    rows = [f"- total slices: {len(manifest.get('slices', []))}"]
+    for status, count in sorted(counts.items()):
+        rows.append(f"- {status}: {count}")
+    content = (
+        f"# {manifest.get('name', 'regression')} — Run Summary\n\n"
+        f"- run_id: `{state['run_id']}`\n"
+        f"- status: {state['status']}\n"
+        + "\n".join(rows)
+    )
+    summary_path.write_text(content, encoding="utf-8")
+# update-end---author:pi---date:2026-08-06---for:【REPORT-GENERATOR】Phase 4 / 建议 6 — 废弃 generate_report，统一 Node 生成---
     return content
 
 
@@ -744,7 +746,8 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
                 state["status"] = "blocked_environment"
                 blocked = True
                 ctx.save()
-                generate_report(ctx)
+                _write_summary_md(ctx.run_dir, ctx.state, ctx.manifest)
+                _generate_report_via_node(ctx.run_dir)
                 break
 
             slice_state.update(
@@ -794,7 +797,8 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
                     }
                 )
             ctx.save()
-            generate_report(ctx)
+            _write_summary_md(ctx.run_dir, ctx.state, ctx.manifest)
+            _generate_report_via_node(ctx.run_dir)
             ctx.heartbeat("slice-finished", force=True)
             if slice_state["status"] in {"failed", "timeout"} and not item.get("continue_on_failure", True):
                 break
@@ -816,7 +820,8 @@ def execute_run(run_dir: Path, retry_failed: bool = False) -> int:
         state["runner_pid"] = None
         ctx.save()
         ctx.heartbeat("runner-finished", force=True)
-        generate_report(ctx)
+        _write_summary_md(ctx.run_dir, ctx.state, ctx.manifest)
+        _generate_report_via_node(ctx.run_dir)
         return exit_code
 
 
@@ -1104,7 +1109,8 @@ def main(argv: list[str] | None = None) -> int:
         run_dir = resolve_run_dir(args.run_dir)
         manifest = read_json(run_dir / "manifest.json")
         state = read_state(run_dir)
-        print(generate_report(RunContext(run_dir, manifest, state)))
+        _write_summary_md(run_dir, state, manifest)
+        _generate_report_via_node(run_dir)
         return 0
     if args.command == "_worker":
         return execute_run(Path(args.run_dir).resolve(), retry_failed=args.retry_failed)
