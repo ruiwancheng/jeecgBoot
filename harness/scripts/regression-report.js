@@ -189,6 +189,48 @@ function indexIssuesBySpec(date) {
   return bySpec;
 }
 
+// 把技术性 actual_error 转换为业务语言描述
+// 例： "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 20\nReceived: 15"
+//   → "断言失败：期望值 20，实际值 15"
+function toBusinessLanguage(errorText) {
+  if (!errorText || errorText === '(无)') return '(无)';
+  const clean = errorText.replace(/\x1b\[[\d;]*m/g, '').trim();
+  // 模式1：expect 断言失败（提取 Expected/Received）
+  const expectMatch = clean.match(/Error[^\n]*expect[^\n]*[\s\S]*?Expected:\s*(\S+)[\s\S]*?Received:\s*(\S+)/);
+  if (expectMatch) {
+    return `断言失败：期望值 \`${expectMatch[1]}\`，实际值 \`${expectMatch[2]}\``;
+  }
+  // 模式2：locator.isVisible() / element not found
+  const locatorMatch = clean.match(/locator[\(\.][^\n]+|element\(s\) not found|Expected:\s*visible/);
+  if (locatorMatch || /TimeoutError|element\(s\) not found/.test(clean)) {
+    const expected = clean.match(/Expected:\s*visible/i);
+    const errorLine = clean.split('\n').find(l => /Error:|TimeoutError/.test(l)) || '';
+    return `页面元素未出现：${errorLine.replace(/^Error:\s*/, '').slice(0, 120)}`;
+  }
+  // 模式3：导航/连接错误（ERR_CONNECTION_REFUSED）
+  if (/ERR_CONNECTION_REFUSED|net::ERR_/.test(clean)) {
+    return '前端页面无法访问（Connection Refused）';
+  }
+  // 模式4：Test timeout
+  const timeoutMatch = clean.match(/Test timeout of (\d+)ms exceeded/);
+  if (timeoutMatch) {
+    return `测试超时（>${Math.round(timeoutMatch[1] / 1000)}秒）`;
+  }
+  // 模式5：权限不足
+  if (/Subject does not have permission/.test(clean)) {
+    const perm = clean.match(/permission \[([^\]]+)\]/);
+    return `权限不足：缺失权限码 \`${perm ? perm[1] : '?'}\``;
+  }
+  // 模式6：SQL/数据库错误（Unknown column / doesn't exist）
+  if (/Unknown column|SQLSyntaxErrorException|doesn't have a default value/.test(clean)) {
+    const col = clean.match(/Unknown column '([^']+)'/) || clean.match(/Field '([^']+)' doesn't have a default value/);
+    return `数据库 schema 错误${col ? `：字段 \`${col[1]}\` 缺失或约束错误` : ''}`;
+  }
+  // fallback：去掉 ANSI 颜色 + 截前 200 字符（保证原意但去掉技术臃肿）
+  const firstLine = clean.split('\n').find(l => l.trim()) || clean;
+  return firstLine.slice(0, 200);
+}
+
 // v2: 传 testNames (包含 spec 文件名) + issueBySpec，提取所有匹配的复现步骤
 function matchIssuesForSlice(testNames, issueBySpec) {
   const matched = [];
@@ -224,17 +266,17 @@ function matchIssuesForSlice(testNames, issueBySpec) {
       const title = issue.title || '';
       const reprod = issue.reproduction || '(无)';
       const problem = issue.actual_error || '(无)';
+      const expected = issue.expected || '(无)';
       lines.push(`- 测试位置：\`${loc}\`${title ? ` 标题：${title}` : ''}`);
-      // 1. 操作步骤
+      // 1. 操作步骤（业务描述）
       lines.push(`  操作步骤：`);
       for (const line of reprod.split('\n')) {
         lines.push(`    ${line}`);
       }
-      // 2. 问题点（actual_error：断言/异常等具体失败信息）
-      lines.push(`  问题点：`);
-      for (const line of problem.split('\n')) {
-        lines.push(`    ${line}`);
-      }
+      // 2. 预期结果（业务语言：来自 scenario.expected）
+      lines.push(`  预期结果（业务描述）：${expected}`);
+      // 3. 实际结果（业务语言：从 actual_error 提取 Expected/Received）
+      lines.push(`  实际结果：${toBusinessLanguage(problem)}`);
     }
   }
   return {
@@ -328,6 +370,7 @@ function parseIssueMd(filePath) {
     first_seen: lineGet('首次发现'),
     actual_error: extractSection(txt, '实际错误'),
     reproduction: extractSection(txt, '复现步骤'),
+    expected: extractSection(txt, '预期结果'),
   };
 }
 
