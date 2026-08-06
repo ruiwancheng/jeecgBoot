@@ -147,10 +147,9 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 入库审核-采购收货-----------
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void audit(String id) {
+public void audit(String id) {
         MesPurchaseReceipt e = queryWithItems(id);
-        if (e == null) throw new JeecgBootException("入库单不存在");
-        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+        validateAuditPreconditions(e);
         //update-begin---author:ruiwancheng---date:20260801---for:【生产批次总开关】事务内仅查一次总开关状态-----------
         // 全局总开关：关闭时不创建采购批次（避免总开关关闭时还在写入批次库存造成数据漂移）
         final boolean batchSwitchOn = globalSwitchService.isEnabled("mes_batch_enabled");
@@ -159,85 +158,107 @@ public class MesPurchaseReceiptServiceImpl extends ServiceImpl<MesPurchaseReceip
         // ← 【P0修复-顺序调换】先改状态（原子守卫），确认成功后再执行副作用（oracle-review①）
         String username = getCurrentUsername();
         Date now = new Date();
-        int rows = baseMapper.auditWithGuard(id, username, now);
-        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+        executeStatusGuard(id, username, now);
 
         // 审核成功后：原子扣减 → 计算成本 → 更新物料成本 → 加库存 → 算应付税额
         java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
         java.math.BigDecimal totalTax = java.math.BigDecimal.ZERO;
         for (MesPurchaseReceiptItem item : e.getItems()) {
-            // 【P0修复-原子扣减】单SQL防超收（oracle-review④自然消解，替代旧的历史汇总校验）
-            int ar = purchaseOrderItemMapper.atomicReceive(e.getPurchaseOrderId(), item.getMaterialId(), item.getReceiptQuantity());
-            if (ar == 0) throw new JeecgBootException("物料[" + item.getMaterialId() + "]累计入库量超采购数量，请检查");
-
-            // 从采购订单行取单价+税率（同物料多行取第一行——后续 order_item_id 关联后再优化）
-            LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
-            piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
-            java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
-
-            // V10.0.1 方案1：优先用 item 自身字段（前端表单带出），缺省再反查订单行兜底
-            //   订单物料路径：onOrderSelected 把 unitPrice/taxRate 写入 item，audit 不必再反查
-            //   手动物料路径：onMaterialChange 把物料 standardPrice 写入 unitPrice，taxRate 默认 0.13
-            //   兜底路径：item 字段为空时（如历史数据/调用方未填），反查订单行取第一行
-            java.math.BigDecimal unitPriceWithTax = item.getUnitPrice();
-            java.math.BigDecimal taxRate = item.getTaxRate();
-            if (unitPriceWithTax == null || taxRate == null) {
-                if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
-                    if (unitPriceWithTax == null) unitPriceWithTax = orderItems.get(0).getUnitPrice();
-                    if (taxRate == null) taxRate = orderItems.get(0).getTaxRate();
-                }
-            }
-            if (unitPriceWithTax == null) unitPriceWithTax = java.math.BigDecimal.ZERO;
-            if (taxRate == null) taxRate = new java.math.BigDecimal("0.13");
-
-            // V9.7.1 修复: 采购订单 unitPrice 即不含税成本单价，不再除以(1+taxRate)
-            java.math.BigDecimal unitCost = unitPriceWithTax;  // unitPrice 本身就是不含税价
-            java.math.BigDecimal costAmount = unitCost.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
-
-            // 【关键顺序】先更新物料移动平均成本（读入库前库存量），再入库
-            materialService.updateMovingAvgCostOnStockIn(item.getMaterialId(), item.getReceiptQuantity(), unitCost, e.getWarehouseId(), "采购入库", e.getCode());
-
-            // 入库（带成本参数）
-            inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
-            //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成（可选创建批次）-----------
-            // 降级：总开关开启 + 物料 batch_enabled=1 时可选创建批次（采购收货可创建采购批次）
-            if (batchSwitchOn) {
-                MesMaterial mat = materialMapper.selectById(item.getMaterialId());
-                if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
-                    //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
-                    // V10.0.0 保质期+有效期至：透传明细行数据到批次主档
-                    String batchId = batchService.createBatchWithManualNo(
-                        item.getMaterialId(),
-                        item.getBatchNo(),     // 从明细行取（为 null/空时报错）
-                        "1",                    // origin_type=1 采购入库
-                        e.getId(), e.getCode(),
-                        item.getReceiptQuantity(), unitCost,
-                        item.getProductionDate(),  // 从明细行取（可空）
-                        item.getExpiryDate(),      // V10.0.0 透传明细行"有效期至"（可空）
-                        item.getShelfLife());      // V10.0.0 透传明细行"保质期(天)"（可空）
-                    //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
-                    batchInventoryService.stockIn(batchId, e.getWarehouseId(),
-                        item.getReceiptQuantity(), "1", e.getId(), e.getCode());
-                }
-            }
-            //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成-----------
-
-            // 应付: 不含税金额 + 税额
-            item.setUnitPrice(unitPriceWithTax);
-            java.math.BigDecimal lineAmount = unitPriceWithTax.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
-            item.setAmount(lineAmount);
-            totalAmount = totalAmount.add(lineAmount);
-            totalTax = totalTax.add(lineAmount.multiply(taxRate).setScale(2, java.math.RoundingMode.HALF_UP));
-            //update-begin---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB（修复工人自报范围外 bug）-----------
-            itemMapper.updateById(item);
-            //update-end---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB-----------
+            totalAmount = totalAmount.add(applyItemReceiveEffects(item, e, batchSwitchOn));
+            java.math.BigDecimal lineAmount = item.getAmount() != null ? item.getAmount() : java.math.BigDecimal.ZERO;
+            java.math.BigDecimal lineTax = lineAmount.multiply(item.getTaxRate() != null ? item.getTaxRate() : new java.math.BigDecimal("0.13")).setScale(2, java.math.RoundingMode.HALF_UP);
+            totalTax = totalTax.add(lineTax);
         }
 
         // 【P1修复-订单状态回写】按累计入库量推进状态（oracle-review P1-1）
         purchaseOrderMapper.markPartiallyReceived(e.getPurchaseOrderId(), username, now);
         purchaseOrderMapper.markFullyReceived(e.getPurchaseOrderId(), username, now);
 
-        // 应付（税额取订单行税率，不再硬编码）
+        generatePayable(e, now, totalAmount, totalTax);
+    }
+
+    /** 校验：实体存在 + 草稿状态（P0-02/03/10 + Phase2 Step2） */
+    private void validateAuditPreconditions(MesPurchaseReceipt e) {
+        if (e == null) throw new JeecgBootException("入库单不存在");
+        if (!"1".equals(e.getStatus())) throw new JeecgBootException("只有草稿可审核");
+    }
+
+    /** 状态守卫：调用 baseMapper.auditWithGuard 原子化 status 1→2（如果失败，后续都不执行） */
+    private void executeStatusGuard(String id, String username, Date now) {
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+    }
+
+    /** 单行入库副作用：原子扣减 + 物料成本 + 加库存 + 批次 + 应付明细，返回 lineAmount */
+    private java.math.BigDecimal applyItemReceiveEffects(MesPurchaseReceiptItem item, MesPurchaseReceipt e, boolean batchSwitchOn) {
+        // 【P0修复-原子扣减】单SQL防超收（oracle-review④自然消解，替代旧的历史汇总校验）
+        int ar = purchaseOrderItemMapper.atomicReceive(e.getPurchaseOrderId(), item.getMaterialId(), item.getReceiptQuantity());
+        if (ar == 0) throw new JeecgBootException("物料[" + item.getMaterialId() + "]累计入库量超采购数量，请检查");
+
+        // 从采购订单行取单价+税率（同物料多行取第一行——后续 order_item_id 关联后再优化）
+        LambdaQueryWrapper<MesPurchaseOrderItem> piQw = new LambdaQueryWrapper<>();
+        piQw.eq(MesPurchaseOrderItem::getOrderId, e.getPurchaseOrderId()).eq(MesPurchaseOrderItem::getMaterialId, item.getMaterialId());
+        java.util.List<MesPurchaseOrderItem> orderItems = purchaseOrderItemMapper.selectList(piQw);
+
+        // V10.0.1 方案1：优先用 item 自身字段（前端表单带出），缺省再反查订单行兜底
+        //   订单物料路径：onOrderSelected 把 unitPrice/taxRate 写入 item，audit 不必再反查
+        //   手动物料路径：onMaterialChange 把物料 standardPrice 写入 unitPrice，taxRate 默认 0.13
+        //   兜底路径：item 字段为空时（如历史数据/调用方未填），反查订单行取第一行
+        java.math.BigDecimal unitPriceWithTax = item.getUnitPrice();
+        java.math.BigDecimal taxRate = item.getTaxRate();
+        if (unitPriceWithTax == null || taxRate == null) {
+            if (!orderItems.isEmpty() && orderItems.get(0).getUnitPrice() != null) {
+                if (unitPriceWithTax == null) unitPriceWithTax = orderItems.get(0).getUnitPrice();
+                if (taxRate == null) taxRate = orderItems.get(0).getTaxRate();
+            }
+        }
+        if (unitPriceWithTax == null) unitPriceWithTax = java.math.BigDecimal.ZERO;
+        if (taxRate == null) taxRate = new java.math.BigDecimal("0.13");
+
+        // V9.7.1 修复: 采购订单 unitPrice 即不含税成本单价，不再除以(1+taxRate)
+        java.math.BigDecimal unitCost = unitPriceWithTax;  // unitPrice 本身就是不含税价
+        java.math.BigDecimal costAmount = unitCost.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
+
+        // 【关键顺序】先更新物料移动平均成本（读入库前库存量），再入库
+        materialService.updateMovingAvgCostOnStockIn(item.getMaterialId(), item.getReceiptQuantity(), unitCost, e.getWarehouseId(), "采购入库", e.getCode());
+
+        // 入库（带成本参数）
+        inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQuantity(), unitCost, costAmount, "采购入库", e.getCode());
+        //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成（可选创建批次）-----------
+        // 降级：总开关开启 + 物料 batch_enabled=1 时可选创建批次（采购收货可创建采购批次）
+        if (batchSwitchOn) {
+            MesMaterial mat = materialMapper.selectById(item.getMaterialId());
+            if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
+                //update-begin---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
+                // V10.0.0 保质期+有效期至：透传明细行数据到批次主档
+                String batchId = batchService.createBatchWithManualNo(
+                    item.getMaterialId(),
+                    item.getBatchNo(),     // 从明细行取（为 null/空时报错）
+                    "1",                    // origin_type=1 采购入库
+                    e.getId(), e.getCode(),
+                    item.getReceiptQuantity(), unitCost,
+                    item.getProductionDate(),  // 从明细行取（可空）
+                    item.getExpiryDate(),      // V10.0.0 透传明细行"有效期至"（可空）
+                    item.getShelfLife());      // V10.0.0 透传明细行"保质期(天)"（可空）
+                //update-end---author:ruiwancheng---date:20260802---for: V10.0.0 物料/批次/采购入库-采购入库审核透传明细 shelfLife/expiryDate 到批次主档-----------
+                batchInventoryService.stockIn(batchId, e.getWarehouseId(),
+                    item.getReceiptQuantity(), "1", e.getId(), e.getCode());
+            }
+        }
+        //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-采购收货集成-----------
+
+        // 应付: 不含税金额 + 税额
+        item.setUnitPrice(unitPriceWithTax);
+        java.math.BigDecimal lineAmount = unitPriceWithTax.multiply(item.getReceiptQuantity()).setScale(2, java.math.RoundingMode.HALF_UP);
+        item.setAmount(lineAmount);
+        //update-begin---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB（修复工人自报范围外 bug）-----------
+        itemMapper.updateById(item);
+        //update-end---author:ruiwancheng---date:20260802---for: V10.0.1 采购入库-明细行 unitPrice/amount 回写 DB-----------
+        return lineAmount;
+    }
+
+    /** 自动生成应付单（唯一索引 uk_payable_source_bill 防重复） */
+    private void generatePayable(MesPurchaseReceipt e, Date now, java.math.BigDecimal totalAmount, java.math.BigDecimal totalTax) {
         MesPayable ap = new MesPayable();
         ap.setCode("AP-" + e.getCode());
         // 【P0修复-slice-1.3】应付单 supplier_id NOT NULL 兜底

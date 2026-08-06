@@ -140,7 +140,7 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String audit(String id) {
+public String audit(String id) {
         // FOR UPDATE 锁主表（与 updateWithItems 同锁互斥），再读明细——消除 TOCTOU
         MesStocktake locked = baseMapper.selectByIdForUpdate(id);
         if (locked == null) throw new JeecgBootException("盘点单不存在");
@@ -148,13 +148,27 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
 
         String username = getCurrentUsername();
         Date now = new Date();
-        int rows = baseMapper.auditWithGuard(id, username, now);
-        if (rows == 0) throw new JeecgBootException("审核失败：盘点单不存在或状态已变更，请刷新后重试");
+        executeStatusGuard(id, username, now);
 
         MesStocktake e = queryWithItems(id);
-        // 校验实盘数已填
+        List<MesStocktakeItem> inLines = collectOverbookItems(e);
+        List<MesStocktakeItem> outLines = collectShortageItems(e);
+
+        String inCode = createOtherStockInForOverbook(e, inLines);
+        String outCode = createOtherStockOutForShortage(e, outLines);
+
+        return buildAuditMessage(e, inLines, outLines, inCode, outCode);
+    }
+
+    /** 状态守卫：调用 baseMapper.auditWithGuard 原子化 status 1→2 */
+    private void executeStatusGuard(String id, String username, Date now) {
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：盘点单不存在或状态已变更，请刷新后重试");
+    }
+
+    /** 收集盘盈行：实盘 > 账面（要求非零成本守卫） */
+    private List<MesStocktakeItem> collectOverbookItems(MesStocktake e) {
         List<MesStocktakeItem> inLines = new ArrayList<>();
-        List<MesStocktakeItem> outLines = new ArrayList<>();
         for (MesStocktakeItem item : e.getItems()) {
             if (item.getActualQty() == null) throw new JeecgBootException("存在未填实盘数量的行（物料ID:" + item.getMaterialId() + "），请补全后再审核");
             BigDecimal diff = item.getActualQty().subtract(item.getBookQty());
@@ -165,63 +179,80 @@ public class MesStocktakeServiceImpl extends ServiceImpl<MesStocktakeMapper, Mes
                 }
                 //update-end---author:ruiwancheng---date:2026-07-29---for: 铁拳团V2 P1-1-----------
                 inLines.add(item);
-            } else if (diff.compareTo(BigDecimal.ZERO) < 0) outLines.add(item);
-        }
-
-        String inCode = null, outCode = null;
-        // 盘盈：同仓合并为一张其它入库单（inType='1'盘盈），创建+审核同事务（用户看不到草稿态调整单）
-        if (!inLines.isEmpty()) {
-            MesOtherStockIn inDoc = new MesOtherStockIn();
-            inDoc.setCode(codeRuleService.nextCode("QI"));
-            inDoc.setInType("1");
-            inDoc.setWarehouseId(e.getWarehouseId());
-            inDoc.setReason("盘点单 " + e.getCode() + " 自动生成（盘盈）");
-            inDoc.setStockDate(e.getTakeDate());
-            inDoc.setStatus("1");
-            List<MesOtherStockInItem> inItems = new ArrayList<>();
-            int ln = 1;
-            for (MesStocktakeItem item : inLines) {
-                MesOtherStockInItem ii = new MesOtherStockInItem();
-                ii.setLineNo(ln++);
-                ii.setMaterialId(item.getMaterialId());
-                ii.setQty(item.getActualQty().subtract(item.getBookQty()));
-                ii.setUnitCost(item.getUnitCost());
-                ii.setAmount(ii.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
-                inItems.add(ii);
             }
-            inDoc.setItems(inItems);
-            otherStockInService.saveWithItems(inDoc);
-            otherStockInService.audit(inDoc.getId());
-            inCode = inDoc.getCode();
-            for (MesStocktakeItem item : inLines) { item.setGeneratedInId(inDoc.getId()); itemMapper.updateById(item); }
         }
-        // 盘亏：同仓合并为一张其它出库单（outType='1'盘亏）
-        if (!outLines.isEmpty()) {
-            MesOtherStockOut outDoc = new MesOtherStockOut();
-            outDoc.setCode(codeRuleService.nextCode("QO"));
-            outDoc.setOutType("1");
-            outDoc.setWarehouseId(e.getWarehouseId());
-            outDoc.setReason("盘点单 " + e.getCode() + " 自动生成（盘亏）");
-            outDoc.setStockDate(e.getTakeDate());
-            outDoc.setStatus("1");
-            List<MesOtherStockOutItem> outItems = new ArrayList<>();
-            int ln = 1;
-            for (MesStocktakeItem item : outLines) {
-                MesOtherStockOutItem oi = new MesOtherStockOutItem();
-                oi.setLineNo(ln++);
-                oi.setMaterialId(item.getMaterialId());
-                oi.setQty(item.getBookQty().subtract(item.getActualQty()));
-                oi.setUnitCost(item.getUnitCost());
-                oi.setAmount(oi.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
-                outItems.add(oi);
-            }
-            outDoc.setItems(outItems);
-            otherStockOutService.saveWithItems(outDoc);
-            otherStockOutService.audit(outDoc.getId());
-            outCode = outDoc.getCode();
-            for (MesStocktakeItem item : outLines) { item.setGeneratedOutId(outDoc.getId()); itemMapper.updateById(item); }
-        }
+        return inLines;
+    }
 
+    /** 收集盘亏行：实盘 < 账面 */
+    private List<MesStocktakeItem> collectShortageItems(MesStocktake e) {
+        List<MesStocktakeItem> outLines = new ArrayList<>();
+        for (MesStocktakeItem item : e.getItems()) {
+            if (item.getActualQty() == null) throw new JeecgBootException("存在未填实盘数量的行（物料ID:" + item.getMaterialId() + "），请补全后再审核");
+            BigDecimal diff = item.getActualQty().subtract(item.getBookQty());
+            if (diff.compareTo(BigDecimal.ZERO) < 0) outLines.add(item);
+        }
+        return outLines;
+    }
+
+    /** 盘盈：同仓合并为一张其它入库单（inType='1'盘盈），创建+审核同事务 */
+    private String createOtherStockInForOverbook(MesStocktake e, List<MesStocktakeItem> inLines) {
+        if (inLines.isEmpty()) return null;
+        MesOtherStockIn inDoc = new MesOtherStockIn();
+        inDoc.setCode(codeRuleService.nextCode("QI"));
+        inDoc.setInType("1");
+        inDoc.setWarehouseId(e.getWarehouseId());
+        inDoc.setReason("盘点单 " + e.getCode() + " 自动生成（盘盈）");
+        inDoc.setStockDate(e.getTakeDate());
+        inDoc.setStatus("1");
+        List<MesOtherStockInItem> inItems = new ArrayList<>();
+        int ln = 1;
+        for (MesStocktakeItem item : inLines) {
+            MesOtherStockInItem ii = new MesOtherStockInItem();
+            ii.setLineNo(ln++);
+            ii.setMaterialId(item.getMaterialId());
+            ii.setQty(item.getActualQty().subtract(item.getBookQty()));
+            ii.setUnitCost(item.getUnitCost());
+            ii.setAmount(ii.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
+            inItems.add(ii);
+        }
+        inDoc.setItems(inItems);
+        otherStockInService.saveWithItems(inDoc);
+        otherStockInService.audit(inDoc.getId());
+        for (MesStocktakeItem item : inLines) { item.setGeneratedInId(inDoc.getId()); itemMapper.updateById(item); }
+        return inDoc.getCode();
+    }
+
+    /** 盘亏：同仓合并为一张其它出库单（outType='1'盘亏） */
+    private String createOtherStockOutForShortage(MesStocktake e, List<MesStocktakeItem> outLines) {
+        if (outLines.isEmpty()) return null;
+        MesOtherStockOut outDoc = new MesOtherStockOut();
+        outDoc.setCode(codeRuleService.nextCode("QO"));
+        outDoc.setOutType("1");
+        outDoc.setWarehouseId(e.getWarehouseId());
+        outDoc.setReason("盘点单 " + e.getCode() + " 自动生成（盘亏）");
+        outDoc.setStockDate(e.getTakeDate());
+        outDoc.setStatus("1");
+        List<MesOtherStockOutItem> outItems = new ArrayList<>();
+        int ln = 1;
+        for (MesStocktakeItem item : outLines) {
+            MesOtherStockOutItem oi = new MesOtherStockOutItem();
+            oi.setLineNo(ln++);
+            oi.setMaterialId(item.getMaterialId());
+            oi.setQty(item.getBookQty().subtract(item.getActualQty()));
+            oi.setUnitCost(item.getUnitCost());
+            oi.setAmount(oi.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
+            outItems.add(oi);
+        }
+        outDoc.setItems(outItems);
+        otherStockOutService.saveWithItems(outDoc);
+        otherStockOutService.audit(outDoc.getId());
+        for (MesStocktakeItem item : outLines) { item.setGeneratedOutId(outDoc.getId()); itemMapper.updateById(item); }
+        return outDoc.getCode();
+    }
+
+    /** 构造审核结果消息 */
+    private String buildAuditMessage(MesStocktake e, List<MesStocktakeItem> inLines, List<MesStocktakeItem> outLines, String inCode, String outCode) {
         return "审核成功：差异" + (inLines.size() + outLines.size()) + "行"
                 + (inCode != null ? "，盘盈入库单 " + inCode : "")
                 + (outCode != null ? "，盘亏出库单 " + outCode : "")
