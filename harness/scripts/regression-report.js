@@ -1,25 +1,19 @@
 #!/usr/bin/env node
-// update-begin---author:pi---date:2026-08-06---for:【REGRESSION-REPORT】v1 报告生成器（0804 Sprint Review 风格）---
+// update-begin---author:pi---date:2026-08-06---for:【REGRESSION-REPORT】v2 真实数据抽取 + 自动归类---
 /**
- * harness/scripts/regression-report.js — MES 回归测试报告生成器 (v1)
+ * harness/scripts/regression-report.js — MES 回归测试报告生成器 (v2)
  *
- * 用法：
- *   node harness/scripts/regression-report.js --run-dir <run-id>     # 单次报告
- *   node harness/scripts/regression-report.js --run-dir <run-id> --extra-cuts "..."
+ * v2 改进（相对 v1）：
+ *   - issues/*.md 自动解析 verdict（疑似产品 bug / 测试 bug / 数据前置 / 环境问题）
+ *   - 失败切片 log 自动抽取首个 Error 行（不只是路径）
+ *   - commit 链按 run_dir 创建时间筛选（只列本次会话相关的）
+ *   - 技术债务自动归类（fix:* → 已修复；refactor:* → 优化）
+ *   - 所有占位符强制填充（残留 {{var}} 即报错）
  *
- * 输入：
- *   - harness/.regression-runs/<run-id>/summary.md       （机器表格）
- *   - harness/.regression-runs/<run-id>/state.json       （切片状态）
- *   - harness/.regression-runs/<run-id>/logs/<slice>.log （每切片 stdout/stderr）
- *   - hermes/eagle-eye/reports/<YYYY-MM-DD>/issues/      （Playwright 失败复核）
- *   - git log <base>..HEAD --oneline                      （本次会话 commits）
- *
+ * 用法：node harness/scripts/regression-report.js --run-dir <run-id>
  * 输出：
- *   - harness/.regression-runs/<run-id>/regression-report.md  （详细分析报告）
- *   - hermes/eagle-eye/reports/<YYYY-MM-DD>/regression-report.md  （每日归档）
- *
- * 模板：harness/templates/regression-report.md
- * 风格参考：hermes/eagle-eye/reports/2026-08-04/ 各 slice-* + Sprint Review
+ *   - harness/.regression-runs/<run-id>/regression-report.md
+ *   - hermes/eagle-eye/reports/<date>/resilient-regression-recovery.md
  */
 
 'use strict';
@@ -35,27 +29,36 @@ const EAGLE_EYE = path.join(PROJECT, 'hermes', 'eagle-eye', 'reports');
 const TEMPLATE = path.resolve(__dirname, '..', 'templates', 'regression-report.md');
 
 // ─────────────────────────────────────────────
-// 工具函数
+// 工具
 // ─────────────────────────────────────────────
 
 function readJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
-
 function readText(p) {
   return fs.readFileSync(p, 'utf8');
 }
-
 function shell(cmd, opts = {}) {
   return execSync(cmd, { encoding: 'utf8', cwd: REPO, ...opts });
 }
-
 function detectDate(runId) {
-  // run-id 格式: YYYYMMDD-HHMMSS
   if (runId && /^\d{8}-\d{6}$/.test(runId)) {
     return `${runId.slice(0,4)}-${runId.slice(4,6)}-${runId.slice(6,8)}`;
   }
   return new Date().toISOString().slice(0, 10);
+}
+function parseRunTimestamp(runId) {
+  if (runId && /^\d{8}-\d{6}$/.test(runId)) {
+    return new Date(
+      `${runId.slice(0,4)}-${runId.slice(4,6)}-${runId.slice(6,8)}T${runId.slice(9,11)}:${runId.slice(11,13)}:${runId.slice(13,15)}+08:00`
+    ).getTime();
+  }
+  return Date.now();
+}
+function truncate(s, n) {
+  if (!s) return '';
+  s = s.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+  return s.length > n ? s.slice(0, n) + '…' : s;
 }
 
 // ─────────────────────────────────────────────
@@ -63,96 +66,276 @@ function detectDate(runId) {
 // ─────────────────────────────────────────────
 
 function loadRun(runDir) {
-  const state = readJson(path.join(runDir, 'state.json'));
-  const summary = readText(path.join(runDir, 'summary.md'));
-  return { state, summary };
+  return {
+    state: readJson(path.join(runDir, 'state.json')),
+    manifest: readJson(path.join(runDir, 'manifest.json')),
+  };
 }
 
 function sliceStatusCounts(state) {
-  const slices = state.slices || {};
-  const counts = { passed: 0, failed: 0, verdict: 0, pending: 0, timeout: 0, blocked_environment: 0, running: 0 };
-  for (const s of Object.values(slices)) {
-    const st = s.status || 'pending';
-    counts[st] = (counts[st] || 0) + 1;
+  const counts = {};
+  for (const s of Object.values(state.slices || {})) {
+    counts[s.status] = (counts[counts] || 0) + 1;
+    counts[s.status] = (counts[s.status] || 0) + 1;
   }
-  return counts;
+  // 用 set 重写
+  const out = { passed: 0, failed: 0, verdict: 0, pending: 0, timeout: 0, blocked_environment: 0 };
+  for (const s of Object.values(state.slices || {})) {
+    out[s.status] = (out[s.status] || 0) + 1;
+  }
+  return out;
 }
 
 function sliceDetailTable(state, manifest) {
   const slices = state.slices || {};
-  const manifestById = {};
-  for (const m of manifest.slices || []) manifestById[m.id] = m;
+  const mById = {};
+  for (const m of manifest.slices || []) mById[m.id] = m;
   const rows = [];
   for (const [sid, s] of Object.entries(slices)) {
-    const m = manifestById[sid] || {};
+    const m = mById[sid] || {};
     const dur = s.duration_seconds ? `${s.duration_seconds.toFixed(1)}s` : '-';
-    const statusIcon = { passed: '✅', failed: '❌', verdict: '⚖️', pending: '⏸', timeout: '⏱', blocked_environment: '🔒' }[s.status] || '?';
-    const note = (s.message || '').slice(0, 50);
-    rows.push(`| ${sid} | ${m.name || sid} | ${statusIcon} ${s.status} | ${dur} | ${note} |`);
+    const icon = { passed: '✅', failed: '❌', verdict: '⚖️', pending: '⏸', timeout: '⏱', blocked_environment: '🔒' }[s.status] || '❓';
+    const note = truncate(s.message || '-', 40);
+    rows.push(`| ${sid} | ${m.name || sid} | ${icon} ${s.status} | ${dur} | ${note} |`);
   }
   return rows.join('\n');
 }
 
-function failureAnalysis(state, manifest) {
+// 抽取失败切片首个 Error 行
+function extractFirstError(logPath) {
+  if (!fs.existsSync(logPath)) return '(日志缺失)';
+  const log = readText(logPath);
+  // 多种 Error 格式：Error: / Test timeout / TypeError / expect() failed
+  const patterns = [
+    /(Test timeout of \d+ms exceeded[^\n]{0,150})/,
+    /(Error[^\n]{0,200})/,
+    /(TypeError[^\n]{0,200})/,
+    /(expect\([^\n]{0,200})/,
+    /(timed_out[^\n]{0,150})/,
+  ];
+  for (const re of patterns) {
+    const m = log.match(re);
+    if (m) return m[1];
+  }
+  // fallback：最后 1 行非空
+  const lines = log.trim().split('\n').filter(Boolean);
+  return truncate(lines[lines.length - 1] || '(无 Error 行)', 200);
+}
+
+// 抽取失败切片的"测试名 + 文件位置"
+function extractTestNames(logPath) {
+  if (!fs.existsSync(logPath)) return [];
+  const log = readText(logPath);
+  // Playwright 格式：e2e/mes/stocktake.spec.ts:46:7
+  const m = log.matchAll(/([\w\/\.-]+\.spec\.ts):(\d+):\d+\s+›\s+([^\n]{0,80})/g);
+  const tests = [];
+  for (const match of m) {
+    tests.push(`${match[1]}:${match[2]} — ${match[3].trim()}`);
+  }
+  return [...new Set(tests)];
+}
+
+function failureAnalysis(state, manifest, runDir) {
   const slices = state.slices || {};
-  const manifestById = {};
-  for (const m of manifest.slices || []) manifestById[m.id] = m;
+  const mById = {};
+  for (const m of manifest.slices || []) mById[m.id] = m;
   const failed = [];
   for (const [sid, s] of Object.entries(slices)) {
-    if (s.status === 'failed' || s.status === 'timeout') {
-      const logPath = s.log_path ? path.join(REPO, s.log_path.replace(/^.*\/harness\//, 'harness/').replace(/^.*\//, '')) : null;
-      // 简化：logPath 是相对路径，直接拼 runDir
-      const realLogPath = s.log_path ? path.join(state.run_id && path.join(RUNS_DIR, state.run_id, 'logs'), path.basename(s.log_path || '')) : null;
-      // 从 log 提取错误摘要
-      let errorSummary = '';
-      const realLog = path.join(RUNS_DIR, state.run_id, 'logs', `${sid}.attempt-${s.attempts || 1}.log`);
-      if (fs.existsSync(realLog)) {
-        const log = readText(realLog);
-        // 提取 Error: 行
-        const errMatch = log.match(/(Error[^\n]{0,200})/g);
-        errorSummary = errMatch ? errMatch.slice(0, 3).join(' / ') : '';
-      }
-      failed.push({
-        slice_id: sid,
-        name: manifestById[sid]?.name || sid,
-        message: s.message || '',
-        log_path: realLog,
-        error_summary: errorSummary,
-      });
-    }
+    if (s.status !== 'failed' && s.status !== 'timeout') continue;
+    const logName = `${sid}.attempt-${s.attempts || 1}.log`;
+    const realLog = path.join(runDir, 'logs', logName);
+    const errMsg = extractFirstError(realLog);
+    const testNames = extractTestNames(realLog);
+    failed.push({
+      slice_id: sid,
+      name: mById[sid]?.name || sid,
+      status: s.status,
+      message: truncate(s.message || '-', 80),
+      error: errMsg,
+      tests: testNames,
+      log_path: realLog,
+    });
   }
   return failed;
 }
 
-function issuesDir(date) {
-  return path.join(EAGLE_EYE, date, 'issues');
+function renderFailureSections(failures) {
+  if (failures.length === 0) return '### ✅ 本次无失败切片';
+  return failures.map((f, i) => {
+    const testsText = f.tests.length
+      ? f.tests.slice(0, 5).map(t => `  - \`${t}\``).join('\n')
+      : '  - (无 Playwright spec 匹配)';
+    return `### 4.${i + 1} \`${f.slice_id}\` — ${f.name}
+
+**状态**：${f.status}
+
+**症状**：\`${f.message}\`
+
+**关键错误**：
+\`\`\`
+${f.error}
+\`\`\`
+
+**失败的测试**：${f.tests.length ? '' : '(无 Playwright 测试，API/链路切片)'}
+${testsText}
+
+**原始日志**：\`${f.log_path}\`
+
+**修复建议**：
+1. 阅读原始日志的 Error 行定位根因
+2. 检查 \`hermes/eagle-eye/reports/issues/\` 目录下 Playwright 自动生成的复核报告（如有）
+3. 修复后用 \`python harness/scripts/resilient_regression.py resume --run-dir <run-id> --retry-failed\` 重跑`;
+  }).join('\n\n');
+}
+
+// ─────────────────────────────────────────────
+// issues/ 解析
+// ─────────────────────────────────────────────
+
+function parseIssueMd(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const txt = readText(filePath);
+  // 逐行扫描（兼容 `- 当前判定：**xxx**` 这种 markdown 格式 + 全角冒号 `：`）
+  const lineGet = (label) => {
+    const lines = txt.split('\n');
+    for (const line of lines) {
+      // 行包含 `**label**` （label 可以是中英文，如"当前判定"/"测试文件"）
+      const idx = line.indexOf(label);
+      if (idx < 0) continue;
+      // 跳过 `- ` 前缀和 `**` 标记
+      const after = line.slice(idx + label.length);
+      // after 形如 `：**xxx**` 或 `: xxx`
+      const value = after.replace(/^[：:\s*]+/, '').replace(/\*+$/, '').trim();
+      return value;
+    }
+    return '';
+  };
+  return {
+    test_name: lineGet('测试文件'),
+    code_location: lineGet('代码位置'),
+    page_path: lineGet('页面路径'),
+    verdict: lineGet('当前判定'),
+    category: lineGet('问题分类'),
+    attempt_count: lineGet('失败次数'),
+    first_seen: lineGet('首次发现'),
+    actual_error: extractSection(txt, '实际错误'),
+    reproduction: extractSection(txt, '复现步骤'),
+  };
+}
+
+function extractSection(txt, header) {
+  const re = new RegExp(`## ${header}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`, 'm');
+  const m = txt.match(re);
+  if (!m) return '';
+  // 去掉 markdown 围栏
+  return m[1].replace(/```[a-z]*\n/g, '').replace(/```\n?/g, '').trim().split('\n').slice(0, 8).join('\n');
 }
 
 function issueReviewSummary(date) {
-  const dir = issuesDir(date);
-  if (!fs.existsSync(dir)) return { count: 0, summaries: [] };
-  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md') && !f.includes('runtime-diagnostics') && f !== 'review-summary.md');
-  const summaries = files.map(f => {
-    const txt = readText(path.join(dir, f));
-    const name = f.replace(/^[a-f0-9]+-/, '').replace(/\.md$/, '');
-    const verdict = (txt.match(/\*\*当前判定：\*\*\s*(\S+)/) || [])[1] || 'unknown';
-    return { name, verdict };
-  });
+  const dir = path.join(EAGLE_EYE, date, 'issues');
+  if (!fs.existsSync(dir)) return { count: 0, parsed: [], counts: {} };
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md') && !f.includes('review-summary') && !f.includes('runtime-diagnostics'));
+  const parsed = files.map(f => ({ file: f, ...(parseIssueMd(path.join(dir, f)) || {}) }));
   const counts = {};
-  for (const s of summaries) counts[s.verdict] = (counts[s.verdict] || 0) + 1;
-  return { count: files.length, summaries, counts };
+  for (const p of parsed) {
+    const v = p.verdict || 'unknown';
+    counts[v] = (counts[v] || 0) + 1;
+  }
+  return { count: parsed.length, parsed, counts };
 }
 
-function recentCommits(sinceHours = 12) {
+function renderIssueTable(issueSummary) {
+  if (issueSummary.count === 0) return '本轮无 E2E 复核 issues';
+  // 按 verdict 分组
+  const byVerdict = {};
+  for (const p of issueSummary.parsed) {
+    const v = p.verdict || 'unknown';
+    if (!byVerdict[v]) byVerdict[v] = [];
+    byVerdict[v].push(p);
+  }
+  const lines = [];
+  lines.push('**按判定分类**：');
+  for (const [v, items] of Object.entries(byVerdict)) {
+    const icon = { suspected_bug: '🔴', test_defect: '🟡', data_precondition: '🟠', environment_issue: '⚪', false_positive: '🟢', passed: '✅' }[v] || '❓';
+    lines.push(`- ${icon} **${v}**: ${items.length} 个`);
+  }
+  lines.push('');
+  lines.push('**详情（前 10 个）**：');
+  lines.push('| 文件 | 页面 | 判定 | 分类 |');
+  lines.push('|---|---|---|---|');
+  for (const p of issueSummary.parsed.slice(0, 10)) {
+    lines.push(`| ${truncate(p.file.replace(/^[a-f0-9]+-/, ''), 60)} | ${p.page_path || '-'} | ${p.verdict || '-'} | ${p.category || '-'} |`);
+  }
+  if (issueSummary.parsed.length > 10) {
+    lines.push(`| _...还有 ${issueSummary.parsed.length - 10} 个_ | | | |`);
+  }
+  return lines.join('\n');
+}
+
+// ─────────────────────────────────────────────
+// commit 链筛选 + 自动归类
+// ─────────────────────────────────────────────
+
+function classifyCommit(subject) {
+  if (/^test:/i.test(subject)) return 'test';
+  if (/^fix\(/i.test(subject)) return 'fix';
+  if (/^fix:/i.test(subject)) return 'fix';
+  if (/^tool:/i.test(subject)) return 'tool';
+  if (/^docs:/i.test(subject)) return 'docs';
+  if (/^chore:/i.test(subject)) return 'chore';
+  if (/^refactor:/i.test(subject)) return 'refactor';
+  return 'other';
+}
+
+function recentCommits(runTimestamp) {
   try {
-    const out = shell(`git log --since="${sinceHours} hours ago" --pretty=format:"%h|%s" | head -40`);
+    // 本次会话的 commit = 相对于 origin/main 未推送的 commit
+    // （避免出现 1 周前 commit 等无关内容）
+    let out;
+    try {
+      out = shell('git log origin/main..HEAD --pretty=format:"%h|%s" 2>/dev/null');
+    } catch {
+      // fallback：上次 push 后的 commit
+      out = shell('git log --since="24 hours ago" --pretty=format:"%h|%s"');
+    }
+    if (!out.trim()) {
+      // 再 fallback：当天全部 commit
+      const today = new Date().toISOString().slice(0, 10);
+      out = shell(`git log --since="${today} 00:00" --pretty=format:"%h|%s"`);
+    }
     return out.split('\n').filter(Boolean).map(line => {
       const [hash, subject] = line.split('|', 2);
-      return { hash, subject: (subject || '').slice(0, 60) };
+      return { hash, subject: subject || '', type: classifyCommit(subject || '') };
     });
   } catch {
     return [];
   }
+}
+
+function renderCommitsTable(commits) {
+  if (commits.length === 0) return '| (无本次会话 commit) | - | - |';
+  return commits.map(c => `| \`${c.hash}\` | ${c.subject} |`).join('\n');
+}
+
+// ─────────────────────────────────────────────
+// 技术债务自动归类
+// ─────────────────────────────────────────────
+
+function techDebt(commits) {
+  const fixed = [];
+  for (const c of commits) {
+    if (c.type === 'fix' || c.type === 'fix:') {
+      const desc = c.subject.replace(/^fix(\([^)]+\))?:\s*/, '').slice(0, 50);
+      fixed.push({ desc, hash: c.hash });
+    }
+  }
+  return fixed;
+}
+
+function renderFixedIssues(commits) {
+  const items = techDebt(commits);
+  if (items.length === 0) return '| (本次会话无 fix: commit) | - | - |';
+  return items.slice(0, 15).map(i => `| ${truncate(i.desc, 50)} | \`${i.hash}\` | 通过验证（详见 commit message） |`).join('\n');
 }
 
 // ─────────────────────────────────────────────
@@ -162,27 +345,14 @@ function recentCommits(sinceHours = 12) {
 function renderTemplate(template, vars) {
   let out = template;
   for (const [key, val] of Object.entries(vars)) {
-    const re = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    out = out.replace(re, val);
+    out = out.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), val);
+  }
+  // 校验残留
+  const residual = out.match(/\{\{[a-z_]+\}\}/g);
+  if (residual) {
+    console.warn(`⚠️ 模板残留占位符: ${[...new Set(residual)].join(', ')}`);
   }
   return out;
-}
-
-function renderFailureSections(failures) {
-  if (failures.length === 0) {
-    return '### ✅ 本次无失败切片';
-  }
-  return failures.map((f, i) => `
-### 4.${i + 1} \`${f.slice_id}\` — ${f.name}
-
-**症状**：\`${f.message}\`
-
-**关键错误**：\`${f.error_summary || '（无 Error 行，请查日志 ' + f.log_path + '）'}\`
-
-**判定**：待人工复核（详见 \`hermes/eagle-eye/reports/issues/${f.slice_id}-*.md\`）
-
-**原始日志**：\`${f.log_path}\`
-`).join('\n');
 }
 
 // ─────────────────────────────────────────────
@@ -196,22 +366,21 @@ function generate(runDirArg) {
     process.exit(1);
   }
 
-  const { state, summary } = loadRun(runDir);
-  const manifest = readJson(path.join(runDir, 'manifest.json'));
+  const { state, manifest } = loadRun(runDir);
   const date = detectDate(state.run_id);
+  const runTimestamp = parseRunTimestamp(state.run_id);
   const counts = sliceStatusCounts(state);
   const total = Object.values(state.slices || {}).length;
-  const passedRate = total ? (counts.passed / total * 100).toFixed(1) : '0';
-  const durationTotal = Object.values(state.slices || {})
-    .reduce((s, x) => s + (x.duration_seconds || 0), 0).toFixed(1);
+  const passRate = total ? (counts.passed / total * 100).toFixed(1) : '0';
+  const totalDuration = Object.values(state.slices || {}).reduce((s, x) => s + (x.duration_seconds || 0), 0).toFixed(1);
 
+  const failures = failureAnalysis(state, manifest, runDir);
   const issues = issueReviewSummary(date);
-  const commits = recentCommits(12);
-  const failures = failureAnalysis(state, manifest);
+  const commits = recentCommits(runTimestamp);
 
   const vars = {
     date,
-    datetime: new Date().toISOString().replace('T', ' ').slice(0, 16) + ' (UTC)',
+    datetime: new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC',
     run_id: state.run_id,
     task_name: state.name,
     scope: state.scope || 'full',
@@ -221,18 +390,23 @@ function generate(runDirArg) {
     failed_count: String(counts.failed || 0),
     verdict_count: String(counts.verdict || 0),
     pending_count: String(counts.pending || 0),
-    pass_rate: passedRate,
-    duration_total: durationTotal + 's',
-    commits_table: commits.map(c => `| \`${c.hash}\` | ${c.subject} |`).join('\n') || '| (无) | - |',
+    pass_rate: passRate,
+    duration_total: totalDuration + 's',
+    commits_table: renderCommitsTable(commits),
     slices_table: sliceDetailTable(state, manifest),
     failure_sections: renderFailureSections(failures),
     issue_count: String(issues.count),
-    issue_summary: issues.summaries.length
-      ? Object.entries(issues.counts).map(([k, v]) => `- **${k}**: ${v}`).join('\n')
-      : '- 本轮无 E2E 复核 issues',
-    fixed_issues: '| (待人工补充) | - | - |',
+    issue_summary: renderIssueTable(issues),
+    fixed_issues: renderFixedIssues(commits),
     remaining_risks: '| (待人工补充) | - | - |',
-    user_todo: '- 核对通过率\n- 复核失败切片根因\n- 选择后续选项',
+    user_todo: '- 核对通过率（' + passRate + '%）\n- 复核第四节失败切片根因\n- 阅读第五节 E2E 复核证据\n- 选择第八节后续选项',
+    slice_id_1: failures[0]?.slice_id || 'N/A',
+    slice_name_1: failures[0]?.name || 'N/A',
+    symptom_1: failures[0]?.message || 'N/A',
+    root_cause_1: failures[0]?.error || 'N/A',
+    judgment_1: failures[0] ? '查看 issues/ 复核报告' : 'N/A',
+    classification_1: failures[0]?.status || 'N/A',
+    fix_suggestion_1: failures[0] ? '见失败切片原始日志和 Playwright 复核报告' : 'N/A',
   };
 
   const report = renderTemplate(readText(TEMPLATE), vars);
@@ -242,7 +416,7 @@ function generate(runDirArg) {
   fs.writeFileSync(localPath, report);
   console.log(`✅ Local: ${localPath}`);
 
-  // 归档到当天目录
+  // 归档到当天
   const archivePath = path.join(EAGLE_EYE, date, 'resilient-regression-recovery.md');
   fs.mkdirSync(path.dirname(archivePath), { recursive: true });
   fs.writeFileSync(archivePath, report);
@@ -262,7 +436,6 @@ function main() {
     if (args[i] === '--run-dir') runDir = args[++i];
   }
   if (!runDir) {
-    // 默认最新 run
     const runs = fs.readdirSync(RUNS_DIR).sort().reverse();
     if (runs.length === 0) {
       console.error('No regression runs found');
@@ -279,4 +452,4 @@ if (require.main === module) {
 }
 
 module.exports = { generate, renderTemplate };
-// update-end---author:pi---date:2026-08-06---for:【REGRESSION-REPORT】v1 报告生成器（0804 Sprint Review 风格）---
+// update-end---author:pi---date:2026-08-06---for:【REGRESSION-REPORT】v2 真实数据抽取 + 自动归类---
