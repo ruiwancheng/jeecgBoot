@@ -471,7 +471,7 @@
       "id": "e2e-basic",
       "name": "E2E batch-1: basic-* (16 个 spec)",
       "kind": "e2e",
-      "cwd": "harness",
+      "cwd": ".",
       "command": [
         "node",
         "harness/scripts/run-batch.js",
@@ -488,7 +488,7 @@
       "id": "e2e-biz",
       "name": "E2E batch-2: batch-* + commonSetting + finance + manufacturing + materialBatch (8 个 spec)",
       "kind": "e2e",
-      "cwd": "harness",
+      "cwd": ".",
       "command": [
         "node",
         "harness/scripts/run-batch.js",
@@ -505,7 +505,7 @@
       "id": "e2e-purchase-sales",
       "name": "E2E batch-3: purchase + sales + stocktake + traceability (11 个 spec)",
       "kind": "e2e",
-      "cwd": "harness",
+      "cwd": ".",
       "command": [
         "node",
         "harness/scripts/run-batch.js",
@@ -513,6 +513,24 @@
         "purchase-sales"
       ],
       "timeout_seconds": 1800,
+      "requires": [
+        "backend",
+        "frontend"
+      ]
+    },
+    {
+      "id": "e2e-smoke",
+      "name": "E2E smoke tests (4 个 spec: login/user-list/role-list/logout)",
+      "kind": "e2e",
+      "cwd": ".",
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "e2e/smoke/",
+        "--workers=1"
+      ],
+      "timeout_seconds": 300,
       "requires": [
         "backend",
         "frontend"

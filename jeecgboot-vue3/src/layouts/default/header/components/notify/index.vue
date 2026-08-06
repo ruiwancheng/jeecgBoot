@@ -148,10 +148,17 @@
 
       // 初始化 WebSocket
       function initWebSocket() {
+        // 【V10.0.5 修复 P0 bug】未登录用户 userInfo 是 undefined，拼接到 URL 会产生 'undefined_xxx' 字符串
+        // 早 return 守卫：用户未登录时直接跳过 WS 连接（避免无效 URL + 控制台警告）
+        const userInfo = unref(userStore.getUserInfo);
+        if (!userInfo?.id) {
+          console.warn('[notify] WebSocket 跳过：用户未登录（userInfo.id 为空）');
+          return;
+        }
         let token = getToken();
         //将登录token生成一个短的标识
         let wsClientId = md5(token);
-        let userId = unref(userStore.getUserInfo).id + "_" + wsClientId;
+        let userId = userInfo.id + "_" + wsClientId;
         // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
         let url = glob.domainUrl?.replace('https://', 'wss://').replace('http://', 'ws://') + '/websocket/' + userId;
         connectWebSocket(url);
