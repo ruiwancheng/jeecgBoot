@@ -17,20 +17,23 @@ function q(sql) { return sqlFileCleanup(sql); }
 
   const suffix = Date.now();
 
-  // 1) 找一个 status=4（部分到货）的采购订单 + 一个仓库
+  // 1) 找两个 status=4（部分到货）的采购订单：A 和 B 各用一个（避免 A audit 后订单变 5 导致 B 失败）
   const poList = (await c.api('GET', '/mes/purchase/order/list?pageNo=1&pageSize=10&status=4')).result.records;
-  if (poList.length === 0) {
-    c.check('准备：找 status=4 采购订单', false, '无可用订单，请先 seed');
+  if (poList.length < 2) {
+    c.check('准备：需要 2 个 status=4 采购订单', false, `仅找到 ${poList.length} 个，请先 seed`);
     c.summary('切片 D'); return;
   }
-  const order = poList[0];
+  const order = poList[0]; // A 用
+  const orderB = poList[1]; // B 用
   const detail = (await c.api('GET', `/mes/purchase/order/queryById?id=${order.id}`)).result;
   const item = detail.items[0];
   const wh = (await c.api('GET', '/mes/basic/warehouse/list?pageNo=1&pageSize=1')).result.records[0];
   c.check('准备：采购订单+明细+仓库', !!(item && wh), `order=${order.code} material=${item.materialId?.slice(-6)} wh=${wh.id?.slice(-6)}`);
 
   // 2) 把物料的 batchEnabled 设为 1（unit 必须为字典编码 1-8）
-  await c.api('PUT', '/mes/basic/material/edit', { ...item.material, unit: '1', batchEnabled: 1 });
+  // 先 queryById 拿完整 material（item 是 PurchaseOrderItem，没有 .material 字段，spread undefined 会丢 id 导致 updateById 静默失败）
+  const matOriginal = (await c.api('GET', `/mes/basic/material/queryById?id=${item.materialId}`)).result;
+  await c.api('PUT', '/mes/basic/material/edit', { ...matOriginal, unit: '1', batchEnabled: 1 });
   const matA = (await c.api('GET', `/mes/basic/material/queryById?id=${item.materialId}`)).result;
   c.check('物料 batchEnabled=1', matA.batchEnabled === 1, `value=${matA.batchEnabled}`);
 
@@ -46,7 +49,7 @@ function q(sql) { return sqlFileCleanup(sql); }
     supplierId: order.supplierId,
     warehouseId: wh.id,
     receiptDate: '2026-08-15',
-    items: [{ materialId: item.materialId, receiptQuantity: 1 }],
+    items: [{ materialId: item.materialId, receiptQuantity: 1, batchNo: `BATCH_OFF_${suffix}` }],
   });
   c.check('A：建采购入库单(关)', rcptOffAdd.code === 200 || rcptOffAdd.message?.includes('累计入库量') || rcptOffAdd.message?.includes('已存在'), rcptOffAdd.message);
   if (rcptOffAdd.code === 200) {
@@ -71,11 +74,11 @@ function q(sql) { return sqlFileCleanup(sql); }
   const rcptOnCode = `PR_D_ON_${suffix}`;
   const rcptOnAdd = await c.api('POST', '/mes/purchase/receipt/add', {
     code: rcptOnCode,
-    purchaseOrderId: order.id,
-    supplierId: order.supplierId,
+    purchaseOrderId: orderB.id,
+    supplierId: orderB.supplierId,
     warehouseId: wh.id,
     receiptDate: '2026-08-15',
-    items: [{ materialId: item.materialId, receiptQuantity: 1 }],
+    items: [{ materialId: item.materialId, receiptQuantity: 1, batchNo: `BATCH_ON_${suffix}` }],
   });
   c.check('B：建采购入库单(开)', rcptOnAdd.code === 200 || rcptOnAdd.message?.includes('累计入库量') || rcptOnAdd.message?.includes('已存在'), rcptOnAdd.message);
   if (rcptOnAdd.code === 200) {

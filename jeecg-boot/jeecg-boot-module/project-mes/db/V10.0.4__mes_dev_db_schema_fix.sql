@@ -60,7 +60,52 @@ SET @sql = IF(@col_exists = 0,
   'SELECT 1');
 PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
--- 3) c_mes_other_stock_in/out 四张表（CREATE IF NOT EXISTS 已包含在 V9.8.0，可在此冗余声明以保证幂等）
+-- 3) c_mes_batch_ledger 列名重构（entity 重命名：source_bill_* → biz_*, record_date → occur_time）
+--    注意：finance 模块 receivable/voucher/payable 仍用 source_bill_*，不动那些表
+--    MySQL 5.7：CHANGE COLUMN 同时改名+改类型，索引属性保留
+--    用 information_schema 判断列名（避免重复执行报错）
+
+-- 3a) biz_type（若已是 biz_type 跳过）
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'biz_type');
+SET @col_exists_old = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'source_bill_type');
+SET @sql = IF(@col_exists = 0 AND @col_exists_old = 1,
+  'ALTER TABLE c_mes_batch_ledger CHANGE COLUMN source_bill_type biz_type VARCHAR(50) DEFAULT NULL COMMENT ''业务类型(采购入库/生产入库/领料/销售出库)''',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- 3b) biz_id
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'biz_id');
+SET @col_exists_old = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'source_bill_id');
+SET @sql = IF(@col_exists = 0 AND @col_exists_old = 1,
+  'ALTER TABLE c_mes_batch_ledger CHANGE COLUMN source_bill_id biz_id VARCHAR(32) DEFAULT NULL COMMENT ''业务单据ID''',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- 3c) biz_no
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'biz_no');
+SET @col_exists_old = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'source_bill_no');
+SET @sql = IF(@col_exists = 0 AND @col_exists_old = 1,
+  'ALTER TABLE c_mes_batch_ledger CHANGE COLUMN source_bill_no biz_no VARCHAR(50) DEFAULT NULL COMMENT ''业务单据号''',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- 3d) occur_time
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'occur_time');
+SET @col_exists_old = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_schema = DATABASE() AND table_name = 'c_mes_batch_ledger' AND column_name = 'record_date');
+SET @sql = IF(@col_exists = 0 AND @col_exists_old = 1,
+  'ALTER TABLE c_mes_batch_ledger CHANGE COLUMN record_date occur_time DATETIME DEFAULT NULL COMMENT ''发生时间''',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- 4) c_mes_other_stock_in/out 四张表（CREATE IF NOT EXISTS 已包含在 V9.8.0，可在此冗余声明以保证幂等）
 CREATE TABLE IF NOT EXISTS c_mes_other_stock_in (
     id                VARCHAR(32)  NOT NULL COMMENT '主键',
     code              VARCHAR(50)  NOT NULL COMMENT '入库单号',
