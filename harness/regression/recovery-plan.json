@@ -2,6 +2,12 @@
   "version": 2,
   "name": "MES regression recovery 2026-08-04 (FULL: 30 slices + chain)",
   "report_path": "hermes/eagle-eye/reports/${date}/resilient-regression-recovery.md",
+  "report_paths": [
+    "hermes/eagle-eye/reports/${date}/resilient-regression-recovery.md"
+  ],
+  "report_mirror_paths": [
+    "/Users/ruisuyun/Documents/笔记空间/低代码平台方案/03测试/${date}/resilient-regression-recovery.md"
+  ],
   "environment": {
     "HARNESS_BASE": "http://127.0.0.1:8080/jeecg-boot",
     "E2E_API_BASE": "http://127.0.0.1:8080/jeecg-boot",
