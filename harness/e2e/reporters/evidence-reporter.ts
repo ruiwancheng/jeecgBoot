@@ -62,7 +62,14 @@ function slug(value: string): string {
 
 function errorText(result: TestResult): string {
   return result.errors
-    .map((error) => error.message || error.value || error.stack || 'unknown error')
+    .map((error) => {
+      // 优先使用 stack（包含 sourceMap 反推的原始源码位置，能定位到字段名，如 `item.bookQty`）
+      // 如果只有 message（例如 page error），就用 message
+      const parts = [];
+      if (error.stack) parts.push(error.stack);
+      if (error.message && error.message !== error.stack?.split('\n')[0]) parts.push(error.message);
+      return parts.join('\n\n') || error.value || 'unknown error';
+    })
     .join('\n\n') || `${result.status} without a structured error`;
 }
 

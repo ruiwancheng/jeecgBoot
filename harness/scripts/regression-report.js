@@ -27,6 +27,7 @@ const { PATHS, REPO, resolve, FALLBACK } = require('./_paths');
 const RUNS_DIR = resolve(PATHS.harness.runs_dir);
 const EAGLE_EYE = resolve(PATHS.hermes.eagle_eye_reports);
 const TEMPLATE = resolve(PATHS.harness.report_template);
+const REPO_ROOT = REPO;  // 别名供 extractFieldFromSpecFile 使用
 
 // ─────────────────────────────────────────────
 // 工具
@@ -189,21 +190,126 @@ function indexIssuesBySpec(date) {
   return bySpec;
 }
 
+// MES 业务字段名 → 业务语义映射表
+// 当 reporter 提供原始字段名（item.bookQty / Number(item.unitCost) 等）时，转为业务可读语义
+const FIELD_NAME_MAPPING = {
+  // 批次主档/流水
+  batchNo: '批次号',
+  batchId: '批次ID',
+  qty: '数量',
+  quantity: '数量',
+  remainQty: '剩余数量',
+  inQty: '入库数量',
+  outQty: '出库数量',
+  // 盘点主档/快照
+  bookQty: '盘点账面数量',
+  actualQty: '盘点实盘数量',
+  diffQty: '盘点差异数量',
+  snapshotTime: '快照时间',
+  // 成本/金额
+  unitCost: '批次单位成本',
+  unitPrice: '单价',
+  price: '价格',
+  amount: '金额',
+  totalAmount: '总金额',
+  totalDebit: '借方总额',
+  totalCredit: '贷方总额',
+  taxRate: '税率',
+  taxAmount: '税额',
+  // 物料
+  materialId: '物料ID',
+  materialCode: '物料编码',
+  warehouseId: '仓库ID',
+  // 订单
+  orderCode: '订单编号',
+  orderNo: '订单号',
+  supplierId: '供应商ID',
+  customerId: '客户ID',
+  productionOrderId: '生产订单ID',
+  salesOrderId: '销售订单ID',
+  // 状态
+  status: '状态',
+  remark: '备注',
+  // 日期
+  deliveryDate: '交货日期',
+  orderDate: '订单日期',
+  productionDate: '生产日期',
+  expiryDate: '有效期',
+};
+
+// 从 spec 源代码中提取断言字段名（配合 code_location 行号）
+// 例：spec.ts:75 -> 读第 75 行，提取 `item.bookQty` / `record.unitCost` 等
+function extractFieldFromSpecFile(specFile, lineNumber) {
+  if (!specFile || !lineNumber) return null;
+  const filePath = path.join(REPO_ROOT, specFile);
+  if (!fs.existsSync(filePath)) return null;
+  const lines = readText(filePath).split('\n');
+  // 读错误行 + 前 2 行（断言表达式可能跨多行）
+  const start = Math.max(0, lineNumber - 3);
+  const end = Math.min(lines.length, lineNumber + 1);
+  const context = lines.slice(start, end).join('\n');
+  // 过滤掉常见 API 中间字段/通用字段（避免噪音）
+  const NOISE = new Set([
+    'result', 'data', 'records', 'res', 'response', 'keys', 'values', 'entries', 'from', 'to',
+    'json', 'body', 'code', 'id', 'name', 'type', 'value', 'date', 'time', 'list',
+    'createdAt', 'updatedAt', 'createTime', 'updateTime',
+    'costValue', 'expectedCost', 'accessToken', 'loginRes', 'apiRes',
+  ]);
+  // 匹配 item.bookQty / record.unitCost / Number(item.X) / expect(...X...).toBe 等
+  const fieldPatterns = [
+    /item\.([a-zA-Z][a-zA-Z0-9_]*)/g,
+    /record\.([a-zA-Z][a-zA-Z0-9_]*)/g,
+    /\.([a-zA-Z][a-zA-Z0-9_]*)[\.\[\)\=]/g,  // .fieldName. 或 .fieldName[ 或 .fieldName) 或 .fieldName=
+    /Object\.keys\([^)]*\)\.includes\(['"]([\w]+)['"]/g, // Object.keys(X).includes('field')
+    /saved\.([a-zA-Z][a-zA-Z0-9_]*)/g,       // saved.fieldName (单据落库后验证)
+    /detail\.result\.items\.([a-zA-Z][a-zA-Z0-9_]*)/g, // detail.result.items[0].fieldName
+  ];
+  const fields = new Set();
+  for (const pat of fieldPatterns) {
+    const matches = context.matchAll(pat);
+    for (const m of matches) {
+      const field = m[1];
+      if (field && !NOISE.has(field)) {
+        fields.add(field);
+      }
+    }
+  }
+  return [...fields];
+}
+
+// 从 actual_error stack 中提取 expect 错误的真实行号
+// Playwright 错误堆栈格式：at .../<spec-file>.spec.ts:LINE:COL
+// 比 issue.code_location（test describe 行）更精确，指向真正的 expect 断言
+function extractRealLineFromErrorStack(actualError, specFile) {
+  if (!actualError || !specFile) return 0;
+  // 提取 spec 文件名 basename
+  const baseName = specFile.split('/').pop();
+  if (!baseName) return 0;
+  // 正则匹配 stack 中的 at .../xxx.spec.ts:LINE:COL
+  const re = new RegExp(`at\\s+(?:[^\\s]+\\s+)?\\(?[^\\s]*${baseName.replace(/\./g, '\\.')}:(\\d+):(\\d+)`, 'm');
+  const m = actualError.match(re);
+  if (m) return parseInt(m[1], 10) || 0;
+  return 0;
+}
+
 // 把技术性 actual_error 转换为业务语言描述
-// 例： "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 20\nReceived: 15"
-//   → "断言失败：期望值 20，实际值 15"
-function toBusinessLanguage(errorText) {
+//   入参新增 specFile + codeLocation：用于从 spec 源码上下文提取断言字段名
+function toBusinessLanguage(errorText, specFile, codeLocation) {
   if (!errorText || errorText === '(无)') return '(无)';
   const clean = errorText.replace(/\x1b\[[\d;]*m/g, '').trim();
+  // 提取断言字段名（从 spec 源码上下文）+ 业务语义映射
+  const fields = extractFieldFromSpecFile(specFile, codeLocation) || [];
+  const fieldLabel = fields.length > 0
+    ? fields.map(f => `${FIELD_NAME_MAPPING[f] || f}(\`${f}\`)`).join('、')
+    : null;
   // 模式1：expect 断言失败（提取 Expected/Received）
   const expectMatch = clean.match(/Error[^\n]*expect[^\n]*[\s\S]*?Expected:\s*(\S+)[\s\S]*?Received:\s*(\S+)/);
   if (expectMatch) {
-    return `断言失败：期望值 \`${expectMatch[1]}\`，实际值 \`${expectMatch[2]}\``;
+    const fieldPart = fieldLabel ? `【${fieldLabel}】` : '';
+    return `断言失败${fieldPart}：期望值 \`${expectMatch[1]}\`，实际值 \`${expectMatch[2]}\``;
   }
   // 模式2：locator.isVisible() / element not found
-  const locatorMatch = clean.match(/locator[\(\.][^\n]+|element\(s\) not found|Expected:\s*visible/);
-  if (locatorMatch || /TimeoutError|element\(s\) not found/.test(clean)) {
-    const expected = clean.match(/Expected:\s*visible/i);
+  if (/TimeoutError|element\(s\) not found|Expected:\s*visible/.test(clean)) {
     const errorLine = clean.split('\n').find(l => /Error:|TimeoutError/.test(l)) || '';
     return `页面元素未出现：${errorLine.replace(/^Error:\s*/, '').slice(0, 120)}`;
   }
@@ -226,7 +332,7 @@ function toBusinessLanguage(errorText) {
     const col = clean.match(/Unknown column '([^']+)'/) || clean.match(/Field '([^']+)' doesn't have a default value/);
     return `数据库 schema 错误${col ? `：字段 \`${col[1]}\` 缺失或约束错误` : ''}`;
   }
-  // fallback：去掉 ANSI 颜色 + 截前 200 字符（保证原意但去掉技术臃肿）
+  // fallback：去掉 ANSI 颜色 + 截前 200 字符
   const firstLine = clean.split('\n').find(l => l.trim()) || clean;
   return firstLine.slice(0, 200);
 }
@@ -275,8 +381,15 @@ function matchIssuesForSlice(testNames, issueBySpec) {
       }
       // 2. 预期结果（业务语言：来自 scenario.expected）
       lines.push(`  预期结果（业务描述）：${expected}`);
-      // 3. 实际结果（业务语言：从 actual_error 提取 Expected/Received）
-      lines.push(`  实际结果：${toBusinessLanguage(problem)}`);
+      // 3. 实际结果（业务语言：从 actual_error 提取 Expected/Received，含字段名+业务语义）
+      const specFile = issue.test_name || '';  // 形如 `harness/e2e/mes/stocktake.spec.ts`
+      // 优先从 actual_error stack 提取真实 expect 行号（如 75）；fallback 到 issue.code_location（如 48=describe 行）
+      let codeLine = extractRealLineFromErrorStack(problem, specFile);
+      if (!codeLine) {
+        const lines_2 = (issue.code_location || '').split(':');
+        codeLine = parseInt(lines_2[1] || '0', 10) || 0;
+      }
+      lines.push(`  实际结果：${toBusinessLanguage(problem, specFile, codeLine)}`);
     }
   }
   return {
@@ -350,8 +463,8 @@ function parseIssueMd(filePath) {
       if (idx < 0) continue;
       // 跳过 `- ` 前缀和 `**` 标记
       const after = line.slice(idx + label.length);
-      // after 形如 `：**xxx**` 或 `: xxx`
-      const value = after.replace(/^[：:\s*]+/, '').replace(/\*+$/, '').trim();
+      // after 形如 `：**\`xxx\`**` 或 `: \`xxx\``，要去掉 ` 和 * 包裹
+      const value = after.replace(/^[：:\s*]+/, '').replace(/\*+$/, '').replace(/^`/, '').replace(/`$/, '').trim();
       return value;
     }
     return '';
