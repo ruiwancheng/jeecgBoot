@@ -22,7 +22,17 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CHAINS_PATH = REPO_ROOT / "hermes" / "business-chains.json"
+
+# Phase 3 / 建议 5：路径集中加载（缺文件时硬编码 fallback）
+try:
+    from _paths import PATHS as _HARNESS_PATHS, resolve as _resolve_path
+    DEFAULT_CHAINS_PATH = _resolve_path(_HARNESS_PATHS["hermes"]["business_chains"])
+except ImportError:
+    _HARNESS_PATHS = {}
+    DEFAULT_CHAINS_PATH = REPO_ROOT / "hermes" / "business-chains.json"
+    def _resolve_path(rel_or_abs, date=None):
+        p = Path(rel_or_abs)
+        return p.resolve() if p.is_absolute() else (REPO_ROOT / rel_or_abs).resolve()
 SEMANTIC_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"\.[A-Za-z_]+\s*[!=]==\s*['\"]"),
     re.compile(r"\.status\s*[!=]==\s*['\"0-9]"),
@@ -183,7 +193,7 @@ def main(argv: list[str] | None = None) -> int:
     chains_path = DEFAULT_CHAINS_PATH
     target = None
     base = None
-    tests_root = REPO_ROOT / "harness" / "tests" / "modules"
+    tests_root = _resolve_path(_HARNESS_PATHS.get("harness", {}).get("tests_modules", "harness/tests/modules"))
     for token in iterator:
         if token == "--manifest":
             manifest_path = Path(next(iterator))

@@ -16,9 +16,19 @@ try:
 except ModuleNotFoundError:
     from harness.scripts.resilient_regression import REPO_ROOT, read_json, read_state
 
+# Phase 3 / 建议 5：路径集中加载（缺文件时硬编码 fallback）
+try:
+    from _paths import PATHS as _HARNESS_PATHS, resolve as _resolve_path
+except ImportError:
+    _HARNESS_PATHS = {}
+    def _resolve_path(rel_or_abs, date=None):
+        from pathlib import Path
+        p = Path(rel_or_abs)
+        return p.resolve() if p.is_absolute() else (REPO_ROOT / rel_or_abs).resolve()
 
-STATIC_DIR = REPO_ROOT / "harness" / "dashboard"
-ISSUE_ROOT = REPO_ROOT / "hermes" / "eagle-eye" / "reports"
+
+STATIC_DIR = _resolve_path(_HARNESS_PATHS.get("harness", {}).get("dashboard", "harness/dashboard"))
+ISSUE_ROOT = _resolve_path(_HARNESS_PATHS.get("hermes", {}).get("eagle_eye_reports", "hermes/eagle-eye/reports"))
 MAX_LOG_BYTES = 250_000
 
 

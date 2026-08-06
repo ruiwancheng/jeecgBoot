@@ -27,7 +27,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const PROJECT = path.resolve(__dirname, '..', '..');
+// Phase 3 / 建议 5：路径集中加载
+const { REPO, PATHS, resolve } = require('./_paths');
+const PROJECT = REPO;
 
 // 45 个 module 测试分批（每批 ~12 个）
 const MODULE_BATCHES = {
@@ -87,7 +89,7 @@ function runModuleBatch(batchId) {
   let total = 0, passed = 0, failed = 0;
   for (const name of batch) {
     const fileName = name.endsWith('.test') ? `${name}.js` : `${name}.test.js`;
-    const file = path.join(PROJECT, 'harness', 'tests', 'modules', fileName);
+    const file = path.join(resolve(PATHS.harness.tests_modules), fileName);
     if (!fs.existsSync(file)) {
       console.log(`  ⚠️  ${name}: 文件不存在，跳过`);
       continue;
@@ -116,7 +118,7 @@ function runE2EBatch(batchId) {
   const specs = batch.map(n => path.join('harness', 'e2e', 'mes', `${n}.spec.ts`));
   console.log(`📦 E2E batch: ${batchId} (${batch.length} 个 spec)`);
   try {
-    runCmd(`npx playwright test ${specs.join(' ')} --workers=1`, { cwd: path.join(PROJECT, 'harness') });
+    runCmd(`npx playwright test ${specs.join(' ')} --workers=1`, { cwd: resolve(PATHS.harness.root) });
   } catch (e) {
     console.log(`\n❌ E2E batch ${batchId} 失败 (exit ${e.status})`);
     process.exit(1);

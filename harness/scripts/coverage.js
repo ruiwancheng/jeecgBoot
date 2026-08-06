@@ -22,13 +22,15 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const PROJECT = path.resolve(__dirname, '..', '..');
+// Phase 3 / 建议 5：路径集中加载
+const { REPO, PATHS, resolve } = require('./_paths');
+const PROJECT = REPO;
 const CTRL_DIRS = {
   mes: path.join(PROJECT, 'jeecg-boot/jeecg-boot-module/project-mes')
 };
 const TEST_DIRS = [
-  path.join(PROJECT, 'harness/tests/modules'),
-  path.join(PROJECT, 'harness/e2e/mes')
+  resolve(PATHS.harness.tests_modules),
+  resolve(PATHS.harness.e2e_mes),
 ];
 
 // ─────────────────────────────────────────────────────────────
