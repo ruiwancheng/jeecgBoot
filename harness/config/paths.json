@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "_description": "MES 回归测试体系 — 文件系统路径集中配置（Phase 3 / 建议 5）",
+  "_doc": "所有相对路径基于 REPO_ROOT（harness/ 的父目录 = jeecgBoot/）",
+  "_template_vars": ["${date} = YYYY-MM-DD（按当天日期展开）"],
+  "harness": {
+    "root": "harness",
+    "regression_manifest": "harness/regression/recovery-plan.json",
+    "runs_dir": "harness/.regression-runs",
+    "tests_root": "harness/tests",
+    "tests_modules": "harness/tests/modules",
+    "tests_chains": "harness/tests/chains",
+    "tests_concurrent": "harness/tests/concurrent",
+    "e2e_root": "harness/e2e",
+    "e2e_mes": "harness/e2e/mes",
+    "playwright_config": "harness/playwright.config.ts",
+    "templates_dir": "harness/templates",
+    "report_template": "harness/templates/regression-report.md",
+    "dashboard": "harness/dashboard"
+  },
+  "hermes": {
+    "eagle_eye_root": "hermes/eagle-eye",
+    "eagle_eye_reports": "hermes/eagle-eye/reports",
+    "business_chains": "hermes/business-chains.json",
+    "plans_dir": "hermes/plan",
+    "reviews_dir": "hermes/reviews"
+  },
+  "external_mirror": {
+    "_doc": "可选外部镜像（用户笔记空间）",
+    "user_notes_root": "/Users/ruisuyun/Documents/笔记空间/低代码平台方案/03测试"
+  }
+}
