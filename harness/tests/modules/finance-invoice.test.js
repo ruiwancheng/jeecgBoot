@@ -32,13 +32,13 @@ async function run() {
   // ====== 准备客户 + 供应商（发票依赖） ======
   const custAdd = await api('POST', '/mes/basic/customer/add', { code: 'INV_CUST_' + TS, name: '发票测试客户', status: 1 });
   const custId = custAdd.code === 200
-    ? (await api('GET', '/mes/basic/customer/list?pageNo=1&pageSize=20')).result?.records?.find(x => x.code === 'INV_CUST_' + TS)?.id || ''
+    ? (await api('GET', '/mes/basic/customer/list?pageNo=1&pageSize=20&code=' + encodeURIComponent('INV_CUST_' + TS))).result?.records?.[0]?.id || ''
     : '';
   ass(custId !== '', '0a 创建客户: ' + custId);
 
   const supAdd = await api('POST', '/mes/basic/supplier/add', { code: 'INV_SUP_' + TS, name: '发票测试供应商', status: 1 });
   const supId = supAdd.code === 200
-    ? (await api('GET', '/mes/basic/supplier/list?pageNo=1&pageSize=20')).result?.records?.find(x => x.code === 'INV_SUP_' + TS)?.id || ''
+    ? (await api('GET', '/mes/basic/supplier/list?pageNo=1&pageSize=20&code=' + encodeURIComponent('INV_SUP_' + TS))).result?.records?.[0]?.id || ''
     : '';
   ass(supId !== '', '0b 创建供应商: ' + supId);
 
