@@ -590,7 +590,9 @@ python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
     write_text_atomic(local_report, content)
     configured = ctx.manifest.get("report_path")
     if configured:
-        target = (REPO_ROOT / configured).resolve()
+        # 支持 ${date} 模板（按当天日期归档报告，避免覆盖其他日期的报告）
+        target_str = configured.replace("${date}", datetime.now().strftime("%Y-%m-%d"))
+        target = (REPO_ROOT / target_str).resolve()
         try:
             write_text_atomic(target, content)
         except OSError as error:

@@ -1,7 +1,7 @@
 {
   "version": 2,
   "name": "MES regression recovery 2026-08-04",
-  "report_path": "hermes/eagle-eye/reports/2026-08-04/resilient-regression-recovery.md",
+  "report_path": "hermes/eagle-eye/reports/${date}/resilient-regression-recovery.md",
   "environment": {
     "HARNESS_BASE": "http://127.0.0.1:8080/jeecg-boot",
     "E2E_API_BASE": "http://127.0.0.1:8080/jeecg-boot",
