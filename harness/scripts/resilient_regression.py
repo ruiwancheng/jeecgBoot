@@ -29,8 +29,19 @@ from urllib.request import Request, urlopen
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_MANIFEST = REPO_ROOT / "harness" / "regression" / "recovery-plan.json"
-DEFAULT_RUNS_DIR = REPO_ROOT / "harness" / ".regression-runs"
+
+# Phase 3 / 建议 5：路径集中加载（缺文件时硬编码 fallback）
+try:
+    from _paths import PATHS as _HARNESS_PATHS, resolve as _resolve_path
+    DEFAULT_MANIFEST = _resolve_path(_HARNESS_PATHS["harness"]["regression_manifest"])
+    DEFAULT_RUNS_DIR = _resolve_path(_HARNESS_PATHS["harness"]["runs_dir"])
+except ImportError:
+    _HARNESS_PATHS = {}
+    DEFAULT_MANIFEST = REPO_ROOT / "harness" / "regression" / "recovery-plan.json"
+    DEFAULT_RUNS_DIR = REPO_ROOT / "harness" / ".regression-runs"
+    def _resolve_path(rel_or_abs, date=None):
+        p = Path(rel_or_abs)
+        return p.resolve() if p.is_absolute() else (REPO_ROOT / rel_or_abs).resolve()
 TERMINAL_STATUSES = {"passed", "failed", "timeout", "skipped"}
 RETRYABLE_STATUSES = {"pending", "running", "interrupted", "blocked_environment"}
 
@@ -547,7 +558,7 @@ def generate_report(ctx: RunContext) -> str:
             f"{result['attempts']} | {exit_code} | {duration} | `{log_path}` | {message} |"
         )
     counts_text = ", ".join(f"{key}={value}" for key, value in sorted(counts.items())) or "无"
-    review_summary_path = REPO_ROOT / "hermes" / "eagle-eye" / "reports" / datetime.now().strftime("%Y-%m-%d") / "issues" / "review-summary.json"
+    review_summary_path = _resolve_path(_HARNESS_PATHS.get("hermes", {}).get("eagle_eye_reports", "hermes/eagle-eye/reports")) / datetime.now().strftime("%Y-%m-%d") / "issues" / "review-summary.json"
     if review_summary_path.exists():
         try:
             review_summary = read_json(review_summary_path)
@@ -596,7 +607,7 @@ python harness/scripts/resilient_regression.py resume --run-dir "{ctx.run_dir}"
     for path_template in configured_paths:
         # 支持 ${date} 模板（按当天日期归档报告，避免覆盖其他日期的报告）
         target_str = path_template.replace("${date}", datetime.now().strftime("%Y-%m-%d"))
-        target = Path(target_str).resolve() if Path(target_str).is_absolute() else (REPO_ROOT / target_str).resolve()
+        target = _resolve_path(target_str)
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
             write_text_atomic(target, content)
@@ -635,7 +646,7 @@ def _dispatch_slice_kind(slice_state: dict[str, Any], item: dict[str, Any], exit
 
 
 def load_chains_doc() -> dict[str, Any]:
-    chains_path = REPO_ROOT / "hermes" / "business-chains.json"
+    chains_path = _resolve_path(_HARNESS_PATHS.get("hermes", {}).get("business_chains", "hermes/business-chains.json"))
     if not chains_path.exists():
         return {"chains": {}}
     try:
@@ -960,8 +971,8 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser.add_argument("--run-dir")
 
     plan_parser = subparsers.add_parser("plan", help="build a merged plan from chains + manifest")
-    plan_parser.add_argument("--manifest", default=str(REPO_ROOT / "harness" / "regression" / "recovery-plan.json"))
-    plan_parser.add_argument("--target", default=str(REPO_ROOT / "harness" / "regression" / "recovery-plan.merged.json"))
+    plan_parser.add_argument("--manifest", default=str(_resolve_path(_HARNESS_PATHS.get("harness", {}).get("regression_manifest", "harness/regression/recovery-plan.json"))))
+    plan_parser.add_argument("--target", default=str(_resolve_path(_HARNESS_PATHS.get("harness", {}).get("regression_manifest", "harness/regression/recovery-plan.json")).parent / "recovery-plan.merged.json"))
     plan_parser.add_argument("--base")
 
     worker_parser = subparsers.add_parser("_worker", help=argparse.SUPPRESS)

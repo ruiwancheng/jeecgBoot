@@ -22,11 +22,11 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const PROJECT = path.resolve(__dirname, '..', '..');
-const REPO = PROJECT;
-const RUNS_DIR = path.join(PROJECT, 'harness', '.regression-runs');
-const EAGLE_EYE = path.join(PROJECT, 'hermes', 'eagle-eye', 'reports');
-const TEMPLATE = path.resolve(__dirname, '..', 'templates', 'regression-report.md');
+// Phase 3 / 建议 5：路径集中加载（缺文件时硬编码 fallback）
+const { PATHS, REPO, resolve, FALLBACK } = require('./_paths');
+const RUNS_DIR = resolve(PATHS.harness.runs_dir);
+const EAGLE_EYE = resolve(PATHS.hermes.eagle_eye_reports);
+const TEMPLATE = resolve(PATHS.harness.report_template);
 
 // ─────────────────────────────────────────────
 // 工具
