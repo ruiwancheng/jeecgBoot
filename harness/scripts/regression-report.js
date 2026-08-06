@@ -139,17 +139,21 @@ function extractTestNames(logPath) {
   return [...new Set(tests)];
 }
 
-function failureAnalysis(state, manifest, runDir) {
+function failureAnalysis(state, manifest, runDir, date) {
   const slices = state.slices || {};
   const mById = {};
   for (const m of manifest.slices || []) mById[m.id] = m;
   const failed = [];
+  // v2: 按 slice_id 从 issues/*.md 抽取“复现步骤”和“页面路径”（供业务人员复核）
+  const issueBySpec = indexIssuesBySpec(date);
   for (const [sid, s] of Object.entries(slices)) {
     if (s.status !== 'failed' && s.status !== 'timeout') continue;
     const logName = `${sid}.attempt-${s.attempts || 1}.log`;
     const realLog = path.join(runDir, 'logs', logName);
     const errMsg = extractFirstError(realLog);
     const testNames = extractTestNames(realLog);
+    // 从该切片关联的 issues 里提取复现步骤 + 页面路径（按测试名匹配，聚合该切片所有 issue）
+    const matched = matchIssuesForSlice(testNames, issueBySpec);
     failed.push({
       slice_id: sid,
       name: mById[sid]?.name || sid,
@@ -158,9 +162,79 @@ function failureAnalysis(state, manifest, runDir) {
       error: errMsg,
       tests: testNames,
       log_path: realLog,
+      reproduction: matched.reproduction,
+      page_path: matched.page_path,
+      matched_specs: matched.matched_specs,
     });
   }
   return failed;
+}
+
+// v2: 按 spec 文件名建立索引 (从 issues/*.md 的 "测试文件" 字段提取)
+function indexIssuesBySpec(date) {
+  const dir = path.join(EAGLE_EYE, date, 'issues');
+  if (!fs.existsSync(dir)) return {};
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md') && !f.includes('review-summary') && !f.includes('runtime-diagnostics'));
+  const bySpec = {};
+  for (const f of files) {
+    const parsed = parseIssueMd(path.join(dir, f));
+    if (!parsed || !parsed.test_name) continue;
+    // test_name 形如 `harness/e2e/mes/traceabilityBatch.spec.ts`
+    const m = parsed.test_name.match(/([\w\/-]+\.spec\.ts)/);
+    if (!m) continue;
+    const specKey = m[1].replace(/^harness\/e2e\//, '');
+    if (!bySpec[specKey]) bySpec[specKey] = [];
+    bySpec[specKey].push(parsed);
+  }
+  return bySpec;
+}
+
+// v2: 传 testNames (包含 spec 文件名) + issueBySpec，提取所有匹配的复现步骤
+function matchIssuesForSlice(testNames, issueBySpec) {
+  const matched = [];
+  const pages = new Set();
+  const seen = new Set();
+  for (const t of testNames) {
+    // t 形如 e2e/mes/stocktake.spec.ts:48 — 锚点#4
+    const m = t.match(/([\w\/-]+\.spec\.ts)/);
+    if (!m) continue;
+    const specKey = m[1].replace(/^e2e\//, '');
+    const issues = issueBySpec[specKey];
+    if (issues && issues.length > 0) {
+      matched.push(specKey);
+      for (const issue of issues) {
+        // 去重：同 spec + 同 title 只输出一次
+        const key = `${specKey}::${issue.title || ''}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (issue.page_path) pages.add(issue.page_path);
+      }
+    }
+  }
+  if (matched.length === 0) {
+    return { reproduction: '', page_path: '', matched_specs: [] };
+  }
+  // 格式化输出：按 spec 分组列出所有复现步骤 + 页面路径
+  const lines = [];
+  for (const specKey of [...new Set(matched)]) {
+    const issues = issueBySpec[specKey] || [];
+    lines.push(`**spec**: \`${specKey}\``);
+    for (const issue of issues) {
+      const loc = issue.code_location || '';
+      const title = issue.title || '';
+      const reprod = issue.reproduction || '(无)';
+      lines.push(`- 测试位置：\`${loc}\`${title ? ` 标题：${title}` : ''}`);
+      lines.push(`  复现步骤：`);
+      for (const line of reprod.split('\n')) {
+        lines.push(`    ${line}`);
+      }
+    }
+  }
+  return {
+    reproduction: lines.join('\n'),
+    page_path: [...pages].join(', '),
+    matched_specs: [...new Set(matched)],
+  };
 }
 
 function renderFailureSections(failures) {
@@ -169,6 +243,11 @@ function renderFailureSections(failures) {
     const testsText = f.tests.length
       ? f.tests.slice(0, 5).map(t => `  - \`${t}\``).join('\n')
       : '  - (无 Playwright spec 匹配)';
+    // v2: 复现步骤 + 复核结果（从 issues/*.md 抽取，业务人员手工填写复核结论）
+    const reproText = f.reproduction && f.reproduction.length > 0
+      ? f.reproduction
+      : '⚠️ 本次回归未生成对应的 issue 复核报告（e2e/mes 之外的切片可能没有 issues/*.md）。\n   业务人员请根据下方"失败的测试"中描述的操作路径手工复现。';
+    const pagePath = f.page_path ? `页面路径: \`${f.page_path}\`\n` : '';
     return `### 4.${i + 1} \`${f.slice_id}\` — ${f.name}
 
 **状态**：${f.status}
@@ -182,6 +261,20 @@ ${f.error}
 
 **失败的测试**：${f.tests.length ? '' : '(无 Playwright 测试，API/链路切片)'}
 ${testsText}
+
+**复现步骤**：${pagePath}
+${reproText}
+
+> 📝 业务人员复核后请填写下方「复核结果」（真实 BUG / 误判 + 原因）
+
+**复核结果**：
+\`\`\`
+判定：  [ ] 真实 BUG   [ ] 误判（非 BUG）
+严重度（如真实 BUG）： [ ] P0 (阻塞)  [ ] P1 (主流程)  [ ] P2 (次要)
+误判原因（如误判）：____________________________________________________
+跟进负责人：__________________________________
+复核人 / 时间：__________________________________
+\`\`\`
 
 **原始日志**：\`${f.log_path}\`
 
@@ -214,7 +307,11 @@ function parseIssueMd(filePath) {
     }
     return '';
   };
+  // 从 markdown 首行（# ...）提取 title
+  const firstLine = txt.split('\n').find(l => l.trim().startsWith('#')) || '';
+  const title = firstLine.replace(/^#\s*/, '').trim();
   return {
+    title,
     test_name: lineGet('测试文件'),
     code_location: lineGet('代码位置'),
     page_path: lineGet('页面路径'),
@@ -381,7 +478,7 @@ function generate(runDirArg) {
   const passRate = total ? (counts.passed / total * 100).toFixed(1) : '0';
   const totalDuration = Object.values(state.slices || {}).reduce((s, x) => s + (x.duration_seconds || 0), 0).toFixed(1);
 
-  const failures = failureAnalysis(state, manifest, runDir);
+  const failures = failureAnalysis(state, manifest, runDir, date);
   const issues = issueReviewSummary(date);
   const commits = recentCommits(runTimestamp);
 
