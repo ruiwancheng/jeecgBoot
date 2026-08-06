@@ -522,7 +522,7 @@
       "id": "e2e-smoke",
       "name": "E2E smoke tests (4 个 spec: login/user-list/role-list/logout)",
       "kind": "e2e",
-      "cwd": ".",
+      "cwd": "harness",
       "command": [
         "npx",
         "playwright",
