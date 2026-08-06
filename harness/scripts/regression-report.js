@@ -45,7 +45,11 @@ function detectDate(runId) {
   if (runId && /^\d{8}-\d{6}$/.test(runId)) {
     return `${runId.slice(0,4)}-${runId.slice(4,6)}-${runId.slice(6,8)}`;
   }
-  return new Date().toISOString().slice(0, 10);
+  // 使用本地时间（与 Python runner 的 datetime.now() 一致）
+  // Phase 2 / 建议 4 修复 P0 时区不一致：
+  // 原 .toISOString() 用 UTC，跨午夜场景 Python 写 2026-08-07，Node 会写 2026-08-06（错）
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function parseRunTimestamp(runId) {
   if (runId && /^\d{8}-\d{6}$/.test(runId)) {
@@ -299,8 +303,9 @@ function recentCommits(runTimestamp) {
       out = shell('git log --since="24 hours ago" --pretty=format:"%h|%s"');
     }
     if (!out.trim()) {
-      // 再 fallback：当天全部 commit
-      const today = new Date().toISOString().slice(0, 10);
+      // 再 fallback：当天全部 commit（用本地时间，与 detectDate / Python 一致）
+      const d = new Date();
+      const today = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       out = shell(`git log --since="${today} 00:00" --pretty=format:"%h|%s"`);
     }
     return out.split('\n').filter(Boolean).map(line => {
@@ -416,11 +421,32 @@ function generate(runDirArg) {
   fs.writeFileSync(localPath, report);
   console.log(`✅ Local: ${localPath}`);
 
-  // 归档到当天
-  const archivePath = path.join(EAGLE_EYE, date, 'resilient-regression-recovery.md');
-  fs.mkdirSync(path.dirname(archivePath), { recursive: true });
-  fs.writeFileSync(archivePath, report);
-  console.log(`✅ Archive: ${archivePath}`);
+  // 归档到当天（Phase 2 / 建议 4：多路径写入 + best-effort 错误隔离）
+  // 路径收集（向后兼容）：
+  //   1. report_paths[] 数组（manifest 新增）
+  //   2. fallback 到 report_path 单数字段（保留兼容）
+  //   3. 追加 report_mirror_paths[] 数组（如用户笔记空间）
+  const manifestPaths = manifest.report_paths || (manifest.report_path ? [manifest.report_path] : []);
+  const mirrorPaths = manifest.report_mirror_paths || [];
+  const allPaths = [...manifestPaths, ...mirrorPaths];
+
+  let successCount = 0, failCount = 0;
+  for (const pathTemplate of allPaths) {
+    const resolved = pathTemplate.replace(/\$\{date\}/g, date);
+    const absolute = path.isAbsolute(resolved) ? resolved : path.join(PROJECT, resolved);
+    try {
+      fs.mkdirSync(path.dirname(absolute), { recursive: true });
+      fs.writeFileSync(absolute, report);
+      console.log(`✅ Archive: ${absolute}`);
+      successCount++;
+    } catch (e) {
+      console.error(`❌ Failed to write ${absolute}: ${e.message}`);
+      failCount++;
+    }
+  }
+  if (failCount > 0) {
+    console.warn(`⚠️  ${failCount}/${allPaths.length} archive writes failed (best-effort)`);
+  }
 
   return report;
 }
