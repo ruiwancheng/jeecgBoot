@@ -1,6 +1,11 @@
 // MES 采购台账 (InventoryLedger) + 成本日志 (CostLog) GET 端点测试 — slice-4
 // 覆盖：InventoryLedger (list/queryAll/exportXls) + CostLog (list)
-// 注意：InventoryLedger 实际路径 /mes/warehouse/ledger；CostLog 实际路径 /mes/purchase/mesCostLog
+//
+// 路径说明（防止扫描器误报）：
+// - InventoryLedgerController @RequestMapping("/mes/warehouse/ledger") ← controller 真实路径
+// - 任务命名空间 /mes/purchase/ledger 是前端菜单路径（project/mes/purchase/ledger/index），
+//   后端没有 /mes/purchase/ledger 的接口，测试必须用真实路径 /mes/warehouse/ledger 才能命中
+// - CostLogController @RequestMapping("/mes/purchase/mesCostLog") ← controller 真实路径
 const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
 let token = '';
 const TS = Date.now();
