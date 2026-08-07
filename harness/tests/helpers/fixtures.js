@@ -99,4 +99,56 @@ function cleanupWarehouseScope(whId, matId) {
   `);
 }
 
-module.exports = { createWarehouse, createMaterial, createSupplier, createAndAuditStockIn, safeDeleteDoc, dbCleanup, cleanupWarehouseScope };
+/** 创建不依赖物料/仓库存在性的孤儿库存行。 */
+async function withOrphanRow(c, opts = {}) {
+  const ts = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const inventoryId = `orphan-inv-${ts}`;
+  const qty = Number.isFinite(Number(opts.qty)) ? Number(opts.qty) : 0;
+  dbCleanup(`
+    INSERT INTO c_mes_inventory
+      (id, material_id, warehouse_id, current_qty, create_by, create_time, update_by, update_time)
+    VALUES ('${inventoryId}', 'orphan-mat-${ts}', 'orphan-wh-${ts}', ${qty}, 'harness', NOW(), 'harness', NOW());
+  `);
+  return inventoryId;
+}
+
+/** 创建物料并在指定引用表中写入最小 fixture。 */
+async function withReferencedMaterial(c, tables = ['c_mes_inventory']) {
+  const suffix = `${String(Date.now()).slice(-10)}${Math.random().toString(36).slice(2, 4)}`;
+  const material = await createMaterial(c, suffix, '测试被引用物料');
+  if (!material.id) throw new Error(`无法创建测试物料 ${suffix}`);
+  const materialId = material.id;
+  const id = (name) => `${name.slice(0, 20)}-${suffix}`;
+  const statements = [];
+  for (const table of tables) {
+    switch (table) {
+      case 'c_mes_inventory':
+        statements.push(`INSERT INTO c_mes_inventory (id, material_id, warehouse_id, current_qty, create_by, create_time) VALUES ('${id(table)}', '${materialId}', 'fixture-wh-${suffix}', 0, 'harness', NOW())`);
+        break;
+      case 'c_mes_bom_item':
+        statements.push(`INSERT INTO c_mes_bom_item (id, bom_id, line_no, material_id, quantity, create_by, create_time) VALUES ('${id(table)}', 'fixture-bom-${suffix}', 1, '${materialId}', 1, 'harness', NOW())`);
+        break;
+      case 'c_mes_batch':
+        statements.push(`INSERT INTO c_mes_batch (id, batch_no, material_id, origin_type, qty, status, create_by, create_time, del_flag) VALUES ('${id(table)}', 'fixture-batch-${suffix}', '${materialId}', 'fixture', 1, '1', 'harness', NOW(), 0)`);
+        break;
+      default:
+        throw new Error(`未定义引用 fixture 表：${table}`);
+    }
+  }
+  if (statements.length) dbCleanup(`${statements.join(';')};`);
+  return materialId;
+}
+
+/** 清理本套测试生成的孤儿库存、引用行和物料。 */
+async function cleanupFixtures(c, ids = []) {
+  const escaped = ids.filter(Boolean).map((id) => String(id).replace(/'/g, "''"));
+  const idClause = escaped.length ? `('${escaped.join("','")}')` : "('')";
+  dbCleanup(`
+    DELETE FROM c_mes_inventory WHERE id LIKE 'orphan-inv-%' OR id LIKE 'c_mes_inventory-%';
+    DELETE FROM c_mes_bom_item WHERE id LIKE 'c_mes_bom_item-%';
+    DELETE FROM c_mes_batch WHERE id LIKE 'c_mes_batch-%';
+    DELETE FROM c_mes_material WHERE id IN ${idClause};
+  `);
+}
+
+module.exports = { createWarehouse, createMaterial, createSupplier, createAndAuditStockIn, safeDeleteDoc, dbCleanup, cleanupWarehouseScope, withOrphanRow, withReferencedMaterial, cleanupFixtures };
