@@ -43,6 +43,8 @@ hermes/logs/
 hermes/sessions/
 # 鹰眼团回归 runner 跑出的临时问题报告（含截图链接、视频），不入仓
 hermes/eagle-eye/reports/*/issues/
+# 临时诊断报告（如 4173 端口诊断），本地化不入版本库
+hermes/eagle-eye/reports/*/diagnosis-*.md
 .remember/
 
 ## deploy-server dependencies
@@ -65,9 +67,25 @@ config/jeecg/code-template-online/
 .code-review-graph/
 
 # Third-party AI client configs (multi-IDE)
-AGENTS.md CODEBUDDY.md GEMINI.md QODER.md
-cursorrules windsurfrules opencode.jsonc
-.codebuddy/ .gemini/ .kiro/ .qoder/
+# Gitignore 每行一个 pattern，多 pattern 用通配符或前缀匹配
+# 顶层文件
+AGENTS.md
+CODEBUDDY.md
+GEMINI.md
+QODER.md
+.cursorrules
+.windsurfrules
+opencode.jsonc
+.vscode/mcp.json
+# 客户端配置目录
+.codebuddy/
+.gemini/
+.kiro/
+.qoder/
+
+# Cron 临时日志（weekly-evolve 自动生成，不入版本库）
+.claude/cron/
+harness/.claude/cron/
 
 # hermes/reviews 2026-08-06 之后会话级评审产物（本地化）
 hermes/reviews/2026-08-06-*.md
