@@ -154,3 +154,48 @@ orca orchestration inbox --json | jq '.result.messages[] | select(.type == "work
 - [ ] 监听 `orca orchestration inbox` 等 worker_done
 - [ ] 如果 worker_done 被拒：先看拒绝原因（`missing_task_id` 等）→ 修协议后重派
 - [ ] 兜底：定期 `git log` + `git status` 验证工人实际进展
+
+---
+
+## 附录（2026-08-07 实测）：完整 4 步派工协议
+
+按 `/harness-check` 改进 1/4 实际验证，Orca 派工协议实际是 **4 步**（之前 learning 写 3 步，缺了 run-create）：
+
+```bash
+# Step 1: 创建 run（必备前置）
+RUN_ID=$(orca orchestration run-create \
+  --objective "派工目标描述" \
+  --json | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['run']['id'])")
+
+# Step 2: 创建 task
+TASK_ID=$(orca orchestration task-create \
+  --run "$RUN_ID" \
+  --spec "派工规格说明" \
+  --task-title "任务标题" \
+  --json | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['task']['id'])")
+
+# Step 3: 派发到 worker
+WORKER=$(orca terminal create --worktree active --command "pi" --json | jq -r .result.terminal.handle)
+orca orchestration dispatch --task $TASK_ID --to $WORKER --inject
+
+# Step 4: 工人完成后发 worker_done
+# (工人在自己 terminal 里跑)
+orca orchestration send \
+  --type worker_done \
+  --task-id $TASK_ID \
+  --outcome succeeded \
+  --subject "[任务名] 完成" \
+  --body "..."
+```
+
+**错误信息含义**：
+- `run_required: No Run is bound` → 漏了 Step 1（run-create）
+- `Unknown flag --title for run-create` → 用 `--objective` 不是 `--title`
+- `worker_done requires taskId` → 漏了 Step 1+2（run-create + task-create）
+- `No recipient or active Dispatch Run` → 漏了 Step 3（dispatch）
+
+**实测验证**：2026-08-07 11:21 在 .regression-state.json run 成功
+- RUN_ID: `run_8578e91f8552`
+- TASK_ID: `task_5ce35014b11b`
+
+详见 `harness-check` 改进 1/4 报告。
