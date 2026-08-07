@@ -182,6 +182,8 @@
       rowKey: 'id',
       formConfig: { labelWidth: 120, schemas: searchFormSchema },
       pagination: { pageSize: 20 },
+      // 关闭 useListPage 默认的"操作"列（inventory.data.ts 已显式声明 fixed:right 的"操作"列，避免双列）
+      showActionColumn: false,
     },
   });
 
