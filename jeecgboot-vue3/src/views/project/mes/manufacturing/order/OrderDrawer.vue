@@ -4,6 +4,13 @@
     <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
     <a-alert type="info" show-icon style="margin-bottom: 8px" :message="alertText" />
     <!--update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert----------->
+    <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】编辑模式：补领按钮（关联领料单在主表点击查看详情）----------->
+    <template v-if="isUpdate && currentOrderId">
+      <a-divider orientation="left" plain>补领操作</a-divider>
+      <a-button type="primary" size="small" preIcon="ant-design:plus-outlined" @click="handleGeneratePicking">补领</a-button>
+      <span style="margin-left: 8px; color: #999">补领单生成后可在领料列表查看</span>
+    </template>
+    <!--update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】编辑模式补领----------->
   </BasicDrawer>
 </template>
 
@@ -12,9 +19,10 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './order.data';
-  import { saveOrUpdateOrder, queryOrderById } from './order.api';
+  import { saveOrUpdateOrder, queryOrderById, generatePicking } from './order.api';
   import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
   import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
+  import { message } from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -22,6 +30,9 @@
   // 生产订单口径提示：默认文案。状态流转：草稿→已审核→已下达→执行中→已完工/已关闭/已取消。
   const alertText = ref('下达后领料/完工单可引用本订单。状态：草稿 → 已审核 → 已下达 → 执行中 → 已完工。');
   //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】当前订单id（用于补领/子表）-----------
+  const currentOrderId = ref<string>('');
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】当前订单id-----------
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: formSchema,
@@ -45,6 +56,7 @@
     }
     if (unref(isUpdate) && data.record) {
       await setFieldsValue({ ...data.record });
+      currentOrderId.value = data.record.id || '';
     }
   });
 
@@ -61,4 +73,19 @@
       setDrawerProps({ confirmLoading: false });
     }
   }
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】补领处理器（从抽屉发起）-----------
+  async function handleGeneratePicking() {
+    if (!currentOrderId.value) {
+      message.warning('订单id缺失');
+      return;
+    }
+    try {
+      await generatePicking({ orderId: currentOrderId.value });
+      message.success('补领单已生成');
+      emit('success');
+    } catch (e: any) {
+      message.error(e?.message || '补领失败');
+    }
+  }
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】补领处理器-----------
 </script>

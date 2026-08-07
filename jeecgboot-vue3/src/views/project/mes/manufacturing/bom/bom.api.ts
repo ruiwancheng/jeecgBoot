@@ -24,6 +24,16 @@ export function deleteBatchBom(params: any) {
   return defHttp.delete({ url: `${BASE}/deleteBatch`, params }, { joinParamsToUrl: true });
 }
 
+//update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM状态机端点（生效/失效）-----------
+export function approveBom(params: any) {
+  return defHttp.put({ url: `${BASE}/approve`, params }, { joinParamsToUrl: true });
+}
+
+export function disableBom(params: any) {
+  return defHttp.put({ url: `${BASE}/disable`, params }, { joinParamsToUrl: true });
+}
+//update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM状态机端点-----------
+
 export function getExportUrl() {
   return `${BASE}/exportXls`;
 }

@@ -26,7 +26,7 @@
   import { useDrawer } from '/@/components/Drawer';
   import { columns, searchFormSchema } from './bom.data';
   import { getStatusColor } from '../shared/statusColor';
-  import { queryBomList, deleteBom, getExportUrl } from './bom.api';
+  import { queryBomList, deleteBom, approveBom, disableBom, getExportUrl } from './bom.api';
   import BomDrawer from './BomDrawer.vue';
   import { message } from 'ant-design-vue';
 
@@ -49,10 +49,23 @@
   const [registerTable, { reload }] = tableContext;
 
   function getActions(record: Recordable) {
-    return [
-      { label: '编辑', onClick: () => handleEdit(record) },
-      { label: '删除', popConfirm: { title: '确认删除该BOM吗？', confirm: () => handleDelete(record) } },
-    ];
+    //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM状态机按钮（按 status 显隐）-----------
+    const acts: any[] = [];
+    // 草稿（status=1）→ 显示生效按钮
+    if (record.status === '1') {
+      acts.push({ label: '生效', popConfirm: { title: '确认生效该BOM吗？', confirm: () => handleApprove(record) } });
+    }
+    // 生效（status=2）→ 显示失效按钮
+    if (record.status === '2') {
+      acts.push({ label: '失效', popConfirm: { title: '确认失效该BOM吗？失效后不可被订单引用。', confirm: () => handleDisable(record) } });
+    }
+    // 草稿/失效（status=1/3）→ 允许编辑删除
+    if (record.status === '1' || record.status === '3') {
+      acts.push({ label: '编辑', onClick: () => handleEdit(record) });
+      acts.push({ label: '删除', popConfirm: { title: '确认删除该BOM吗？', confirm: () => handleDelete(record) } });
+    }
+    //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM状态机按钮-----------
+    return acts;
   }
 
   function handleAdd() {
@@ -66,4 +79,16 @@
     message.success('删除成功');
     reload();
   }
+  //update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM生效/失效处理器-----------
+  async function handleApprove(record: Recordable) {
+    await approveBom({ id: record.id });
+    message.success('已生效');
+    reload();
+  }
+  async function handleDisable(record: Recordable) {
+    await disableBom({ id: record.id });
+    message.success('已失效');
+    reload();
+  }
+  //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM生效/失效处理器-----------
 </script>
