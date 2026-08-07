@@ -19,5 +19,6 @@
 | 2026-08-06 | [features-business-chains-cross-validation.md](features-business-chains-cross-validation.md) | features ↔ business-chains 交叉验证机制（harness-check 第 3 轴修复） |
 | 2026-08-06 | [large-function-refactoring-slice-b.md](large-function-refactoring-slice-b.md) | 大函数拆分 Slice B：MesSalesOutboundServiceImpl + MesMenuRegistry.buildMenus |
 | 2026-08-06 | [independent-issues-slice-cde.md](independent-issues-slice-cde.md) | Slice C/D/E 独立 issues 修复规划 |
+| 2026-08-07 | [inventory-orphan-cleanup-2026-08-07.md](inventory-orphan-cleanup-2026-08-07.md) | 库存总览孤儿行清理 4 阶段整合方案（UI 黄金模板 + 后端 + 守卫 + 回归测试） |
 
 *最后更新: 2026-08-08*
