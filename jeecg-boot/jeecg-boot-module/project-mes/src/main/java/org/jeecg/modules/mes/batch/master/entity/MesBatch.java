@@ -32,7 +32,7 @@ public class MesBatch implements Serializable {
     @Schema(description = "批次号(系统生成 BT-{物料编码}-{YYYYMMDD}-{序号})")
     private String batchNo;
 
-    @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id")
+    @Dict(dictTable = "c_mes_material", dicText = "code", dicCode = "id")
     @Schema(description = "物料ID")
     private String materialId;
 

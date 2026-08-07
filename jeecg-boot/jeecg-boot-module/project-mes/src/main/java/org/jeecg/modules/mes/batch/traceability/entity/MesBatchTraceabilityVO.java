@@ -45,7 +45,7 @@ public class MesBatchTraceabilityVO implements Serializable {
     @Schema(description = "批次号")
     private String batchNo;
 
-    @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id")
+    @Dict(dictTable = "c_mes_material", dicText = "code", dicCode = "id")
     @Excel(name = "物料ID", width = 15)
     @Schema(description = "物料ID")
     private String materialId;
