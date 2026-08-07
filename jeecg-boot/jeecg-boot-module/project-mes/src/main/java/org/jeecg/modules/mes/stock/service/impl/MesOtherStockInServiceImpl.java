@@ -187,7 +187,9 @@ public class MesOtherStockInServiceImpl extends ServiceImpl<MesOtherStockInMappe
                 throw new JeecgBootException("第" + (i + 1) + "行成本单价不能为负数");
             // 服务端权威计算金额快照（无条件覆盖，前端只读只是 UI 防线）
             BigDecimal cost = item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO;
-            item.setAmount(item.getQty().multiply(cost).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-begin---author:pi---date:2026-08-07---for:B2 other-stock-in 金额精度 18,2 → 18,4 (setScale 2→4)-----------
+            item.setAmount(item.getQty().multiply(cost).setScale(4, java.math.RoundingMode.HALF_UP));
+            //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
             totalAmount = totalAmount.add(item.getAmount());
             item.setLineNo(i + 1);
             item.setInId(entity.getId());

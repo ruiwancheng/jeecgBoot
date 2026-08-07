@@ -213,7 +213,9 @@ public String audit(String id) {
             ii.setMaterialId(item.getMaterialId());
             ii.setQty(item.getActualQty().subtract(item.getBookQty()));
             ii.setUnitCost(item.getUnitCost());
-            ii.setAmount(ii.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
+            //update-begin---author:pi---date:2026-08-07---for:B2 stocktake→other-in 金额精度 18,2 → 18,4 (setScale 2→4)-----------
+            ii.setAmount(ii.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(4, RoundingMode.HALF_UP));
+            //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
             inItems.add(ii);
         }
         inDoc.setItems(inItems);
@@ -241,7 +243,9 @@ public String audit(String id) {
             oi.setMaterialId(item.getMaterialId());
             oi.setQty(item.getBookQty().subtract(item.getActualQty()));
             oi.setUnitCost(item.getUnitCost());
-            oi.setAmount(oi.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP));
+            //update-begin---author:pi---date:2026-08-07---for:B2 stocktake→other-out 金额精度 18,2 → 18,4 (setScale 2→4)-----------
+            oi.setAmount(oi.getQty().multiply(item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO).setScale(4, RoundingMode.HALF_UP));
+            //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
             outItems.add(oi);
         }
         outDoc.setItems(outItems);
@@ -310,7 +314,9 @@ public String audit(String id) {
             if (item.getActualQty() != null) {
                 BigDecimal diff = item.getActualQty().subtract(item.getBookQty());
                 item.setDiffQty(diff);
-                item.setDiffAmount(diff.multiply(cost).setScale(2, RoundingMode.HALF_UP));
+                //update-begin---author:pi---date:2026-08-07---for:B2 stocktake diff_amount 精度 18,2 → 18,4 (setScale 2→4)-----------
+                item.setDiffAmount(diff.multiply(cost).setScale(4, RoundingMode.HALF_UP));
+                //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
                 totalDiff = totalDiff.add(item.getDiffAmount());
             }
             itemMapper.insert(item);

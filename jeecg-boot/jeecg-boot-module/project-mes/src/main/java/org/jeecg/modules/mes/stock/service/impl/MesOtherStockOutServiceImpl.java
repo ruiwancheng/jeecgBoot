@@ -129,7 +129,9 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
         for (MesOtherStockOutItem item : e.getItems()) {
             MesMaterial mat = materialService.getById(item.getMaterialId());
             BigDecimal lockedUnitCost = (mat != null && mat.getMovingAvgCost() != null) ? mat.getMovingAvgCost() : BigDecimal.ZERO;
-            BigDecimal lockedAmount = item.getQty().multiply(lockedUnitCost).setScale(2, java.math.RoundingMode.HALF_UP);
+            //update-begin---author:pi---date:2026-08-07---for:B2 other-stock-out 金额精度 18,2 → 18,4 (setScale 2→4)-----------
+            BigDecimal lockedAmount = item.getQty().multiply(lockedUnitCost).setScale(4, java.math.RoundingMode.HALF_UP);
+            //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
             // 持久化锁定值（unaudit 红冲与台账 out_amount 均依赖明细表 amount）
             item.setUnitCost(lockedUnitCost);
             item.setAmount(lockedAmount);
@@ -198,7 +200,9 @@ public class MesOtherStockOutServiceImpl extends ServiceImpl<MesOtherStockOutMap
                 throw new JeecgBootException("第" + (i + 1) + "行成本单价不能为负数");
             // 服务端权威计算金额快照（无条件覆盖，前端只读只是 UI 防线）
             BigDecimal cost = item.getUnitCost() != null ? item.getUnitCost() : BigDecimal.ZERO;
-            item.setAmount(item.getQty().multiply(cost).setScale(2, java.math.RoundingMode.HALF_UP));
+            //update-begin---author:pi---date:2026-08-07---for:B2 other-stock-out 金额精度 18,2 → 18,4 (setScale 2→4)-----------
+            item.setAmount(item.getQty().multiply(cost).setScale(4, java.math.RoundingMode.HALF_UP));
+            //update-end---author:pi---date:2026-08-07---for:B2 金额精度 setScale 4-----------
             totalAmount = totalAmount.add(item.getAmount());
             item.setLineNo(i + 1);
             item.setOutId(entity.getId());
