@@ -5,8 +5,9 @@
 
 set -e
 
-# 0. 路径配置（用 git 找到仓库根，更可靠）
-REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || cd "$(dirname "$0")/../../.." && pwd)"
+# 0. 路径配置（脚本在 harness/scripts/cron/，仓库根在 3 层之上）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 LOG_FILE="$REPO_ROOT/.claude/cron/evolve-$(date +%Y%m%d-%H%M%S).log"
@@ -51,7 +52,6 @@ if [ -d "$REPO_ROOT/.claude/memory/learnings" ]; then
   for L in "$REPO_ROOT"/.claude/memory/learnings/*.md; do
     [ -f "$L" ] || continue
     NAME=$(basename "$L" .md)
-    # 检查 rules/ 是否提到此 learning
     if ! grep -q "$NAME" "$REPO_ROOT"/.claude/rules/*.md 2>/dev/null; then
       TITLE=$(head -1 "$L" | sed 's/^# \[.*\] \[[^]]*\] //' | cut -c1-50)
       echo "  ⚠️ $NAME: $TITLE..." | tee -a "$LOG_FILE"
