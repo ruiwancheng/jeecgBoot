@@ -10,7 +10,10 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesMaterial;
 import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;
 import org.jeecg.modules.mes.basic.service.MaterialReferenceChecker;
+import org.jeecg.modules.mes.basic.service.MaterialReferenceAggregator;
+import org.jeecg.modules.mes.basic.service.CriticalTableLockService;
 import org.jeecg.modules.mes.basic.service.IMesMaterialService;
+import org.jeecg.modules.mes.basic.service.SysDictCache;
 import org.jeecg.modules.mes.purchase.ledger.service.IMesCostLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -39,6 +42,15 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
     /** Spring 自动注入所有实现 MaterialReferenceChecker 的 @Component bean（19 张引用表） */
     @Autowired
     private List<MaterialReferenceChecker> referenceCheckers;
+
+    @Autowired
+    private MaterialReferenceAggregator referenceAggregator;
+
+    @Autowired
+    private CriticalTableLockService criticalTableLockService;
+
+    @Autowired
+    private SysDictCache dictCache;
 
     /** 异常消息中第一个数字（即"行数"），用于 preCheckDelete 反查 */
     private static final Pattern COUNT_PATTERN = Pattern.compile("(\\d+)");
@@ -87,36 +99,32 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Serializable id) {
-        //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 守卫：删除前校验 19 张引用表-----------
+        //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 性能优化：聚合守卫与关键表行锁-----------
         String materialId = id.toString();
-        Map<String, Long> refCounts = preCheckDelete(materialId);
+        Set<String> openStatuses = new HashSet<>(dictCache.getOpenStatuses("mes_production_picking_status"));
+        Map<String, Long> refCounts = referenceAggregator.aggregate(materialId, openStatuses);
         if (refCounts.values().stream().anyMatch(c -> c != null && c > 0)) {
             throw new JeecgBootException(buildRejectMessage(refCounts));
         }
-        //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】守卫校验-----------
+        criticalTableLockService.lockAndRecheck(materialId, refCounts.keySet());
         return super.removeById(id);
+        //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 性能优化-----------
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
-        // P0-1：批量删除也要走 19 checker 守卫（之前漏改，/deleteBatch 端点会绕过守卫）
-        List<String> validIds = list.stream()
-            .map(Object::toString)
-            .filter(StringUtils::hasText)
-            .collect(Collectors.toList());
-        for (String materialId : validIds) {
-            Map<String, Long> refCounts = preCheckDelete(materialId);
-            boolean hasReference = refCounts.values().stream().anyMatch(c -> c != null && c > 0);
-            if (hasReference) {
-                throw new JeecgBootException(
-                    "物料 " + materialId + " 被引用：" + buildRejectMessage(refCounts) + "；批量删除整批拒绝");
+        //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 性能优化：批量删除复用单条聚合守卫-----------
+        for (Object obj : list) {
+            if (obj != null && StringUtils.hasText(obj.toString())) {
+                removeById(obj.toString());
             }
         }
-        return super.removeByIds(list);
+        //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 性能优化-----------
+        return true;
     }
 
     @Override
