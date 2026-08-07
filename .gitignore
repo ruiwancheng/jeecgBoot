@@ -63,3 +63,8 @@ __pycache__/
 config/jeecg/code-template-online/
 # Added by code-review-graph
 .code-review-graph/
+
+# Third-party AI client configs (multi-IDE)
+AGENTS.md CODEBUDDY.md GEMINI.md QODER.md
+cursorrules windsurfrules opencode.jsonc
+.codebuddy/ .gemini/ .kiro/ .qoder/
