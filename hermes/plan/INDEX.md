@@ -21,5 +21,6 @@
 | 2026-08-06 | [independent-issues-slice-cde.md](independent-issues-slice-cde.md) | Slice C/D/E 独立 issues 修复规划 |
 | 2026-08-07 | [inventory-orphan-cleanup-2026-08-07.md](inventory-orphan-cleanup-2026-08-07.md) | 库存总览孤儿行清理 v3 完整方案（按 Codex v2 评审再重写，19 张表守卫 + UNION ALL + 启动自检） |
 | 2026-08-07 | [inventory-orphan-cleanup-impl-2026-08-07.md](inventory-orphan-cleanup-impl-2026-08-07.md) | v3 实施草案（19 个 checker + 聚合查询 + 启动自检完整代码） |
+| 2026-08-07 | [inventory-orphan-cleanup-release-notes.md](inventory-orphan-cleanup-release-notes.md) | v3 发版说明（8 commit + 部署步骤 + 业务方沟通模板） |
 
-*最后更新: 2026-08-08*
+*最后更新: 2026-08-07*
