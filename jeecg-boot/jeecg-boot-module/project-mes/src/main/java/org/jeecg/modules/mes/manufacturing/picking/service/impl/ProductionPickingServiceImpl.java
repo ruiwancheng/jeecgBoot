@@ -167,7 +167,12 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         if (!StringUtils.hasText(entity.getProductionOrderId())) throw new JeecgBootException("生产订单不能为空");
         MesProductionOrder order = orderMapper.selectById(entity.getProductionOrderId());
         if (order == null) throw new JeecgBootException("生产订单不存在");
-        if (!"1".equals(order.getStatus())) throw new JeecgBootException("仅草稿状态的生产订单可领料");
+        //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-3 订单状态机 release 推领料单：允许草稿/已审核/已下达创建领料单（补领场景）-----------
+        // 原约束仅草稿可领，但 release() 路径需从已审核订单推领料单，补领（generatePicking）从已下达推
+        String orderStatus = order.getStatus();
+        if (!"1".equals(orderStatus) && !"2".equals(orderStatus) && !"3".equals(orderStatus))
+            throw new JeecgBootException("仅草稿/已审核/已下达状态的生产订单可领料");
+        //update-end---author:ruiwancheng---date:2026-08-08---for: slice-3 release/generatePicking 允许更广订单状态-----------
         if (!StringUtils.hasText(entity.getWarehouseId())) throw new JeecgBootException("领料仓库不能为空");
         if (entity.getRemark() != null && entity.getRemark().length() > 500) throw new JeecgBootException("备注长度不能超过500个字符");
         List<MesProductionPickingItem> items = entity.getItems();

@@ -68,5 +68,33 @@ public class ProductionOrderController extends JeecgController<MesProductionOrde
         if (service.count(new QueryWrapper<>()) > QUERY_ALL_MAX) throw new JeecgBootException("订单超过" + QUERY_ALL_MAX + "条");
         return super.exportXls(req, entity, MesProductionOrder.class, "生产订单");
     }
+
+    //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-3 订单状态机 5 端点（决策 E 复用 edit 权限）-----------
+    @PutMapping("/audit") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功"); }
+
+    @PutMapping("/release") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> release(@RequestParam String id) {
+        String pickingId = service.release(id);
+        return Result.ok("下单成功，草稿领料单ID: " + pickingId);
+    }
+
+    @PutMapping("/complete") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> complete(@RequestParam String id) { service.complete(id); return Result.ok("完工成功"); }
+
+    @PutMapping("/close") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> close(@RequestParam String id) { service.close(id); return Result.ok("关闭成功"); }
+
+    @PutMapping("/cancel") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> cancel(@RequestParam String id) { service.cancel(id); return Result.ok("取消成功"); }
+    //update-end---author:ruiwancheng---date:2026-08-08---for: slice-3 订单状态机 5 端点-----------
+
+    //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-3 订单 generatePicking（手动生成草稿领料单，补领场景）-----------
+    @PostMapping("/generatePicking") @RequiresPermissions("mes:productionOrder:edit")
+    public Result<String> generatePicking(@RequestParam String id) {
+        String pickingId = service.generatePicking(id);
+        return Result.ok("草稿领料单生成成功，ID: " + pickingId);
+    }
+    //update-end---author:ruiwancheng---date:2026-08-08---for: slice-3 订单 generatePicking-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产订单接口-----------
