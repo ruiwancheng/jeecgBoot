@@ -73,5 +73,13 @@ public class ProductionPickingController extends JeecgController<MesProductionPi
     @PutMapping("/audit") @RequiresPermissions("mes:productionPicking:edit")
     public Result<String> audit(@RequestParam String id) { service.audit(id); return Result.ok("审核成功，库存已扣减"); }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-----------
+
+    //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder：领料单列表"补领"按钮，按订单生成补领草稿单（支持分批）-----------
+    @PostMapping("/generateByOrder") @RequiresPermissions("mes:productionPicking:add")
+    public Result<String> generateByOrder(@RequestParam String orderId) {
+        String pickingId = service.generateByOrder(orderId);
+        return Result.ok("补领草稿领料单生成成功，ID: " + pickingId);
+    }
+    //update-end---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder 补领-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-16---for: MES生产制造-生产领料接口-----------

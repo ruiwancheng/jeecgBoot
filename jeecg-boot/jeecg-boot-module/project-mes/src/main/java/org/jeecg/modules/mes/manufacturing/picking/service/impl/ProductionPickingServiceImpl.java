@@ -7,7 +7,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.mes.basic.service.IMesCodeRuleService;
 import org.jeecg.modules.mes.basic.service.IMesInventoryService;
+import org.jeecg.modules.mes.manufacturing.bom.entity.MesBom;
+import org.jeecg.modules.mes.manufacturing.bom.entity.MesBomItem;
+import org.jeecg.modules.mes.manufacturing.bom.mapper.MesBomItemMapper;
+import org.jeecg.modules.mes.manufacturing.bom.service.IMesBomService;
 import org.jeecg.modules.mes.manufacturing.order.entity.MesProductionOrder;
 import org.jeecg.modules.mes.manufacturing.order.mapper.MesProductionOrderMapper;
 import org.jeecg.modules.mes.manufacturing.picking.entity.MesProductionPicking;
@@ -25,12 +30,18 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPickingMapper, MesProductionPicking> implements IProductionPickingService {
 
     @Autowired private MesProductionPickingItemMapper itemMapper;
     @Autowired private MesProductionOrderMapper orderMapper;
+    //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder：注入 BOM/子件/编码规则（补领依赖）-----------
+    @Autowired private IMesBomService bomService;
+    @Autowired private MesBomItemMapper bomItemMapper;
+    @Autowired private IMesCodeRuleService codeRuleService;
+    //update-end---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder 补领依赖-----------
     //update-begin---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存联动-生产领料-----------
     @Autowired private IMesInventoryService inventoryService;
     //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-领料集成依赖-----------
@@ -160,6 +171,66 @@ public class ProductionPickingServiceImpl extends ServiceImpl<MesProductionPicki
         }
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 领料审核-扣库存-----------
+
+    //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder：基于订单+BOM+已领累计生成补领草稿领料单（支持分批）-----------
+    /**
+     * 补领决策表：
+     *   ① 订单状态需存在（不强校验 status：草稿/已审核/已下达均允许，决策 E 复用 add 权限）
+     *   ② BOM 必须生效（status='2'）
+     *   ③ 补领量 = BOM 用量 × planQty - 已领累计（已领累计不计状态，草稿/已审核均扣减）
+     *   ④ 仅保留 remain > 0 的行；全部 ≤ 0 抛错"该订单已领完，无需补领"
+     *   ⑤ 同订单可多次补领（分批场景）
+     *   ⑥ 新单状态 = 草稿("1")，不入库存（审核时才扣库存）
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String generateByOrder(String orderId) {
+        if (!StringUtils.hasText(orderId)) throw new JeecgBootException("订单ID不能为空");
+        MesProductionOrder order = orderMapper.selectById(orderId);
+        if (order == null) throw new JeecgBootException("订单不存在");
+        if (!StringUtils.hasText(order.getBomId())) throw new JeecgBootException("订单未关联BOM");
+        MesBom bom = bomService.getById(order.getBomId());
+        if (bom == null) throw new JeecgBootException("关联BOM不存在");
+        if (!"2".equals(bom.getStatus())) throw new JeecgBootException("BOM未生效（status必须为2）");
+        if (order.getPlanQty() == null || order.getPlanQty().compareTo(BigDecimal.ZERO) <= 0)
+            throw new JeecgBootException("订单计划数量异常");
+
+        List<MesBomItem> bomItems = bomItemMapper.selectByMainId(bom.getId());
+        if (bomItems == null || bomItems.isEmpty()) throw new JeecgBootException("BOM未配置子件");
+
+        // 累计已领（按 订单+物料 聚合，草稿/已审核均计入）
+        List<MesProductionPickingItem> remainItems = bomItems.stream().map(i -> {
+            BigDecimal already = itemMapper.sumPickedByOrder(orderId, i.getMaterialId());
+            if (already == null) already = BigDecimal.ZERO;
+            BigDecimal total = i.getQuantity().multiply(order.getPlanQty());
+            BigDecimal remain = total.subtract(already);
+            if (remain.compareTo(BigDecimal.ZERO) <= 0) return null;
+            MesProductionPickingItem pi = new MesProductionPickingItem();
+            pi.setMaterialId(i.getMaterialId());
+            pi.setQuantity(remain);
+            return pi;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        if (remainItems.isEmpty()) throw new JeecgBootException("该订单已领完，无需补领");
+
+        // 构造补领草稿单（沿用 PP 编码规则，与 slice-3 generatePicking 一致）
+        String username = getCurrentUsername();
+        Date now = new Date();
+        MesProductionPicking picking = new MesProductionPicking();
+        picking.setCode(codeRuleService.nextCode("PP"));
+        picking.setProductionOrderId(orderId);
+        picking.setWarehouseId(order.getWarehouseId());
+        picking.setStatus("1");
+        picking.setPickingDate(now);
+        picking.setCreateBy(username);
+        picking.setCreateTime(now);
+        picking.setUpdateBy(username);
+        picking.setUpdateTime(now);
+        picking.setItems(remainItems);
+        saveWithItems(picking);
+        return picking.getId();
+    }
+    //update-end---author:ruiwancheng---date:2026-08-08---for: slice-4 领料 generateByOrder 补领-----------
 
     private void validate(MesProductionPicking entity) {
         if (!StringUtils.hasText(entity.getCode())) throw new JeecgBootException("领料单号不能为空");
