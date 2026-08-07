@@ -4,7 +4,7 @@
   "scope": "full",
   "slice_count": 33,
   "failed_count": 8,
-  "next_step": "B4-retry-needed",
+  "next_step": "all-pushed-and-completed",
   "updated_at": "2026-08-07T05:30:00+08:00",
   "comment": "2026-08-07 回归测试 8 个 failed 切片已完成 双重复核 + 误判复盘 + 真实 BUG 切片处理（30+ 误判 + 3 个真实 BUG）",
   "retro_completed_at": "2026-08-07T09:50:19.600988",
@@ -35,9 +35,39 @@
       "verdict": "TraceabilityDrawer.vue 84 行修复 + spec 4 行调整"
     },
     "B4_feat_inventory-alert-enhancement": {
-      "commit": "db3b31d (误提交)",
-      "status": "failed",
-      "verdict": "前端工人误把 B3 commit 提交到 B4 分支，inventoryAlert 实际未改，需重派"
+      "commit": "4f8e83d1",
+      "status": "succeeded",
+      "verdict": "B4 实际已完成（inventoryAlert/index.vue 384 行 + data.ts 2.1 KB），前端工人完成代码但误提交到 B4 分支前未 commit，工作区改动留在 main。已在切回 main 时识别并正确 commit"
     }
+  },
+  "push_completed_at": "2026-08-07T10:53:16.940914",
+  "final_results": {
+    "main_commit": "e2860a9",
+    "branches_pushed": [
+      {
+        "branch": "hotfix/mes-costlog-permission",
+        "commit": "2935d62",
+        "task": "B1 P0 权限码",
+        "status": "pushed"
+      },
+      {
+        "branch": "fix/amount-precision-4",
+        "commit": "08e5056",
+        "task": "B2 P1 精度 4 位",
+        "status": "pushed"
+      },
+      {
+        "branch": "fix/traceability-drawer-render",
+        "commit": "db3b31d",
+        "task": "B3 P1 抽屉渲染",
+        "status": "pushed"
+      },
+      {
+        "branch": "feat/inventory-alert-enhancement",
+        "commit": "4f8e83d1",
+        "task": "B4 P2 inventoryAlert 5 项功能",
+        "status": "pushed (晚发现，已正确提交)"
+      }
+    ]
   }
 }
