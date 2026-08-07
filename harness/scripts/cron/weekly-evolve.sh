@@ -5,8 +5,8 @@
 
 set -e
 
-# 0. 路径配置
-REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# 0. 路径配置（用 git 找到仓库根，更可靠）
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || cd "$(dirname "$0")/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 LOG_FILE="$REPO_ROOT/.claude/cron/evolve-$(date +%Y%m%d-%H%M%S).log"
@@ -18,8 +18,6 @@ echo "仓库: $REPO_ROOT" | tee -a "$LOG_FILE"
 # 1. 跑 /learn（提取本次会话经验）
 echo "" | tee -a "$LOG_FILE"
 echo "--- Step 1: /learn ---" | tee -a "$LOG_FILE"
-# AI 跑 /learn（CLI 模式 — 通过 agent 调用）
-# 注：实际跑需 agent 介入，这里只跑 read-only 报告
 if command -v code-review-graph >/dev/null 2>&1; then
   echo "  code-review-graph 可用，可跑完整 /learn 流程" | tee -a "$LOG_FILE"
 else
@@ -29,23 +27,38 @@ fi
 # 2. 跑 /auto-learn（read-only 报告）
 echo "" | tee -a "$LOG_FILE"
 echo "--- Step 2: /auto-learn ---" | tee -a "$LOG_FILE"
-echo "  learnings 数量: $(ls -1 .claude/memory/learnings/*.md 2>/dev/null | wc -l | tr -d ' ')" | tee -a "$LOG_FILE"
-echo "  rules/ 行数: $(cat .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')" | tee -a "$LOG_FILE"
-echo "  rules/ 章节数: $(grep -h '^## ' .claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')" | tee -a "$LOG_FILE"
+if [ -d "$REPO_ROOT/.claude/memory/learnings" ]; then
+  LEARNINGS_COUNT=$(ls -1 "$REPO_ROOT"/.claude/memory/learnings/*.md 2>/dev/null | wc -l | tr -d ' ')
+else
+  LEARNINGS_COUNT=0
+fi
+if [ -d "$REPO_ROOT/.claude/rules" ]; then
+  RULES_LINES=$(cat "$REPO_ROOT"/.claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')
+  RULES_SECTIONS=$(grep -h '^## ' "$REPO_ROOT"/.claude/rules/*.md 2>/dev/null | wc -l | tr -d ' ')
+else
+  RULES_LINES=0
+  RULES_SECTIONS=0
+fi
+echo "  learnings 数量: $LEARNINGS_COUNT" | tee -a "$LOG_FILE"
+echo "  rules/ 行数: $RULES_LINES" | tee -a "$LOG_FILE"
+echo "  rules/ 章节数: $RULES_SECTIONS" | tee -a "$LOG_FILE"
 
-# 3. 检测哪些 learnings 未规则化（输出报告）
+# 3. 检测哪些 learnings 未规则化
 echo "" | tee -a "$LOG_FILE"
 echo "--- Step 3: 待规则化 learnings ---" | tee -a "$LOG_FILE"
 UNRULED=0
-for L in .claude/memory/learnings/*.md; do
-  NAME=$(basename "$L" .md)
-  # 检查 rules/ 是否提到此 learning
-  if ! grep -q "$NAME" .claude/rules/*.md 2>/dev/null; then
-    TITLE=$(head -1 "$L" | sed 's/^# \[.*\] \[[^]]*\] //' | cut -c1-50)
-    echo "  ⚠️ $NAME: $TITLE..." | tee -a "$LOG_FILE"
-    UNRULED=$((UNRULED + 1))
-  fi
-done
+if [ -d "$REPO_ROOT/.claude/memory/learnings" ]; then
+  for L in "$REPO_ROOT"/.claude/memory/learnings/*.md; do
+    [ -f "$L" ] || continue
+    NAME=$(basename "$L" .md)
+    # 检查 rules/ 是否提到此 learning
+    if ! grep -q "$NAME" "$REPO_ROOT"/.claude/rules/*.md 2>/dev/null; then
+      TITLE=$(head -1 "$L" | sed 's/^# \[.*\] \[[^]]*\] //' | cut -c1-50)
+      echo "  ⚠️ $NAME: $TITLE..." | tee -a "$LOG_FILE"
+      UNRULED=$((UNRULED + 1))
+    fi
+  done
+fi
 echo "  待规则化数: $UNRULED" | tee -a "$LOG_FILE"
 
 # 4. 写健康度报告
