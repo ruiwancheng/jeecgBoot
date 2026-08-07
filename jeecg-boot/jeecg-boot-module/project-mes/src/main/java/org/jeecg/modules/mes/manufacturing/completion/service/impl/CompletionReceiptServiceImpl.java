@@ -134,11 +134,16 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
         //update-end---author:ruiwancheng---date:20260801---for:【生产批次总开关】总开关缓存-----------
         String username = getCurrentUsername();
         Date now = new Date();
+        //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-2 完工 audit 顺序修复（先 CAS 后库存，与领料 P0-3 对齐）-----------
+        // 1. 先原子状态守卫（防并发：CAS 失败时不调库存/批次/订单联动）
+        int rows = baseMapper.auditWithGuard(id, username, now);
+        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+        // 2. 守卫成功后再写库存 + 批次库存（事务内回滚安全）
         for (MesCompletionReceiptItem item : e.getItems()) {
-            // 1. 物料主库存入库（保留原逻辑：unitCost=null 不重算移动平均）
+            // 2.1 物料主库存入库（保留原逻辑：unitCost=null 不重算移动平均）
             inventoryService.stockIn(item.getMaterialId(), e.getWarehouseId(), item.getReceiptQty(), null, null, "完工入库", e.getCode());
             //update-begin---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
-            // 2. 降级：总开关开启 + 物料 batch_enabled=1 才创建批次（防数据库膨胀）
+            // 2.2 降级：总开关开启 + 物料 batch_enabled=1 才创建批次（防数据库膨胀）
             if (batchSwitchOn) {
                 MesMaterial mat = materialMapper.selectById(item.getMaterialId());
                 if (mat != null && Integer.valueOf(1).equals(mat.getBatchEnabled())) {
@@ -160,8 +165,26 @@ public class CompletionReceiptServiceImpl extends ServiceImpl<MesCompletionRecei
             }
             //update-end---author:ruiwancheng---date:20260731---for: V8.0.0 MES批次管理-完工入库降级集成-----------
         }
-        int rows = baseMapper.auditWithGuard(id, username, now);
-        if (rows == 0) throw new JeecgBootException("审核失败：入库单不存在或状态已变更，请刷新后重试");
+        //update-end---author:ruiwancheng---date:2026-08-08---for: slice-2 完工 audit 顺序修复（先 CAS 后库存）-----------
+        //update-begin---author:ruiwancheng---date:2026-08-08---for: slice-2 完工 audit 联动订单 completedQty + 达 planQty 推 status='5'-----------
+        // 3. 联动订单：按 items 累加 completedQty（SQL 自增，不读改写），最后按 planQty 触发 status='5'
+        if (StringUtils.hasText(e.getProductionOrderId())) {
+            for (MesCompletionReceiptItem item : e.getItems()) {
+                if (item.getReceiptQty() == null || item.getReceiptQty().compareTo(BigDecimal.ZERO) <= 0) continue;
+                orderMapper.accumulateCompletedQty(e.getProductionOrderId(), item.getReceiptQty());
+            }
+            // 达 planQty 且订单处于 status='3'（已下达，本期不推执行中）→ 推 status='5'
+            MesProductionOrder order = orderMapper.selectById(e.getProductionOrderId());
+            if (order != null && "3".equals(order.getStatus())
+                    && order.getPlanQty() != null && order.getCompletedQty() != null
+                    && order.getCompletedQty().compareTo(order.getPlanQty()) >= 0) {
+                order.setStatus("5");
+                order.setUpdateBy(username);
+                order.setUpdateTime(now);
+                orderMapper.updateById(order);
+            }
+        }
+        //update-end---author:ruiwancheng---date:2026-08-08---for: slice-2 完工 audit 联动订单 completedQty + 达 planQty 推 status='5'-----------
     }
     //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 完工入库审核-加库存-----------
 
