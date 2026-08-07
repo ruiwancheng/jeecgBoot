@@ -1,7 +1,6 @@
 // @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0
 import type { BasicColumn } from '/@/components/Table/src/types/table';
 import type { FormSchema } from '/@/components/Form';
-import { queryMaterialSelect } from '../../basic/material/material.api';
 import { queryWarehouseSelect } from '../../basic/warehouse/warehouse.api';
 
 export const columns: BasicColumn[] = [
@@ -15,6 +14,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   { field: 'batchNo', label: '批次号', component: 'Input', colProps: { span: 6 }, componentProps: { maxlength: 50 } },
-  { field: 'materialId', label: '物料', component: 'ApiSelect', colProps: { span: 6 }, componentProps: { api: queryMaterialSelect } },
+  // 物料搜索改为 Input（与 traceability/ledger.data.ts 保持一致），QueryGenerator 走 material_id 等值匹配
+  { field: 'materialId', label: '物料', component: 'Input', colProps: { span: 6 } },
   { field: 'warehouseId', label: '仓库', component: 'ApiSelect', colProps: { span: 6 }, componentProps: { api: queryWarehouseSelect } },
 ];
