@@ -4,6 +4,7 @@ package org.jeecg.modules.mes.basic.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesMaterial;
@@ -23,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMaterial> implements IMesMaterialService {
 
@@ -101,6 +103,19 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
     @Transactional
     public boolean removeByIds(Collection<?> list) {
         if (list == null || list.isEmpty()) return false;
+        // P0-1：批量删除也要走 19 checker 守卫（之前漏改，/deleteBatch 端点会绕过守卫）
+        List<String> validIds = list.stream()
+            .map(Object::toString)
+            .filter(StringUtils::hasText)
+            .collect(Collectors.toList());
+        for (String materialId : validIds) {
+            Map<String, Long> refCounts = preCheckDelete(materialId);
+            boolean hasReference = refCounts.values().stream().anyMatch(c -> c != null && c > 0);
+            if (hasReference) {
+                throw new JeecgBootException(
+                    "物料 " + materialId + " 被引用：" + buildRejectMessage(refCounts) + "；批量删除整批拒绝");
+            }
+        }
         return super.removeByIds(list);
     }
 
@@ -211,10 +226,18 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
             try {
                 checker.assertNotReferenced(materialId);
                 refCounts.put(checker.describe(), 0L);
-            } catch (JeecgBootException e) {
-                refCounts.put(checker.describe(), parseCountFromMessage(e.getMessage()));
+            } catch (Exception e) {  // P1-2：扩到 Exception，不让 schema 漂移时单点异常阻断整个预检
+                log.warn("[orphan-guard] checker {} 执行异常（materialId={}）：{}",
+                    checker.describe(), materialId, e.getMessage());
+                refCounts.put(checker.describe(), -1L);  // -1 表示异常（与"0=可删"区分）
             }
         }
+        // P1-2：sanity check，dev 环境立即暴露漏注册或 Spring 扫描失败
+        if (refCounts.size() < 19) {
+            throw new IllegalStateException(
+                "MaterialReferenceChecker 数量异常：实际 " + refCounts.size()
+                + " 个，期望 19 个。可能新增加引用表但未实现 checker，请补齐实现");
+            }
         return refCounts;
     }
 
