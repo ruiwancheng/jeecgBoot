@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Update;
 import org.jeecg.modules.mes.basic.entity.MesInventory;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 public interface MesInventoryMapper extends BaseMapper<MesInventory> {
 
@@ -32,5 +34,19 @@ public interface MesInventoryMapper extends BaseMapper<MesInventory> {
             "ORDER BY m.code, w.name")
     java.util.List<java.util.Map<String, Object>> selectInventoryWithMaterial(@Param("keyword") String keyword, @Param("warehouseId") String warehouseId, @Param("materialId") String materialId);
     //update-end---author:ruiwancheng---date:2026-07-25---for: V9.7.1 库存总览-联表查询-----------
+
+    //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】4 个 select（阶段 2，Mapper XML 实现）-----------
+    /** 单条孤儿行查询：含 material/warehouse 联表信息 + del_flag，供 risk_type 派生 */
+    Map<String, Object> selectOrphanById(@Param("id") String id);
+
+    /** 批量孤儿行查询：必须用 XML foreach 走预编译参数化（Codex P0：严禁 ${ids}） */
+    List<Map<String, Object>> selectOrphansByIds(@Param("ids") List<String> ids);
+
+    /** 导出专用：含 LIMIT #{limit}，防止 OOM */
+    List<Map<String, Object>> selectOrphansForExport(@Param("limit") int limit);
+
+    /** 孤儿行总数 */
+    Long countOrphans();
+    //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】4 个 select-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-19---for: Phase2 Step2 库存Mapper-----------
