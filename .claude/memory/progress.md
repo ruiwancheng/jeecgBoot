@@ -289,3 +289,63 @@
 ### 待手工操作
 - commit vite.config.ts preview proxy 修复（待用户决定 commit message）
 - /evolve 批 4（7 月剩余 ~17 条 learnings 诊断/审计/E2E 域）
+
+---
+
+## 2026-08-07 回归测试体系 v2.0 完整闭环
+
+### 核心工作流
+
+1. 跑回归测试（run-dir 20260807-032053）→ 8 failed 切片
+2. 业务人员逐条复核 → 30+ 误判（5 大类）+ 3 真 BUG
+3. 误判复盘 → 6 个 cleanup 任务
+4. BUG 切片处理 → 4 个 BUG（B1/B2/B3/B4）4/4 全部 commit + push
+5. 流程优化（3 步 + run-dir + 5 大误判规则）
+6. 6 条今日 learnings 全部规则化到 rules/（健康度 9.75/10）
+7. 业务人员使用指南（仓库 + 笔记空间双备份）
+8. /harness-check 4 项改进完成（派工协议验证 + 清理文件 + cron 自动化 + 双备份）
+
+### 关键 commits
+
+| # | Commit | 标题 |
+|---|---|---|
+| 1 | e2860a9 | 3 步流程 + run-dir 自动记忆 |
+| 2 | 92e5ebf | Orca 派工 taskId 必填 |
+| 3 | 18056c0 | git 兜底 + 业务语言 |
+| 4 | cd554ad | /evolve 5 项规则化 |
+| 5 | c9c7e14 | 最终状态 + 历史 learnings |
+| 6 | fd57799 | 派工 4 步实测 |
+| 7 | ea3f0b5 | 同步非本会话改动 |
+| 8 | eb0c4f0 | weekly-evolve cron |
+| 9 | 52d69a8 | cron 路径修复 v1 |
+| 10 | a42dbd3 | cron 路径修复 v2 |
+| 11 | b19d2db | 使用指南双备份 |
+
+### 关键数字
+
+- 4 个 fix 分支：hotfix/mes-costlog-permission + fix/amount-precision-4 + fix/traceability-drawer-render + feat/inventory-alert-enhancement
+- +557 行规则（5 项 /evolve）
+- 6 条今日 learnings（4 新 + 2 强化）
+- 27 条 learnings 总数（+ 96 条历史归档）
+- 健康度 9.75/10
+
+### 关键决策
+
+- B4 inventoryAlert 5 项功能 — 工人完成代码但没 commit，协调者从 git status 识别并补救 commit（学习：派工协议失败时用 git 兜底）
+- 派工协议实际是 4 步（run-create + task-create + dispatch + worker_done），之前 learnings 写 3 步不完整
+- 业务人员使用指南用纯业务语言写（无技术术语），双备份到笔记空间 + 仓库
+
+### 待手工操作
+
+- 配置 cron 任务：crontab -e → `0 23 * * 0 cd /Users/ruisuyun/Documents/GitHub/jeecgBoot && bash harness/scripts/cron/weekly-evolve.sh >> /tmp/evolve.log 2>&1`
+- 合并 4 个 fix 分支到 main（创建 PR）
+- B1 P0 权限码生产部署（V10.1.3__mes_costlog_perms_fix.sql）
+- B2 P1 精度生产部署（decimal(18,2) → 18,4 迁移）
+- 清理 .claude/settings.json.bak（备份文件）
+
+### 下次回归
+
+业务人员说 3 句话：
+1. "跑回归测试"
+2. "开始复核"
+3. "派发 bug 修复"
