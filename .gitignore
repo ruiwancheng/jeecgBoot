@@ -68,3 +68,6 @@ config/jeecg/code-template-online/
 AGENTS.md CODEBUDDY.md GEMINI.md QODER.md
 cursorrules windsurfrules opencode.jsonc
 .codebuddy/ .gemini/ .kiro/ .qoder/
+
+# hermes/reviews 2026-08-06 之后会话级评审产物（本地化）
+hermes/reviews/2026-08-06-*.md
