@@ -324,3 +324,137 @@ for (const s of sections) {
   4. 「再增加 预期结果 和 实际结果，注意用业务语言」
   5. 「著名具体是哪个字段 期望值 20，实际值 15」
   6. 「复核结果 是 AI 根据业务人员口头反馈记录的」
+
+---
+
+## 12. 回归后必走 3 步流程（2026-08-07 复盘新增）
+
+> **背景**：单源 AI 复核有 30%+ 误判率。2026-08-07 回归发现 30+ 处误判（traceabilityBatch 7 条 + purchase-ledger 7 条 + basic-codeRule 导出 + batch-ledger 5 条 + batch-inventory 2 条 + sales-outbound #8）。**强制双源独立复核 + 误判复盘 + 真实 BUG 切片** 才能保证质量。
+
+### 完整工作流（7 步）
+
+```
+1. /test-regression                          跑回归测试
+   ↓
+2. 报告生成（v3 模板，6 commits 已固化）      node harness/scripts/regression-report.js --run-dir <id>
+   ↓
+3. /regression-review --run-dir <id>         ⭐ 双源独立复核（业务 + 独立 AI）
+   ↓                                          - 业务人员口头复核（不懂技术）
+   ↓                                          - 独立 AI 复核（codex 或 Claude，干净上下文）
+   ↓                                          - 冲突切片走 /orca-review 二次评审
+   ↓
+4. /regression-retro --run-dir <id>          ⭐ 误判复盘（避免下次踩坑）
+   ↓                                          - 抽取所有误判切片
+   ↓                                          - 按 5 大类分类（报告生成器 / spec URL / 业务页面废弃 / 用例不符 / dev DB 残留）
+   ↓                                          - 写规则到 .claude/rules/
+   ↓                                          - 改测试用例（删错断言 / 改错 URL）
+   ↓                                          - 累积到 .claude/memory/learnings/
+   ↓
+5. /regression-decompose --run-dir <id>      ⭐ 真实 BUG 切片处理
+   ↓                                          - 按 P0/P1/P2/P3 分级
+   ↓                                          - 每个 BUG 切成 1 个 cleanup 任务（6 要素）
+   ↓                                          - 派发到对应 owner（前端/后端/cleanup 脚本）
+   ↓
+6. 跟踪 cleanup 任务                        .claude/cleanup-tasks/<date>-<bug>.md
+   ↓                                          每个任务走 /delegate → worker_done → /verify → /done
+7. 下次回归前确认                            所有 cleanup 任务已 close + retro 规则已生效
+```
+
+### 误判 5 大类（2026-08-07 复盘归纳）
+
+| 类别 | 特征 | 案例 | 处理 |
+|---|---|---|---|
+| **A. 报告生成器误归类** | issue 目录匹配错（traceabilityBatch 全标 Connection Refused）| 4.2 traceabilityBatch × 7 | 修 `regression-report.js` issue 归类逻辑 |
+| **B. spec URL/文件名错位** | 测试用旧 URL / 旧名字（purchase-ledger 业务上叫库存台账）| 4.8 purchase-ledger × 7 | 重命名 spec + 改 PAGE_PATH |
+| **C. 业务页面废弃未清理** | spec/前端/菜单还在但业务已下线（batch-ledger 已被 traceability 替代）| 4.7 batch-ledger × 5 | 删 spec + 前端 + 移菜单 |
+| **D. 测试用例与业务设计不符** | 业务上没这功能 / 业务用工具栏，测试期望行内 | 4.6 codeRule 导出 + 4.7 batch-inventory × 2 + 4.8 sales-outbound | 删断言 |
+| **E. dev DB 残留干扰** | 测试期望 X，实际 dev DB 已有 Y | 4.1 stocktake（期望 20 实际 15）| 改 setupFixture / 加清理 |
+
+### 真实 BUG 5 类（2026-08-07 复盘归纳）
+
+| 类别 | 严重度 | 案例 | 跟进 |
+|---|---|---|---|
+| **后端精度丢失** | P1 | other-stock-in totalAmount 4 位小数被截断为 2 位 | 后端改 setScale(2→4) |
+| **前端抽屉渲染失败** | P1 | traceabilityBatch #4 抽屉未显示"批次流水" | 前端排查 v-if/mounted/data |
+| **后端权限码缺失（P0）** | P0 | purchase-mesCostLog 权限码 `mes:purchase:costLog:list` 未注册 | 后端注册权限码 |
+| **前端功能单调（待优化）** | P2 | inventoryAlert 页面无搜索/查询/导出/新增/筛选 | 前端优化排期 |
+| **算法 / 业务逻辑正确** | — | stocktake 移动平均加权法业务人员确认正确 | 不需修复 |
+
+### 关联命令（已固化）
+
+- `.claude/commands/test/regression-review.md` — 双源独立复核
+- `.claude/commands/test/regression-retro.md` — 误判复盘
+- `.claude/commands/test/regression-decompose.md` — 真实 BUG 切片处理
+- `.claude/commands/test/test-regression.md` — 已加入"回归后必走 3 步流程"章节
+
+### 验收（一次性回归 + 流程检查）
+
+| 验收项 | 预期 |
+|---|---|
+| `/test-regression` 输出含"回归后必走 3 步流程" | ✅ |
+| `.claude/commands/test/regression-review.md` 存在 | ✅ |
+| `.claude/commands/test/regression-retro.md` 存在 | ✅ |
+| `.claude/commands/test/regression-decompose.md` 存在 | ✅ |
+| `hermes/plan/regression-report-template-evolution.md` 包含第 12 章"回归后必走 3 步流程" | ✅ |
+| 下次回归必走 `/regression-review` 双源复核 | 强制 |
+---
+
+## 13. run-dir 自动记忆（v2 优化 2026-08-07）
+
+> **业务人员要求**：不要每次都让用户输入 run-dir，AI 自己记忆最近一次。
+
+### 状态文件
+
+**路径**：`.claude/.regression-state.json`
+
+**当前状态**（2026-08-07）：
+```json
+{
+  "last_run_dir": "20260807-032053",
+  "last_run_at": "2026-08-07T03:20:53+08:00",
+  "scope": "full",
+  "slice_count": 33,
+  "failed_count": 8,
+  "next_step": "completed"
+}
+```
+
+### 4 级 fallback 自动检测
+
+3 个新命令（`/regression-review` / `/regression-retro` / `/regression-decompose`）启动时**自动解析** run-dir：
+
+```
+优先级：
+1. 命令行参数 --run-dir（显式指定，最高优先级）
+2. 状态文件 .regression-state.json 的 last_run_dir（次高）
+3. harness/.regression-runs/ 目录最新 mtime（兜底）
+4. 报错退出（都找不到时提示用户）
+```
+
+### 状态文件更新时机
+
+| 时机 | next_step | 谁触发 |
+|---|---|---|
+| `/test-regression` 跑完回归 | `regression-review` | test-regression.md 4.5 章节 |
+| `/regression-review` 完成 | `regression-retro` | regression-review.md 第 5 步 |
+| `/regression-retro` 完成 | `regression-decompose` | regression-retro.md 关联命令章节 |
+| `/regression-decompose` 完成 | `completed` | regression-decompose.md 第 6 步 |
+
+### 使用方式（v2 优化后）
+
+```bash
+# 不需要 --run-dir 参数（AI 自己记忆）
+/regression-review
+/regression-retro
+/regression-decompose
+
+# 显式指定（覆盖自动检测，例如下次回归用）
+/regression-review --run-dir 20260808-123456
+```
+
+### 状态文件位置
+
+- 状态文件：`.claude/.regression-state.json`
+- 3 个命令脚本：`.claude/commands/test/regression-{review,retro,decompose}.md`
+- test-regression 写入逻辑：`.claude/commands/test/test-regression.md` 第 4.5 章节
+- learning 记录：`.claude/memory/learnings/2026-08-07-regression-double-review.md`

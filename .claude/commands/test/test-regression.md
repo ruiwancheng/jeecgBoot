@@ -90,6 +90,43 @@ Windows、Ubuntu、macOS 均使用 Python runner；不得在命令文件中拼�
 报告目录：hermes/eagle-eye/reports/YYYY-MM-DD/
 ```
 
+### 4.5 跑完后写入状态文件（v2 优化 2026-08-07）
+
+> **业务人员要求**：AI 自己记录 run-dir，下次调用 `/regression-review` 等命令时**不用问**。
+
+**状态文件**：`.claude/.regression-state.json`
+
+```bash
+# 跑完回归后自动写入
+python -c "
+import json, datetime
+state_file = '.claude/.regression-state.json'
+try:
+    state = json.load(open(state_file, encoding='utf-8'))
+except (FileNotFoundError, json.JSONDecodeError):
+    state = {}
+
+state['last_run_dir'] = '<run-id>'  # 替换为本次 run-dir
+state['last_run_at'] = '<run-finished-at>'  # ISO 时间
+state['scope'] = 'full|change'  # 本次范围
+state['slice_count'] = <N>  # 本次切片数
+state['failed_count'] = <M>  # 本次 failed 数
+state['next_step'] = 'regression-review'  # 下一步推荐
+state['updated_at'] = datetime.datetime.now().isoformat()
+
+with open(state_file, 'w', encoding='utf-8') as f:
+    json.dump(state, f, indent=2, ensure_ascii=False)
+print(f'[state] 写入: last_run_dir={state[\"last_run_dir\"]} next_step={state[\"next_step\"]}')
+"
+```
+
+**下次调用其他命令时**：
+- `/regression-review`（无参数）→ 自动读状态文件 → 拿 `last_run_dir`
+- `/regression-retro`（无参数）→ 同上
+- `/regression-decompose`（无参数）→ 同上
+
+详见各命令的 "run-dir 自动检测" 章节。
+
 ### 5. 断点恢复
 
 `--resume` 时：
@@ -131,6 +168,34 @@ python harness/scripts/resilient_regression.py resume \
 hermes/eagle-eye/reports/YYYY-MM-DD/issues/
 ```
 
+## 回归后必走流程（双重复核 + 复盘 + 切片）
+
+> **2026-08-07 复盘新增**：回归测试跑完后**必须**走以下 3 步流程，避免单源 AI 误判（历史教训：单源 AI 复核有 30%+ 误判率）。
+
+```text
+/test-regression (本命令)
+       ↓ 跑完回归，产出 failed 切片
+/regression-review --run-dir <id>           ← Step 1: 双重复核（业务 + 独立 AI）
+       ↓ 双源确认：真实 BUG / 误判
+/regression-retro --run-dir <id>            ← Step 2: 误判复盘（避免下次踩坑）
+       ↓ 误判模式 → 规则 + 改测试用例
+/regression-decompose --run-dir <id>        ← Step 3: 真实 BUG 切片处理
+       ↓ 真实 BUG → 派发 cleanup 任务
+```
+
+**详细说明**：
+
+| 命令 | 何时 | 谁来做 | 产出 |
+|---|---|---|---|
+| `/regression-review` | 跑完回归后立即 | 业务人员 + 独立 AI（codex/Claude）| 双源复核后的最终判定 |
+| `/regression-retro` | `/regression-review` 完成后 | 主协调 AI | 误判模式分类 + rules 更新 + 测试用例改 + learnings |
+| `/regression-decompose` | `/regression-review` 完成后（平行于 retro）| 主协调 AI | 真实 BUG 切片 + 派发 cleanup 任务 |
+
+**禁止绕过**：
+- ❌ 不允许跑完回归直接派发 cleanup 任务（必须先走 `/regression-review` 双重复核）
+- ❌ 不允许跳过 `/regression-retro`（下次回归会继续踩同样的坑）
+- ❌ 不允许 `/regression-review` 用单源 AI（必须业务人员 + 独立 AI 双源）
+
 ## 禁止事项
 
 - 不直接在当前会话前台串行跑整批 Playwright；
@@ -138,5 +203,8 @@ hermes/eagle-eye/reports/YYYY-MM-DD/issues/
 - 不把环境失败写成产品 Bug；
 - 不因为单个 E2E 失败自动修改业务代码；
 - 不重复启动已有 running runner；
-- 不默认停止用户已有的后端、前端、MySQL、Redis。
+- 不默认停止用户已有的后端、前端、MySQL、Redis；
+- **不跳过 `/regression-review` 双重复核**；
+- **不跳过 `/regression-retro` 误判复盘**；
+- **不跳过 `/regression-decompose` 真实 BUG 切片处理**。
 <!-- update-end---author:pi---date:2026-08-04---for:【REGRESSION-COMMANDS】新增主动回归测试命令入口 -->

@@ -235,3 +235,62 @@ netstat
 **实证**：2026-08-05 commit 55ef7bd，CI schema init 跑通（之前必 ENOENT）。
 
 详见 `learnings/2026-08-05-ci-skip-via-env-not-code.md`。
+
+---
+
+## L5：回归测试误判复盘（2026-08-07 retro 固化）
+
+> 来源：2026-08-07 回归测试 33+ 处误判复盘。**下次回归前必看**。
+
+### 5 大误判模式 + 必走处理
+
+| 类别 | 触发场景 | 必走处理 |
+|---|---|---|
+| **A. 报告生成器误归类** | `regression-report.js` 从 `hermes/eagle-eye/reports/<date>/issues/*.md` 抽取失败测试时，**所有 traceabilityBatch / inventoryAlert 条目都被打上 Connection Refused 标签** | 修 `harness/scripts/regression-report.js`：issue 归类前先核对 Playwright 日志的 `✓` / `✘` 标志，**仅当 spec 实际失败才列入「失败的测试」** |
+| **B. spec URL/文件名错位** | 测试用 `/project/mes/purchase/ledger`，但业务上叫"**库存台账**"，URL 是 `/project/mes/warehouse/ledger`；component 路径在 `purchase/ledger/` 但路由 path 在 `warehouse/ledger/`（历史遗留错位）| 测试 spec 文件名 + `PAGE_PATH` **必须与 `router/routes/modules/mes.ts` + `MesMenuRegistry` 对齐**。命名错误（如 `purchase-ledger.spec.ts`）→ 重命名为 `inventory-ledger.spec.ts` |
+| **C. 业务页面废弃未清理** | V8.0.0 注册的 `mes_batch_ledger` 菜单 + `batch/ledger/index.vue` + `batch-ledger.spec.ts`，在 V10.0.3 schema 重构后被「批次追溯」页面替代 | 业务页面废弃必走三删：**删 spec + 删前端 + 移菜单**（保留后端被依赖的端点，如 `listByBatchId`）|
+| **D. 测试用例与业务设计不符** | 业务上某页面**没有某功能**（如 basic-codeRule 无导出、batch-inventory 无新增、sales-outbound 审核/取消是工具栏而非行内），但测试加了对应断言 | 测试断言前必查前端 `*.data.ts` 工具栏配置 + `index.vue` 是否有对应按钮/抽屉/工具栏。**业务无此功能 → 删断言** |
+| **E. dev DB 残留 / 测试 setup 时序** | 测试期望 X（来自 setupFixture 创建的物料），实际 dev DB 已有 Y 数据（如 stocktake 期望 20/8 实际 LOCAL-M 15/18.6765）；或 `materialBatch.spec.ts:23-33` 用 `switches.first()` 改总开关 + `page.goto` 跳页 → store 重新 load 失败 | ① setupFixture **创建独立仓库**避免与 dev DB 资源共用 ② 改测试期望为动态值 `expect(item.bookQty).toBeGreaterThanOrEqual(1)` 容忍残留 ③ 改 setupFixture 用 `store.set` 或 API 注入状态 ④ `waitForTableReady` 等待逻辑优化 + 拆条 timeout |
+
+### 新建 spec 时的硬性 checklist（避免 D 类误判）
+
+写新测试 spec 前必查：
+
+```bash
+# 1. 业务 URL 是否与路由表对齐？
+grep "component:" router/routes/modules/mes.ts | grep -B 1 "<page-keyword>"
+
+# 2. 业务菜单名是否对齐？
+grep "<page-keyword>" MesMenuRegistry.java
+
+# 3. 前端 data.ts 是否有工具栏 / 导出 / 抽屉 / formSchema？
+ls src/views/project/mes/<page>/<page>.data.ts && \
+  grep -E "formSchema|exportXls|tableTitle" src/views/project/mes/<page>/<page>.data.ts
+```
+
+### 修改 spec 的硬性 checklist（避免 B/C/D 类误判）
+
+```bash
+# 1. spec 文件名是否与 menu key 对齐？
+# 错例：purchase-ledger.spec.ts（业务叫库存台账）
+# 正例：inventory-ledger.spec.ts
+
+# 2. PAGE_PATH 是否与路由 path 对齐？
+# 错例：'/project/mes/purchase/ledger'
+# 正例：'/project/mes/warehouse/ledger'
+
+# 3. 业务页面是否已废弃？
+# 查 git log + 与业务人员确认
+```
+
+### 必走命令
+
+- 跑回归后必走 `/regression-review`（双源复核，避免单源 AI 误判）
+- 复核后必走 `/regression-retro`（误判复盘，本章节就是 retro 产物）
+- 真实 BUG 必走 `/regression-decompose`（切片处理）
+
+### 参考
+
+- 详细误判清单：`harness/.regression-runs/20260807-032053/regression-report.md` 第四节
+- 复盘报告：`/regression-retro` 20260807-032053
+- learning 记录：`.claude/memory/learnings/2026-08-07-regression-double-review.md`

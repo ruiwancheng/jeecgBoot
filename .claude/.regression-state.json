@@ -1,0 +1,43 @@
+{
+  "last_run_dir": "20260807-032053",
+  "last_run_at": "2026-08-07T03:20:53+08:00",
+  "scope": "full",
+  "slice_count": 33,
+  "failed_count": 8,
+  "next_step": "B4-retry-needed",
+  "updated_at": "2026-08-07T05:30:00+08:00",
+  "comment": "2026-08-07 回归测试 8 个 failed 切片已完成 双重复核 + 误判复盘 + 真实 BUG 切片处理（30+ 误判 + 3 个真实 BUG）",
+  "retro_completed_at": "2026-08-07T09:50:19.600988",
+  "retro_summary": "33+ 处误判已分类（5 大类），规则写入 testing.md L5，6 个 cleanup 任务已派发（C1-C6）",
+  "decompose_completed_at": "2026-08-07T09:51:54.586403",
+  "decompose_summary": "4 个真实 BUG 已切片（P0×1 + P1×2 + P2×1），cleanup 任务已写 .claude/cleanup-tasks/2026-08-07-real-bugs.md",
+  "b1_b2_completed_at": "2026-08-07T10:30:12.391198",
+  "b1_commit": "2935d6252b9d08b9606f6ed097052ff1d88d5f41",
+  "b1_branch": "hotfix/mes-costlog-permission",
+  "b2_commit": "08e5056a1434d89962164dc5ba3bf0b48b7488cc",
+  "b2_branch": "fix/amount-precision-4",
+  "b1_b2_summary": "B1 权限码修复 (27/27 tests pass) + B2 金额精度 4 位 (97/97 tests pass), 两个分支均已 push 到 origin",
+  "cleanup_completed_at": "2026-08-07T10:47:29.689515",
+  "cleanup_results": {
+    "B1_hotfix_mes-costlog-permission": {
+      "commit": "2935d62",
+      "status": "succeeded",
+      "verdict": "P0 权限码注册成功，V10.1.3 SQL 迁移，27/27 验证通过"
+    },
+    "B2_fix_amount-precision-4": {
+      "commit": "08e5056",
+      "status": "succeeded",
+      "verdict": "DB 精度 18,2→18,4 + 5 个 service setScale 2→4，1.0 × 18.6765 = 18.6765"
+    },
+    "B3_fix_traceability-drawer-render": {
+      "commit": "db3b31d",
+      "status": "succeeded",
+      "verdict": "TraceabilityDrawer.vue 84 行修复 + spec 4 行调整"
+    },
+    "B4_feat_inventory-alert-enhancement": {
+      "commit": "db3b31d (误提交)",
+      "status": "failed",
+      "verdict": "前端工人误把 B3 commit 提交到 B4 分支，inventoryAlert 实际未改，需重派"
+    }
+  }
+}

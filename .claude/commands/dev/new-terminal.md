@@ -1,12 +1,10 @@
 ---
-description: 自有命令 — 开启新会话：在当前终端上下文膨胀时，一键生成记忆卡片 + 打开新 pi 终端作为控制中心（2026-08 起统一用 pi，不再按调用者自检测）
+description: 自有命令 — 开启新会话：在当前终端上下文膨胀时，一键生成记忆卡片 + 打开新终端作为控制中心。自动检测当前 agent 类型（claude/pi/codex）并创建对应类型的新终端。
 ---
 
 # /new-terminal
 
-上下文膨胀时，打开一个 pi 新终端作为控制中心。带齐所有规则和状态，但没有历史噪音。
-
-> **agent 策略**：2026-08 起统一用 pi，**不再按调用者身份自检测**（Claude 调 Claude / pi 调 pi 的旧规则已废弃）。
+上下文膨胀时，打开一个同类型新终端作为控制中心。带齐所有规则和状态，但没有历史噪音。
 
 ## 与 /delegate 的区别
 
@@ -18,22 +16,58 @@ description: 自有命令 — 开启新会话：在当前终端上下文膨胀�
 
 ## 流程
 
-1. 运行 `/cleanup-context` 生成记忆卡片（含会话上下文——最重要的增量信息）
-   - **卡片质量门控：** "下一步"必须含具体文件路径或接口路径，不满足则重写再输出
-2. 创建 pi 终端（统一用 pi，不再自检测）：
-	   ```bash
-	   orca terminal create --worktree active --command "pi" --json
-	   ```
-3. 等待终端就绪：`orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 120000 --json`
-4. 用 `orca terminal send` 把记忆卡片 + 执行指令发送给新终端：
-   ```
-   orca terminal send --terminal <handle> --text "<卡片内容 + 恢复指令>" --enter --json
-   ```
-5. 紧跟发送一条"执行信号"，强制 agent 立即动手：
-   ```
-   orca terminal send --terminal <handle> --text "执行上述卡片中'下一步'的动作。直接操作，不要复述、不要问问题。" --enter --json
-   ```
-6. 提示用户："新控制中心已就绪，切换到那个终端即可开始工作"
+### 0. 自检测当前 agent 类型
+
+```bash
+# agent 是 shell 的子进程，$$ 是 shell 自身，shell 的父进程才是 agent
+AGENT=$(ps -p $(ps -p $$ -o ppid=) -o comm= 2>/dev/null)
+```
+
+根据 `$AGENT` 确定要创建的终端类型：
+
+| 祖父进程（AGENT） | 创建命令 |
+|------------------|---------|
+| `Claude` | `orca terminal create --worktree active --command "claude" --json` |
+| `pi` | `orca terminal create --worktree active --command "pi" --json` |
+| `codex` | `orca terminal create --worktree active --command "codex" --json` |
+| 其他 | 提示用户手动开终端 |
+
+> **注意**：`ps -p $$ -o comm=` 返回的是 `/bin/zsh`（shell），不是 agent。必须查父进程的父进程（祖父进程）才能拿到 agent 名称。
+
+### 1. 生成记忆卡片
+
+运行 `/cleanup-context` 生成记忆卡片（含会话上下文——最重要的增量信息）。
+**卡片质量门控：** "下一步"必须含具体文件路径或接口路径，不满足则重写再输出。
+
+### 2. 创建新终端
+
+```bash
+orca terminal create --worktree active --command "<agent>" --json
+```
+
+### 3. 等待就绪
+
+```bash
+orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 120000 --json
+```
+
+### 4. 注入记忆卡片
+
+```
+orca terminal send --terminal <handle> --text "<卡片内容 + 恢复指令>" --enter --json
+```
+
+### 5. 发送执行信号
+
+```
+orca terminal send --terminal <handle> --text "执行上述卡片中'下一步'的动作。直接操作，不要复述、不要问问题。" --enter --json
+```
+
+### 6. 提示用户
+
+"新控制中心已就绪：切换到 `<handle>` 继续工作"
+
+---
 
 ## 注入内容格式（terminal send 发送的完整文本）
 
@@ -55,19 +89,25 @@ description: 自有命令 — 开启新会话：在当前终端上下文膨胀�
 执行卡片中"下一步"的动作。直接操作。
 ```
 
+---
+
 ## 使用示例
 
 ```
 用户（在当前膨胀终端里）：/new-terminal
-AI：📋 生成记忆卡片... ✅（下一步含具体文件路径）
-    🚀 创建 pi 新终端 term_xxx ✅
+AI：🔍 自检测当前 agent: claude
+    📋 生成记忆卡片... ✅（下一步含具体文件路径）
+    🚀 创建 claude 新终端 term_xxx ✅
     ⏳ 等待就绪... ✅
     📤 注入记忆卡片 ✅
     ⚡ 发送执行信号 ✅
-    
+
     ✅ 新控制中心已就绪：切换到 term_xxx 继续工作
 ```
 
+---
+
 ## 降级
 
-如果 Orca 不可用：退化为 `/cleanup-context` + 提示用户手动开终端粘贴记忆卡片。
+- Orca 不可用 → 退化为 `/cleanup-context` + 提示用户手动开终端粘贴记忆卡片
+- 未知 agent 类型 → 提示"无法识别当前 agent，请在目标终端手动执行以下操作"
