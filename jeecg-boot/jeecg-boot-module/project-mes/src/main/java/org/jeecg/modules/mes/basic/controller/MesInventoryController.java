@@ -108,10 +108,12 @@ public class MesInventoryController {
         }
         inventoryMapper.deleteById(id);
         String riskType = deriveRiskType(row);
-        cleanupAuditService.log("ui-single", id,
+        String operator = getCurrentUsername();
+        // P1-4：source 三元化（ui:<username> / sql-emergency / cron:<jobname>），避免 "system" 串扰
+        cleanupAuditService.log("ui:" + operator, id,
                 (String) row.get("material_id"),
                 (String) row.get("warehouse_id"),
-                qty, riskType, getCurrentUsername());
+                qty, riskType, operator);
         return Result.ok("已删除孤儿行 " + id);
     }
 
@@ -141,10 +143,12 @@ public class MesInventoryController {
         for (Map<String, Object> row : orphans) {
             inventoryMapper.deleteById((String) row.get("id"));
             String riskType = deriveRiskType(row);
-            cleanupAuditService.log("ui-batch", (String) row.get("id"),
+            String operator = getCurrentUsername();
+            // P1-4：source 三元化，与单删保持一致
+            cleanupAuditService.log("ui:" + operator, (String) row.get("id"),
                     (String) row.get("material_id"),
                     (String) row.get("warehouse_id"),
-                    (BigDecimal) row.get("current_qty"), riskType, getCurrentUsername());
+                    (BigDecimal) row.get("current_qty"), riskType, operator);
         }
         return Result.ok("已删除 " + orphans.size() + " 条孤儿行");
     }
@@ -152,12 +156,11 @@ public class MesInventoryController {
     /** 导出孤儿清单：EasyExcel 流式，LIMIT 由 Mapper 强制（防止 OOM） */
     @GetMapping("/exportOrphanXls")
     @RequiresPermissions("mes:inventory:export")
-    public void exportOrphanXls(HttpServletResponse response) throws Exception {
-        List<Map<String, Object>> orphans = inventoryMapper.selectOrphansForExport(10000);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=orphan_inventory.xlsx");
-        // 注：完整 EasyExcel 写出逻辑在 Slice 3 运维 Runbook 补齐；此处先写计数保证联调
-        response.getWriter().write("orphan_count=" + orphans.size());
+    public void exportOrphanXls(HttpServletResponse response) {
+        // P0-2：旧实现披 xlsx 外衣写 plain text，Excel 打开报错。
+        // 显式拒绝 + 指引用户走应急 SQL/CSV，避免浏览器下载坏文件。
+        throw new UnsupportedOperationException(
+                "exportOrphanXls 待 Slice 3+ 补齐 EasyExcel 实现。当前请走 SQL 应急脚本或前端 CSV 导出");
     }
 
     /** 孤儿行总数：权限沿用 list（轻量只读） */

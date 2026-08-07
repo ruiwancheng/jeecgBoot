@@ -27,6 +27,7 @@
           <foreach collection="ids" item="id" open="(" separator="," close=")">
               #{id}
           </foreach>
+        FOR UPDATE  <!-- P1-3：批量删除前锁行，防并发 TOCTOU（qty 校验与 deleteById 之间） -->
     </select>
 
     <!-- 导出专用：含 LIMIT 防御 OOM，单批上限由 Controller 传 10000 -->

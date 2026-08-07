@@ -21,11 +21,16 @@ public interface MesInventoryMapper extends BaseMapper<MesInventory> {
 
     //update-begin---author:ruiwancheng---date:2026-07-25---for: V9.7.1 库存总览-联表查询-----------
     @Select("SELECT i.id, i.material_id, i.warehouse_id, i.current_qty, " +
-            "m.code AS material_code, m.name AS material_name, m.moving_avg_cost, " +
-            "w.name AS warehouse_name " +
+            "m.code AS material_code, m.name AS material_name, m.moving_avg_cost, m.del_flag AS material_del_flag, " +
+            "w.name AS warehouse_name, w.del_flag AS warehouse_del_flag, " +
+            //update-begin---author:ruiwancheng---date:20260807---for:【P0-1】selectInventoryWithMaterial 加 isOrphan 字段契约（前端 record.isOrphan === '1' 才显示孤儿标签/按钮）-----------
+            "CASE WHEN (m.id IS NULL OR m.del_flag = 1 OR w.id IS NULL OR w.del_flag = 1) THEN '1' ELSE '0' END AS isOrphan " +
+            //update-end---author:ruiwancheng---date:20260807---for:【P0-1】isOrphan 字段契约-----------
             "FROM c_mes_inventory i " +
-            "LEFT JOIN c_mes_material m ON i.material_id = m.id AND m.del_flag = 0 " +
-            "LEFT JOIN c_mes_warehouse w ON i.warehouse_id = w.id AND w.del_flag = 0 " +
+            //update-begin---author:ruiwancheng---date:20260807---for:【P0-1】LEFT JOIN 移除 del_flag 过滤，否则软删物料的 m.id 会被滤成 NULL 而 m.del_flag 也读不到，isOrphan 判定不完整-----------
+            "LEFT JOIN c_mes_material m ON i.material_id = m.id " +
+            "LEFT JOIN c_mes_warehouse w ON i.warehouse_id = w.id " +
+            //update-end---author:ruiwancheng---date:20260807---for:【P0-1】LEFT JOIN 移除 del_flag 过滤-----------
             "WHERE (m.code LIKE CONCAT('%',#{keyword},'%') OR m.name LIKE CONCAT('%',#{keyword},'%') OR #{keyword} IS NULL) " +
             "AND (i.warehouse_id = #{warehouseId} OR #{warehouseId} IS NULL) " +
             //update-begin---author:ruiwancheng---date:2026-07-29---for: /debug 盘点抽盘账面数拉取-materialId过滤支持-----------
