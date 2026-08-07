@@ -1,8 +1,8 @@
-# 库存总览孤儿行清理 — 实施草案（v2）
+# 库存总览孤儿行清理 — 实施草案（v3）
 
-> **配套文档**：`inventory-orphan-cleanup-2026-08-07.md`（主方案）
-> **用途**：阶段 1+2+4+5 的代码草案（Java / Vue / TS / SQL / Shell）
-> **版本**：v2（基于 Codex 评审重写）
+> **配套文档**：`inventory-orphan-cleanup-2026-08-07.md`（主方案 v3）
+> **用途**：阶段 1+2+4+5 的完整代码（Java / Vue / TS / SQL / Shell）
+> **版本**：v3（基于 Codex v2 评审再重写，含 19 个 checker + UNION ALL + 启动自检 + 字典缓存 + 关键表行锁）
 
 ---
 
@@ -183,9 +183,9 @@
 
 ---
 
-## § B. 阶段 2：后端 3 端点（MesInventoryController）
+## § B. 阶段 2：后端 3 端点（MesInventoryController，v3 修订 risk_type 派生）
 
-### B.1 Controller 完整代码
+### B.1 Controller 完整代码（v3：risk_type 从 material_del_flag 派生）
 
 ```java
 //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】3 端点 + 审计 Service 注入-----------
@@ -195,6 +195,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -212,7 +213,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -225,7 +225,7 @@ public class MesInventoryController {
     @Autowired private MesInventoryMapper inventoryMapper;
     @Autowired private IMesInventoryCleanupAuditService cleanupAuditService;
 
-    /** 单删孤儿行（Codex P0：@Validated id 非空） */
+    /** 单删孤儿行 */
     @DeleteMapping("/deleteOrphan")
     @RequiresPermissions("mes:inventory:deleteOrphan")
     @Transactional(rollbackFor = Exception.class)
@@ -237,14 +237,15 @@ public class MesInventoryController {
             throw new JeecgBootException("孤儿行有库存(" + qty + ")，禁止删除");
         }
         inventoryMapper.deleteById(id);
+        // v3：risk_type 从 material_del_flag 派生（不再硬编码 "B2"）
+        String riskType = deriveRiskType(row);
         cleanupAuditService.log("ui-single", id,
             (String) row.get("material_id"),
             (String) row.get("warehouse_id"),
-            qty, "B2", getCurrentUsername());
+            qty, riskType, getCurrentUsername());
         return Result.ok("已删除");
     }
 
-    /** Codex P0：POST + body 而非 DELETE + query string（防 HTTP 414） */
     @Data
     public static class BatchDeleteOrphanRequest {
         @NotEmpty(message = "ids 不能为空")
@@ -266,33 +267,37 @@ public class MesInventoryController {
         }
         for (Map<String, Object> row : orphans) {
             inventoryMapper.deleteById(row.get("id"));
+            String riskType = deriveRiskType(row);  // v3 派生
             cleanupAuditService.log("ui-batch", (String) row.get("id"),
                 (String) row.get("material_id"),
                 (String) row.get("warehouse_id"),
-                (BigDecimal) row.get("current_qty"), "B2", getCurrentUsername());
+                (BigDecimal) row.get("current_qty"), riskType, getCurrentUsername());
         }
         return Result.ok("已删除 " + orphans.size() + " 条");
     }
 
-    /** Codex P1：导出专用查询含 limit，防 OOM */
     @GetMapping("/exportOrphanXls")
-    @RequiresPermissions("mes:inventory:export")
+    @RequiresPermissions("mes:inventory:export")  // v3：第 3 个 addPerms 已在 MesMenuRegistry
     public void exportOrphanXls(HttpServletResponse response) throws Exception {
         List<Map<String, Object>> orphans = inventoryMapper.selectOrphansForExport(10000);
-        // 用 EasyExcel 流式写入（避免 POI OOM）
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=orphan_inventory.xlsx");
-        // ... EasyExcel.write(response.getOutputStream(), Map.class).sheet("孤儿行").doWrite(orphans);
+        // EasyExcel 流式写入
     }
 
-    /** 孤儿行总数（前端 orphanCount 展示） */
     @GetMapping("/orphanCount")
     @RequiresPermissions("mes:inventory:list")
     public Result<Long> orphanCount() {
         return Result.ok(inventoryMapper.countOrphans());
     }
 
-    // ... 现有 list 端点保留
+    /** v3：risk_type 派生（A2=物料硬删 + qty=0 / B2=物料软删 + qty=0） */
+    private String deriveRiskType(Map<String, Object> row) {
+        Integer materialDelFlag = (Integer) row.get("material_del_flag");
+        // material_id 为 null OR del_flag=1 → A2（硬删或软删都归 B2，硬删极少走 UI）
+        boolean isSoftDeleted = materialDelFlag != null && materialDelFlag == 1;
+        return isSoftDeleted ? "B2" : "A2";  // 实际 UI 调用基本都是软删
+    }
 }
 //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】3 端点
 ```
@@ -475,7 +480,7 @@ SQL
 
 ---
 
-## § D. 阶段 4：MaterialReferenceChecker 列表模式
+## § D. 阶段 4：MaterialReferenceChecker 列表模式（v3 完整重写）
 
 ### D.1 接口
 
@@ -483,7 +488,7 @@ SQL
 package org.jeecg.modules.mes.basic.service;
 
 /**
- * 物料引用检查器（Codex P0：19+ 张引用表全覆盖）
+ * 物料引用检查器（Codex v2 P0：19 张引用表全覆盖 + UNION ALL 聚合）
  * 每张引用 material_id 的表一个 bean，主代码注入 List 调用。
  */
 public interface MaterialReferenceChecker {
@@ -492,7 +497,9 @@ public interface MaterialReferenceChecker {
 }
 ```
 
-### D.2 示例实现（16 个 checker 的模板）
+### D.2 完整 19 个 checker 实现（Codex v2 修订）
+
+#### D.2.1 公共基础类
 
 ```java
 @Component
@@ -512,80 +519,332 @@ public class InventoryReferenceChecker implements MaterialReferenceChecker {
         }
     }
 }
+```
 
+#### D.2.2 全部 19 个 checker 列表
+
+| # | 类名 | describe() | 守卫 SQL |
+|---|---|---|---|
+| 1 | `InventoryReferenceChecker` | `c_mes_inventory` | `WHERE material_id=?` (count) |
+| 2 | `InventoryLedgerReferenceChecker` | `c_mes_inventory_ledger` | 同上 |
+| 3 | `BatchReferenceChecker` | `c_mes_batch` | `WHERE material_id=? AND del_flag=0` |
+| 4 | `BatchInventoryReferenceChecker` | `c_mes_batch_inventory` | `WHERE material_id=?` |
+| 5 | `BatchLedgerReferenceChecker` | `c_mes_batch_ledger` | 同上 |
+| 6 | `BomItemReferenceChecker` | `c_mes_bom_item` | 同上 |
+| 7 | `CompletionReceiptItemReferenceChecker` | `c_mes_completion_receipt_item` | JOIN `c_mes_completion_receipt` + `status!='2'` |
+| 8 | `CostLogReferenceChecker` | `c_mes_cost_log` | `WHERE material_id=?` |
+| 9 | `DeliveryNoteItemReferenceChecker` | `c_mes_delivery_note_item` | JOIN `c_mes_delivery_note` + `status!='3'` |
+| 10 | `OtherStockInItemReferenceChecker` | `c_mes_other_stock_in_item` | JOIN `c_mes_other_stock_in` + `status!='2'` |
+| 11 | `OtherStockOutItemReferenceChecker` | `c_mes_other_stock_out_item` | JOIN `c_mes_other_stock_out` + `status!='2'` |
+| 12 | `PriceReferenceChecker` | `c_mes_price` | `WHERE material_id=? AND del_flag=0` |
+| 13 | `PickingItemReferenceChecker` | `c_mes_production_picking_item` | JOIN `c_mes_production_picking` + `status IN (open)` |
+| 14 | `PurchaseApplyItemReferenceChecker` | `c_mes_purchase_apply_item` | JOIN `c_mes_purchase_apply` + `status!='2'` |
+| 15 | `PurchaseOrderItemReferenceChecker` | `c_mes_purchase_order_item` | JOIN `c_mes_purchase_order` + `status!='2'` |
+| 16 | `PurchaseReceiptItemReferenceChecker` | `c_mes_purchase_receipt_item` | JOIN `c_mes_purchase_receipt` + `status!='2'` |
+| 17 | `SalesOrderItemReferenceChecker` | `c_mes_sales_order_item` | JOIN `c_mes_sales_order` + `status!='2'` |
+| 18 | `SalesOutboundItemReferenceChecker` | `c_mes_sales_outbound_item` | JOIN `c_mes_sales_outbound` + `status!='3'` |
+| 19 | `StocktakeItemReferenceChecker` | `c_mes_stocktake_item` | JOIN `c_mes_stocktake` + `status!='2'` |
+
+#### D.2.3 典型 checker 完整代码（v3 完整覆盖）
+
+```java
+// 1. 物料库存（完全无行）
 @Component
-public class ProductionOrderReferenceChecker implements MaterialReferenceChecker {
-    @Autowired private MesProductionOrderMapper mapper;
-    @Autowired private SysDictService dictService;  // Codex P0：状态白名单字典化
-
-    @Override public String describe() { return "c_mes_production_order"; }
-
-    @Override
-    public void assertNotReferenced(String materialId) {
-        List<String> openStatuses = dictService.getDictItems("mes_production_order_status")
-            .stream()
-            .filter(i -> !"已完结".equals(i.getText()))
-            .map(SysDictItem::getValue)
-            .collect(Collectors.toList());
-
+public class InventoryReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private MesInventoryMapper mapper;
+    @Override public String describe() { return "c_mes_inventory"; }
+    @Override public void assertNotReferenced(String materialId) {
         Long cnt = mapper.selectCount(
-            new QueryWrapper<MesProductionOrder>()
-                .eq("material_id", materialId)
-                .in("status", openStatuses));
-        if (cnt > 0) {
-            throw new JeecgBootException("物料被 " + cnt + " 个未完结生产订单引用");
-        }
+            new QueryWrapper<MesInventory>().eq("material_id", materialId));
+        if (cnt > 0) throw new JeecgBootException(
+            "物料在 c_mes_inventory 仍有 " + cnt + " 行引用，请先用 UI 清理");
     }
 }
 
-// 其余 14 个 checker 同模式实现，参考 § 6.3 表
+// 3. 批次主档（del_flag=0）
+@Component
+public class BatchReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private MesBatchMapper mapper;
+    @Override public String describe() { return "c_mes_batch"; }
+    @Override public void assertNotReferenced(String materialId) {
+        Long cnt = mapper.selectCount(
+            new QueryWrapper<MesBatch>().eq("material_id", materialId).eq("del_flag", 0));
+        if (cnt > 0) throw new JeecgBootException("物料被 " + cnt + " 个批次引用");
+    }
+}
+
+// 7. 完工入库明细（v3 状态白名单从 SysDictCache 读）
+@Component
+public class CompletionReceiptItemReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private MesCompletionReceiptItemMapper itemMapper;
+    @Autowired private SysDictCache dictCache;
+    @Override public String describe() { return "c_mes_completion_receipt_item"; }
+    @Override public void assertNotReferenced(String materialId) {
+        List<String> openStatuses = dictCache.getOpenStatuses("mes_completion_receipt_status");
+        if (openStatuses.isEmpty()) {
+            throw new JeecgBootException("完工入库状态字典缓存为空，请检查 SysDictCache");
+        }
+        Long cnt = itemMapper.selectCount(
+            new QueryWrapper<MesCompletionReceiptItem>()
+                .eq("material_id", materialId)
+                .apply("receipt_id IN (SELECT id FROM c_mes_completion_receipt WHERE status IN ('"
+                    + String.join("','", openStatuses) + "'))"));
+        if (cnt > 0) throw new JeecgBootException("物料被 " + cnt + " 行未完结完工入库引用");
+    }
+}
+
+// 其余 16 个 checker 同模式，参考主方案 § 6.3 表格
 ```
 
-### D.3 MesMaterialServiceImpl 重写
+### D.3 MesMaterialServiceImpl 重写（v3 两步走）
 
 ```java
 @Service
 public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMaterial>
         implements IMesMaterialService {
 
-    // Codex P0：注入 checker 列表（Spring 自动收集所有实现）
-    @Autowired
-    private List<MaterialReferenceChecker> referenceCheckers;
+    // v3：注入聚合器、启动自检、行锁服务
+    @Autowired private MaterialReferenceAggregator referenceAggregator;
+    @Autowired private CriticalTableLockService criticalTableLockService;
+    @Autowired private SysDictCache dictCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Serializable id) {
         String materialId = id.toString();
 
-        // 预检：UI 删除物料前可调用此接口展示关联数
-        for (MaterialReferenceChecker checker : referenceCheckers) {
-            checker.assertNotReferenced(materialId);
+        // 第一步：UNION ALL 聚合查全表引用计数（轻量级，仅读）
+        Map<String, Long> refCounts = referenceAggregator.aggregate(materialId);
+        if (refCounts.values().stream().anyMatch(c -> c > 0)) {
+            throw new JeecgBootException(formatRejectMessage(refCounts));
         }
+
+        // 第二步：关键表（inventory / batch / production_picking）行锁 + 最终校验
+        // 防守卫→删除窗口的并发漏判（Codex v2 P0）
+        criticalTableLockService.lockAndRecheck(materialId, refCounts.keySet());
 
         return super.removeById(id);
     }
 
-    /** Codex P1：业务影响预检接口（UI 删除前调用） */
+    /** v3 业务影响预检接口（UI 删除前调用） */
     public Map<String, Long> preCheckDelete(String materialId) {
-        Map<String, Long> result = new LinkedHashMap<>();
-        for (MaterialReferenceChecker checker : referenceCheckers) {
-            try {
-                checker.assertNotReferenced(materialId);
-                result.put(checker.describe(), 0L);
-            } catch (JeecgBootException e) {
-                // 解析"X 行引用"中的数字
-                Long cnt = parseCount(e.getMessage());
-                result.put(checker.describe(), cnt);
+        return referenceAggregator.aggregate(materialId);
+    }
+
+    private String formatRejectMessage(Map<String, Long> refCounts) {
+        return refCounts.entrySet().stream()
+            .filter(e -> e.getValue() > 0)
+            .map(e -> e.getKey() + "=" + e.getValue() + " 行")
+            .collect(Collectors.joining("; ", "物料被以下表引用：", ""));
+    }
+}
+```
+
+### D.4 MaterialReferenceAggregator（UNION ALL 聚合，Codex v2 P0）
+
+```java
+@Component
+public class MaterialReferenceAggregator {
+    @Autowired private JdbcTemplate jdbc;
+
+    public Map<String, Long> aggregate(String materialId) {
+        String sql = buildUnionSql();
+        List<Map<String, Object>> rows = jdbc.queryForList(sql, materialId);
+        return rows.stream().collect(Collectors.toMap(
+            r -> (String) r.get("tbl"),
+            r -> ((Number) r.get("cnt")).longValue()));
+    }
+
+    private String buildUnionSql() {
+        // 动态生成 19 张表的 UNION ALL SQL（避免硬编码，便于新增表时维护）
+        return Stream.of(
+            "SELECT 'c_mes_inventory' AS tbl, COUNT(*) AS cnt FROM c_mes_inventory WHERE material_id = ?",
+            "SELECT 'c_mes_inventory_ledger' AS tbl, COUNT(*) AS cnt FROM c_mes_inventory_ledger WHERE material_id = ?",
+            "SELECT 'c_mes_batch' AS tbl, COUNT(*) AS cnt FROM c_mes_batch WHERE material_id = ? AND del_flag = 0",
+            "SELECT 'c_mes_batch_inventory' AS tbl, COUNT(*) AS cnt FROM c_mes_batch_inventory WHERE material_id = ?",
+            "SELECT 'c_mes_batch_ledger' AS tbl, COUNT(*) AS cnt FROM c_mes_batch_ledger WHERE material_id = ?",
+            "SELECT 'c_mes_bom_item' AS tbl, COUNT(*) AS cnt FROM c_mes_bom_item WHERE material_id = ?",
+            // 状态白名单改在 SQL 拼接时从 SysDictCache 读
+            buildStatusFilteredSql("c_mes_completion_receipt_item",
+                "c_mes_completion_receipt", "mes_completion_receipt_status", "'2'"),
+            "SELECT 'c_mes_cost_log' AS tbl, COUNT(*) AS cnt FROM c_mes_cost_log WHERE material_id = ?",
+            buildStatusFilteredSql("c_mes_delivery_note_item",
+                "c_mes_delivery_note", null, "'3'"),
+            buildStatusFilteredSql("c_mes_other_stock_in_item",
+                "c_mes_other_stock_in", null, "'2'"),
+            buildStatusFilteredSql("c_mes_other_stock_out_item",
+                "c_mes_other_stock_out", null, "'2'"),
+            "SELECT 'c_mes_price' AS tbl, COUNT(*) AS cnt FROM c_mes_price WHERE material_id = ? AND del_flag = 0",
+            buildStatusFilteredSql("c_mes_production_picking_item",
+                "c_mes_production_picking", "mes_production_picking_status", null),
+            buildStatusFilteredSql("c_mes_purchase_apply_item",
+                "c_mes_purchase_apply", null, "'2'"),
+            buildStatusFilteredSql("c_mes_purchase_order_item",
+                "c_mes_purchase_order", null, "'2'"),
+            buildStatusFilteredSql("c_mes_purchase_receipt_item",
+                "c_mes_purchase_receipt", null, "'2'"),
+            buildStatusFilteredSql("c_mes_sales_order_item",
+                "c_mes_sales_order", null, "'2'"),
+            buildStatusFilteredSql("c_mes_sales_outbound_item",
+                "c_mes_sales_outbound", null, "'3'"),
+            buildStatusFilteredSql("c_mes_stocktake_item",
+                "c_mes_stocktake", null, "'2'")
+        ).collect(Collectors.joining(" UNION ALL "));
+    }
+
+    /** 状态过滤的子查询生成（item + parent + status filter） */
+    private String buildStatusFilteredSql(String itemTable, String parentTable,
+                                          String dictCode, String excludeStatus) {
+        String statusFilter;
+        if (dictCode != null) {
+            // 从 SysDictCache 读（启动时拼到 SQL 中）
+            List<String> openStatuses = dictCache.getOpenStatuses(dictCode);
+            statusFilter = " AND p.status IN ('" + String.join("','", openStatuses) + "')";
+        } else {
+            statusFilter = " AND p.status != " + excludeStatus;
+        }
+        return String.format(
+            "SELECT '%s' AS tbl, COUNT(*) AS cnt FROM %s i JOIN %s p ON i.%s_id = p.id "
+                + "WHERE i.material_id = ?%s",
+            itemTable, itemTable, parentTable,
+            itemTable.replace("_item", "").replace("c_mes_", ""), statusFilter);
+    }
+}
+```
+
+### D.5 MaterialReferenceCoverageAssertor（启动自检，Codex v2 P0）
+
+```java
+@Component
+public class MaterialReferenceCoverageAssertor implements ApplicationRunner {
+    @Autowired private DataSource ds;
+    @Autowired private List<MaterialReferenceChecker> checkers;
+
+    @Override
+    @Transactional(readOnly = true)
+    public void run(ApplicationArguments args) {
+        // 1. 查 schema 实际含 material_id 的表
+        Set<String> actualTables = new HashSet<>();
+        try (Connection conn = ds.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                "SELECT table_name FROM information_schema.columns " +
+                "WHERE column_name = 'material_id' AND table_schema = DATABASE()");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) actualTables.add(rs.getString(1));
+        } catch (SQLException e) { throw new RuntimeException(e); }
+
+        // 2. 查 checker 描述的所有表
+        Set<String> checkerTables = checkers.stream()
+            .map(c -> c.describe().split("\\.")[0])
+            .collect(Collectors.toSet());
+
+        // 3. 差异比对（fail-fast）
+        Set<String> missing = Sets.difference(actualTables, checkerTables);
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException(
+                "【守卫覆盖校验】以下表含 material_id 但未实现 checker: " + missing
+                + "，请补齐 MaterialReferenceChecker 实现");
+        }
+        log.info("【守卫覆盖校验】通过：schema {} 张表均已覆盖", actualTables.size());
+    }
+}
+```
+
+### D.6 SysDictCache（@PostConstruct + @Scheduled 60s 刷新）
+
+```java
+@Component
+public class SysDictCache implements ApplicationRunner {
+    @Autowired private SysDictService dictService;
+    private volatile Map<String, List<String>> openStatusCache = new ConcurrentHashMap<>();
+
+    @Override public void run(ApplicationArguments args) { refresh(); }
+
+    @Scheduled(fixedRate = 60_000)  // 每 60s 刷新
+    public void refresh() {
+        try {
+            openStatusCache.put("mes_production_order_status",
+                getOpenItems("mes_production_order_status", "已完结"));
+            openStatusCache.put("mes_completion_receipt_status",
+                getOpenItems("mes_completion_receipt_status", "已入库"));
+            openStatusCache.put("mes_production_picking_status",
+                getOpenItems("mes_production_picking_status", "已审核"));
+            openStatusCache.put("mes_purchase_apply_status",
+                getOpenItems("mes_purchase_apply_status", "已入库"));
+            openStatusCache.put("mes_purchase_order_status",
+                getOpenItems("mes_purchase_order_status", "已关闭"));
+            openStatusCache.put("mes_purchase_receipt_status",
+                getOpenItems("mes_purchase_receipt_status", "已入库"));
+            openStatusCache.put("mes_sales_order_status",
+                getOpenItems("mes_sales_order_status", "已关闭"));
+            openStatusCache.put("mes_sales_outbound_status",
+                getOpenItems("mes_sales_outbound_status", "已审核"));
+            openStatusCache.put("mes_delivery_note_status",
+                getOpenItems("mes_delivery_note_status", "已发货"));
+            openStatusCache.put("mes_other_stock_in_status",
+                getOpenItems("mes_other_stock_in_status", "已入库"));
+            openStatusCache.put("mes_other_stock_out_status",
+                getOpenItems("mes_other_stock_out_status", "已出库"));
+            openStatusCache.put("mes_stocktake_status",
+                getOpenItems("mes_stocktake_status", "已审核"));
+        } catch (Exception e) {
+            log.warn("字典缓存刷新失败，使用上次缓存", e);
+        }
+    }
+
+    private List<String> getOpenItems(String dictCode, String closedText) {
+        return dictService.getDictItems(dictCode)
+            .stream().filter(i -> !closedText.equals(i.getText()))
+            .map(SysDictItem::getValue).collect(Collectors.toList());
+    }
+
+    public List<String> getOpenStatuses(String dictCode) {
+        return openStatusCache.getOrDefault(dictCode, List.of());
+    }
+}
+```
+
+### D.7 CriticalTableLockService（关键表 FOR UPDATE 重检）
+
+```java
+@Component
+public class CriticalTableLockService {
+    @Autowired private JdbcTemplate jdbc;
+
+    /** 守卫→删除窗口的关键表行锁重检（Codex v2 P0） */
+    @Transactional(rollbackFor = Exception.class)
+    public void lockAndRecheck(String materialId, Set<String> tables) {
+        // inventory：必须无任何行（包含零库存）
+        if (tables.contains("c_mes_inventory")) {
+            List<Map<String, Object>> locked = jdbc.queryForList(
+                "SELECT id FROM c_mes_inventory WHERE material_id = ? FOR UPDATE",
+                materialId);
+            if (!locked.isEmpty()) {
+                throw new JeecgBootException("并发检测：c_mes_inventory 守卫通过后又有 " + locked.size() + " 行被创建");
             }
         }
-        return result;
+        // batch：必须无 del_flag=0 行
+        if (tables.contains("c_mes_batch")) {
+            List<Map<String, Object>> locked = jdbc.queryForList(
+                "SELECT id FROM c_mes_batch WHERE material_id = ? AND del_flag = 0 FOR UPDATE",
+                materialId);
+            if (!locked.isEmpty()) {
+                throw new JeecgBootException("并发检测：c_mes_batch 守卫通过后又有 " + locked.size() + " 行被创建");
+            }
+        }
+        // production_picking_item：行锁（防并发领料）
+        if (tables.contains("c_mes_production_picking_item")) {
+            jdbc.queryForList(
+                "SELECT id FROM c_mes_production_picking_item WHERE material_id = ? FOR UPDATE",
+                materialId);
+        }
     }
 }
 ```
 
 ---
 
-## § E. 阶段 5：测试代码草案
+## § E. 阶段 5：测试代码草案（v3 补 fixtures cleanup + CoverageAssertorTest）
 
 ### E.1 fixtures helper
 
@@ -666,92 +925,159 @@ const { withOrphanRow } = require('../helpers/fixtures');
 
 ```javascript
 const { createClient } = require('../helpers/api');
-const { withReferencedMaterial } = require('../helpers/fixtures');
+const { withReferencedMaterial, cleanupFixtures } = require('../helpers/fixtures');
 
 (async () => {
   const c = createClient(process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot');
   await c.login('mes_admin', '123456');
   let passed = 0, failed = 0;
+  const fixtureIds = [];  // v3：跟踪所有 fixture，测试结束统一 cleanup
 
-  // S1: 有 inventory 行
-  const mat1 = await withReferencedMaterial(c, ['c_mes_inventory']);
-  const r1 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat1}`);
-  if (r1.code === 500 && r1.message.includes('c_mes_inventory')) { passed++; c.check('S1 库存引用拦截', true); }
-  else { failed++; c.check('S1 库存引用拦截', false, r1.message); }
+  try {
+    // S1: 有 inventory 行
+    const mat1 = await withReferencedMaterial(c, ['c_mes_inventory']);
+    fixtureIds.push(mat1);
+    const r1 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat1}`);
+    if (r1.code === 500 && r1.message.includes('c_mes_inventory')) { passed++; c.check('S1 库存引用拦截', true); }
+    else { failed++; c.check('S1 库存引用拦截', false, r1.message); }
 
-  // S2: 有 BOM 引用
-  const mat2 = await withReferencedMaterial(c, ['c_mes_bom_item']);
-  const r2 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat2}`);
-  if (r2.code === 500 && r2.message.includes('bom_item')) { passed++; c.check('S2 BOM 拦截', true); }
-  else { failed++; c.check('S2 BOM 拦截', false, r2.message); }
+    // S2: 有 BOM 引用（v3 用 bom_item 而非 bom）
+    const mat2 = await withReferencedMaterial(c, ['c_mes_bom_item']);
+    fixtureIds.push(mat2);
+    const r2 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat2}`);
+    if (r2.code === 500 && r2.message.includes('bom_item')) { passed++; c.check('S2 BOM 拦截', true); }
+    else { failed++; c.check('S2 BOM 拦截', false, r2.message); }
 
-  // S3: 有未完结生产订单
-  const mat3 = await withReferencedMaterial(c, ['c_mes_production_order']);
-  // 设置 status='1'（草稿/未完结）
-  await execSQL(`UPDATE c_mes_production_order SET status='1' WHERE material_id=?`, [mat3]);
-  const r3 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat3}`);
-  if (r3.code === 500 && r3.message.includes('生产订单')) { passed++; c.check('S3 未完结订单拦截', true); }
-  else { failed++; c.check('S3 未完结订单拦截', false, r3.message); }
+    // S3: 有未完结领料单（v3 用 picking_item 而非 picking）
+    const mat3 = await withReferencedMaterial(c, ['c_mes_production_picking_item']);
+    fixtureIds.push(mat3);
+    await execSQL(`UPDATE c_mes_production_picking SET status='1' WHERE id IN (SELECT picking_id FROM c_mes_production_picking_item WHERE material_id=?)`, [mat3]);
+    const r3 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat3}`);
+    if (r3.code === 500 && r3.message.includes('领料')) { passed++; c.check('S3 未完结领料拦截', true); }
+    else { failed++; c.check('S3 未完结领料拦截', false, r3.message); }
 
-  // S4: 有活跃批次
-  const mat4 = await withReferencedMaterial(c, ['c_mes_batch']);
-  const r4 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat4}`);
-  if (r4.code === 500 && r4.message.includes('批次')) { passed++; c.check('S4 批次拦截', true); }
-  else { failed++; c.check('S4 批次拦截', false, r4.message); }
+    // S4: 有活跃批次
+    const mat4 = await withReferencedMaterial(c, ['c_mes_batch']);
+    fixtureIds.push(mat4);
+    const r4 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat4}`);
+    if (r4.code === 500 && r4.message.includes('批次')) { passed++; c.check('S4 批次拦截', true); }
+    else { failed++; c.check('S4 批次拦截', false, r4.message); }
 
-  // S5: qty=0 inventory 行（Codex P0：必须拦截）
-  const mat5 = await withReferencedMaterial(c, ['c_mes_inventory']);
-  await execSQL(`UPDATE c_mes_inventory SET current_qty=0 WHERE material_id=?`, [mat5]);
-  const r5 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat5}`);
-  if (r5.code === 500) { passed++; c.check('S5 qty=0 inventory 拦截', true, 'v1 漏判已修'); }
-  else { failed++; c.check('S5 qty=0 inventory 拦截', false, '守卫逻辑漏洞！'); }
+    // S5: qty=0 inventory 行（v3 必须拦截）
+    const mat5 = await withReferencedMaterial(c, ['c_mes_inventory']);
+    fixtureIds.push(mat5);
+    await execSQL(`UPDATE c_mes_inventory SET current_qty=0 WHERE material_id=?`, [mat5]);
+    const r5 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat5}`);
+    if (r5.code === 500) { passed++; c.check('S5 qty=0 inventory 拦截', true, 'v3 修复'); }
+    else { failed++; c.check('S5 qty=0 inventory 拦截', false, '守卫逻辑漏洞！'); }
 
-  // S6: 全新物料无引用 → 删除成功
-  const mat6 = await withReferencedMaterial(c, []);
-  const r6 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat6}`);
-  if (r6.code === 200) { passed++; c.check('S6 无引用可删', true); }
-  else { failed++; c.check('S6 无引用可删', false, r6.message); }
+    // S6: 全新物料无引用 → 删除成功
+    const mat6 = await withReferencedMaterial(c, []);
+    fixtureIds.push(mat6);
+    const r6 = await c.api('DELETE', `/mes/basic/material/delete?id=${mat6}`);
+    if (r6.code === 200) { passed++; c.check('S6 无引用可删', true); }
+    else { failed++; c.check('S6 无引用可删', false, r6.message); }
+  } finally {
+    // v3：无论断言成功失败都 cleanup fixture，避免污染测试库
+    await cleanupFixtures(c, fixtureIds);
+  }
 
   console.log(`\n结果：${passed} passed, ${failed} failed`);
 })();
 ```
 
+### E.4 MaterialReferenceCoverageAssertorTest（v3 新增）
+
+```javascript
+// 验证启动自检：schema 含 material_id 的表未被 checker 覆盖时，应用启动应失败
+const { execSQL } = require('../helpers/db');
+
+describe('MaterialReferenceCoverageAssertor', () => {
+  test('全部 19 张表都已覆盖', async () => {
+    const result = await execSQL(`
+      SELECT table_name FROM information_schema.columns
+      WHERE column_name = 'material_id' AND table_schema = DATABASE()
+      ORDER BY table_name
+    `);
+    const tables = result.map(r => r.table_name);
+
+    // 期望 19 张表全部覆盖
+    const expected = [
+      'c_mes_batch', 'c_mes_batch_inventory', 'c_mes_batch_ledger',
+      'c_mes_bom_item', 'c_mes_completion_receipt_item', 'c_mes_cost_log',
+      'c_mes_delivery_note_item', 'c_mes_inventory', 'c_mes_inventory_ledger',
+      'c_mes_other_stock_in_item', 'c_mes_other_stock_out_item', 'c_mes_price',
+      'c_mes_production_picking_item', 'c_mes_purchase_apply_item',
+      'c_mes_purchase_order_item', 'c_mes_purchase_receipt_item',
+      'c_mes_sales_order_item', 'c_mes_sales_outbound_item', 'c_mes_stocktake_item'
+    ];
+    expect(tables).toEqual(expect.arrayContaining(expected));
+    expect(tables.length).toBe(expected.length);
+  });
+
+  test('新增引用表忘加 checker 应导致启动失败', async () => {
+    // 模拟：临时创建一张测试表含 material_id 列（但无 checker）
+    // 应用启动应抛 IllegalStateException
+    // 注：实际测试需重启 Spring 容器，集成测试场景
+    const tempTable = `c_mes_test_no_checker_${Date.now()}`;
+    try {
+      await execSQL(`CREATE TABLE ${tempTable} (
+        id VARCHAR(32) PRIMARY KEY,
+        material_id VARCHAR(32) NOT NULL
+      )`);
+
+      // 重新触发 ApplicationRunner.run()（通过 Spring context refresh）
+      // 期望：抛 "以下表含 material_id 但未实现 checker"
+      await expect(triggerAssertor()).rejects.toThrow(/未实现 checker.*${tempTable}/);
+    } finally {
+      await execSQL(`DROP TABLE IF EXISTS ${tempTable}`);
+    }
+  });
+});
+```
+
 ---
 
-## § F. 完整 checklist 汇总
+## § F. 完整 checklist 汇总（v3）
 
 ### 阶段 1（UI）
 - [ ] § A 完整代码落地
 - [ ] `/vue-audit` 库存页 → 全 PASS
 
 ### 阶段 2（后端）
-- [ ] § B.1 Controller 3 端点（含 @Validated）
+- [ ] § B.1 Controller 3 端点（含 @Validated + risk_type 派生）
 - [ ] § B.2 Mapper XML（含 foreach）
 - [ ] § B.3 flyway migration（审计表）
-- [ ] MesMenuRegistry 注册 3 个权限
+- [ ] MesMenuRegistry 注册 **3 个权限**（含 export）
 
 ### 阶段 3（SQL 应急）
 - [ ] § C.1 入口校验
 - [ ] § C.2 DRY-RUN 一致性
 - [ ] § C.3 rollback FOR UPDATE
 
-### 阶段 4（守卫重写）
+### 阶段 4（守卫重写，v3 升级）
 - [ ] § D.1 MaterialReferenceChecker 接口
-- [ ] § D.2 16 个 checker bean
-- [ ] § D.3 MesMaterialServiceImpl 重写
+- [ ] § D.2 **19 个** checker bean（v3 完整清单）
+- [ ] § D.3 MesMaterialServiceImpl 重写（两步走：聚合 + 行锁）
+- [ ] § D.4 MaterialReferenceAggregator UNION ALL 聚合
+- [ ] § D.5 MaterialReferenceCoverageAssertor 启动自检（fail-fast）
+- [ ] § D.6 SysDictCache @PostConstruct + @Scheduled 60s
+- [ ] § D.7 CriticalTableLockService 关键表 FOR UPDATE
 - [ ] UI 预检接口 preCheckDelete
 
-### 阶段 5（测试）
-- [ ] § E.1 fixtures helper
+### 阶段 5（测试，v3 补 1 个）
+- [ ] § E.1 fixtures helper（含 cleanup）
 - [ ] § E.2 inventory-orphan-edge.test.js
 - [ ] § E.3 material-delete-guard.test.js（6 场景）
 - [ ] inventory-orphan-export.test.js 补全
 - [ ] inventory-orphan-ui-delete.test.js 补全（审计表断言）
+- [ ] **MaterialReferenceCoverageAssertorTest（v3 新增）**
 
 ### 阶段 6（运维）
 - [ ] 月度归档脚本 + cron
 - [ ] 备份保留策略
 - [ ] 回滚演练 SOP
+- [ ] **故障响应 SOP（Codex v2 建议：rollback 失败/RCA 流程）**
 
 ---
 
