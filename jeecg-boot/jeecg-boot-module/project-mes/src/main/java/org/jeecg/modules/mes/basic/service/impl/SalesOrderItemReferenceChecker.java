@@ -1,0 +1,30 @@
+//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】守卫表 17 c_mes_sales_order_item（JOIN status!=2）-----------
+package org.jeecg.modules.mes.basic.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.modules.mes.sales.entity.MesSalesOrderItem;
+import org.jeecg.modules.mes.sales.mapper.MesSalesOrderItemMapper;
+import org.jeecg.modules.mes.basic.service.MaterialReferenceChecker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SalesOrderItemReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private MesSalesOrderItemMapper mapper;
+
+    @Override public String describe() { return "c_mes_sales_order_item"; }
+
+    @Override
+    public void assertNotReferenced(String materialId) {
+        QueryWrapper<MesSalesOrderItem> qw = new QueryWrapper<>();
+        qw.eq("material_id", materialId)
+          .apply("order_id IN (SELECT id FROM c_mes_sales_order WHERE status <> '2')");
+        Long cnt = mapper.selectCount(qw);
+        if (cnt > 0) {
+            throw new JeecgBootException(
+                "物料被 " + cnt + " 行未完结的销售订单引用，请先清理");
+        }
+    }
+}
+//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】守卫表 17-----------

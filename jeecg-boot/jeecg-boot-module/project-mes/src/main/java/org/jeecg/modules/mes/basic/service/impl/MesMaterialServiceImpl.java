@@ -8,6 +8,7 @@ import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.modules.mes.basic.entity.MesMaterial;
 import org.jeecg.modules.mes.basic.mapper.MesMaterialMapper;
+import org.jeecg.modules.mes.basic.service.MaterialReferenceChecker;
 import org.jeecg.modules.mes.basic.service.IMesMaterialService;
 import org.jeecg.modules.mes.purchase.ledger.service.IMesCostLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMaterial> implements IMesMaterialService {
@@ -28,6 +32,15 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
     @Autowired
     private IMesCostLogService costLogService;
     //update-end---author:ruiwancheng---date:2026-07-24---for: V9.7.0 成本日志Service注入-----------
+
+    //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 守卫：注入 19 个 checker bean-----------
+    /** Spring 自动注入所有实现 MaterialReferenceChecker 的 @Component bean（19 张引用表） */
+    @Autowired
+    private List<MaterialReferenceChecker> referenceCheckers;
+
+    /** 异常消息中第一个数字（即"行数"），用于 preCheckDelete 反查 */
+    private static final Pattern COUNT_PATTERN = Pattern.compile("(\\d+)");
+    //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】守卫注入-----------
 
     @Override
     @Transactional
@@ -74,6 +87,13 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
     @Override
     @Transactional
     public boolean removeById(Serializable id) {
+        //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】阶段 4 守卫：删除前校验 19 张引用表-----------
+        String materialId = id.toString();
+        Map<String, Long> refCounts = preCheckDelete(materialId);
+        if (refCounts.values().stream().anyMatch(c -> c != null && c > 0)) {
+            throw new JeecgBootException(buildRejectMessage(refCounts));
+        }
+        //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】守卫校验-----------
         return super.removeById(id);
     }
 
@@ -180,5 +200,37 @@ public class MesMaterialServiceImpl extends ServiceImpl<MesMaterialMapper, MesMa
             return "system";
         }
     }
+    //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】preCheckDelete 实现（UI 删除物料前调用）-----------
+    @Override
+    public Map<String, Long> preCheckDelete(String materialId) {
+        Map<String, Long> refCounts = new LinkedHashMap<>();
+        if (referenceCheckers == null) {
+            return refCounts;
+        }
+        for (MaterialReferenceChecker checker : referenceCheckers) {
+            try {
+                checker.assertNotReferenced(materialId);
+                refCounts.put(checker.describe(), 0L);
+            } catch (JeecgBootException e) {
+                refCounts.put(checker.describe(), parseCountFromMessage(e.getMessage()));
+            }
+        }
+        return refCounts;
+    }
+
+    private Long parseCountFromMessage(String message) {
+        if (message == null) return -1L;
+        Matcher m = COUNT_PATTERN.matcher(message);
+        return m.find() ? Long.parseLong(m.group(1)) : -1L;
+    }
+
+    private String buildRejectMessage(Map<String, Long> refCounts) {
+        String refs = refCounts.entrySet().stream()
+            .filter(e -> e.getValue() != null && e.getValue() > 0)
+            .map(e -> e.getKey() + "=" + e.getValue() + "行")
+            .collect(Collectors.joining("; "));
+        return "物料被以下表引用：" + refs + "；请先清理关联数据再删除物料";
+    }
+    //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】preCheckDelete 实现-----------
 }
 //update-end---author:ruiwancheng---date:2026-07-14---for: MES基础设置-物料Service实现-----------
