@@ -200,7 +200,13 @@
           "4": "库存不足 → release 阻断（硬阻止）",
           "5": "完工 audit → 订单 completedQty 累加 + status='5'",
           "6": "补领量 = 总需 - 已领累计（剩余 > 0 才生成）"
-        }
+        },
+        "testFile": "harness/tests/modules/manufacturing-state-machine-guards.test.js",
+        "testFileApi": "harness/tests/mes/manufacturing-chain.test.js",
+        "testFileE2E": "harness/e2e/mes/manufacturing-order-drawer.spec.ts",
+        "apiAnchors": 20,
+        "e2eAnchors": 3,
+        "note": "slice-1/2/3/4 状态机端点 + OrderDrawer UI 补领按钮"
       },
       "health": {
         "lastAudit": "2026-08-07",
