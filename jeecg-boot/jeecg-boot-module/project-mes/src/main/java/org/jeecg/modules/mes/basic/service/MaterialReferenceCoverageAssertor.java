@@ -26,18 +26,30 @@ import java.util.stream.Collectors;
 @Component
 public class MaterialReferenceCoverageAssertor implements ApplicationRunner {
 
+    /**
+     * 审计/历史表中的 material_id 是不可变历史快照，物料删除后必须继续保留。
+     * 这些表不属于业务引用守卫范围。
+     */
+    private static final Set<String> AUDIT_HIS_TABLES = Set.of(
+        "c_mes_inventory_cleanup_audit",
+        "c_mes_inventory_cleanup_audit_his"
+    );
+
     @Autowired private DataSource ds;
     @Autowired private List<MaterialReferenceChecker> checkers;
 
     @Override
     public void run(ApplicationArguments args) {
         Set<String> actualTables = queryActualTables();
+        Set<String> businessTables = actualTables.stream()
+            .filter(table -> !AUDIT_HIS_TABLES.contains(table))
+            .collect(Collectors.toSet());
         Set<String> checkerTables = checkers.stream()
             .map(c -> c.describe().split("\\.")[0])  // 去掉 schema 前缀
             .collect(Collectors.toSet());
 
-        Set<String> missing = Sets.difference(actualTables, checkerTables);
-        Set<String> extra = Sets.difference(checkerTables, actualTables);
+        Set<String> missing = Sets.difference(businessTables, checkerTables);
+        Set<String> extra = Sets.difference(checkerTables, businessTables);
 
         if (!missing.isEmpty() || !extra.isEmpty()) {
             StringBuilder msg = new StringBuilder("【守卫覆盖校验】失败：\n");
@@ -51,8 +63,8 @@ public class MaterialReferenceCoverageAssertor implements ApplicationRunner {
             throw new IllegalStateException(msg.toString());
         }
 
-        log.info("【守卫覆盖校验】通过：schema 与 19 个 checker 描述完全对齐（{} 张表）",
-            actualTables.size());
+        log.info("【守卫覆盖校验】通过：{} 张业务表全部守卫覆盖，{} 张审计/历史表天然豁免",
+            businessTables.size(), actualTables.size() - businessTables.size());
     }
 
     private Set<String> queryActualTables() {
