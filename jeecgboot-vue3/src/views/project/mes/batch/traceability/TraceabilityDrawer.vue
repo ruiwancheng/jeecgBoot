@@ -83,16 +83,16 @@
     if (!data?.batchId) return;
     loading.value = true;
     try {
-      // 1. 查批次主档
+      // 1. 查批次主档（defHttp 已剥掉外层 {success,result} 包装，直接拿到 result 内容）
       const batchResp = await queryBatchList({ id: data.batchId, pageSize: 1 });
-      if (batchResp?.result?.records?.length) {
-        batch.value = batchResp.result.records[0];
+      if (batchResp?.records?.length) {
+        batch.value = batchResp.records[0];
       } else {
         batch.value = null;
       }
-      // 2. 查批次流水（复用 ledger 模块 listByBatchId 端点）
+      // 2. 查批次流水（listByBatchId 端点 result 是数组，defHttp 剥包装后直接是数组）
       const ledgerResp = await listLedgerByBatchId({ batchId: data.batchId });
-      ledgerItems.value = ledgerResp?.result || [];
+      ledgerItems.value = Array.isArray(ledgerResp) ? ledgerResp : [];
     } finally {
       loading.value = false;
     }
