@@ -1,8 +1,9 @@
-# 库存总览孤儿行清理 — 完整方案
+# 库存总览孤儿行清理 — 完整方案（v2，按 Codex 评审重写）
 
 > **目的**：彻底解决 MES "库存总览"页面显示大量"（物料已删除）"孤儿行的问题
-> **生成日期**：2026-08-07
-> **关联**：`/debug` 库存总览孤儿行诊断
+> **版本**：v2（2026-08-07，Codex 评审后重写）
+> **v1 → v2 变更**：修复 Codex 评审 [P0]×3 + [P1]×8 + [P2]×2，详见 § 十一 修订记录
+> **关联**：`hermes/reviews/2026-08-07-review-inventory-orphan-cleanup.md`
 > **优先级**：P1（线上已暴露，影响业务人员日常使用）
 
 ---
@@ -18,525 +19,530 @@
 
 ---
 
-## 二、整合方案（4 阶段）
+## 二、整合方案（6 阶段）
 
 ```
-阶段 1 (本次): UI 增加删除按钮 + 黄金模板对齐 ──────── 业务人员自助删除
-阶段 2 (本次): 后端增加 3 个端点（单删/批量删/导出）─── 配套支持
-阶段 3 (应急): SQL 清理脚本（应急工具，不走主流程）── 预留后台能力
-阶段 4 (后续): 长期修复方案 A + 回归测试 ────────── 排期
+阶段 1 (本周): UI 黄金模板对齐 + 孤儿行删除按钮（业务自助主流程）
+阶段 2 (本周): 后端 3 端点（含 P0 安全修复：SQL 注入 + HTTP 414 + 守门）
+阶段 3 (应急): SQL 清理脚本加固（P0：DRY-RUN 一致性 + 回滚行锁 + LIMIT 注入防御）
+阶段 4 (下周): 物料删除守卫重写（19+ 张引用表全覆盖 + 防软删产生新孤儿）
+阶段 5 (下周): 回归测试补全（fixtures + 边界 case + 导出模板）
+阶段 6 (持续): 运维 Runbook（审计表归档 + 备份保留 + 回滚演练）
 ```
+
+**阶段依赖**：
+```
+1 ─→ 2 ─→ [上线] ─→ 4 ─→ 5
+              │
+              └─→ 3（应急，仅 UI/后端异常时用）
+```
+
+**关键约束**：
+- 阶段 1+2 完成 → 上线，业务人员开始自助清理
+- 阶段 4 **必须先于** 阶段 5 完成（守卫升级是测试的先决条件）
+- 阶段 3 不进主流程，仅 DBA 应急兜底
 
 ---
 
 ## 三、阶段 1：UI 黄金模板对齐 + 增加"删除孤儿行"按钮
 
-### 3.1 现状评估（vue-audit 对照）
+### 3.1 vue-audit 现状评估
 
-跑 `/vue-audit jeecgboot-vue3/src/views/project/mes/basic/inventory` 当前结果预估：
+跑 `/vue-audit jeecgboot-vue3/src/views/project/mes/basic/inventory`：
 
-| 检查项 | 现状 | 期望 |
+| 检查项 | 现状 | v2 期望 |
 |---|---|---|
-| `@generated-from` 标注 | ❌ 缺失 | 必须有 |
-| 删除按钮 | ❌ 缺失 | 孤儿行可一键删 |
-| 列表行操作 | ❌ 无 | 至少 1 个 action |
-| 字典翻译（_dictText） | ⚠️ 部分 | 全字段对齐 |
-| 状态/类型标签 | ⚠️ 部分 | 库存类型显隐 |
-| ApiSelect 引用 | ✅ Pass | - |
+| `@generated-from` 标注 | ❌ 缺失 | ✅ 必须有 |
+| 删除按钮 | ❌ 缺失 | ✅ 孤儿行可一键删（含仓库孤儿） |
+| rowSelection | ❌ 缺失 | ✅ 模板模式 1:1 |
+| 列表行操作 | ❌ 无 | ✅ 至少 1 个 action |
+| 字典翻译（_dictText） | ⚠️ 部分 | ✅ 全字段对齐 |
+| orphanTag 标识 | ❌ 无 | ✅ 显隐标签 |
 
-### 3.2 index.vue 改造目标（黄金模板对齐）
+### 3.2 index.vue 改造要点
 
-**关键改动**（参见 `harness/templates/mes-doc-page/master-detail`）：
+**关键改动**：
+1. 顶部加 `@generated-from: harness/templates/mes-doc-page/master-detail`
+2. 加 `rowSelection`（对齐模板 selectedRowKeys/selectedRows reactive 模式）
+3. 新增槽位：`orphanTag`（孤儿标识）+ `action`（删除按钮）
+4. **`isOrphan()` 同时判 material + warehouse**（Codex P1）
+5. 批量删除按钮：仅当选中含孤儿行时显示
+6. 导出按钮：独立条件，不依赖选中行（Codex P1）
 
-```vue
-<!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
-<template>
-  <div>
-    <BasicTable @register="registerTable" :rowSelection="rowSelection">
-      <template #tableTitle>
-        <span>库存总览</span>
-        <span style="margin-left:16px; color:#888; font-weight:normal; font-size:13px">
-          库存金额合计：<b style="color:#1677ff">{{ pageTotalAmount }}</b>
-          （零库存红标，点行首 + 看最近台账）
-        </span>
-        <!--update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】新增批量删除按钮---------->
-        <a-button
-          v-if="hasOrphanSelected"
-          danger
-          preIcon="ant-design:delete-outlined"
-          style="margin-left:16px"
-          @click="batchDeleteOrphan">
-          批量删除孤儿行（{{ selectedOrphanKeys.length }}）
-        </a-button>
-        <!--update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】批量删除按钮----------->
-
-        <!--update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】单行删除按钮（仅孤儿行可见）---------->
-        <a-button
-          v-if="hasOrphanSelected"
-          danger
-          preIcon="ant-design:export-outlined"
-          @click="exportOrphanXls">
-          导出孤儿清单
-        </a-button>
-        <!--update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】导出孤儿清单---------->
-      </template>
-
-      <!-- 现有 matText/whText/qtyTag/amountText slot 保留 -->
-
-      <!--update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】新增孤儿行标识---------->
-      <template #orphanTag="{ record }">
-        <a-tag v-if="isOrphan(record)" color="default" title="该库存行引用的物料已删除">孤儿行</a-tag>
-      </template>
-      <!--update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】孤儿行标识---------->
-
-      <!--update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】单行删除按钮---------->
-      <template #action="{ record }">
-        <TableAction :actions="getActions(record)" />
-      </template>
-      <!--update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】单行删除---------->
-    </BasicTable>
-    <!-- <InventoryLedgerSubTable> 保留 -->
-  </div>
-</template>
-
-<script lang="ts" setup>
-  // 现有 imports + 新增：
-  import { ref, computed, reactive } from 'vue';
-  import { message, Modal } from 'ant-design-vue';
-  import { queryInventoryList, deleteOrphanInventory, batchDeleteOrphanInventory, getOrphanExportUrl } from './inventory.api';
-
-  const selectedRowKeys = reactive<string[]>([]);
-  const selectedRows = reactive<Recordable[]>([]);
-
-  const rowSelection = {
-    type: 'checkbox' as const,
-    columnWidth: 50,
-    selectedRowKeys,
-    onChange(keys: string[], rows: Recordable[]) {
-      selectedRowKeys.length = 0;
-      selectedRowKeys.push(...keys);
-      selectedRows.length = 0;
-      selectedRows.push(...rows);
-    },
-  };
-
-  // 判定孤儿行：material_code 为空（LEFT JOIN 不匹配）
-  function isOrphan(record: Recordable): boolean {
-    return !record.material_code;
-  }
-
-  const selectedOrphanKeys = computed(() =>
-    selectedRows.filter(isOrphan).map((r) => r.id)
-  );
-  const hasOrphanSelected = computed(() => selectedOrphanKeys.value.length > 0);
-
-  function getActions(record: Recordable) {
-    if (!isOrphan(record)) return [];
-    return [
-      {
-        label: '删除',
-        popConfirm: {
-          title: `确认删除该孤儿行？（inventory_id=${record.id}）`,
-          confirm: () => handleDeleteOne(record),
-        },
-      },
-    ];
-  }
-
-  async function handleDeleteOne(record: Recordable) {
-    await deleteOrphanInventory({ id: record.id });
-    message.success('已删除');
-    reload();
-  }
-
-  async function batchDeleteOrphan() {
-    if (!selectedOrphanKeys.value.length) return;
-    // 安全守门：仅孤儿行可批量删
-    Modal.confirm({
-      title: `确认删除 ${selectedOrphanKeys.value.length} 条孤儿行？`,
-      content: '此操作不可逆（后端会写审计表，但 UI 无回滚入口）。建议先用"导出孤儿清单"留档。',
-      okText: '确认删除',
-      okButtonProps: { danger: true },
-      onOk: async () => {
-        await batchDeleteOrphanInventory({ ids: selectedOrphanKeys.value.join(',') });
-        message.success(`已删除 ${selectedOrphanKeys.value.length} 条`);
-        selectedRowKeys.length = 0;
-        selectedRows.length = 0;
-        reload();
-      },
-    });
-  }
-
-  function exportOrphanXls() {
-    // 复用 queryInventoryList 拉全量孤儿，过滤后导出
-    // （具体实现略，可参考其他页面的 exportXls 写法）
-  }
-</script>
-```
-
-### 3.3 inventory.api.ts 改造
-
+**isOrphan 判定**（Codex 修正）：
 ```typescript
-import { defHttp } from '/@/utils/http/axios';
-
-const BASE = '/mes/warehouse/inventory';
-
-// 现有：queryInventoryList
-export function queryInventoryList(params: Recordable) {
-  return defHttp.get({ url: `${BASE}/list`, params });
+function isOrphan(record: Recordable): boolean {
+  return !record.material_code || !record.warehouse_name;
 }
-
-// 新增：单删
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】单删 API-----------
-export function deleteOrphanInventory(params: { id: string }) {
-  return defHttp.delete({ url: `${BASE}/deleteOrphan`, params }, { joinParamsToUrl: true });
-}
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】单删 API
-
-// 新增：批量删（仅孤儿行）
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】批量删 API-----------
-export function batchDeleteOrphanInventory(params: { ids: string }) {
-  return defHttp.delete({ url: `${BASE}/batchDeleteOrphan`, params }, { joinParamsToUrl: true });
-}
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】批量删 API
-
-// 新增：导出孤儿清单 URL（用于前端 window.open）
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】导出 URL-----------
-export function getOrphanExportUrl() {
-  return `${BASE}/exportOrphanXls`;
-}
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】导出 URL
 ```
 
-### 3.4 inventory.data.ts 改造（columns 加 action/orphanTag 槽位）
+### 3.3 实施 checklist
 
-```typescript
-export const columns: BasicColumn[] = [
-  // 现有列保留
-  { title: '物料编码', dataIndex: 'material_code', width: 130, slots: { customRender: 'matText' } },
-  { title: '物料名称', dataIndex: 'material_name', width: 150 },
-  { title: '仓库', dataIndex: 'warehouse_name', width: 120, slots: { customRender: 'whText' } },
-  { title: '当前库存', dataIndex: 'current_qty', width: 100, slots: { customRender: 'qtyTag' } },
-  { title: '移动平均成本', dataIndex: 'moving_avg_cost', width: 110 },
-  { title: '库存金额', dataIndex: 'inventory_amount', width: 110, slots: { customRender: 'amountText' } },
-  // 新增：孤儿标识 + 操作
-  //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】新增列-----------
-  { title: '状态', dataIndex: 'isOrphan', width: 80, slots: { customRender: 'orphanTag' } },
-  { title: '操作', dataIndex: 'action', width: 80, slots: { customRender: 'action' }, fixed: 'right' },
-  //update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】新增列
-];
-```
+- [ ] `index.vue` 加 `@generated-from` 标注
+- [ ] 加 rowSelection + selectedRowKeys/selectedRows reactive
+- [ ] 加 `orphanTag` slot（孤儿行标签）
+- [ ] 加 `action` slot（单行删除）
+- [ ] 加"批量删除孤儿行"按钮（tableTitle，仅孤儿选中时显示）
+- [ ] 加"导出孤儿清单"按钮（独立条件）
+- [ ] 加 `TableAction` import（v1 遗漏）
+- [ ] `isOrphan()` 同时判 warehouse
+
+**完整代码草案**：见 `inventory-orphan-cleanup-impl-2026-08-07.md` § A
 
 ---
 
-## 四、阶段 2：后端增加 3 个端点（黄金模板对齐）
+## 四、阶段 2：后端 3 端点（含 P0 安全修复）
 
-### 4.1 MesInventoryController 新增端点
+### 4.1 端点清单（修正 SQL 注入 + HTTP 414）
+
+| 端点 | 方法 | 权限 | 安全守门 |
+|---|---|---|---|
+| `/deleteOrphan?id=xxx` | **DELETE** | `mes:inventory:deleteOrphan` | 必须是孤儿行 + qty=0 + @Validated id 非空 |
+| `/batchDeleteOrphan` | **POST + body** | `mes:inventory:batchDeleteOrphan` | 全部孤儿行 + 任一 qty>0 拒绝 + ids 上限 500 |
+| `/exportOrphanXls` | GET | `mes:inventory:export` | 仅导孤儿 + 专用查询含 limit |
+
+**P0 修复**（vs v1）：
+- ~~`@DeleteMapping` 接收 ids query string~~ → 改 POST + body，避免 HTTP 414
+- ~~`${ids}` 字符串拼接 SQL~~ → 改 `@SelectProvider` 或 XML foreach，杜绝注入
+- 加 `@Validated` 参数校验
+
+### 4.2 MesInventoryController 草案
 
 ```java
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】新增 3 个端点-----------
-package org.jeecg.modules.mes.basic.controller;
-
-// ... 现有 imports + 新增：
-import org.jeecg.common.exception.JeecgBootException;
-import org.springframework.transaction.annotation.Transactional;
-
-@Slf4j
-@Tag(name = "MES-库存总览")
-@RestController
-@RequestMapping("/mes/warehouse/inventory")
-public class MesInventoryController {
-    @Autowired private MesInventoryMapper inventoryMapper;
-    @Autowired private IMesInventoryService inventoryService;  // 新增
-    @Autowired private IMesInventoryCleanupAuditService cleanupAuditService;  // 新增
-
-    /**
-     * 删除单个孤儿行（仅允许孤儿行 + qty=0）
-     */
-    @DeleteMapping("/deleteOrphan")
-    @RequiresPermissions("mes:inventory:deleteOrphan")
-    @Transactional(rollbackFor = Exception.class)
-    public Result<String> deleteOrphan(@RequestParam String id) {
-        Map<String, Object> row = inventoryMapper.selectOrphanById(id);
-        if (row == null) throw new JeecgBootException("该库存行不是孤儿行，禁止删除");
-        // 安全守门：qty > 0 必须走人工流程
-        BigDecimal qty = (BigDecimal) row.get("current_qty");
-        if (qty != null && qty.compareTo(BigDecimal.ZERO) > 0) {
-            throw new JeecgBootException("孤儿行有库存(" + qty + ")，禁止删除；请先盘点或 resurrect 物料");
-        }
-        inventoryMapper.deleteById(id);
-        cleanupAuditService.log("ui-single", id, row.get("material_id"), row.get("warehouse_id"), qty, "B2", getCurrentUsername());
-        return Result.ok("已删除");
+@PostMapping("/batchDeleteOrphan")  // 改 POST 而非 DELETE
+@RequiresPermissions("mes:inventory:batchDeleteOrphan")
+@Transactional(rollbackFor = Exception.class)
+public Result<String> batchDeleteOrphan(
+    @RequestBody @Validated BatchDeleteOrphanRequest req) {  // body 非 query
+    if (req.getIds() == null || req.getIds().isEmpty()) {
+        throw new JeecgBootException("ids 不能为空");
     }
-
-    /**
-     * 批量删除孤儿行（仅 qty=0）
-     */
-    @DeleteMapping("/batchDeleteOrphan")
-    @RequiresPermissions("mes:inventory:batchDeleteOrphan")
-    @Transactional(rollbackFor = Exception.class)
-    public Result<String> batchDeleteOrphan(@RequestParam String ids) {
-        List<String> idList = Arrays.asList(ids.split(","));
-        List<Map<String, Object>> orphans = inventoryMapper.selectOrphansByIds(idList);
-        // 守门：任一 qty > 0 → 整批拒绝
-        for (Map<String, Object> row : orphans) {
-            BigDecimal qty = (BigDecimal) row.get("current_qty");
-            if (qty != null && qty.compareTo(BigDecimal.ZERO) > 0) {
-                throw new JeecgBootException("孤儿行 " + row.get("id") + " 有库存(" + qty + ")，禁止批量删");
-            }
-        }
-        for (Map<String, Object> row : orphans) {
-            inventoryMapper.deleteById(row.get("id"));
-            cleanupAuditService.log("ui-batch", row.get("id"), row.get("material_id"), row.get("warehouse_id"),
-                (BigDecimal) row.get("current_qty"), "B2", getCurrentUsername());
-        }
-        return Result.ok("已删除 " + orphans.size() + " 条");
+    if (req.getIds().size() > 500) {
+        throw new JeecgBootException("单批最多 500 条");
     }
-
-    /**
-     * 导出孤儿清单（Excel）
-     */
-    @GetMapping("/exportOrphanXls")
-    @RequiresPermissions("mes:inventory:export")
-    public ModelAndView exportOrphanXls(HttpServletRequest req) {
-        // 复用 selectInventoryWithMaterial 但强制过滤孤儿
-        List<Map<String, Object>> rows = inventoryMapper.selectInventoryWithMaterial(null, null, null)
-            .stream().filter(r -> r.get("material_code") == null).collect(Collectors.toList());
-        // 构造 Excel（参考其他模块的 exportXls 实现）
-        // ...
-    }
+    // 守门 + 删除逻辑
 }
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】后端 3 端点
 ```
 
-### 4.2 MesInventoryMapper 新增查询
+### 4.3 MesInventoryMapper 注入修复（XML foreach）
+
+**严禁使用 `${ids}` 字符串插值**。改用 XML foreach：
+
+```xml
+<select id="selectOrphansByIds" resultType="map">
+    SELECT i.*, m.code AS material_code, m.del_flag AS material_del_flag,
+           w.name AS warehouse_name, w.del_flag AS warehouse_del_flag
+    FROM c_mes_inventory i
+    LEFT JOIN c_mes_material m ON i.material_id = m.id
+    LEFT JOIN c_mes_warehouse w ON i.warehouse_id = w.id
+    WHERE (m.id IS NULL OR m.del_flag = 1 OR w.id IS NULL OR w.del_flag = 1)
+      AND i.id IN
+      <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+      </foreach>
+</select>
+```
+
+### 4.4 审计 Service 新建
+
+新建 `MesInventoryCleanupAudit` 实体 + Mapper + Service（v1 漏建）：
+- 表结构复用 `harness/scripts/sql/cleanup-orphan-inventory.sh` 的 `c_mes_inventory_cleanup_audit`
+- 走 flyway V10.x.x__mes_cleanup_audit.sql migration
+- Service 暴露给 Controller 调用
+
+### 4.5 exportOrphanXls OOM 防护
+
+**专用查询** + **分页流式导出**：
 
 ```java
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】Mapper 新增 2 查询-----------
-@Select("SELECT i.*, m.code AS material_code, m.del_flag AS material_del_flag " +
-        "FROM c_mes_inventory i " +
-        "LEFT JOIN c_mes_material m ON i.material_id = m.id " +
-        "WHERE i.id = #{id} AND (m.id IS NULL OR m.del_flag = 1)")
-Map<String, Object> selectOrphanById(@Param("id") String id);
-
-@Select("SELECT i.*, m.code AS material_code, m.del_flag AS material_del_flag " +
-        "FROM c_mes_inventory i " +
-        "LEFT JOIN c_mes_material m ON i.material_id = m.id " +
-        "WHERE i.id IN (${ids}) AND (m.id IS NULL OR m.del_flag = 1)")
-List<Map<String, Object>> selectOrphansByIds(@Param("ids") List<String> ids);  // 注意 SQL 注入风险，实际需用 foreach
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行清理】Mapper
+@GetMapping("/exportOrphanXls")
+@RequiresPermissions("mes:inventory:export")
+public ModelAndView exportOrphanXls() {
+    // 用 selectOrphansForExport 专用查询（带 limit 防 OOM）
+    List<Map<String, Object>> orphans = inventoryMapper.selectOrphansForExport(10000);
+    // 用 EasyExcel 流式写入（不用 POI 全量内存）
+    return new ModelAndView(new ExcelView(), model);
+}
 ```
 
-### 4.3 审计表 + Service
+### 4.6 菜单权限注册
 
-复用 `harness/scripts/sql/cleanup-orphan-inventory.sh` 已有的 `c_mes_inventory_cleanup_audit` 表结构（建议建在 jeecg-boot 库）。
+`MesMenuRegistry` 新增 3 个权限码（v1 遗漏）：
+```java
+addPerms(list, "mes:inventory:deleteOrphan", "mes_inventory", new String[]{"deleteOrphan"});
+addPerms(list, "mes:inventory:batchDeleteOrphan", "mes_inventory", new String[]{"batchDeleteOrphan"});
+```
+
+### 4.7 实施 checklist
+
+- [ ] 新建 `MesInventoryCleanupAudit` 实体 + Mapper + Service + Controller
+- [ ] flyway V10.x.x__mes_cleanup_audit.sql
+- [ ] `MesInventoryController` 加 3 端点（deleteOrphan + batchDeleteOrphan + exportOrphanXls）
+- [ ] `batchDeleteOrphan` 改 POST + body
+- [ ] `MesInventoryMapper.selectOrphansByIds` 用 XML foreach
+- [ ] 新增 `selectOrphansForExport(limit)` 专用查询
+- [ ] `MesMenuRegistry` 注册 3 个权限
+- [ ] `@Validated` 参数校验
+
+**完整代码草案**：见 `inventory-orphan-cleanup-impl-2026-08-07.md` § B
 
 ---
 
-## 五、阶段 3：SQL 清理脚本（应急工具，非主流程）
+## 五、阶段 3：SQL 清理脚本加固（应急工具）
 
-详见 `harness/scripts/sql/`：
+### 5.1 加固项（Codex P0/P1）
 
-| 文件 | 用途 |
+| 项 | 加固内容 |
 |---|---|
-| `diagnose-orphan-inventory.sql` | 应急探针（业务人员发现异常时供 DBA 排查） |
-| `cleanup-orphan-inventory.sh` | 应急工具（DBA 兜底，不走主流程） |
-| `README.md` | DBA 操作手册 |
+| **DRY-RUN 一致性** | DRY-RUN 与真实 DELETE 用同一段 SQL（here-doc 变量），避免行为漂移 |
+| **回滚行锁** | rollback 加 `SELECT ... FOR UPDATE`，事务内判断 `rolled_back=0` 防 TOCTOU |
+| **LIMIT 注入防御** | `[[ "${limit}" =~ ^[0-9]+$ ]]` 整型校验 |
+| **BATCH_ID 白名单** | `^[a-zA-Z0-9_-]{1,64}$` 字符校验 |
+| **空密码处理** | `MES_DB_PASS` 为空时不加 `-p`（避免交互式卡住） |
+| **备份可选强制** | `REQUIRE_BACKUP=1` 时头部检查最近 1 小时备份 |
+| **审计表 DDL 解耦** | 抽到 flyway migration，脚本只 INSERT/SELECT |
 
-**主流程**：业务人员在"库存总览"页面用"删除"按钮自助清理，**不依赖 DBA**。
-**应急场景**：UI 操作异常（如后端 bug）时，DBA 用此脚本兜底。
+### 5.2 实施 checklist
 
-**典型应急命令**（仅供 DBA 参考，业务人员无需关心）：
-```bash
-cd harness/scripts/sql
-DRY_RUN=0 ./cleanup-orphan-inventory.sh clean-zero
-DRY_RUN=0 ./cleanup-orphan-inventory.sh clean-nonzero --batch-id biz-2026-08-07 --limit 100
-./cleanup-orphan-inventory.sh rollback --batch-id biz-2026-08-07  # 误删回滚
-```
+- [ ] DRY-RUN 与 DELETE 共用 SQL（here-doc 变量提取）
+- [ ] rollback 加 `FOR UPDATE` 行锁
+- [ ] 入口加 LIMIT/BATCH_ID 整型与字符白名单校验
+- [ ] 修复 `-p${DB_PASS}` 空密码行为
+- [ ] 审计表 DDL 抽到 migration
+
+**完整修复代码**：见 `inventory-orphan-cleanup-impl-2026-08-07.md` § C
 
 ---
 
-## 六、阶段 4：长期修复 — 方案 A（物料删除前置校验）
+## 六、阶段 4：物料删除守卫重写（P0 升级）
 
-### 6.1 改造目标
+### 6.1 问题分析（Codex 评审关键发现）
 
-在 `MesMaterialServiceImpl.removeById` 加 3 层守卫：
+**v1 守卫的致命漏洞**：
+
+1. **覆盖严重不足**：仓库实际有 19+ 张引用表，v1 只查 3 类
+2. **逻辑漏洞**：`super.removeById` 是 `UPDATE del_flag=1`（不是 DELETE）
+   - 若 `c_mes_inventory` 存在 `qty=0` 行，守卫 1 放行 → 物料被逻辑删除
+   - 物料 del_flag=1 后，inventory 行的 material_id 指向"已删"物料 → **新孤儿行产生**
+3. **状态白名单不够稳**：硬编码 `"2","3"` 不跟字典变更
+
+### 6.2 新守卫设计：MaterialReferenceChecker 列表模式
+
+**核心思想**：每张引用表一个 bean，主代码不动，新增引用表只需加 bean。
 
 ```java
-//update-begin---author:ruiwancheng---date:20260807---for:【孤儿行根因修复】物料删除 3 层守卫-----------
+public interface MaterialReferenceChecker {
+    /** 返回此检查器关心的表/字段描述（用于日志） */
+    String describe();
+    /** 断言物料未被未完结业务引用，违反时抛 JeecgBootException */
+    void assertNotReferenced(String materialId);
+}
+```
+
+**实现示例**（每张引用表一个 bean）：
+
+```java
+@Component  // 自动注入到列表
+public class InventoryReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private MesInventoryMapper mapper;
+    
+    @Override public String describe() { return "c_mes_inventory"; }
+    
+    @Override
+    public void assertNotReferenced(String materialId) {
+        // 关键：完全无行才放行（不限 qty），否则会产生新孤儿
+        Long cnt = mapper.selectCount(
+            new QueryWrapper<MesInventory>().eq("material_id", materialId));
+        if (cnt > 0) {
+            throw new JeecgBootException("物料在 c_mes_inventory 仍有 " + cnt + " 行引用（包括零库存），请先用 UI 清理");
+        }
+    }
+}
+```
+
+### 6.3 19+ 张引用表覆盖清单
+
+| # | 表 | 业务含义 | checker bean |
+|---|---|---|---|
+| 1 | `c_mes_inventory` | 物料库存 | `InventoryReferenceChecker` |
+| 2 | `c_mes_inventory_ledger` | 库存流水 | `InventoryLedgerReferenceChecker` |
+| 3 | `c_mes_batch` | 批次主档 | `BatchReferenceChecker` |
+| 4 | `c_mes_production_order` | 生产订单 | `ProductionOrderReferenceChecker` |
+| 5 | `c_mes_production_picking` | 领料单 | `PickingReferenceChecker` |
+| 6 | `c_mes_completion_receipt_item` | 完工入库明细 | `CompletionReceiptItemReferenceChecker` |
+| 7 | `c_mes_bom` | BOM 主表 | `BomReferenceChecker` |
+| 8 | `c_mes_bom_item` | BOM 子项 | `BomItemReferenceChecker` |
+| 9 | `c_mes_sales_order_item` | 销售订单明细 | `SalesOrderItemReferenceChecker` |
+| 10 | `c_mes_sales_outbound_item` | 销售出库明细 | `SalesOutboundItemReferenceChecker` |
+| 11 | `c_mes_delivery_note_item` | 发货单明细 | `DeliveryNoteItemReferenceChecker` |
+| 12 | `c_mes_purchase_apply_item` | 采购申请明细 | `PurchaseApplyItemReferenceChecker` |
+| 13 | `c_mes_purchase_order_item` | 采购订单明细 | `PurchaseOrderItemReferenceChecker` |
+| 14 | `c_mes_purchase_receipt_item` | 采购入库明细 | `PurchaseReceiptItemReferenceChecker` |
+| 15 | `c_mes_other_stock` | 其他出入库 | `OtherStockReferenceChecker` |
+| 16 | `c_mes_stocktake_item` | 盘点单明细 | `StocktakeItemReferenceChecker` |
+
+**动态发现**（v2 实施时）：用 SQL 扫描 `information_schema.columns` 自动找齐：
+```sql
+SELECT table_name FROM information_schema.columns
+WHERE column_name = 'material_id' AND table_schema = 'jeecg-boot';
+```
+
+### 6.4 MesMaterialServiceImpl 重写
+
+```java
 @Override
 @Transactional(rollbackFor = Exception.class)
 public boolean removeById(Serializable id) {
     String materialId = id.toString();
-
-    // 守卫 1: 库存检查（c_mes_inventory 有 qty > 0 禁止删）
-    Long stockRows = baseMapper.selectCount(
-        new QueryWrapper<MesInventory>().eq("material_id", materialId).gt("current_qty", 0));
-    if (stockRows > 0) {
-        throw new JeecgBootException("物料存在未清库存(" + stockRows + " 行)，禁止删除；请先盘点或调拨");
+    
+    // N 层守卫（每张引用表一个 checker bean）
+    for (MaterialReferenceChecker checker : referenceCheckers) {
+        checker.assertNotReferenced(materialId);
     }
-
-    // 守卫 2: 未完结业务单据
-    Long openBills = baseMapper.selectCount(new QueryWrapper<MesProductionOrder>()
-        .eq("material_id", materialId)
-        .notIn("status", "2", "3"));  // 2=已入库, 3=已关闭
-    if (openBills > 0) {
-        throw new JeecgBootException("物料被 " + openBills + " 个未完结生产订单引用，禁止删除");
-    }
-    // 采购入库/销售出库同理
-
-    // 守卫 3: 活跃批次
-    Long activeBatches = batchMapper.selectCount(
-        new QueryWrapper<MesBatch>().eq("material_id", materialId).eq("del_flag", 0));
-    if (activeBatches > 0) {
-        throw new JeecgBootException("物料被 " + activeBatches + " 个批次引用，禁止删除");
-    }
-
+    
     return super.removeById(id);
 }
-//update-end---author:ruiwancheng---date:20260807---for:【孤儿行根因修复】物料删除守卫
 ```
 
-### 6.2 影响评估
+### 6.5 状态白名单字典化
 
-| 维度 | 影响 |
-|---|---|
-| 存量孤儿行 | 不会自动清（需阶段 2 + 3 处理） |
-| 后续删除 | 必须先清干净才能删，杜绝新生孤儿 |
-| 业务感知 | 物料删除可能因关联数据被拒，业务流程需调整 |
-| 回归测试 | 必跑（删除用例要重写） |
+`ProductionOrderReferenceChecker` 内部读 SysDictItem：
+
+```java
+public class ProductionOrderReferenceChecker implements MaterialReferenceChecker {
+    @Autowired private SysDictService dictService;
+    
+    @Override
+    public void assertNotReferenced(String materialId) {
+        // 读字典 "未完结" 状态值（运维改字典自动跟随）
+        List<String> openStatuses = dictService.getDictItems("mes_production_order_status")
+            .stream().filter(i -> !"已完结".equals(i.getText()))
+            .map(SysDictItem::getValue).collect(Collectors.toList());
+        
+        Long cnt = orderMapper.selectCount(
+            new QueryWrapper<MesProductionOrder>()
+                .eq("material_id", materialId)
+                .in("status", openStatuses));
+        if (cnt > 0) throw new JeecgBootException("物料被 " + cnt + " 个未完结生产订单引用");
+    }
+}
+```
+
+### 6.6 业务影响量化（Codex 建议补充）
+
+| 流程 | 受影响判断 | UI 提前暴露 |
+|---|---|---|
+| 物料盘点 | 删除前提示"盘点未审核 N 条" | ✅ |
+| 物料复制 | 删除前提示"被 N 个 BOM 引用" | ✅ |
+| 采购下单 | 物料已软删后采购申请被静默拒 | ✅ 守卫拦截 |
+| 销售下单 | 同上 | ✅ 守卫拦截 |
+
+### 6.7 实施 checklist
+
+- [ ] 新建 `MaterialReferenceChecker` 接口
+- [ ] 实现 16 个 checker bean
+- [ ] `MesMaterialServiceImpl` 注入 `List<MaterialReferenceChecker>`
+- [ ] `removeById` 改为遍历调用所有 checker
+- [ ] checker 内部读 SysDictItem 而非硬编码
+- [ ] UI 删除物料前调用"预检接口"提前暴露
+- [ ] 业务影响表纳入 release notes
+
+**完整代码草案**：见 `inventory-orphan-cleanup-impl-2026-08-07.md` § D
 
 ---
 
-## 七、阶段 5：回归测试补充
+## 七、阶段 5：回归测试补全（P1 升级）
 
-### 7.1 新增 3 个测试文件
+### 7.1 新增 fixtures helper（Codex P1）
 
-| 文件 | 覆盖 |
-|---|---|
-| `harness/tests/modules/inventory-orphan-ui-delete.test.js` | UI 单删 + 批量删 API（含安全守门） |
-| `harness/tests/modules/inventory-orphan-export.test.js` | 导出孤儿清单 Excel（含数据正确性） |
-| `harness/tests/modules/material-delete-guard.test.js` | 物料删除 3 层守卫（有库存/有单据/有批次 → 拒绝） |
-
-### 7.2 inventory-orphan-ui-delete.test.js 模板
+新建 `harness/tests/helpers/fixtures.js`：
 
 ```javascript
-// 切片: 库存总览孤儿行 UI 删除测试
-const { createClient } = require('../helpers/api');
+// 准备孤儿行（material 或 warehouse 已删）
+async function withOrphanRow(client, opts = {}) {
+  // opts: { materialQty, warehouseQty, source: 'hard'|'soft' }
+  // 返回 inventory_id
+}
 
-const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
-const ENDPOINT = '/mes/warehouse/inventory';
+// 准备关联引用的物料（被多张表引用）
+async function withReferencedMaterial(client, tables = ['inventory']) {
+  // 创建物料 + 在指定表中插入引用行
+  // 返回 material_id
+}
 
-(async () => {
-  const c = createClient(BASE);
-  await c.login('mes_admin', '123456');
-
-  console.log('\n===== 库存总览孤儿行 UI 删除测试 =====\n');
-
-  // 0. 准备：找一个孤儿行
-  const list = await c.api('GET', `${ENDPOINT}/list?pageNo=1&pageSize=100`);
-  const orphans = list.result.records.filter((r) => !r.material_code);
-  console.log(`发现孤儿行: ${orphans.length} 条`);
-
-  if (orphans.length === 0) {
-    console.log('⚠️ 无孤儿行可测，跳过（需先在 DB 制造测试数据）');
-    return;
-  }
-
-  // 1. 守门：qty > 0 的孤儿行禁止删
-  const nonZero = orphans.find((r) => Number(r.current_qty) > 0);
-  if (nonZero) {
-    const r = await c.api('DELETE', `${ENDPOINT}/deleteOrphan?id=${nonZero.id}`);
-    c.check('1.1 有库存孤儿行拒绝删除', r.code === 500 && r.message.includes('有库存'), r.message);
-  } else {
-    console.log('⏭️  无有库存孤儿行，跳过守门测试');
-  }
-
-  // 2. 正常删除：qty = 0 的孤儿行
-  const zeroOrphan = orphans.find((r) => Number(r.current_qty) === 0);
-  if (zeroOrphan) {
-    const r = await c.api('DELETE', `${ENDPOINT}/deleteOrphan?id=${zeroOrphan.id}`);
-    c.check('2.1 零库存孤儿行单删', r.code === 200, r.message);
-
-    // 验证：审计表有记录
-    // （需直接 SQL 查询或额外 API）
-  }
-
-  // 3. 批量删除：3 条 qty=0 孤儿行
-  // （需先准备测试数据）
-
-  // 4. 守门：非孤儿行禁止删
-  // （找一条正常库存行，验证 deleteOrphan 拒绝）
-})();
+// 清理 fixture
+async function cleanupFixtures(client, ids) {
+  // 事务回滚所有 fixture
+}
 ```
 
-### 7.3 material-delete-guard.test.js 模板
+### 7.2 新增边界 case 测试套件
+
+新建 `harness/tests/modules/inventory-orphan-edge.test.js`：
+
+| 用例 | 预期 |
+|---|---|
+| 空 ids 调 batchDelete | 200 "无需删除" |
+| ids 含 SQL 特殊字符（`1','2',' OR 1=1 --`） | 500 拦截 |
+| 超长 ids（>500） | 500 "单批最多 500" |
+| 并发删同一行 | 一个成功，另一个 404 |
+| rollback 已回滚批次 | "该批次无待回滚记录" |
+| 跨批次 rollback | 不影响其他批次审计 |
+
+### 7.3 material-delete-guard.test.js 完整化
+
+| 场景 | fixture | 断言 |
+|---|---|---|
+| S1 有 inventory 行 | `withReferencedMaterial(['inventory'])` | 500 "c_mes_inventory 仍有 N 行" |
+| S2 有 BOM 引用 | `withReferencedMaterial(['bom_item'])` | 500 "c_mes_bom_item" |
+| S3 有未完结生产订单 | `withReferencedMaterial(['production_order'])` + status='1' | 500 "未完结生产订单" |
+| S4 有活跃批次 | `withReferencedMaterial(['batch'])` | 500 "批次" |
+| S5 软删物料 + qty=0 inventory | 同 S1 但 qty=0 | **必须 500**（v1 漏判） |
+| S6 全新物料无任何引用 | 全新物料 | 200 删除成功 |
+
+### 7.4 inventory-orphan-export.test.js 完整化
 
 ```javascript
-// 切片: 物料删除 3 层守卫测试
-const { createClient } = require('../helpers/api');
-const BASE = process.env.HARNESS_BASE || 'http://localhost:8080/jeecg-boot';
+// 1. 准备 5 条孤儿 + 3 条正常
+// 2. GET /exportOrphanXls
+// 3. 解析 xlsx
+// 4. 断言行数 == 5，字段完整，物料编码列全为空
+```
 
-(async () => {
-  const c = createClient(BASE);
-  await c.login('mes_admin', '123456');
+### 7.5 实施 checklist
 
-  console.log('\n===== 物料删除 3 层守卫测试 =====\n');
+- [ ] 新建 `harness/tests/helpers/fixtures.js`
+- [ ] 新建 `harness/tests/modules/inventory-orphan-edge.test.js`
+- [ ] 完善 `harness/tests/modules/material-delete-guard.test.js`（6 场景）
+- [ ] 完善 `harness/tests/modules/inventory-orphan-export.test.js`
+- [ ] 完善 `harness/tests/modules/inventory-orphan-ui-delete.test.js`（审计表断言）
+- [ ] 测试 fixture 准备 SQL 走 `db.exec()` helper
 
-  // S1: 有库存的物料 → 删除应被拒
-  // （选一个 c_mes_inventory.current_qty > 0 的物料）
-  const mat1 = await c.api('GET', '/mes/basic/material/list?pageNo=1&pageSize=50');
-  const withStock = mat1.result.records.find((m) => m.id);  // 简化：随机找一个
-  if (withStock) {
-    const r = await c.api('DELETE', `/mes/basic/material/delete?id=${withStock.id}`);
-    c.check('S1 有库存物料禁止删除', r.code === 500 && r.message.includes('未清库存'), r.message);
-  }
+---
 
-  // S2: 有未完结生产订单的物料 → 拒绝
-  // S3: 有活跃批次的物料 → 拒绝
-  // S4: 无任何关联的物料 → 可正常删除
-})();
+## 八、阶段 6：运维 Runbook（新增）
+
+### 8.1 审计表生命周期
+
+```
+c_mes_inventory_cleanup_audit（活跃表，< 90 天）
+    ↓ 月度归档（自动 cron）
+c_mes_inventory_cleanup_audit_his（历史表，保留 1 年）
+    ↓ 季度清理
+DROP（按合规要求）
+```
+
+**月度归档脚本**：`harness/scripts/sql/archive-cleanup-audit.sh`
+```bash
+# 每月 1 号 02:00 跑
+INSERT INTO c_mes_inventory_cleanup_audit_his
+SELECT * FROM c_mes_inventory_cleanup_audit
+WHERE cleaned_at < DATE_SUB(NOW(), INTERVAL 90 DAY);
+
+DELETE FROM c_mes_inventory_cleanup_audit
+WHERE cleaned_at < DATE_SUB(NOW(), INTERVAL 90 DAY);
+```
+
+### 8.2 备份保留期
+
+- 每次 `cleanup-orphan-inventory.sh backup` 产出 `backup_c_mes_inventory_*.sql`
+- 保留 30 天，过期自动清理
+- 异地存储（OSS/S3）建议保留 1 年
+
+### 8.3 回滚演练
+
+每季度 1 次：
+1. 准备测试库，制造 5 条孤儿行
+2. 跑 `clean-zero` + 验证删除
+3. 跑 `rollback --batch-id quarterly-drill-xxx`
+4. 验证库存行恢复
+5. 报告演练结果到 ops 群
+
+### 8.4 监控指标
+
+| 指标 | 告警阈值 |
+|---|---|
+| 新增孤儿行/周 | > 0 立即告警（守卫失效） |
+| 审计表行数 | > 100k 告警（清理滞后） |
+| rollback 调用次数/周 | > 5 告警（业务误操作频繁） |
+
+---
+
+## 九、实施路线图（v2 修订）
+
+```
+Day 1 (本周一)
+└── 阶段 1+2：UI + 后端（含 P0 修复）
+
+Day 2 (本周二)
+├── 部署上线 → 业务人员用页面自助清理存量
+└── 阶段 5：QA 写 fixtures helper
+
+Day 3 (本周三)
+├── 阶段 4：物料删除守卫重写（16+ checker bean）
+└── 阶段 5：3 个测试文件补全
+
+Day 4 (本周四)
+├── 全量回归
+├── 阶段 6：运维 Runbook 写完
+└── /vue-audit 库存页 → 全 PASS
+
+Day 5+ (下周)
+└── 月度归档 cron 上线 + 备份策略生效
 ```
 
 ---
 
-## 八、实施路线图
+## 十、风险与回滚
 
-```
-Day 1-2 (本周)
-├── 阶段 1: UI 黄金模板对齐 + 增加删除按钮（前端 1 人日）
-├── 阶段 2: 后端 3 个端点 + 审计 Service（后端 0.5 人日）
-└── 部署到线上 → 业务人员用页面自助清理存量
+| 风险 | 缓解 | 回滚 |
+|---|---|---|
+| UI 误删业务行 | 后端安全守门（非孤儿行拒绝 + qty>0 拒绝） | rollback 命令 |
+| 守卫太严业务卡壳 | UI 预检接口提前暴露关联数 | 临时加 `force=true` 开关（仅超管） |
+| 回归测试覆盖不足 | 强制 5 个新测试纳入主回归 | 守卫漏判时人工 rollback |
+| 守卫漏判（新增引用表未加 checker） | `information_schema` 扫描动态发现 | 紧急加 checker bean |
+| 审计表膨胀 | 月度归档 + TTL 90 天 | 历史表查证 |
 
-Day 3-5 (下周)
-├── 阶段 5: 3 个回归测试（QA 0.5 人日）
-├── 阶段 4: 物料删除 3 层守卫（后端 0.5 人日）
-└── 全量回归 + /vue-audit 库存页全绿
+## 十一、修订记录（v1 → v2）
 
-应急（随时）
-└── DBA 跑 harness/scripts/sql/cleanup-orphan-inventory.sh（仅 UI 异常时）
-```
-
-## 九、风险与回滚
-
-| 风险 | 缓解 |
-|---|---|
-| UI 误删业务行 | 后端安全守门（非孤儿行拒绝）+ qty>0 拒绝 |
-| 守卫太严，业务卡壳 | 提供"强制删除"开关（仅超管权限） |
-| 回归测试覆盖不足 | 强制 3 个新测试纳入主回归 |
-| 守卫漏判（如其他引用） | 监控"新增孤儿行"指标，告警 |
-
-## 十、成功标准
-
-| 指标 | 目标 |
-|---|---|
-| 存量孤儿行 | 0（业务人员用页面清完） |
-| 新增孤儿行 | 0/周（阶段 4 守卫生效） |
-| 库存总览页"（物料已删除）"行 | 0 |
-| `/vue-audit` 库存页 | 全 PASS |
-| 回归测试 | 3 个新测试全部 PASS |
-| DBA 介入次数 | 0/周（业务自助） |
+| # | 类型 | 项 | 来自 Codex 评审 |
+|---|---|---|---|
+| 1 | [P0] | SQL 注入修复（Mapper 改 foreach） | § 4.3 |
+| 2 | [P0] | HTTP 414 修复（batch 改 POST + body） | § 4.2 |
+| 3 | [P0] | 守卫覆盖 19+ 张引用表 | § 6.3 |
+| 4 | [P0] | 守卫逻辑漏洞（qty=0 也拒） | § 6.1 |
+| 5 | [P1] | UI isOrphan 同时判 warehouse | § 3.2 |
+| 6 | [P1] | 导出专用查询（含 limit） | § 4.5 |
+| 7 | [P1] | 菜单权限注册 3 个新权限 | § 4.6 |
+| 8 | [P1] | 审计表 DDL 抽 migration | § 5.1 |
+| 9 | [P1] | rollback FOR UPDATE 防 TOCTOU | § 5.1 |
+| 10 | [P1] | LIMIT/BATCH_ID 注入防御 | § 5.1 |
+| 11 | [P1] | 阶段 5 fixtures helper + 边界 case | § 7 |
+| 12 | [P2] | 阶段 6 运维 Runbook 新增 | § 8 |
+| 13 | [P2] | 业务影响表量化 | § 6.6 |
 
 ---
 
-*本文档由 /debug 会话自动生成。代码片段仅作示意，实施前需 review + 实际联调。*
+## 十二、成功标准
+
+| 指标 | 目标 | 验证方式 |
+|---|---|---|
+| 存量孤儿行 | 0 | UI 自助清理 |
+| 新增孤儿行 | 0/周 | 阶段 4 守卫生效 |
+| 库存总览页"（物料已删除）" | 0 行 | 业务刷新页面 |
+| `/vue-audit` 库存页 | 全 PASS | `vue-audit.sh` |
+| 回归测试 | 5 个新测试 PASS | `harness/test-results/` |
+| SQL 注入 | 0 高危（中危 < 3） | 静态扫描 |
+| 守卫覆盖 | 16+ 张引用表 | `information_schema` 验证 |
+| DBA 介入 | 0/周（业务自助） | 阶段 3 仅应急用 |
+
+---
+
+## 十三、附：Codex 评审原报告引用
+
+完整 Codex 评审见 `hermes/reviews/2026-08-07-review-inventory-orphan-cleanup.md`。
+本方案 § 三～§ 八 已逐条落实其 [P0]×3 + [P1]×8 + [P2]×2 改进建议。
+
+---
+
+*本文档 v2 由 /debug 会话基于 Codex v1 评审意见重写。代码草案见独立 impl 文档。*
