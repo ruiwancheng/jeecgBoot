@@ -154,7 +154,9 @@ test.describe('MES 批次追溯 V10.0.3 批次级 E2E', () => {
     await expect(drawerAlert).toBeVisible();
 
     // 批次流水 divider + 流水表头（这些始终渲染）
-    await expect(drawer.locator('text:has-text("批次流水")')).toBeVisible();
+    //update-begin---author:pi---date:2026-08-07---for:修复批次追溯抽屉断言定位---
+    await expect(drawer.locator('[data-testid="traceability-ledger-title"]')).toBeVisible();
+    //update-end---author:pi---date:2026-08-07---for:修复批次追溯抽屉断言定位---
     const ledgerHeaders = ['时间', '业务类型', '业务单据', '入库', '出库'];
     for (const h of ledgerHeaders) {
       await expect(drawer.locator(`th:has-text("${h}")`).first(), `流水表应显示"${h}"列`).toBeVisible({ timeout: 3000 });
