@@ -294,3 +294,81 @@ ls src/views/project/mes/<page>/<page>.data.ts && \
 - 详细误判清单：`harness/.regression-runs/20260807-032053/regression-report.md` 第四节
 - 复盘报告：`/regression-retro` 20260807-032053
 - learning 记录：`.claude/memory/learnings/2026-08-07-regression-double-review.md`
+
+---
+
+## L6：复核结果就地标注原则（2026-08-07 evolve 固化）
+
+> 来源：`memory/learnings/2026-08-07-regression-review-workflow.md`
+> 业务人员原话："复核结果在具体问题点也标注下 ... 方便我一个个核实问题点"
+
+### 核心原则
+
+**复核标注必须就地逐条显示** — 业务人员能"逐条核实"，不用跳来跳去。
+
+❌ **错误做法**：只把复核结果放在 4.X 顶部的「复核结果」section（汇总里）
+✅ **正确做法**：在每个具体「测试位置：`X:Y`」行旁加复核标注（就地）
+
+### 标注格式
+
+```markdown
+- 测试位置：`171:7` 标题：› ... › 5. 导出按钮可见 + 点击触发下载
+  操作步骤：
+    ...
+  预期结果（业务描述）：...
+  实际结果：...
+  > 📋 **复核结果**：✅ **误判**（报告生成器归类错误） | 严重度 P3 | 业务人员实测... | 跟进：regression-report.js 修复 issue 归类逻辑 | 复核人 业务人员 / 2026-08-07
+```
+
+### 4 元素（结构化）
+
+每条复核标注必须含：
+
+| 元素 | 说明 | 示例 |
+|---|---|---|
+| **判定** | ✅ 误判 / 🔴 真 bug / 🟡 要优化 / ⏳ 待复核 | ✅ 误判 |
+| **严重度** | P0 (24h) / P1 (1 周) / P2 (2 周) / P3 (无需跟进) | P1 |
+| **业务侧原因** | 业务人员原话（不是技术）| "账面 15 是对的" |
+| **跟进负责人** | 前端工程师 XXX / 后端工程师 XXX / 待 cleanup | 后端工程师小王 |
+| **复核人 / 时间** | 业务人员 / AI 名字 + YYYY-MM-DD | 业务人员 / 2026-08-07 |
+
+### 自动化要求
+
+报告生成器（`harness/scripts/regression-report.js` v3.0+）必须：
+
+1. 解析每条 failed 切片的「测试位置」行
+2. 在「实际结果」行后插入「复核结果」section（用 `> 📋 **复核结果**：...` 格式）
+3. 同时保留 4.X 顶部的「复核结果」section（汇总）
+4. 业务人员/AI 用 edit 工具逐条覆盖（不是一次性自动填）
+
+### 为什么不能用 AI 一次性自动填
+
+- AI 一次填所有 → 容易误判（30%+ 误判率，2026-08-07 实证）
+- 业务人员逐条反馈 + AI 逐条填 → 准确率 95%+
+
+### 业务人员工作流（"复核记录员"模式）
+
+```
+1. AI 拿报告给业务人员（列出失败测试 + 解释 + 验证步骤）
+   ↓
+2. 业务人员亲自到系统里走一遍（不依赖 AI 判定）
+   ↓
+3. 业务人员用自然语言告诉 AI：
+   "4.X 是误判 / 真 bug / 要优化 / 拿不准，因为 XXX"
+   ↓
+4. AI 用 edit 工具在对应「测试位置」行旁填入复核标注
+   ↓
+5. 报告交付给 PM/leader 跟进
+```
+
+### 配套：edit 工具"oldText 唯一性"陷阱
+
+跨 4.X 段同时编辑时（如 4.2 + 4.8 traceabilityBatch），同 spec 文件内容完全相同，edit 工具会报错"Found N occurrences"。
+
+**应对 3 招**：
+1. **上下文 anchor**：在 oldText 加前置/后置不同行做唯一
+2. **python replace 兜底**：`content.replace(old, new)` 一次完成
+3. **分多次 edit**：用更大的 oldText 上下文做唯一
+
+详见 `memory/learnings/2026-08-07-regression-review-workflow.md` + `2026-08-07-coordinator-git-status-fallback.md`（edit 工具陷阱）。
+//update-end---author:evolve---date:2026-08-07---for:【/evolve】复核结果就地标注原则---

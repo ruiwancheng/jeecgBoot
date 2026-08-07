@@ -88,4 +88,86 @@ public Result<IPage<MesMaterial>> selectPage(...) {
 
 详见 `learnings/2026-07-20-table-dict-bypasses-tablelogic.md`。
 
-//update-end---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月数据库/SQL 1 条 learning 到 design.md---
+//update-end---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月数据库/SQL 1 条 learning 到 design.md------
+
+## 增量增强 + 降级策略模式（2026-08-07 evolve 固化）
+
+> 来源：`memory/learnings/2026-07-20-incremental-enhance-with-degradation.md`
+> 核心：Harness 安全演进的基石
+
+### 核心原则
+
+> **演进 ≠ 重写** — 增量增强 + 失败时降级到旧版
+
+### 模式定义
+
+**增量增强（Incremental Enhance）**：
+- 不一次性重写旧系统
+- 每次迭代只加 1-2 个小功能
+- 旧功能保留，新功能叠加
+
+**降级策略（Degradation）**：
+- 新功能失败时 → 自动降级到旧版（不报错）
+- 业务方永远拿到可用结果
+- 失败信息可观测但不阻塞流程
+
+### 适用场景
+
+| 场景 | 增量增强 | 降级策略 |
+|---|:---:|:---:|
+| 新增多语言 | ✅ | ✅（中文 fallback）|
+| 新增搜索优化 | ✅ | ✅（旧 SQL 兜底）|
+| 新增数据源 | ✅ | ✅（旧数据源 fallback）|
+| 新增 API 端点 | ✅ | ❌（不影响旧路径）|
+| 替换核心算法 | ❌ | ❌（应该重写）|
+
+### 实施模式
+
+```typescript
+// 模式 A：try-catch 降级
+async function enhancedSearch(keyword: string) {
+  try {
+    return await newSearchEngine.search(keyword);  // 新版
+  } catch (e) {
+    log.warn('new search failed, fallback', e);
+    return await oldSearchEngine.search(keyword);  // 旧版 fallback
+  }
+}
+
+// 模式 B：特性开关
+const useNewFeature = featureFlag.isEnabled('new-search');
+return useNewFeature 
+  ? newSearchEngine.search(keyword)
+  : oldSearchEngine.search(keyword);
+
+// 模式 C：A/B 测试
+if (Math.random() < 0.1) {  // 10% 流量
+  return newSearchEngine.search(keyword);  // 新版
+}
+return oldSearchEngine.search(keyword);  // 90% 旧版
+```
+
+### 黄金法则
+
+1. **新功能必须可降级** — 不能让业务方承担新功能的失败风险
+2. **降级路径必须测试** — 旧版 fallback 路径必须有测试覆盖
+3. **可观测性必备** — 降级发生时要 log + metric，业务方可感知
+4. **开关可控** — 紧急情况可一键关闭新功能回滚
+
+### 反模式
+
+- ❌ **直接替换旧代码** — 出问题无法回滚
+- ❌ **新功能失败抛错** — 业务方被卡住
+- ❌ **降级路径不测** — fallback 失效导致 100% 不可用
+- ❌ **降级不通知** — 业务方不知道在用旧版
+
+### Harness 实战
+
+- **2026-07-20 /evolve 批 1**：批量归档 5 条 learnings，每条都先增量写 rules，再验证功能不回归
+- **2026-07-22 /evolve 批 2**：先 parallel-write，然后逐条确认
+- **2026-07-30 /evolve 批 3**：合并 design.md，每条都标注 //update-begin---author---date---for:---
+
+**核心**：Harness 演进不能破坏现有功能，**降级策略是底线**。
+
+详见 `memory/learnings/2026-07-20-incremental-enhance-with-degradation.md`。
+//update-end---author:evolve---date:2026-08-07---for:【/evolve】增量增强+降级策略模式---

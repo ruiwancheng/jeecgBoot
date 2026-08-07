@@ -232,3 +232,134 @@ harness/
 - `hermes/scans/INDEX.md` 和 `hermes/tiequan/*/index.md` 通过 git 共享（见 `.gitignore` 例外规则）
 - 其他 hermes/ 和 harness/ 文件为本地私有，不同步
 - 重要发现应通过 git commit 的代码变更传递，不依赖 hermes/ 文件传递
+
+---
+
+## 批量 learnings 归档必须逐条验证等效覆盖（2026-08-07 evolve 固化）
+
+> 来源：`memory/learnings/2026-07-28-bulk-learning-archive-validation.md`
+> 触发：批量归档 / 合并 / 迁移 learnings（如把几十条 learnings 合并到几个 rules 文件）
+
+### 核心原则
+
+> **批量操作 ≠ 批量信任** — 每条 learning 合并后必须**逐条验证等效覆盖**
+
+### 3 个反模式
+
+1. ❌ **删了原 learning 不验证**：以为 rules 覆盖了，实际可能漏了细节
+2. ❌ **合并多条 learning 成一条**：模糊了原本的具体场景
+3. ❌ **只 grep 关键词不读全文**：grep 匹配可能误判
+
+### 等效覆盖验证清单
+
+批量合并 1 条 learning 到 rules/ 后，必须逐项检查：
+
+```markdown
+## 验证清单（每条 learning）
+
+- [ ] 触发条件是否明确写出来？
+- [ ] 处理方式是否具体可执行（不是抽象建议）？
+- [ ] 实战案例是否保留（如 commit hash / 文件路径）？
+- [ ] 关联的代码示例 / 命令是否完整？
+- [ ] 边界条件（"不适用" / "反例"）是否标注？
+- [ ] 与现有 rule 是否冲突？冲突 → 更新（不是叠加）
+```
+
+### 流程模板
+
+```bash
+# Step 1: 列出待合并的 learnings
+ls -lt .claude/memory/learnings/ | head -10
+
+# Step 2: 对每条 learning 提取 5W1H
+# - What: 标题/触发条件
+# - Why: 为什么重要
+# - When: 何时触发
+# - Where: 涉及哪些文件/命令
+# - Who: 谁负责（业务/AI/工程师）
+# - How: 具体处理方式
+
+# Step 3: 在 rules/ 找最匹配的 rule 文件
+# - 检索关键词（grep）
+# - 对比上下文（避免误匹配）
+
+# Step 4: 写入 + 标注
+cat >> .claude/rules/<rule-file>.md << 'EOF'
+// update-begin---author:evolve---date:YYYY-MM-DD---for:【批量归档】合并 N 条 learnings---
+## 章节标题
+[内容]
+// update-end---
+---
+
+## 批量 learnings 归档必须逐条验证等效覆盖（2026-08-07 evolve 固化）
+
+> 来源：`memory/learnings/2026-07-28-bulk-learning-archive-validation.md`
+> 触发：批量归档 / 合并 / 迁移 learnings（如把几十条 learnings 合并到几个 rules 文件）
+
+### 核心原则
+
+> **批量操作 ≠ 批量信任** — 每条 learning 合并后必须**逐条验证等效覆盖**
+
+### 3 个反模式
+
+1. ❌ **删了原 learning 不验证**：以为 rules 覆盖了，实际可能漏了细节
+2. ❌ **合并多条 learning 成一条**：模糊了原本的具体场景
+3. ❌ **只 grep 关键词不读全文**：grep 匹配可能误判
+
+### 等效覆盖验证清单
+
+批量合并 1 条 learning 到 rules/ 后，必须逐项检查：
+
+```markdown
+## 验证清单（每条 learning）
+
+- [ ] 触发条件是否明确写出来？
+- [ ] 处理方式是否具体可执行（不是抽象建议）？
+- [ ] 实战案例是否保留（如 commit hash / 文件路径）？
+- [ ] 关联的代码示例 / 命令是否完整？
+- [ ] 边界条件（"不适用" / "反例"）是否标注？
+- [ ] 与现有 rule 是否冲突？冲突 → 更新（不是叠加）
+```
+
+### 流程模板
+
+```bash
+# Step 1: 列出待合并的 learnings
+ls -lt .claude/memory/learnings/ | head -10
+
+# Step 2: 对每条 learning 提取 5W1H
+# - What: 标题/触发条件
+# - Why: 为什么重要
+# - When: 何时触发
+# - Where: 涉及哪些文件/命令
+# - Who: 谁负责（业务/AI/工程师）
+# - How: 具体处理方式
+
+# Step 3: 在 rules/ 找最匹配的 rule 文件
+# - 检索关键词（grep）
+# - 对比上下文（避免误匹配）
+
+# Step 4: 写入 + 标注
+cat >> .claude/rules/<rule-file>.md << 'EOF'
+// update-begin---author:evolve---date:YYYY-MM-DD---for:【批量归档】合并 N 条 learnings---
+## 章节标题
+[内容]
+// update-end---
+EOF
+
+# Step 5: 验证
+# - 读原 learning
+# - 对比 rules 新章节
+# - 任何缺失项 → 补
+```
+
+### 实战案例
+
+**2026-07-28 N1 批量归档**：5 条 learnings（hook-protocol / batch-fix-issue / dual-ai-audit / jsonl-timeline / rule-merge-closure）合并到 1 条规则文件
+
+**结果**：
+- ✅ 触发条件 / 处理方式 / 实战案例 / 关联命令 全部保留
+- ❌ 最初漏了"批量操作必须 grep 反向引用" → 补加
+
+详见 `memory/learnings/2026-07-28-bulk-learning-archive-validation.md`。
+//update-end---author:evolve---date:2026-08-07---for:【/evolve】批量 learnings 归档验证---
