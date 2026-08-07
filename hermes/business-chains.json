@@ -1,8 +1,8 @@
 {
   "$schema": "business-chains.schema.json",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "业务链路注册表——声明模块间上下游依赖，改任意节点触发全链路质量验证",
-  "lastUpdated": "2026-08-04",
+  "lastUpdated": "2026-08-07",
   "chains": {
     "采购链路": {
       "id": "purchase-chain",
@@ -107,12 +107,18 @@
     },
     "生产链路": {
       "id": "manufacturing-chain",
-      "description": "BOM→生产订单→领料→完工入库",
+      "description": "BOM→生产订单→领料→完工入库（slice-7 状态机 6 锚点贯通）",
       "flow": [
         "定义BOM",
+        "BOM生效(同产品一生效锁定)",
         "下生产单",
-        "领料",
-        "完工入库"
+        "订单审核(BOM生效校验)",
+        "订单下达(库存校验+推草稿领料单)",
+        "领料单审核(扣库存+批次FIFO)",
+        "完工入库创建",
+        "完工审核(加库存+批次+联动订单completedQty)",
+        "completedQty≥planQty推status=已完工",
+        "补领生成(剩余=总需-已领累计)"
       ],
       "modules": [
         "manufacturing/bom",
@@ -120,24 +126,86 @@
         "manufacturing/picking",
         "manufacturing/completion"
       ],
-      "sideEffects": [],
+      "sideEffects": [
+        "basic/inventory(领料扣减/完工增加)",
+        "batch/inventory(批次FIFO/批次生成)"
+      ],
       "tests": {
-        "api": "harness/tests/modules/manufacturing.test.js",
-        "e2e": null
+        "api": "harness/tests/mes/manufacturing-chain.test.js",
+        "e2e": "harness/e2e/mes/manufacturing-chain.spec.ts"
       },
-      "criticalPaths": [],
+      "criticalPaths": [
+        "PUT /mes/manufacturing/bom/approve → FOR UPDATE 同产品一生效锁定 + status='2'（slice-1）",
+        "POST /mes/manufacturing/bom/add → 父子表事务 + 子项物料≠父项 + 非空子项（validateBom）",
+        "PUT /mes/manufacturing/order/audit → 仅草稿态 + 关联BOM必须生效(status='2')",
+        "PUT /mes/manufacturing/order/release → BOM子件×planQty 库存校验（硬阻止）+ 同事务生成草稿领料单 + 订单status='3'（slice-3）",
+        "PUT /mes/manufacturing/picking/audit → 先CAS状态守卫(防并发) + 扣主库存 + 总开关开启时按FIFO扣批次库存（slice-2/3）",
+        "PUT /mes/manufacturing/completion/audit → 先CAS状态守卫 + 加主库存 + 总开关开启时创建批次 + 联动订单completedQty累加 + completedQty≥planQty推status='5'（slice-2）",
+        "POST /mes/manufacturing/picking/generateByOrder → 补领量=总需-已领累计 + 仅保留remain>0 + 全≤0抛'已领完'（slice-4）",
+        "POST /mes/manufacturing/order/generatePicking → 同事务生成补领草稿单（不扣库存，审核时才扣）",
+        "PUT /mes/manufacturing/order/complete → 仅已下达(3) + completedQty≥planQty 推status='5'（slice-3）",
+        "PUT /mes/manufacturing/bom/disable → 仅生效/草稿可失效，status='3'（已失效不可再approve）"
+      ],
       "chainTests": {
-        "enabled": false,
-        "planned": true,
-        "reason": "待手工验证可贯通性后再编码链文件",
-        "nextStep": "跑 /chain-test 生产链路 验证 BOM→订单→领料→完工"
+        "enabled": true,
+        "segments": [
+          {
+            "name": "BOM状态机+同产品一生效",
+            "file": "harness/tests/mes/manufacturing-chain.test.js",
+            "assertions": 8,
+            "covers": [
+              "锚点1: BOM approve → status='2'",
+              "锚点2: 同产品再approve → 抛错"
+            ]
+          },
+          {
+            "name": "订单状态机+库存校验+推领料单",
+            "file": "harness/tests/mes/manufacturing-chain.test.js",
+            "assertions": 14,
+            "covers": [
+              "锚点3: 订单release → 草稿领料单 + status='3'",
+              "锚点4: 库存不足 → release阻断"
+            ]
+          },
+          {
+            "name": "完工联动订单completedQty+status推进",
+            "file": "harness/tests/mes/manufacturing-chain.test.js",
+            "assertions": 7,
+            "covers": [
+              "锚点5: 完工audit → 订单completedQty累加 + status='5'"
+            ]
+          },
+          {
+            "name": "补领量=总需-已领累计",
+            "file": "harness/tests/mes/manufacturing-chain.test.js",
+            "assertions": 7,
+            "covers": [
+              "锚点6: generateByOrder → 补领量分批场景"
+            ]
+          },
+          {
+            "name": "UI流全链路(BOM→订单→领料→完工)",
+            "file": "harness/e2e/mes/manufacturing-chain.spec.ts",
+            "assertions": 6,
+            "covers": [
+              "锚点1-6 UI状态机按钮+跨页面跳转+弹窗"
+            ]
+          }
+        ],
+        "orchestrator": "harness/tests/mes/manufacturing-chain.test.js",
+        "anchors": {
+          "1": "BOM approve → status='2'（生效）",
+          "2": "同产品再 approve → 抛错（FOR UPDATE 一生效锁定）",
+          "3": "订单 release → 草稿领料单生成 + 订单 status='3'",
+          "4": "库存不足 → release 阻断（硬阻止）",
+          "5": "完工 audit → 订单 completedQty 累加 + status='5'",
+          "6": "补领量 = 总需 - 已领累计（剩余 > 0 才生成）"
+        }
       },
       "health": {
-        "lastAudit": "2026-08-04",
-        "status": "planned",
-        "openGaps": [
-          "manufacturing-chain.test.js 待新建"
-        ]
+        "lastAudit": "2026-08-07",
+        "status": "healthy",
+        "openGaps": []
       }
     },
     "基础数据": {
