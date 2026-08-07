@@ -164,4 +164,44 @@ git push origin main
 
 详见 `learnings/2026-07-20-claude-code-sandbox-git-push.md`。
 
+### MCP server command 必须用绝对路径（mcp-server-absolute-path）
+
+**铁律**：`.mcp.json` 里 `mcpServers.<name>.command` **必须填绝对路径**，禁止填 `python` / `python3` / `python3.11` 等可被 PATH 截胡的命令名。
+
+**问题**：macOS 用户通常装了多个 Python 解释器，PATH 第一个命中的不一定是 homebrew 那个，**包安装位置不一致**：
+
+| PATH 命中 | 是否装了 code_review_graph |
+|-----------|:---:|
+| `/Users/ruisuyun/.local/bin/python3.11` | ❌ |
+| `/opt/homebrew/bin/python3.11` | ✅ v2.3.7 |
+
+`python3.11 -m code_review_graph serve` 命中第一个 → `ModuleNotFoundError` → MCP 进程秒退 → Claude Code 静默无工具注入，无任何错误日志。
+
+**强制规则**：
+- ✅ `command: "/opt/homebrew/bin/code-review-graph"` + `args: ["mcp"]`
+- ✅ `command: "/usr/local/bin/some-mcp-server"` + `args: [...]`
+- ❌ `command: "python3.11"` + `args: ["-m", "code_review_graph", "serve"]`
+- ❌ `command: "python"` + `args: [...]`
+
+**诊断信号**：
+- `/capability-check` 报 MCP 不可用但 `code-review-graph status` 显示图谱健康
+- Claude Code 重启后依然无 `mcp__*__*` 工具
+- 直接跑 `command args...` 在终端能启动 server，但 MCP 协议层不识别
+
+**修复流程**：
+1. `which <命令名>` 看命中哪个解释器
+2. `command -p <绝对路径>` 验证绝对路径可执行
+3. 改 `.mcp.json` 用绝对路径
+4. **完全退出 Claude Code 重开**（`/exit` 不够）
+
+**反模式**：
+- ❌ 反复改 `python3` → `python3.11` → `python3.12`，猜下一个 PATH 命中（包可能没装）
+- ❌ `pip install` 给错误的解释器装包（浪费 30s）
+- ❌ 静默降级走 Grep/Read —— 失去架构感知能力不可恢复
+
+详见 `learnings/2026-08-06-mcp-server-absolute-path.md`。
+
+//update-begin---author:evolve---date:2026-08-06---for:【MCP 不可用】code-review-graph 修复沉淀（3 次改 command 才定位 PATH 截胡）---
+//update-end---author:evolve---date:2026-08-06---for:【MCP 不可用】code-review-graph 修复沉淀（3 次改 command 才定位 PATH 截胡）---
+
 //update-end---author:evolve---date:2026-08-02---for:【/evolve 批 3】合并 7 月运维 1 条 learning 到 boundary.md---
