@@ -46,6 +46,14 @@ public class MesBomController extends JeecgController<MesBom, IMesBomService> {
     @PutMapping("/edit") @RequiresPermissions("mes:bom:edit")
     public Result<String> edit(@RequestBody MesBom entity) { service.updateWithItems(entity); return Result.ok("编辑成功"); }
 
+    //update-begin---author:ruiwancheng---date:2026-08-07---for: slice-1 BOM状态机 端点 /approve /disable（复用edit权限）-----------
+    @PutMapping("/approve") @RequiresPermissions("mes:bom:edit")
+    public Result<String> approve(@RequestParam String id) { service.approve(id); return Result.ok("生效成功"); }
+
+    @PutMapping("/disable") @RequiresPermissions("mes:bom:edit")
+    public Result<String> disable(@RequestParam String id) { service.disable(id); return Result.ok("失效成功"); }
+    //update-end---author:ruiwancheng---date:2026-08-07---for: slice-1 BOM状态机 端点 /approve /disable（复用edit权限）-----------
+
     @DeleteMapping("/delete") @RequiresPermissions("mes:bom:delete")
     public Result<String> delete(@RequestParam String id) { service.removeWithItems(id); return Result.ok("删除成功"); }
 

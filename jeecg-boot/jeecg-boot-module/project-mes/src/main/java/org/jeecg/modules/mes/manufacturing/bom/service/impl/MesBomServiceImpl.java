@@ -90,6 +90,39 @@ public class MesBomServiceImpl extends ServiceImpl<MesBomMapper, MesBom> impleme
         super.removeById(id);
     }
 
+    //update-begin---author:ruiwancheng---date:2026-08-07---for: slice-1 BOM状态机 approve（FOR UPDATE 同产品一生效加固）-----------
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void approve(String id) {
+        if (!StringUtils.hasText(id)) throw new JeecgBootException("BOM ID不能为空");
+        MesBom exist = baseMapper.selectById(id);
+        if (exist == null) throw new JeecgBootException("BOM不存在");
+        if ("2".equals(exist.getStatus())) throw new JeecgBootException("BOM已生效，无需重复操作");
+        if ("3".equals(exist.getStatus())) throw new JeecgBootException("BOM已失效，无法生效");
+        // 1) FOR UPDATE 锁住该产品所有生效BOM行，事务内防并发 approve
+        Long activeCount = baseMapper.countActiveByProductForUpdate(exist.getProductId());
+        if (activeCount != null && activeCount > 0) throw new JeecgBootException("该产品已有生效BOM");
+        // 2) 守卫通过，置 status='2' 并落 updateBy/updateTime
+        exist.setStatus("2");
+        exist.setUpdateBy(getCurrentUsername());
+        exist.setUpdateTime(new Date());
+        super.updateById(exist);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void disable(String id) {
+        if (!StringUtils.hasText(id)) throw new JeecgBootException("BOM ID不能为空");
+        MesBom exist = baseMapper.selectById(id);
+        if (exist == null) throw new JeecgBootException("BOM不存在");
+        if ("3".equals(exist.getStatus())) throw new JeecgBootException("已失效无需重复操作");
+        exist.setStatus("3");
+        exist.setUpdateBy(getCurrentUsername());
+        exist.setUpdateTime(new Date());
+        super.updateById(exist);
+    }
+    //update-end---author:ruiwancheng---date:2026-08-07---for: slice-1 BOM状态机 approve（FOR UPDATE 同产品一生效加固）-----------
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeByIds(java.util.Collection<?> list) {

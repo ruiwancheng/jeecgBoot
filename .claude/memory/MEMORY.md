@@ -36,3 +36,6 @@
 - [HTTP 200包着404](learnings/2026-07-28-http200-wraps-404.md) — 接口验证看body success字段；新类需install+重启不信DevTools热载
 - [AI 监督 AI 是死循环](learnings/2026-07-29-ai-supervise-ai-dead-loop.md) — 对非技术用户，过程验证不如结果验证；机械校验和功能测试才是硬证据
 - [orca-review 热终端复用](learnings/2026-07-29-orca-review-hot-terminal.md) — 必须先 terminal list 查已有 Claude 终端，不可直接 create
+- [Gitignore 单行多 pattern 失效](learnings/2026-08-07-gitignore-one-pattern-per-line.md) — 每行只识别一个 pattern，空格分隔 = 一个文件名；必须 `git check-ignore` 验证
+- [派工前区分已跟踪/未跟踪](learnings/2026-08-07-delegate-distinguish-tracked-untracked.md) — `git ls-files --error-unmatch` 区分；INDEX.md 已跟踪需追加不要覆盖
+- [orca v5.5+ worker_done 需 taskId](learnings/2026-08-07-orca-send-typed-required.md) — 协调者代发必须降级为普通消息；active Dispatch 绑定限制
