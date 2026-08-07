@@ -93,7 +93,9 @@ public class MesInventoryController {
 
     //update-begin---author:ruiwancheng---date:20260807---for:【孤儿行清理】4 个端点（阶段 2）-----------
 
-    /** 单删孤儿行：仅允许 qty=0 的孤儿行；material_del_flag 派生 risk_type */
+    /** 单删孤儿行：仅要求行本身是孤儿（FK 目标已删），不再拦截 qty>0；
+     *  孤儿行 = 脏数据（warehouse/material 已删，qty 是"幻影库存"无法真实出库），强留无意义；
+     *  qty 由 cleanup_audit 表记录，可追溯。 */
     @DeleteMapping("/deleteOrphan")
     @RequiresPermissions("mes:inventory:deleteOrphan")
     @Transactional(rollbackFor = Exception.class)
@@ -102,10 +104,6 @@ public class MesInventoryController {
         if (row == null) {
             throw new JeecgBootException("该库存行不是孤儿行，禁止删除");
         }
-        BigDecimal qty = (BigDecimal) row.get("current_qty");
-        if (qty != null && qty.compareTo(BigDecimal.ZERO) > 0) {
-            throw new JeecgBootException("孤儿行有库存(" + qty + ")，禁止删除");
-        }
         inventoryMapper.deleteById(id);
         String riskType = deriveRiskType(row);
         String operator = getCurrentUsername();
@@ -113,7 +111,7 @@ public class MesInventoryController {
         cleanupAuditService.log("ui:" + operator, id,
                 (String) row.get("material_id"),
                 (String) row.get("warehouse_id"),
-                qty, riskType, operator);
+                (BigDecimal) row.get("current_qty"), riskType, operator);
         return Result.ok("已删除孤儿行 " + id);
     }
 
@@ -133,12 +131,6 @@ public class MesInventoryController {
         List<Map<String, Object>> orphans = inventoryMapper.selectOrphansByIds(idList);
         if (orphans.isEmpty()) {
             return Result.ok("无可删除的孤儿行");
-        }
-        for (Map<String, Object> row : orphans) {
-            BigDecimal qty = (BigDecimal) row.get("current_qty");
-            if (qty != null && qty.compareTo(BigDecimal.ZERO) > 0) {
-                throw new JeecgBootException("孤儿行 " + row.get("id") + " 有库存(" + qty + ")，禁止批量删");
-            }
         }
         for (Map<String, Object> row : orphans) {
             inventoryMapper.deleteById((String) row.get("id"));
