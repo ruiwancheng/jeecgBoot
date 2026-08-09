@@ -28,8 +28,10 @@ public class MesBom implements Serializable {
     @TableId(type = IdType.ASSIGN_ID)
     private String id;
     @Excel(name = "BOM编号", width = 15) private String code;
-    @Excel(name = "父项物料", width = 20, dictTable = "c_mes_material", dicText = "name", dicCode = "id")
-    @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id") private String productId;
+    //update-begin---author:ruiwancheng---date:20260808---for:【物料显示统一编码】同商品多规格→name不唯一→改code精准识别-----------
+    @Excel(name = "父项物料", width = 20, dictTable = "c_mes_material", dicText = "code", dicCode = "id")
+    @Dict(dictTable = "c_mes_material", dicText = "code", dicCode = "id") private String productId;
+    //update-end---author:ruiwancheng---date:20260808---for:【物料显示统一编码】同商品多规格→name不唯一→改code精准识别-----------
     @Excel(name = "版本", width = 10) private String version;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") private Date effectiveDate;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd") @DateTimeFormat(pattern = "yyyy-MM-dd") private Date expiryDate;

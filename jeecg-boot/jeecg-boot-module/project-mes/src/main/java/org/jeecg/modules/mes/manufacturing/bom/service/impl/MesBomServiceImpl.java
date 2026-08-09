@@ -58,7 +58,16 @@ public class MesBomServiceImpl extends ServiceImpl<MesBomMapper, MesBom> impleme
             entity.setUpdateTime(new Date());
             baseMapper.resurrect(entity);
         } else {
-            try { super.save(entity); } catch (DuplicateKeyException e) { throw new JeecgBootException("BOM编号已存在"); }
+            //update-begin---author:ruiwancheng---date:2026-08-07---for: BOM add 错误信息修正：uk_bom_product_version (product_id, version) 冲突不应误导为 'BOM编号已存在' -----------
+            try { super.save(entity); } catch (DuplicateKeyException e) {
+                // uk_bom_product_version (product_id, version, del_flag) 唯一约束冲突
+                // code 唯一性已在前面 selectCount 校验过，这里是 product+version 重复
+                if (e.getMessage() != null && e.getMessage().contains("uk_bom_product_version")) {
+                    throw new JeecgBootException("该产品已存在相同版本的BOM（版本号已存在），请修改版本号");
+                }
+                throw new JeecgBootException("BOM编号已存在");
+            }
+            //update-end---author:ruiwancheng---date:2026-08-07---for: BOM add 错误信息修正-----------
         }
         saveItems(entity);
     }

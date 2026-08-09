@@ -1,11 +1,11 @@
 {
-  "last_run_dir": "20260807-032053",
-  "last_run_at": "2026-08-07T03:20:53+08:00",
+  "last_run_dir": "20260807-220917",
+  "last_run_at": "2026-08-07T22:50:00+08:00",
   "scope": "full",
-  "slice_count": 33,
-  "failed_count": 8,
-  "next_step": "all-pushed-and-completed",
-  "updated_at": "2026-08-07T05:30:00+08:00",
+  "slice_count": 38,
+  "failed_count": 14,
+  "next_step": "deferred-by-user",
+  "updated_at": "2026-08-07T23:54:17.452824",
   "comment": "2026-08-07 回归测试 8 个 failed 切片已完成 双重复核 + 误判复盘 + 真实 BUG 切片处理（30+ 误判 + 3 个真实 BUG）",
   "retro_completed_at": "2026-08-07T09:50:19.600988",
   "retro_summary": "33+ 处误判已分类（5 大类），规则写入 testing.md L5，6 个 cleanup 任务已派发（C1-C6）",
@@ -69,5 +69,11 @@
         "status": "pushed (晚发现，已正确提交)"
       }
     ]
-  }
+  },
+  "real_bugs": 4,
+  "false_positives": 10,
+  "mixed": 3,
+  "review_repro_completed": true,
+  "user_decision": "本次回归测试放弃核对（报告看不懂）",
+  "note": "生产链路 7 切片 + 9 切片测试已 merge 到 main。回归测试报告生成流程待优化（详见 learnings/2026-08-07-regression-report-messy-retro.md）。下次手动跑测试时只跑变化切片即可。"
 }

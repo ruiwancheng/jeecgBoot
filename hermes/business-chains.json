@@ -204,11 +204,12 @@
         "testFile": "harness/tests/modules/manufacturing-state-machine-guards.test.js",
         "testFileApi": "harness/tests/mes/manufacturing-chain.test.js",
         "testFileE2E": "harness/e2e/mes/manufacturing-order-drawer.spec.ts",
-        "apiAnchors": 41,
+        "apiAnchors": 53,
         "e2eAnchors": 3,
-        "note": "slice-8 补齐 P1（/edit 4 + /generatePicking 1）；P2 仅剩 4 个 /exportXls",
+        "note": "slice-9 补齐 P2 /exportXls 4 端点；所有端点全覆盖",
         "testFileEdit": "harness/tests/modules/manufacturing-edit-endpoints.test.js",
-        "coverageAfter": "API 39/43 = 90% (P1 全清)"
+        "coverageAfter": "API 43/43 = 100%（全清）",
+        "testFileExport": "harness/tests/modules/manufacturing-export-endpoints.test.js"
       },
       "health": {
         "lastAudit": "2026-08-07",

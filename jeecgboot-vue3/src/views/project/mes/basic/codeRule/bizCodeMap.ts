@@ -28,6 +28,8 @@ export const MES_BIZ_CODE = {
   PURCHASE_APPLY: 'PA',
   /** 其它入库 — views/project/mes/stock/other-in */
   OTHER_STOCK_IN: 'QI',
+  /** BOM — views/project/mes/manufacturing/bom */
+  BOM: 'BM',
   /** 其它出库 — views/project/mes/stock/other-out */
   OTHER_STOCK_OUT: 'QO',
   /** 盘点单 — views/project/mes/stock/stocktake */

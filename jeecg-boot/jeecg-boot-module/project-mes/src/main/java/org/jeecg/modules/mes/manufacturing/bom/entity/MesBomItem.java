@@ -24,7 +24,9 @@ public class MesBomItem implements Serializable {
     @TableId(type = IdType.ASSIGN_ID) private String id;
     private String bomId;
     private Integer lineNo;
-    @Dict(dictTable = "c_mes_material", dicText = "name", dicCode = "id") private String materialId;
+    //update-begin---author:ruiwancheng---date:20260808---for:【物料显示统一编码】同商品多规格→name不唯一→改code精准识别（Excel导出联动）-----------
+    @Dict(dictTable = "c_mes_material", dicText = "code", dicCode = "id") private String materialId;
+    //update-end---author:ruiwancheng---date:20260808---for:【物料显示统一编码】同商品多规格→name不唯一→改code精准识别（Excel导出联动）-----------
     private BigDecimal quantity;
     private BigDecimal lossRate;
     private String isSubstitute;

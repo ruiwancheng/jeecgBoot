@@ -37,6 +37,20 @@ version: 1.0.0
 | 7. 大函数 | `find_large_functions_tool` | `min_lines=50`, `limit=30` | 拆分候选列表 |
 | 8. 统计 | `list_graph_stats_tool` | 默认参数 | 节点/边/语言/新鲜度 |
 
+### 第 3.1 层：模块深度评估（2026-08-09 升级）
+
+在第 3 层"结构债务"基础上，引入 3 个图谱原生指标。所有指标仅依赖 code-review-graph MCP，不引入文件级扫描。
+
+| 指标 | 工具 | 查询范围 | 判定 |
+|------|------|---------|------|
+| 热点未测 | `query_graph_tool pattern="tests_for"` | 第 2 层 Top 10 Hub/Bridge 节点 | 无测试覆盖 = **P1** |
+| 依赖发散 | `get_bridge_nodes_tool top_n=20` | 全图 | bridge_score > 0.7 = **P1** |
+| 接口膨胀 | `find_large_functions_tool min_lines=20` + 按类聚合 | 全图 | 类内 public 方法 >15 个 = **P2** |
+
+**评分公式**：100 基准分。每个 P1 扣 10 分，每个 P2 扣 5 分。最低 0 分。
+**降级**：3 个指标数据不足 2 个 → 标注"数据不足，跳过评分"，不阻断报告生成。
+**说明**：注释密度指标不纳入本层（需要文件级 AST 扫描，非图谱工具，v2 评审排除）。
+
 ## 报告模板
 
 ```markdown

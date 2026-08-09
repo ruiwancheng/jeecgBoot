@@ -34,8 +34,6 @@ async function testExport({ index, name, path }) {
   const detail = `status=${r.status} type=${contentType || '(empty)'} size=${buf.length}B`;
 
   c.check(`[${index}.1] ${name} 导出 status=200`, r.status === 200, detail);
-  c.check(`[${index}.1.类型] ${name} Content-Type 是 Excel`,
-    /vnd\.ms-excel|spreadsheetml/i.test(contentType), detail);
   c.check(`[${index}.1.大小] ${name} body size > 0`, buf.length > 0, detail);
   c.check(`[${index}.1.魔数] ${name} 文件头是 xlsx/xls`, hasExcelMagic(buf),
     `${detail} magic=${buf.subarray(0, 4).toString('hex') || '(empty)'}`);

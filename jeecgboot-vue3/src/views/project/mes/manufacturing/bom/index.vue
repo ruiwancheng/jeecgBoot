@@ -1,11 +1,20 @@
 <!-- @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0 -->
 <template>
   <div>
-    <BasicTable @register="registerTable">
+    <!--update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 rowSelection + 模式3展开子表----------->
+    <BasicTable @register="registerTable" :rowSelection="rowSelection">
+      <template #expandedRowRender="{ record }">
+        <BomItemsSubTable :bomId="record.id" />
+      </template>
       <template #tableTitle>
         <a-button type="primary" preIcon="ant-design:plus-outlined" @click="handleAdd">新增BOM</a-button>
         <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
+        <a-divider type="vertical" />
+        <!-- 模式 2：批量生效/失效（状态守卫：全选同状态才可用） -->
+        <a-button type="primary" :disabled="allStatus != '1'" @click="batchApprove">批量生效</a-button>
+        <a-button danger :disabled="allStatus != '2'" @click="batchDisable">批量失效</a-button>
       </template>
+      <!--update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 rowSelection + 模式3展开子表----------->
       <!--update-begin---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】statusTag槽位（阶段颜色）----------->
       <template #statusTag="{ record }">
         <a-tag :color="getStatusColor('bom', record.status)">{{ record.status_dictText || (record.status === '2' ? '生效' : '草稿') }}</a-tag>
@@ -20,6 +29,9 @@
 </template>
 
 <script lang="ts" setup>
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 imports（computed/reactive）-----------
+  import { computed, reactive } from 'vue';
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 imports（computed/reactive）-----------
   import { BasicTable, useTable } from '/@/components/Table';
   import { TableAction } from '/@/components/Table';
   import { useListPage } from '/@/hooks/system/useListPage';
@@ -28,11 +40,37 @@
   import { getStatusColor } from '../shared/statusColor';
   import { queryBomList, deleteBom, approveBom, disableBom, getExportUrl } from './bom.api';
   import BomDrawer from './BomDrawer.vue';
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式3展开子表 import-----------
+  import BomItemsSubTable from './BomItemsSubTable.vue';
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式3展开子表 import-----------
   import { message } from 'ant-design-vue';
 
   defineOptions({ name: 'MesBom' });
 
   const [registerDrawer, { openDrawer }] = useDrawer();
+
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 + 批量状态守卫-----------
+  const selectedRowKeys = reactive<string[]>([]);
+  const selectedRows = reactive<Recordable[]>([]);
+
+  const rowSelection = {
+    type: 'checkbox' as const,
+    columnWidth: 50,
+    selectedRowKeys,
+    onChange(keys: string[], rows: Recordable[]) {
+      selectedRowKeys.length = 0;
+      selectedRowKeys.push(...keys);
+      selectedRows.length = 0;
+      selectedRows.push(...rows);
+    },
+  };
+
+  const allStatus = computed(() => {
+    if (!selectedRows.length) return '';
+    const s = selectedRows[0].status;
+    return selectedRows.every((r) => r.status === s) ? s : '';
+  });
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2复选框 + 批量状态守卫-----------
 
   const { prefixCls, tableContext, onExportXls } = useListPage({
     designScope: 'mes-manufacturing-bom',
@@ -91,4 +129,25 @@
     reload();
   }
   //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】BOM生效/失效处理器-----------
+
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2批量生效/失效处理器-----------
+  async function batchApprove() {
+    for (const r of selectedRows) {
+      await approveBom({ id: r.id });
+    }
+    message.success(`已生效${selectedRowKeys.length}条`);
+    selectedRowKeys.length = 0;
+    selectedRows.length = 0;
+    reload();
+  }
+  async function batchDisable() {
+    for (const r of selectedRows) {
+      await disableBom({ id: r.id });
+    }
+    message.success(`已失效${selectedRowKeys.length}条`);
+    selectedRowKeys.length = 0;
+    selectedRows.length = 0;
+    reload();
+  }
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式2批量生效/失效处理器-----------
 </script>

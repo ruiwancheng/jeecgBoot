@@ -1,3 +1,4 @@
+// @generated-from: harness/templates/mes-doc-page/master-detail @version: 1.0.0
 import { defHttp } from '/@/utils/http/axios';
 
 const BASE = '/mes/manufacturing/bom';

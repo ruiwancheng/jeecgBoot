@@ -8,6 +8,9 @@
     <a-divider>BOM行</a-divider>
     <div style="margin-bottom: 8px">
       <a-button type="dashed" preIcon="ant-design:plus-outlined" @click="addLine">添加行</a-button>
+      <!--update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗----------->
+      <a-button type="dashed" preIcon="ant-design:appstore-add-outlined" style="margin-left:8px" @click="handleOpenBatchModal">批量添加物料</a-button>
+      <!--update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗----------->
     </div>
     <a-table :dataSource="items" :columns="itemColumns" :pagination="false" size="small" rowKey="lineNo">
       <template #materialId="{ record, index }">
@@ -21,14 +24,18 @@
         <InputNumber :value="record.quantity" :min="0.01" :step="1" style="width: 100%" @change="(v: number) => updateItem(index, 'quantity', v)" />
       </template>
       <template #lossRate="{ record, index }">
-        <InputNumber
-          :value="record.lossRate"
-          :min="0"
-          :max="100"
-          :precision="2"
-          style="width: 100%"
-          @change="(v: number) => updateItem(index, 'lossRate', v)"
-        />
+        <!--update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式9损耗率>50%红标（drawer 内编辑时也提示）----------->
+        <span :style="(Number(record.lossRate) || 0) > 50 ? { color: '#ff4d4f', fontWeight: 'bold' } : {}">
+          <InputNumber
+            :value="record.lossRate"
+            :min="0"
+            :max="100"
+            :precision="2"
+            style="width: 100%"
+            @change="(v: number) => updateItem(index, 'lossRate', v)"
+          />
+        </span>
+        <!--update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式9损耗率>50%红标----------->
       </template>
       <template #isAlternative="{ record, index }">
         <a-switch
@@ -42,6 +49,14 @@
         <a-button type="link" danger @click="removeLine(index)">删除</a-button>
       </template>
     </a-table>
+    <!--update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（实例）----------->
+    <MaterialSelectModal
+      :visible="batchModalVisible"
+      mode="multiple"
+      @update:visible="batchModalVisible = $event"
+      @select="handleBatchAddMaterials"
+    />
+    <!--update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（实例）----------->
   </BasicDrawer>
 </template>
 
@@ -49,10 +64,17 @@
   import { ref, computed, unref } from 'vue';
   import { InputNumber, Divider } from 'ant-design-vue';
   import JMaterialSelect from '/@/views/project/mes/basic/material/JMaterialSelect.vue';
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（imports）-----------
+  import MaterialSelectModal from '/@/views/project/mes/basic/material/MaterialSelectModal.vue';
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（imports）-----------
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { formSchema } from './bom.data';
   import { saveOrUpdateBom, queryBomById } from './bom.api';
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式4自动编码接线（imports）-----------
+  import { getNextCode } from '/@/views/project/mes/basic/codeRule/codeRule.api';
+  import { MES_BIZ_CODE } from '/@/views/project/mes/basic/codeRule/bizCodeMap';
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式4自动编码接线（imports）-----------
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(false);
@@ -61,6 +83,9 @@
   // BOM 口径提示：默认文案。BOM 生效后才能被生产订单引用。
   const alertText = ref('BOM 生效后才能被生产订单引用。状态：草稿 → 生效 → 失效。');
   //update-end---author:ruiwancheng---date:20260731---for:【制造链路黄金模板对齐】模式8口径提示Alert-----------
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（state）-----------
+  const batchModalVisible = ref(false);
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（state）-----------
 
   const itemColumns = [
     { title: '物料', dataIndex: 'materialId', slots: { customRender: 'materialId' }, width: 200 },
@@ -82,6 +107,17 @@
     items.value = [{ lineNo: 1, quantity: 1, lossRate: 0, isAlternative: 0 }];
     isUpdate.value = !!data?.isUpdate;
     setDrawerProps({ confirmLoading: false });
+    //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式4自动编码接线（新增时）-----------
+    // 模式 4：新增时自动获取编码（失败回退手工输入，不阻塞开单）
+    if (!unref(isUpdate)) {
+      try {
+        const nextCode = await getNextCode(MES_BIZ_CODE.BOM);
+        if (nextCode) await setFieldsValue({ code: nextCode });
+      } catch (e) {
+        /* fallback: 手工输入 */
+      }
+    }
+    //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式4自动编码接线（新增时）-----------
     if (unref(isUpdate) && data.record) {
       try {
         const bom = await queryBomById({ id: data.record.id });
@@ -106,6 +142,25 @@
   function updateItem(index: number, field: string, value: any) {
     items.value[index] = { ...items.value[index], [field]: value };
   }
+
+  //update-begin---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（handlers）-----------
+  function handleOpenBatchModal() {
+    batchModalVisible.value = true;
+  }
+  function handleBatchAddMaterials(materials: any[]) {
+    const startLineNo = items.value.length + 1;
+    materials.forEach((m, i) => {
+      items.value.push({
+        lineNo: startLineNo + i,
+        materialId: m.id,
+        materialId_dictText: m.name || m.code || '',
+        quantity: 1,
+        lossRate: 0,
+        isAlternative: 0,
+      });
+    });
+  }
+  //update-end---author:ruiwancheng---date:20260807---for:【vue-migrate黄金模板】模式6批量添加物料弹窗（handlers）-----------
 
   async function handleSubmit() {
     const values = await validate();

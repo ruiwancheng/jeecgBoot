@@ -39,3 +39,49 @@
 - [Gitignore 单行多 pattern 失效](learnings/2026-08-07-gitignore-one-pattern-per-line.md) — 每行只识别一个 pattern，空格分隔 = 一个文件名；必须 `git check-ignore` 验证
 - [派工前区分已跟踪/未跟踪](learnings/2026-08-07-delegate-distinguish-tracked-untracked.md) — `git ls-files --error-unmatch` 区分；INDEX.md 已跟踪需追加不要覆盖
 - [orca v5.5+ worker_done 需 taskId](learnings/2026-08-07-orca-send-typed-required.md) — 协调者代发必须降级为普通消息；active Dispatch 绑定限制
+
+
+## 模块缩写表（2026-08-09 沉淀）
+
+| 缩写 | 全称 | 表前缀 | 业务含义 |
+|------|------|--------|----------|
+| BOM | Bill of Materials | `bom_` | 物料清单/配方 |
+| SO | Sales Order | `so_` | 销售订单 |
+| PO | Purchase Order | `po_` | 采购订单 |
+| WO | Work Order | `wo_` | 生产工单/加工单 |
+| PR | Purchase Requisition | `pr_` | 采购申请 |
+| INV | Inventory | `inv_` | 库存 |
+
+> 维护触发：新增业务模块缩写时，由 /learn 增量补充。
+
+## 状态机速查（2026-08-09 沉淀）
+
+### BOM 状态
+
+| 状态 | 字段值 | 含义 |
+|------|--------|------|
+| 草稿 | draft | 未发布 |
+| 已发布 | published | 可被工单引用 |
+| 已停用 | inactive | 历史保留 |
+
+### 销售订单（SO）状态
+
+| 状态 | 字段值 | 含义 |
+|------|--------|------|
+| 待审核 | pending | 已创建未审核 |
+| 已审核 | approved | 审核通过待发货 |
+| 部分发货 | partial | 部分出库 |
+| 已完成 | completed | 全部发货 |
+| 已取消 | cancelled | 流程终止 |
+
+### 采购订单（PO）状态
+
+| 状态 | 字段值 | 含义 |
+|------|--------|------|
+| 待审核 | pending | 已创建未审核 |
+| 已审核 | approved | 待入库 |
+| 部分入库 | partial_received | 部分到货 |
+| 已入库 | received | 全部到货 |
+| 已取消 | cancelled | 流程终止 |
+
+> 维护触发：状态字段或转移条件变更时，由 /learn 同步更新。
