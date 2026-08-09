@@ -25,6 +25,28 @@ fi
 
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)
 
+# ============================================
+# 规则 glob 修改 → 版本号 bump 一致性（2026-08-09 新增）
+# glob 变更 + version 未变 = 阻断
+# ============================================
+STAGED_RULES=$(echo "$STAGED_FILES" | grep '^\.claude/rules/.*\.md$')
+if [ -n "$STAGED_RULES" ]; then
+  GLOB_VERSION_VIOLATIONS=0
+  while IFS= read -r file; do
+    GLOB_CHANGED=$(git diff --cached "$file" 2>/dev/null | grep -c '^[-+].*glob:' || true)
+    VERSION_CHANGED=$(git diff --cached "$file" 2>/dev/null | grep -c '^[-+].*version:' || true)
+    if [ "$GLOB_CHANGED" -gt 0 ] && [ "$VERSION_CHANGED" -eq 0 ]; then
+      echo "[Super Harness] ⚠️  $file: glob 变更但 version 未 bump" >&2
+      GLOB_VERSION_VIOLATIONS=$((GLOB_VERSION_VIOLATIONS + 1))
+    fi
+  done <<< "$STAGED_RULES"
+  if [ "$GLOB_VERSION_VIOLATIONS" -gt 0 ]; then
+    echo "[Super Harness] 🚫 $GLOB_VERSION_VIOLATIONS 个规则文件改了 glob 但没升版号" >&2
+    echo "  改 glob = 语义变化 = 必须 bump version" >&2
+    exit 2
+  fi
+fi
+
 # SQL 危险操作检查
 SQL_FILES=$(echo "$STAGED_FILES" | grep '\.sql$')
 if [ -n "$SQL_FILES" ]; then
