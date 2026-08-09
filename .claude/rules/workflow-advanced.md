@@ -1,7 +1,7 @@
 ---
 name: workflow-advanced
 description: 开发流程低频专题 — /delegate派工/evolve增量/菜单路由/业务文档/派工兜底
-glob: "**/.claude/commands/delegate/**,**/.claude/commands/dev/decompose.md,**/.claude/commands/learn/**,**/hermes/prd/**"
+glob: "**/*.{vue,ts},**/.claude/commands/delegate/**,**/.claude/commands/dev/decompose.md,**/.claude/commands/learn/**,**/hermes/prd/**"
 version: 1.0
 ---
 
