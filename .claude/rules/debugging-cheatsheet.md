@@ -106,6 +106,8 @@ find . -name "<filename>"
 
 详见 `learnings/2026-08-01-code-fact-verification-before-plan.md`。
 
+> **注意**：`workflow-advanced.md` §派工第 0 步：工人现状摸底 使用同样模式但侧重派工场景（三态判定：已修/需决议/真要改），命令形态略有不同。两处应保持同步。
+
 ### 接 "X 处" 数字前先 grep（grep-call-sites-before-accepting-count）
 
 工人说"调用了 3 处"或"修改了 5 个文件" → **自己 grep 验证**，不直接相信数字。

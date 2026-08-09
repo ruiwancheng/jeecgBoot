@@ -2,7 +2,7 @@
 name: workflow
 description: 开发流程——需求→计划→实现→自验证→提交
 glob: "**/*"
-version: 4.1
+version: 4.2
 ---
 
 # 开发流程

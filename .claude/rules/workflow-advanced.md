@@ -84,6 +84,8 @@ git blame <file>:<line>               # 看 P0 行号最近修改
 
 🚫 禁止：盲目按记忆卡片写代码。详见 `learnings/2026-08-02-delegate-worker-rebaseline-and-git-fallback.md`。
 
+> **元规则**：同 `debugging-cheatsheet.md` §code-fact-verification-before-plan。派工场景侧重三态判定（已修/需决议/真要改），日常编码场景侧重事实验证。两处命令形态略有不同，应保持同步。
+
 ### 部署控制台重置 + 强制全量（deploy-console-reset）
 
 部署控制台缓存旧 class，可能导致代码改了但运行时仍跑老逻辑。**部署前重置控制台 + 强制全量**（清 classpath + 不增量）：
@@ -96,59 +98,8 @@ git blame <file>:<line>               # 看 P0 行号最近修改
 
 ### 菜单/路由/权限规则（/evolve 增量 2026-07）
 
-#### 1. 前端路由匹配（frontend-route-match）
-- `/@/router/routes/*` 定义路由表
-- 菜单 URL 必须与路由 path 一致（否则 404）
-- 多级路由用 `redirect` 字段而非 `path` 重复
-详见 `learnings/2026-07-05-frontend-route-match.md`。
-
-#### 2. 路由菜单过滤（jeecg-route-menu-filter）
-- 后端 `/sys/permission/list` 过滤当前用户可见菜单
-- 前端 `usePermission().buildRoutesAction` 按权限构建动态路由
-- 隐藏菜单 ≠ 禁用 API（API 仍要 `@RequiresPermissions`）
-详见 `learnings/2026-07-29-jeecg-route-menu-filter.md`。
-
-#### 3. 菜单自动注册 + 管理员角色（menu-auto-register-admin-role）
-- `MesMenuRegistry` Runner 注册菜单后**自动给 admin 角色赋权**
-- 隐藏菜单 + 路由 → 用户无权限但路径存在
-- 注册失败 → `Runner` 异常，但应用继续启动
-详见 `learnings/2026-07-08-menu-auto-register-admin-role.md`。
-
-#### 4. 菜单路由假 404（menu-route-false-404）
-**症状**：菜单点击跳 404，但路由文件存在。
-**根因**：
-- 路由 `path` 与菜单 `url` 不一致
-- 路由 component 路径错（`/views/X.vue` 实际是 `/views/Y.vue`）
-- 路由 `meta.ignoreAuth: true` 但仍要求登录
-详见 `learnings/2026-07-14-menu-route-false-404.md`。
-
-#### 5. meta 文档角色（meta-document-role）
-- `router.beforeEach` 从 `to.meta.roles` 取角色列表做权限校验
-- 路由 `meta` 字段必须在 `permission.ts` 中显式声明
-- 后端 `permission` 表的 `menu_type` 影响前端是否生成菜单
-详见 `learnings/2026-07-05-meta-document-role.md`。
-
-#### 6. 新模块菜单路由自动注册（new-module-menu-route-auto-register）
-**新模块上线检查清单**：
-- [ ] `SysMenu` 表插入菜单 SQL
-- [ ] `Router/routes/modules/<module>.ts` 添加路由
-- [ ] `permission.ts` 注册权限码
-- [ ] 管理员角色自动绑权（`MesMenuRegistry`）
-- [ ] 前端路由 meta 配角色
-详见 `learnings/2026-07-21-new-module-menu-route-auto-register.md`。
-
-#### 7. 路由菜单层级（route-menu-hierarchy）
-- `parent_id` 字段建立菜单树
-- 前端 `BasicMenu` 组件递归渲染
-- 层级超过 3 层 → UX 变差（考虑扁平化或面包屑）
-详见 `learnings/2026-07-06-route-menu-hierarchy.md`。
-
-#### 8. Shiro perms 匹配的是 `perms` 字段不是 `id`（shiro-perms-not-id）
-**铁律**：`@RequiresPermissions("xxx:add")` 匹配 `sys_permission.perms` 列，**不是 `id` 列**。
-- ✅ `permission(id, parentId, name)` 工厂方法自动 `setPerms(id)`
-- ✅ 注册 Runner 同步 `setPerms(def.getPerms())`
-- ❌ 只设 `id` 不设 `perms` → 权限码形同虚设
-详见 `learnings/2026-07-14-shiro-perms-not-id.md`。
+> 📦 **已迁入 `frontend.md`**。frontend.md 已有 Vue/TS glob 覆盖（`**/*.{vue,ts}`），改路由时自动加载。
+> 详见 `.claude/rules/frontend.md` §菜单/路由/权限规则。
 
 ---
 

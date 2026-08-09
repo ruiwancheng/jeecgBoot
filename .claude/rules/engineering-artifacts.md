@@ -2,7 +2,7 @@
 name: engineering-artifacts
 description: 工程产物目录规范——hermes/ 和 harness/ 的子目录结构、命名规范、文件生命周期
 glob: "hermes/**/*,harness/**/*"
-version: 1.0
+version: 1.1
 ---
 
 # 工程产物目录规范

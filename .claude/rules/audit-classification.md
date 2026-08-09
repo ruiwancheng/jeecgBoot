@@ -2,7 +2,7 @@
 name: audit-classification
 description: 审计报告自动分类——辅助AI判定审计风险的真伪和优先级
 glob: "hermes/tiequan/**/*"
-version: 1.1
+version: 1.2
 ---
 
 # 审计反馈自动分类

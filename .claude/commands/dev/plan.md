@@ -12,10 +12,21 @@ description: 自有命令 — 制定实施计划：查模块、锚定模式、�
 
 ### 0. 读取 brainstorm 产物（2026-08-09 新增）
 
-检测 `.claude/specs/` 目录最新文件（按 mtime 排序，取 30 分钟内创建的）：
+查找最新 spec 文件（30 分钟内）：
 
-- **存在且新鲜** → 读取验收标准作为 plan 输入，提示 `📋 检测到 /brainstorm 产物（X 分钟前），自动复用...`
-- **过期（≥30 分钟）** → 提示 `⚠️ /brainstorm 产物已过期（X 分钟前），是否重新确认需求？`
+```bash
+# 确保目录存在 + 获取最新 spec
+mkdir -p .claude/specs
+SPEC=$(find .claude/specs -name "*.md" -not -name ".gitkeep" -mmin -30 2>/dev/null | sort -r | head -1)
+if [ -n "$SPEC" ]; then
+  echo "📋 检测到 /brainstorm 产物（$(stat -f %Sm -t '%Y-%m-%d %H:%M' "$SPEC" 2>/dev/null || stat -c %y "$SPEC" 2>/dev/null | cut -d. -f1)），自动复用..."
+  cat "$SPEC"
+fi
+```
+
+**判定逻辑**：
+- **存在且新鲜**（`-mmin -30`）→ 读取验收标准作为 plan 输入
+- **过期**（≥30 分钟）→ 提示 `⚠️ /brainstorm 产物已过期，是否重新确认需求？`
 - **不存在** → 正常继续，不阻塞
 
 > 此步骤为**推荐**而非强制。无 spec 文件时 plan 仍可正常执行。
