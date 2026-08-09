@@ -29,7 +29,7 @@ description: 自有命令 — 需求澄清：先聊清楚做什么、验收标�
 - 验收标准: 1. ... 2. ... 3. ...
 - 涉及模块: <列表>
 - 边界条件: <关键边界>
-- valid_for: 30min
+- valid_for: 30min（与 plan.md 步骤0 + .last-plan.json 统一常量，修改时三处同步）
 ```
 
 > 此文件供 `/plan` 自动读取，避免 brainstorm 结论在后续步骤中丢失。

@@ -12,7 +12,7 @@ description: 自有命令 — 制定实施计划：查模块、锚定模式、�
 
 ### 0. 读取 brainstorm 产物（2026-08-09 新增）
 
-查找最新 spec 文件（30 分钟内）：
+查找最新 spec 文件（30 分钟内，与 brainstorm.md valid_for + .last-plan.json 统一常量）：
 
 ```bash
 # 确保目录存在 + 获取最新 spec
@@ -85,6 +85,6 @@ echo "{
 
 **用途：** 后续 `/decompose` 会自动检测此缓存，避免用户重复描述任务。
 
-**失效条件：** 缓存超过 30 分钟视为过期（`/decompose` 会提示重新描述）。
+**失效条件：** 缓存超过 30 分钟视为过期（与 brainstorm.md valid_for 统一常量。修改时三处同步：brainstorm.md / plan.md / .last-plan.json）。
 
 > `.claude/.last-plan.json` 已在根 `.gitignore` 中忽略。

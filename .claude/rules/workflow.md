@@ -133,7 +133,7 @@ version: 4.2
 | 4-10 文件 | 轻量评审 | ~30K |
 | \>10 文件 | 完整评审 | ~150K |
 
-**自动衔接**：`/decompose` 自动读取 `/plan` 输出（30 分钟内），无需重新描述任务。缓存文件 `.claude/.last-plan.json`（已 gitignore）。显式覆盖用 `--no-cache` 或 `--restart`。
+**自动衔接**：`/decompose` 自动读取 `/plan` 输出（30 分钟内，与 brainstorm.md valid_for 统一常量），无需重新描述任务。缓存文件 `.claude/.last-plan.json`（已 gitignore）。显式覆盖用 `--no-cache` 或 `--restart`。
 
 **详细方法论 + 完整 8 反模式 + 切片模板**：见 `.claude/skills/decompose/SKILL.md`
 
